@@ -9,8 +9,13 @@
     "@mantine/hooks": "^6.0.21",
     "@mantine/notifications": "^6.0.21",
     "@tabler/icons-react": "^2.42.0",
+    "i18next": "^23.7.6",
+    "i18next-browser-languagedetector": "^7.2.0",
+    "i18next-http-backend": "^2.4.2",
     "react": "^18.2.0",
+    "react-country-flag": "^3.1.0",
     "react-dom": "^18.2.0",
+    "react-i18next": "^13.5.0",
     "react-router-dom": "^6.19.0"
   },
   "scripts": {

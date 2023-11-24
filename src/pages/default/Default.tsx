@@ -1,6 +1,8 @@
 import { Title } from "@mantine/core";
-import React from "react";
+import { useTranslation } from "react-i18next";
 
 export default function DefaultPage() {
-    return <Title order={1}>Hello World</Title>
+    const {t} = useTranslation();
+
+    return <Title order={1}>{t('pages.default.message')}</Title>
 }

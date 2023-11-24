@@ -1,0 +1,10 @@
+{
+    "app": {
+        "title": "Cortical Stimulation Tool"
+    },
+    "pages": {
+        "default": {
+            "message": "Hello World!"
+        }
+    }
+}

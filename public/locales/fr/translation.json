@@ -1,0 +1,10 @@
+{
+    "app": {
+        "title": "Outil Stimulation Corticale"
+    },
+    "pages": {
+        "default": {
+            "message": "Bonjour!"
+        }
+    }
+}
