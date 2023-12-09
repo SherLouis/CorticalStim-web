@@ -2,7 +2,6 @@ import { ActionIcon, AppShell, Avatar, Group, Header, Menu, Title, useMantineCol
 import { PropsWithChildren } from 'react'
 import { IconSun, IconMoonStars } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import ReactCountryFlag from 'react-country-flag';
 
 // TODO: menu for language switch
 export default function BasePage(props: PropsWithChildren<BasePageProps>) {
@@ -10,15 +9,6 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
     const dark = colorScheme === 'dark';
 
     const { i18n } = useTranslation();
-
-    const getCountryCodeForLanguage = (language: string | undefined): string => {
-        switch (language) {
-            case 'fr':
-                return 'fr';
-            default:
-                return 'gb';
-        }
-    }
 
     return (
         <AppShell
@@ -34,9 +24,7 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
                         <Group position="right">
                             <Menu withArrow position="bottom">
                                 <Menu.Target>
-                                    <Avatar>
-                                        <ReactCountryFlag countryCode={getCountryCodeForLanguage(i18n.resolvedLanguage)} className="emojiFlag" />
-                                    </Avatar>
+                                    <Avatar src={i18n.resolvedLanguage === 'fr' ? '/CorticalStim-web/assets/images/flag_fr.svg' : '/CorticalStim-web/assets/images/flag_uk.svg'} />
                                 </Menu.Target>
                                 <Menu.Dropdown>
                                     <Menu.Item disabled={i18n.resolvedLanguage === 'en'}>
@@ -44,15 +32,15 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
                                             variant={i18n.resolvedLanguage === 'en' ? "outline" : "default"}
                                             onClick={() => i18n.changeLanguage('en')}
                                         >
-                                            <ReactCountryFlag countryCode={getCountryCodeForLanguage('en')} />
+                                            <Avatar src={'/CorticalStim-web/assets/images/flag_uk.svg'} />
                                         </ActionIcon>
                                     </Menu.Item>
-                                    <Menu.Item disabled={i18n.resolvedLanguage === 'en'}>
+                                    <Menu.Item disabled={i18n.resolvedLanguage === 'fr'}>
                                         <ActionIcon
                                             variant={i18n.resolvedLanguage === 'fr' ? "outline" : "default"}
                                             onClick={() => i18n.changeLanguage('fr')}
                                         >
-                                            <ReactCountryFlag countryCode={getCountryCodeForLanguage('fr')} />
+                                            <Avatar src={'/CorticalStim-web/assets/images/flag_fr.svg'} />
                                         </ActionIcon>
                                     </Menu.Item>
                                 </Menu.Dropdown>
