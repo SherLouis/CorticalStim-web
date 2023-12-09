@@ -5,6 +5,9 @@
     "pages": {
         "default": {
             "message": "Hello World!"
+        },
+        "report": {
+            "message": "Report!"
         }
     }
 }

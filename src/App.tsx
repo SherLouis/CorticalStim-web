@@ -1,10 +1,11 @@
 import { ColorScheme, ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { Suspense, useState } from 'react';
-import { Routes, Route, HashRouter } from 'react-router-dom';
+import { Routes, Route, HashRouter, BrowserRouter } from 'react-router-dom';
 import BasePage from './entry/BasePage';
 import DefaultPage from './pages/default/Default';
 import { useTranslation } from 'react-i18next';
+import ReportPage from './pages/report/ReportPage';
 
 function App() {
     const [colorScheme, setColorScheme] = useState<ColorScheme>('dark');
@@ -13,7 +14,6 @@ function App() {
 
     const { t } = useTranslation();
 
-    console.log("App rendered");
     return (
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
             <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
@@ -22,6 +22,7 @@ function App() {
                     <HashRouter>
                         <Routes>
                             <Route path='*' element={<DefaultPage />} /> {/* This is the default Route */}
+                            <Route path='/report' element={<ReportPage />} />
                         </Routes>
                     </HashRouter>
                 </BasePage>
