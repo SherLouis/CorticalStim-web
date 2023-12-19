@@ -7,6 +7,9 @@
             "message": "Bonjour!"
         },
         "stimulationTool": {
+            "validation": {
+                "electrodeLabel": "Les noms d'électrodes doivent être différents"
+            },
             "step1": {
                 "title": "Positionement des électrodes",
                 "description": "Définir le positionement des contacts",

@@ -7,6 +7,9 @@
             "message": "Hello World!"
         },
         "stimulationTool": {
+            "validation": {
+                "electrodeLabel": "Cannot have duplicate electrode label"
+            },
             "step1": {
                 "title": "Electrode placement",
                 "description": "Define contact placement",

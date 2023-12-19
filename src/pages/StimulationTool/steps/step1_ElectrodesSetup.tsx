@@ -23,6 +23,8 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
         <Group align="center">
             <Container sx={{ flex: 1 }}>
                 {/*TODO: Electrodes input form*/}
+                {/*TODO: Change color of Chip when done*/}
+                {/*FIXME: Be able to type multiple characters in electrode name before escaping*/}
                 <Button onClick={addElectrode}>{t("pages.stimulationTool.step1.addElectrodeButton")}</Button>
                 {form.values.electrodes.map((electrode, electrode_i) => {
                     return (
@@ -35,7 +37,7 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
                                 gap={{ base: 'sm', lg: 'xs' }}
                                 justify={{ lg: 'center' }}
                                 sx={{ flex: 2 }}>
-                                <TextInput
+                                <TextInput 
                                     size="xs"
                                     label={t("pages.stimulationTool.step1.electrodeLabel")}
                                     placeholder="A"

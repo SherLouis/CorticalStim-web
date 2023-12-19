@@ -13,7 +13,7 @@ export default function StimulationToolPage() {
         initialValues: { electrodes: [] },
         validate: {
             electrodes: {
-                label: (value, values) => values.electrodes.map((e) => e.label).filter((v) => v === value).length > 1 ? "Cannot have duplicate electrode label" : null
+                label: (value, values) => values.electrodes.map((e) => e.label).filter((v) => v === value).length > 1 ? t("pages.stimulationTool.validation.electrodeLabel") : null
             }
         },
         validateInputOnChange: true,
