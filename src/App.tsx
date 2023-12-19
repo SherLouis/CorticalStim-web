@@ -22,7 +22,6 @@ function App() {
                     <HashRouter>
                         <Routes>
                             <Route path='*' element={<DefaultPage />} /> {/* This is the default Route */}
-                            <Route path='/report' element={<ReportPage />} />
                         </Routes>
                     </HashRouter>
                 </BasePage>

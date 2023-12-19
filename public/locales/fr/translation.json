@@ -5,9 +5,6 @@
     "pages": {
         "default": {
             "message": "Bonjour!"
-        },
-        "report": {
-            "message": "Rapport!"
         }
     }
 }
