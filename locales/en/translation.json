@@ -1,0 +1,26 @@
+{
+    "app": {
+        "title": "Cortical Stimulation Tool"
+    },
+    "pages": {
+        "default": {
+            "message": "Hello World!"
+        },
+        "stimulationTool": {
+            "validation": {
+                "electrodeLabel": "Cannot have duplicate electrode label"
+            },
+            "step1": {
+                "title": "Electrode placement",
+                "description": "Define contact placement",
+                "addElectrodeButton": "Add an electrode",
+                "electrodeLabel": "Name",
+                "nbContactsLabel": "Contacts"
+            },
+            "step2": {
+                "title": "Stimulations",
+                "description": "Define stimulation parameters and effects"
+            }
+        }
+    }
+}

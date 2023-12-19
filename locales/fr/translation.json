@@ -1,0 +1,26 @@
+{
+    "app": {
+        "title": "Outil Stimulation Corticale"
+    },
+    "pages": {
+        "default": {
+            "message": "Bonjour!"
+        },
+        "stimulationTool": {
+            "validation": {
+                "electrodeLabel": "Les noms d'électrodes doivent être différents"
+            },
+            "step1": {
+                "title": "Positionement des électrodes",
+                "description": "Définir le positionement des contacts",
+                "addElectrodeButton": "Ajouter une électrode",
+                "electrodeLabel": "Nom",
+                "nbContactsLabel": "Contacts"
+            },
+            "step2": {
+                "title": "Stimulations",
+                "description": "Définir les paramètres de stimulation et les effets"
+            }
+        }
+    }
+}
