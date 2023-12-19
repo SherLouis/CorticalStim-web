@@ -5,6 +5,19 @@
     "pages": {
         "default": {
             "message": "Hello World!"
+        },
+        "stimulationTool": {
+            "step1": {
+                "title": "Electrode placement",
+                "description": "Define contact placement",
+                "addElectrodeButton": "Add an electrode",
+                "electrodeLabel": "Name",
+                "nbContactsLabel": "Contacts"
+            },
+            "step2": {
+                "title": "Stimulations",
+                "description": "Define stimulation parameters and effects"
+            }
         }
     }
 }

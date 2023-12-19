@@ -1,11 +1,10 @@
-import { ColorScheme, ColorSchemeProvider, MantineProvider } from '@mantine/core';
+import { ColorScheme, ColorSchemeProvider, MantineProvider, Skeleton } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { Suspense, useState } from 'react';
-import { Routes, Route, HashRouter, BrowserRouter } from 'react-router-dom';
+import { Routes, Route, HashRouter } from 'react-router-dom';
 import BasePage from './entry/BasePage';
-import DefaultPage from './pages/default/Default';
 import { useTranslation } from 'react-i18next';
-import ReportPage from './pages/report/ReportPage';
+import StimulationToolPage from './pages/StimulationTool/StimulationToolPage';
 
 function App() {
     const [colorScheme, setColorScheme] = useState<ColorScheme>('dark');
@@ -21,7 +20,7 @@ function App() {
                 <BasePage title={t('app.title')}>
                     <HashRouter>
                         <Routes>
-                            <Route path='*' element={<DefaultPage />} /> {/* This is the default Route */}
+                            <Route path='*' element={<StimulationToolPage />} /> {/* This is the default Route */}
                         </Routes>
                     </HashRouter>
                 </BasePage>
@@ -31,9 +30,14 @@ function App() {
 }
 
 export default function WrappedApp() {
+    const fallback = (<div>
+        <Skeleton height={8} radius="xl" />
+        <Skeleton height={8} mt={6} radius="xl" />
+        <Skeleton height={8} mt={6} width="70%" radius="xl" />
+    </div>);
     return (
-        <Suspense fallback="Loading...">
-            <App />
-        </Suspense>
+        <Suspense fallback={fallback}>
+            < App />
+        </Suspense >
     );
 }
