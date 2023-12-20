@@ -15,7 +15,8 @@
                 "description": "Define contact placement",
                 "addElectrodeButton": "Add an electrode",
                 "electrodeLabel": "Name",
-                "nbContactsLabel": "Contacts"
+                "nbContactsLabel": "Contacts",
+                "destrieuxRegionLabel": "Destrieux region"
             },
             "step2": {
                 "title": "Stimulations",

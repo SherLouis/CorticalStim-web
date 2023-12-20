@@ -15,7 +15,8 @@
                 "description": "Définir le positionement des contacts",
                 "addElectrodeButton": "Ajouter une électrode",
                 "electrodeLabel": "Nom",
-                "nbContactsLabel": "Contacts"
+                "nbContactsLabel": "Contacts",
+                "destrieuxRegionLabel": "Region Destrieux"
             },
             "step2": {
                 "title": "Stimulations",

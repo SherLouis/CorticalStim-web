@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/CorticalStim-web/static/js/main.a4469244.js",
+    "main.js": "/CorticalStim-web/static/js/main.ef3de98d.js",
     "index.html": "/CorticalStim-web/index.html",
     "static/media/getFetch.cjs": "/CorticalStim-web/static/media/getFetch.40f37ddea2378391108f.cjs"
   },
   "entrypoints": [
-    "static/js/main.a4469244.js"
+    "static/js/main.ef3de98d.js"
   ]
 }
