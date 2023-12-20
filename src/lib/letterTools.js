@@ -17,7 +17,7 @@ export var letters = (function() {
     
     function isLetters(arr) {
         for (var i = 0; i < arr.length; i++) {
-            if(arr[i].toLowerCase() != arr[i].toUpperCase()){
+            if(arr[i].toLowerCase() !== arr[i].toUpperCase()){
             } else {
                 return false;
             }

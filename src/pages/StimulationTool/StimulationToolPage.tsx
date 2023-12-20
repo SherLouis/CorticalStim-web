@@ -1,4 +1,4 @@
-import { Box, Container, Stepper } from "@mantine/core";
+import { Box, Stepper } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import StimulationFormValues from "../../models/stimulationForm";
@@ -16,7 +16,6 @@ export default function StimulationToolPage() {
                 label: (value, values) => values.electrodes.map((e) => e.label).filter((v) => v === value).length > 1 ? t("pages.stimulationTool.validation.electrodeLabel") : null
             }
         },
-        validateInputOnChange: true,
         validateInputOnBlur: true
     })
 

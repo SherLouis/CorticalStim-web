@@ -19,26 +19,25 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
             form.insertListItem(`electrodes.${electrodeIndex}.contacts`, { index: i });
         }
     }
+    /*TODO: Electrodes input form*/
+    /*TODO: Change color of Chip when done*/
     return (<>
         <Group align="center">
-            <Container sx={{ flex: 1 }}>
-                {/*TODO: Electrodes input form*/}
-                {/*TODO: Change color of Chip when done*/}
-                {/*FIXME: Be able to type multiple characters in electrode name before escaping*/}
+            <Container sx={{ flex: 1, alignItems: "center" }}>
                 <Button onClick={addElectrode}>{t("pages.stimulationTool.step1.addElectrodeButton")}</Button>
                 {form.values.electrodes.map((electrode, electrode_i) => {
                     return (
-                        <Group key={electrode.label} mt="xs">
+                        <Group key={electrode_i} mt="sm" align="center">
                             <ActionIcon color="red" onClick={() => form.removeListItem('electrodes', electrode_i)}>
-                                <IconTrash size="1rem" />
+                                <IconTrash size="1.5rem" />
                             </ActionIcon>
                             <Flex
                                 direction={{ base: 'column', lg: 'row' }}
                                 gap={{ base: 'sm', lg: 'xs' }}
                                 justify={{ lg: 'center' }}
                                 sx={{ flex: 2 }}>
-                                <TextInput 
-                                    size="xs"
+                                <TextInput
+                                    size="sm"
                                     label={t("pages.stimulationTool.step1.electrodeLabel")}
                                     placeholder="A"
                                     required
@@ -46,7 +45,7 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
                                     {...form.getInputProps(`electrodes.${electrode_i}.label`)}
                                 />
                                 <NumberInput
-                                    size="xs"
+                                    size="sm"
                                     label={t("pages.stimulationTool.step1.nbContactsLabel")}
                                     sx={{ flex: 6 }}
                                     defaultValue={electrode.contacts.length}
@@ -58,7 +57,7 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
                                     <Group position="center">
                                         {electrode.contacts.map((contact, contact_i) => {
                                             const contactId = `${electrode.label}-${contact.index}`;
-                                            return (<Chip size='xs' value={contactId}>{contactId}</Chip>);
+                                            return (<Chip size='sm' value={contactId} key={contactId}>{contactId}</Chip>);
                                         })}
                                     </Group>
                                 </Chip.Group>
