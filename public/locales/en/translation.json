@@ -13,6 +13,8 @@
             "step1": {
                 "title": "Electrode placement",
                 "description": "Define contact placement",
+                "contactConfiguration": "Contacts configuration",
+                "placement":"Placement",
                 "addElectrodeButton": "Add an electrode",
                 "electrodeLabel": "Name",
                 "nbContactsLabel": "Contacts",
@@ -23,5 +25,8 @@
                 "description": "Define stimulation parameters and effects"
             }
         }
+    },
+    "common": {
+        "okButtonLabel": "OK"
     }
 }
