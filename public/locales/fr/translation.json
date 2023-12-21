@@ -11,8 +11,8 @@
                 "electrodeLabel": "Les noms d'électrodes doivent être différents"
             },
             "step1": {
-                "title": "Positionement des électrodes",
-                "description": "Définir le positionement des contacts",
+                "title": "Positionnement des électrodes",
+                "description": "Définir le positionnement des contacts",
                 "addElectrodeButton": "Ajouter une électrode",
                 "electrodeLabel": "Nom",
                 "nbContactsLabel": "Contacts",
