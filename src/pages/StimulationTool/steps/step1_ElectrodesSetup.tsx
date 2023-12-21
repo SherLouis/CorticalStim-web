@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Button, Chip, Container, Flex, Group, NumberInput, Radio, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Box, Button, Chip, Container, Flex, Group, NumberInput, Stack, TextInput, Title } from "@mantine/core";
 import StepProperties from "./step";
 import { useTranslation } from "react-i18next";
 import { IconTrash } from "@tabler/icons-react";

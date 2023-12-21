@@ -84,6 +84,7 @@ export default function ElectrodeLocationForm({onSubmit}: ElectrodeLocationFormP
             { value: "74", label: "S_temporal_transverse" }
         ];
     }
+    // TODO: find a better way to select Destrieux (more compact, no spill over)
     return (
         <Container m={'sm'}>
             <Radio.Group
