@@ -1,9 +1,7 @@
 import { Button, Container, Radio } from "@mantine/core";
-import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 
-export default function ElectrodeLocationForm({onSubmit}: ElectrodeLocationFormProps) {
-    const form = useForm<ElectrodeLocationFormValues>({initialValues:{destieux:""}})
+export default function ElectrodeLocationForm({ onSubmit, destrieuxValue }: ElectrodeLocationFormProps) {
     const { t } = useTranslation();
     const getRoiDestrieuxOptions = (): { value: string; label: string; }[] => {
         return [
@@ -89,7 +87,8 @@ export default function ElectrodeLocationForm({onSubmit}: ElectrodeLocationFormP
         <Container m={'sm'}>
             <Radio.Group
                 label={t('pages.stimulationTool.step1.destrieuxRegionLabel')}
-                {...form.getInputProps('destieux')}
+                value={destrieuxValue}
+                onChange={(newValue) => onSubmit({ destieux: newValue })}
             >
                 <Container sx={{ display: 'grid', gridAutoFlow: 'column', gridTemplateRows: 'repeat(25,1fr)', gap: '10px' }}>
                     {getRoiDestrieuxOptions().map((roi_destrieux, i) =>
@@ -99,13 +98,14 @@ export default function ElectrodeLocationForm({onSubmit}: ElectrodeLocationFormP
                         />)}
                 </Container>
             </Radio.Group>
-            <Button type='submit' onClick={()=>onSubmit(form.values)}>{t('common.okButtonLabel')}</Button>
+            <Button type='submit' onClick={() => {onSubmit({ destieux: destrieuxValue })}}>{t('common.okButtonLabel')}</Button>
         </Container>
     )
 }
 
 interface ElectrodeLocationFormProps {
-    onSubmit: (values:ElectrodeLocationFormValues) => void;
+    destrieuxValue: string;
+    onSubmit: (values: ElectrodeLocationFormValues) => void;
 }
 
 export interface ElectrodeLocationFormValues {

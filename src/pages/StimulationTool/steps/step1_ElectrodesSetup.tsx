@@ -52,7 +52,27 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
         }
     }
 
-    /*TODO: Display value of done contacts*/
+    const getSelectedContactsROIValue = (): string => {
+        var roi_destrieu = "";
+        selectedContacts.forEach((c, c_i) => {
+            const electrode_label = c.split('-').slice(0, -1).join('-');
+            const contact_index = c.split('-').at(-1);
+            const destrieux = form.values.electrodes.find((electrode) => electrode.label === electrode_label)?.contacts.at(parseInt(contact_index!))?.location.destrieux;
+            if (c_i === 0) { roi_destrieu = destrieux !== undefined ? destrieux : "" }
+            else {
+                if ((destrieux === undefined && roi_destrieu !== "") || (destrieux !== undefined && roi_destrieu !== destrieux)) { roi_destrieu = "multiple"; return; }
+            }
+        });
+        return roi_destrieu;
+    }
+
+    const handleDeleteElectorde = (electrode_label: string) => {
+        const electrode = form.values.electrodes.find((e) => e.label === electrode_label);
+        setSelectedContacts(selectedContacts.filter((c) => !c.startsWith(electrode!.label)));
+        setDoneContacts(doneContacts.filter((c) => !c.startsWith(electrode!.label)));
+        form.removeListItem('electrodes', form.values.electrodes.findIndex((e) => e.label === electrode_label));
+    }
+
     return (
         <Stack>
             <Flex
@@ -71,7 +91,7 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
                                     justify={{ lg: 'center' }}
                                     mt={'sm'}>
                                     <Flex direction={'row'} align='center' justify='center' gap='sm' sx={{ flex: 4 }}>
-                                        <ActionIcon color="red" sx={{ flex: 2 }} onClick={() => form.removeListItem('electrodes', electrode_i)}>
+                                        <ActionIcon color="red" sx={{ flex: 2 }} onClick={() => handleDeleteElectorde(electrode.label)}>
                                             <IconTrash size="1.5rem" />
                                         </ActionIcon>
                                         <TextInput
@@ -90,7 +110,7 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
                                             onChange={(v) => setContactsToElectrode(electrode_i, v === "" ? 0 : v)}
                                         />
                                     </Flex>
-                                    <Group key={electrode_i} align="center" position="left" sx={{ flex: 8 }}>
+                                    <Group key={electrode_i} align="center" position="center" sx={{ flex: 8 }}>
                                         <Chip.Group multiple value={selectedContacts} onChange={setSelectedContacts}>
                                             <Group position="center">
                                                 {electrode.contacts.map((contact, contact_i) => {
@@ -116,7 +136,7 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
                     <Box display={(selectedContacts.length > 0) ? 'block' : 'none'}>
                         <Stack align='flex-start' justify='flex-start'>
                             <Title order={3}>{t('pages.stimulationTool.step1.placement')}</Title>
-                            <ElectrodeLocationForm onSubmit={handleElectrodeLocationFormSubmit} />
+                            <ElectrodeLocationForm destrieuxValue={getSelectedContactsROIValue()} onSubmit={handleElectrodeLocationFormSubmit} />
                         </Stack>
                     </Box>
 
