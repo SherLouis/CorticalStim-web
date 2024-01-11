@@ -1,8 +1,11 @@
 import { Button, Container, Radio } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-export default function ElectrodeLocationForm({ onSubmit, destrieuxValue }: ElectrodeLocationFormProps) {
+export default function ElectrodeLocationForm({ onSubmit, formInitialValues }: ElectrodeLocationFormProps) {
     const { t } = useTranslation();
+    const form = useForm<ElectrodeLocationFormValues>({initialValues: formInitialValues})
     const getRoiDestrieuxOptions = (): { value: string; label: string; }[] => {
         return [
             { value: "", label: "None" },
@@ -82,13 +85,16 @@ export default function ElectrodeLocationForm({ onSubmit, destrieuxValue }: Elec
             { value: "74", label: "S_temporal_transverse" }
         ];
     }
+    const handleSubmit = () => {
+        onSubmit(form.values);
+    }
+    useEffect(() => {form.reset(); form.setValues(formInitialValues);}, [formInitialValues]);
     // TODO: find a better way to select Destrieux (more compact, no spill over)
     return (
         <Container m={'sm'}>
             <Radio.Group
                 label={t('pages.stimulationTool.step1.destrieuxRegionLabel')}
-                value={destrieuxValue}
-                onChange={(newValue) => onSubmit({ destieux: newValue })}
+                {...form.getInputProps('destrieux')}
             >
                 <Container sx={{ display: 'grid', gridAutoFlow: 'column', gridTemplateRows: 'repeat(25,1fr)', gap: '10px' }}>
                     {getRoiDestrieuxOptions().map((roi_destrieux, i) =>
@@ -98,16 +104,16 @@ export default function ElectrodeLocationForm({ onSubmit, destrieuxValue }: Elec
                         />)}
                 </Container>
             </Radio.Group>
-            <Button type='submit' onClick={() => {onSubmit({ destieux: destrieuxValue })}}>{t('common.okButtonLabel')}</Button>
+            <Button type='submit' onClick={() => handleSubmit()}>{t('common.okButtonLabel')}</Button>
         </Container>
     )
 }
 
 interface ElectrodeLocationFormProps {
-    destrieuxValue: string;
+    formInitialValues: ElectrodeLocationFormValues;
     onSubmit: (values: ElectrodeLocationFormValues) => void;
 }
 
 export interface ElectrodeLocationFormValues {
-    destieux: string;
+    destrieux: string;
 }

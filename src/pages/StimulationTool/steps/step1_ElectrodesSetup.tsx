@@ -34,14 +34,14 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
                 if (electrode.label === electrode_label) {
                     electrode.contacts.forEach((contact) => {
                         if (contact.index.toString() === contact_index) {
-                            form.setFieldValue(`electrodes.${electrode_i}.contacts.${contact.index}.location.destrieux`, values.destieux);
+                            form.setFieldValue(`electrodes.${electrode_i}.contacts.${contact.index}.location.destrieux`, values.destrieux);
                         }
                     });
                 }
             });
         }
 
-        if (values.destieux !== "") {
+        if (values.destrieux !== "") {
             const newDoneContacts = selectedContacts.filter((c) => !doneContacts.includes(c));
             setDoneContacts((prevDoneContacts) => [...prevDoneContacts, ...newDoneContacts]);
             setSelectedContacts([]);
@@ -52,7 +52,7 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
         }
     }
 
-    const getSelectedContactsROIValue = (): string => {
+    const getSelectedContactsROIValue = (): ElectrodeLocationFormValues => {
         var roi_destrieu = "";
         selectedContacts.forEach((c, c_i) => {
             const electrode_label = c.split('-').slice(0, -1).join('-');
@@ -63,7 +63,7 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
                 if ((destrieux === undefined && roi_destrieu !== "") || (destrieux !== undefined && roi_destrieu !== destrieux)) { roi_destrieu = "multiple"; return; }
             }
         });
-        return roi_destrieu;
+        return { destrieux: roi_destrieu };
     }
 
     const handleDeleteElectorde = (electrode_label: string) => {
@@ -84,59 +84,59 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
                     <Button onClick={addElectrode}>{t("pages.stimulationTool.step1.addElectrodeButton")}</Button>
                     {form.values.electrodes.map((electrode, electrode_i) => {
                         return (
-                            <>
-                                <Flex
-                                    direction={{ base: 'column', lg: 'row' }}
-                                    gap={{ base: 'sm', lg: 'xs' }}
-                                    justify={{ lg: 'center' }}
-                                    mt={'sm'}>
-                                    <Flex direction={'row'} align='center' justify='center' gap='sm' sx={{ flex: 4 }}>
-                                        <ActionIcon color="red" sx={{ flex: 2 }} onClick={() => handleDeleteElectorde(electrode.label)}>
-                                            <IconTrash size="1.5rem" />
-                                        </ActionIcon>
-                                        <TextInput
-                                            size="sm"
-                                            sx={{ flex: 6 }}
-                                            label={t("pages.stimulationTool.step1.electrodeLabel")}
-                                            placeholder="A"
-                                            required
-                                            {...form.getInputProps(`electrodes.${electrode_i}.label`)}
-                                        />
-                                        <NumberInput
-                                            size="sm"
-                                            sx={{ flex: 6 }}
-                                            label={t("pages.stimulationTool.step1.nbContactsLabel")}
-                                            defaultValue={electrode.contacts.length}
-                                            onChange={(v) => setContactsToElectrode(electrode_i, v === "" ? 0 : v)}
-                                        />
-                                    </Flex>
-                                    <Group key={electrode_i} align="center" position="center" sx={{ flex: 8 }}>
-                                        <Chip.Group multiple value={selectedContacts} onChange={setSelectedContacts}>
-                                            <Group position="center">
-                                                {electrode.contacts.map((contact, contact_i) => {
-                                                    const contactId = `${electrode.label}-${contact.index}`;
-                                                    return (
-                                                        <Chip size='sm'
-                                                            value={contactId}
-                                                            key={contactId}
-                                                            variant={doneContacts.includes(contactId) ? 'filled' : 'light'}
-                                                            color={selectedContacts?.includes(contactId) ? 'blue' : doneContacts?.includes(contactId) ? 'green' : 'gray'}
-                                                            checked={doneContacts.includes(contactId)}>
-                                                            {contactId}
-                                                        </Chip>);
-                                                })}
-                                            </Group>
-                                        </Chip.Group>
-                                    </Group>
+                            <Flex
+                                direction={{ base: 'column', lg: 'row' }}
+                                gap={{ base: 'sm', lg: 'xs' }}
+                                justify={{ lg: 'center' }}
+                                mt={'sm'}
+                                key={'div_electrode_' + electrode_i}
+                            >
+                                <Flex direction={'row'} align='center' justify='center' gap='sm' sx={{ flex: 4 }}>
+                                    <ActionIcon color="red" sx={{ flex: 2 }} onClick={() => handleDeleteElectorde(electrode.label)}>
+                                        <IconTrash size="1.5rem" />
+                                    </ActionIcon>
+                                    <TextInput
+                                        size="sm"
+                                        sx={{ flex: 6 }}
+                                        label={t("pages.stimulationTool.step1.electrodeLabel")}
+                                        placeholder="A"
+                                        required
+                                        {...form.getInputProps(`electrodes.${electrode_i}.label`)}
+                                    />
+                                    <NumberInput
+                                        size="sm"
+                                        sx={{ flex: 6 }}
+                                        label={t("pages.stimulationTool.step1.nbContactsLabel")}
+                                        defaultValue={electrode.contacts.length}
+                                        onChange={(v) => setContactsToElectrode(electrode_i, v === "" ? 0 : v)}
+                                    />
                                 </Flex>
-                            </>)
+                                <Group key={electrode_i} align="center" position="center" sx={{ flex: 8 }}>
+                                    <Chip.Group multiple value={selectedContacts} onChange={setSelectedContacts}>
+                                        <Group position="center">
+                                            {electrode.contacts.map((contact, contact_i) => {
+                                                const contactId = `${electrode.label}-${contact.index}`;
+                                                return (
+                                                    <Chip size='sm'
+                                                        value={contactId}
+                                                        key={contactId}
+                                                        variant={doneContacts.includes(contactId) ? 'filled' : 'light'}
+                                                        color={selectedContacts?.includes(contactId) ? 'blue' : doneContacts?.includes(contactId) ? 'green' : 'gray'}
+                                                        checked={doneContacts.includes(contactId)}>
+                                                        {contactId}
+                                                    </Chip>);
+                                            })}
+                                        </Group>
+                                    </Chip.Group>
+                                </Group>
+                            </Flex>)
                     })}
                 </Container>
                 <Container sx={{ flex: 6 }} >
                     <Box display={(selectedContacts.length > 0) ? 'block' : 'none'}>
                         <Stack align='flex-start' justify='flex-start'>
                             <Title order={3}>{t('pages.stimulationTool.step1.placement')}</Title>
-                            <ElectrodeLocationForm destrieuxValue={getSelectedContactsROIValue()} onSubmit={handleElectrodeLocationFormSubmit} />
+                            <ElectrodeLocationForm formInitialValues={getSelectedContactsROIValue()} onSubmit={handleElectrodeLocationFormSubmit} />
                         </Stack>
                     </Box>
 
