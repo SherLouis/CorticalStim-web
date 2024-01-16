@@ -5,9 +5,11 @@ export default interface StimulationFormValues {
             index: number;
             location: {
                 side: string;
+                lobe: string;
                 gyrus: string;
                 region: string;
                 destrieux: string;
+                done: boolean;
             };
             stimulations: {
                 parameters: StimulationsParametersValues;
