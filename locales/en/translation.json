@@ -27,6 +27,7 @@
         }
     },
     "common": {
-        "okButtonLabel": "OK"
+        "okButtonLabel": "OK",
+        "resetButtonLabel": "Reset"
     }
 }
