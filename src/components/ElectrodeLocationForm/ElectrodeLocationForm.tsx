@@ -117,7 +117,7 @@ export default function ElectrodeLocationForm({ onSubmit, onReset, formInitialVa
             >
                 <Group mt="xs">
                     {getSideOptions().map((side_i) => {
-                        return <Radio value={side_i.value} label={side_i.label} />
+                        return <Radio value={side_i.value} label={side_i.label} key={side_i.value}/>
                     })}
                 </Group>
             </Radio.Group>

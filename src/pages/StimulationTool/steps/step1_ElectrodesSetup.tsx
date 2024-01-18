@@ -2,15 +2,17 @@ import { ActionIcon, Box, Button, Chip, Container, Flex, Group, NumberInput, Sta
 import StepProperties from "./step";
 import { useTranslation } from "react-i18next";
 import { IconDownload, IconFolderOpen, IconTrash } from "@tabler/icons-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { letters } from "../../../lib/letterTools";
 import ElectrodeLocationForm, { ElectrodeLocationFormValues } from "../../../components/ElectrodeLocationForm/ElectrodeLocationForm";
+import StimulationFormValues from "../../../models/stimulationForm";
 
 export default function ElectrodeSetupStep({ form, onComplete }: StepProperties) {
     const { t } = useTranslation();
     const [nextElectrodeDefaultLabel, setNextElectrodeDefaultLabel] = useState('A');
     const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
     const [doneContacts, setDoneContacts] = useState<string[]>([]);
+    const openInputFileRef = useRef<HTMLInputElement | null>(null);
 
     const addElectrode = () => {
         form.insertListItem('electrodes', { label: nextElectrodeDefaultLabel, contacts: [] });
@@ -118,8 +120,47 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
         form.removeListItem('electrodes', form.values.electrodes.findIndex((e) => e.label === electrode_label));
     }
 
-    // TODO: download and save (values + done contacts)
-    // TODO: upload file (validate file + load values + done contacts)
+    const downloadFormValues = () => {
+        var data = new Blob([JSON.stringify(form.values)], { type: 'application/json' });
+        var dataURL = window.URL.createObjectURL(data);
+        var tempLink = document.createElement('a');
+        tempLink.href = dataURL;
+        tempLink.setAttribute('download', `stimulation_${new Date().toISOString().substring(0, 10)}.json`);
+        tempLink.click();
+    }
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files === null) {
+            return;
+        }
+        const uploadedFile = e.target.files[0];
+
+        const fileReader = new FileReader();
+        if (uploadedFile !== undefined)
+            fileReader.readAsText(uploadedFile, "UTF-8");
+        fileReader.onload = () => {
+            try {
+                const values = JSON.parse(fileReader.result as string);
+                form.setValues(values);
+                var formDoneContacts: string[] = [];
+                (values as StimulationFormValues).electrodes.forEach((electrode) => {
+                    electrode.contacts.forEach((contact) => {
+                        if (contact.location.done) {
+                            const contactId = `${electrode.label}-${contact.index}`;
+                            formDoneContacts.push(contactId);
+                        }
+                    })
+                })
+                setDoneContacts(formDoneContacts);
+                setNextElectrodeDefaultLabel(letters.increment((values as StimulationFormValues).electrodes.at(-1)?.label))
+            }
+            catch (e) {
+                // TODO: display notification instead
+                console.error("**Not valid JSON file!**");
+            }
+        }
+    };
+
     return (
         <Stack>
             <Flex
@@ -129,8 +170,13 @@ export default function ElectrodeSetupStep({ form, onComplete }: StepProperties)
                 <Container sx={{ flex: 6, alignItems: "center", padding: '0' }}>
                     <Group>
                         <Title order={3}>{t('pages.stimulationTool.step1.contactConfiguration')}</Title>
-                        <ActionIcon><IconFolderOpen /></ActionIcon>
-                        <ActionIcon><IconDownload /></ActionIcon>
+                        <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} style={{ display: 'none' }} />
+                        <ActionIcon>
+                            <IconFolderOpen onClick={() => openInputFileRef.current?.click()} />
+                        </ActionIcon>
+                        <ActionIcon title="Download values">
+                            <IconDownload onClick={downloadFormValues} />
+                        </ActionIcon>
                     </Group>
                     <Button onClick={addElectrode}>{t("pages.stimulationTool.step1.addElectrodeButton")}</Button>
                     {form.values.electrodes.map((electrode, electrode_i) => {
