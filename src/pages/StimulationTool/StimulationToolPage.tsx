@@ -62,7 +62,7 @@ export default function StimulationToolPage() {
     };
 
     return (
-        <Box mx={"2%"}>
+        <Box mx={"2vh"} h={"90vh"}>
             <Group>
                 <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} style={{ display: 'none' }} />
                 <ActionIcon>

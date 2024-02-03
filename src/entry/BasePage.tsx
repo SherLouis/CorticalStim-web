@@ -11,12 +11,13 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
 
     return (
         <AppShell
-            padding="md"
+            h={"100vh"}
+            padding="1vh"
             styles={(theme) => ({
                 main: { backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
             })}
             header={
-                <Header height={60} p={"md"}>
+                <Header height={"8vh"} p={"md"}>
                     <Group position="apart">
                         <Title>{props.title}</Title>
 

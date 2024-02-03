@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Button, Chip, Container, Flex, Group, NumberInput, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Box, Button, Chip, Container, Flex, Group, NumberInput, ScrollArea, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
@@ -123,76 +123,74 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
     // TODO new layout!
     return (
-        <Stack>
-            <Flex
-                direction={{ base: 'column', lg: 'row' }}
-                gap={{ base: 'sm', lg: 'xs' }}
-                align={'flex-start'}>
-                <Container sx={{ flex: 6, alignItems: "center", padding: '0' }}>
-                    <Button onClick={addElectrode}>{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
-                    {form.values.electrodes.map((electrode, electrode_i) => {
-                        return (
-                            <Flex
-                                direction={{ base: 'column', lg: 'row' }}
-                                gap={{ base: 'sm', lg: 'xs' }}
-                                justify={{ lg: 'center' }}
-                                mt={'sm'}
-                                key={'div_electrode_' + electrode_i}
-                            >
-                                <Flex direction={'row'} align='center' justify='center' gap='sm' sx={{ flex: 4 }}>
-                                    <ActionIcon color="red" sx={{ flex: 2 }} onClick={() => handleDeleteElectorde(electrode.label)}>
-                                        <IconTrash size="1.5rem" />
-                                    </ActionIcon>
-                                    <TextInput
-                                        size="sm"
-                                        sx={{ flex: 6 }}
-                                        label={t("pages.stimulationTool.implantation.electrodeLabel")}
-                                        placeholder="A"
-                                        required
-                                        {...form.getInputProps(`electrodes.${electrode_i}.label`)}
-                                    />
-                                    <NumberInput
-                                        size="sm"
-                                        sx={{ flex: 6 }}
-                                        label={t("pages.stimulationTool.implantation.nbContactsLabel")}
-                                        defaultValue={electrode.n_contacts}
-                                        onChange={(v) => setContactsToElectrode(electrode_i, v === "" ? 0 : v)}
-                                    />
-                                </Flex>
-                                <Group key={electrode_i} align="center" position="center" sx={{ flex: 8 }}>
-                                    <Chip.Group multiple value={selectedContacts} onChange={setSelectedContacts}>
-                                        <Group position="center">
-                                            {electrode.stim_points.map((stim_point, stim_point_i) => {
-                                                const pointId = `${electrode.label}-${stim_point.index}`;
-                                                return (
-                                                    <Chip size='sm'
-                                                        value={pointId}
-                                                        key={pointId}
-                                                        variant={doneContacts.includes(pointId) ? 'filled' : 'light'}
-                                                        color={selectedContacts?.includes(pointId) ? 'blue' : doneContacts?.includes(pointId) ? 'green' : 'gray'}
-                                                        checked={doneContacts.includes(pointId)}>
-                                                        {pointId}
-                                                    </Chip>);
-                                            })}
-                                        </Group>
-                                    </Chip.Group>
-                                </Group>
-                            </Flex>)
-                    })}
-                </Container>
-                <Container sx={{ flex: 6 }} >
-                    <Box display={(selectedContacts.length > 0) ? 'block' : 'none'}>
-                        <Stack align='flex-start' justify='flex-start'>
-                            <Title order={3}>{t('pages.stimulationTool.implantation.placement')}</Title>
-                            <StimulationPointLocationSelection
-                                formInitialValues={getSelectedContactsROIValue()}
-                                onSubmit={handleElectrodeLocationFormSubmit}
-                                onReset={resetSelectedContacts} />
-                        </Stack>
-                    </Box>
+        <Box>
+            <ScrollArea w={"100%"} h={"35vh"} sx={{ flex: 6, alignItems: "center", padding: '0' }}>
+                <Button onClick={addElectrode}>{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
+                {form.values.electrodes.map((electrode, electrode_i) => {
+                    return (
+                        <Flex
+                            direction={{ base: 'column', lg: 'row' }}
+                            gap={{ base: 'sm', lg: 'xs' }}
+                            justify={{ lg: 'center' }}
+                            mt={'sm'}
+                            key={'div_electrode_' + electrode_i}
+                        >
+                            <Flex direction={'row'} align='center' justify='center' gap='sm' sx={{ flex: 4 }}>
+                                <ActionIcon color="red" sx={{ flex: 2 }} onClick={() => handleDeleteElectorde(electrode.label)}>
+                                    <IconTrash size="1.5rem" />
+                                </ActionIcon>
+                                <TextInput
+                                    size="sm"
+                                    sx={{ flex: 6 }}
+                                    label={t("pages.stimulationTool.implantation.electrodeLabel")}
+                                    placeholder="A"
+                                    required
+                                    {...form.getInputProps(`electrodes.${electrode_i}.label`)}
+                                />
+                                <NumberInput
+                                    size="sm"
+                                    sx={{ flex: 6 }}
+                                    label={t("pages.stimulationTool.implantation.nbContactsLabel")}
+                                    defaultValue={electrode.n_contacts}
+                                    onChange={(v) => setContactsToElectrode(electrode_i, v === "" ? 0 : v)}
+                                />
+                            </Flex>
+                            <Group key={electrode_i} align="center" position="center" sx={{ flex: 8 }}>
+                                <Chip.Group multiple value={selectedContacts} onChange={setSelectedContacts}>
+                                    <Group position="center">
+                                        {electrode.stim_points.map((stim_point, stim_point_i) => {
+                                            const pointId = `${electrode.label}-${stim_point.index}`;
+                                            return (
+                                                <Chip size='sm'
+                                                    value={pointId}
+                                                    key={pointId}
+                                                    variant={doneContacts.includes(pointId) ? 'filled' : 'light'}
+                                                    color={selectedContacts?.includes(pointId) ? 'blue' : doneContacts?.includes(pointId) ? 'green' : 'gray'}
+                                                    checked={doneContacts.includes(pointId)}>
+                                                    {pointId}
+                                                </Chip>);
+                                        })}
+                                    </Group>
+                                </Chip.Group>
+                            </Group>
+                        </Flex>)
+                })}
+            </ScrollArea>
 
-                </Container>
-            </Flex>
-        </Stack>
+            <Container w={"100%"} h={"10vh"} >
+            </Container>
+
+            <ScrollArea w={"100%"} h={"35vh"} >
+                <Title order={3}>{t('pages.stimulationTool.implantation.placement')}</Title>
+                <Box display={(selectedContacts.length > 0) ? 'block' : 'none'}>
+                    <Stack align='flex-start' justify='flex-start'>
+                        <StimulationPointLocationSelection
+                            formInitialValues={getSelectedContactsROIValue()}
+                            onSubmit={handleElectrodeLocationFormSubmit}
+                            onReset={resetSelectedContacts} />
+                    </Stack>
+                </Box>
+            </ScrollArea>
+        </Box>
     );
 }
