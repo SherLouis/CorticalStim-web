@@ -3,7 +3,6 @@ import { PropsWithChildren } from 'react'
 import { IconSun, IconMoonStars } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
-// TODO: menu for language switch
 export default function BasePage(props: PropsWithChildren<BasePageProps>) {
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const dark = colorScheme === 'dark';

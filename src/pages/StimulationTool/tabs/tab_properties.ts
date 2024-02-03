@@ -1,7 +1,6 @@
 import { UseFormReturnType } from "@mantine/form";
 import StimulationFormValues from "../../../models/stimulationForm";
 
-export default interface StepProperties {
+export interface TabProperties {
     form: UseFormReturnType<StimulationFormValues>;
-    onComplete: ()=>void;
 }

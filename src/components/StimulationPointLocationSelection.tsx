@@ -2,14 +2,15 @@ import { Button, Container, Group, NativeSelect, Radio, Table } from "@mantine/c
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import ColumnButtonSelect from "../ColumnButtonSelect";
 
-export default function ElectrodeLocationForm({ onSubmit, onReset, formInitialValues }: ElectrodeLocationFormProps) {
+
+// TODO: VEP, Destrieux, MNI
+// TODO: from figure
+
+export default function StimulationPointLocationSelection({ onSubmit, onReset, formInitialValues }: StimulationPointLocationSelectionProps) {
     const { t } = useTranslation();
     const form = useForm<ElectrodeLocationFormValues>({ initialValues: formInitialValues })
-    const getSideOptions = (): { value: string; label: string; }[] => {
-        return [{ value: "left", label: "Left" }, { value: "right", label: "Right" }];
-    }
+
     const getRoiDestrieuxOptions = (): { value: string; label: string; }[] => {
         return [
             { value: "", label: "-" },
@@ -89,89 +90,17 @@ export default function ElectrodeLocationForm({ onSubmit, onReset, formInitialVa
             { value: "74", label: "74-S_temporal_transverse" }
         ];
     }
-    const getRoiOptions = (level: 'lobe' | 'gyrus' | 'region') => {
-        const rois: { level: string, lobe: string, gyrus?: string, region?: string }[] = [{ level: 'lobe', lobe: 'frontal' }];
-        switch (level) {
-            case 'lobe':
-                return rois.filter((roi) => roi.level === level).map((roi) => roi.lobe);
-            case 'gyrus':
-                return rois.filter((roi) => roi.level === level
-                    && roi.lobe === form.getInputProps('lobe').value).map((roi) => roi.gyrus!);
-            case 'region':
-                return rois.filter((roi) => roi.level === level
-                    && roi.lobe === form.getInputProps('lobe').value
-                    && roi.gyrus === form.getInputProps('gyrus').value).map((roi) => roi.region!);
-            default:
-                return [];
-        }
-    }
+
     const handleSubmit = () => {
         onSubmit(form.values);
     }
     useEffect(() => { form.reset(); form.setValues(formInitialValues); }, [formInitialValues]);
     return (
         <Container>
-            <Radio.Group
-                label="Side"
-                {...form.getInputProps('side')}
-            >
-                <Group mt="xs">
-                    {getSideOptions().map((side_i) => {
-                        return <Radio value={side_i.value} label={side_i.label} key={side_i.value}/>
-                    })}
-                </Group>
-            </Radio.Group>
             <NativeSelect
                 label="Destrieux"
                 data={getRoiDestrieuxOptions()} {...form.getInputProps('destrieux')}
             />
-            <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
-                <thead>
-                    <tr>
-                        <th>Lobe</th>
-                        <th>Gyrus</th>
-                        <th>Region</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr key={"options"}>
-                        <td>
-                            <ColumnButtonSelect
-                                data={getRoiOptions('lobe')}
-                                onChange={(v) => {
-                                    form.setFieldValue('gyrus', '');
-                                    form.setFieldValue('sub', '');
-                                    form.setFieldValue('precision', '');
-                                    form.getInputProps('lobe').onChange(v)
-                                }}
-                                form={form} form_path='lobe'
-                            />
-                        </td>
-                        <td>
-                            <ColumnButtonSelect
-                                data={getRoiOptions('gyrus')}
-                                form={form} form_path="gyrus"
-                                onChange={(v) => {
-                                    form.setFieldValue('sub', '');
-                                    form.setFieldValue('precision', '');
-                                    form.getInputProps('gyrus').onChange(v)
-                                }}
-                            />
-                        </td>
-                        <td>
-                            <ColumnButtonSelect
-                                data={getRoiOptions('region')}
-                                form={form} form_path="region"
-                                onChange={(v) => {
-                                    form.setFieldValue('precision', '');
-                                    form.getInputProps('region').onChange(v)
-                                }}
-                            />
-                        </td>
-                    </tr>
-                </tbody>
-            </Table>
-
             <Group>
                 <Button type='submit' variant="filled" onClick={() => handleSubmit()}>{t('common.okButtonLabel')}</Button>
                 <Button type='reset' variant="light" color="red" onClick={() => onReset()}>{t('common.resetButtonLabel')}</Button>
@@ -180,16 +109,15 @@ export default function ElectrodeLocationForm({ onSubmit, onReset, formInitialVa
     )
 }
 
-interface ElectrodeLocationFormProps {
+interface StimulationPointLocationSelectionProps {
     formInitialValues: ElectrodeLocationFormValues;
     onSubmit: (values: ElectrodeLocationFormValues) => void;
     onReset: () => void;
 }
 
 export interface ElectrodeLocationFormValues {
-    side: string;
-    lobe: string;
-    gyrus: string;
-    region: string;
+    vep: string;
     destrieux: string;
+    mni: { x: number; y: number; z: number };
+    is_gray: boolean;
 }

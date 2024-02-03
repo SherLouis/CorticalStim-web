@@ -1,16 +1,27 @@
-import { Box, Stepper } from "@mantine/core";
+import { ActionIcon, Box, Group, Tabs } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import StimulationFormValues from "../../models/stimulationForm";
-import { useState } from "react";
-import ElectrodeSetupStep from "./steps/step1_ElectrodesSetup";
-import StimulationsStep from "./steps/step2_Stimulations";
+import { useRef, useState } from "react";
+import ElectrodeSetupStep from "./tabs/t1_ImplantationSetup";
+import StimulationsTab from "./tabs/t2_Stimulations";
+import SummaryTab from "./tabs/t3_Summary";
+import { IconFolderOpen, IconDownload } from "@tabler/icons-react";
 
 export default function StimulationToolPage() {
     const { t } = useTranslation();
+    const openInputFileRef = useRef<HTMLInputElement | null>(null);
 
     const form = useForm<StimulationFormValues>({
-        initialValues: { electrodes: [] },
+        initialValues: {
+            electrode_params: {
+                type: "",
+                separation: 0,
+                diameter: 0,
+                length: 0
+            },
+            electrodes: []
+        },
         validate: {
             electrodes: {
                 label: (value, values) => values.electrodes.map((e) => e.label).filter((v) => v === value).length > 1 ? t("pages.stimulationTool.validation.electrodeLabel") : null
@@ -19,22 +30,59 @@ export default function StimulationToolPage() {
         validateInputOnBlur: true
     })
 
-    const [activeStep, setActiveStep] = useState(0);
-    const nextStep = () => setActiveStep((activeStep) => (activeStep < 2 ? activeStep + 1 : activeStep));
+    const [activeTab, setActiveTab] = useState<string | null>('implantation');
+
+    const downloadFormValues = () => {
+        var data = new Blob([JSON.stringify(form.values)], { type: 'application/json' });
+        var dataURL = window.URL.createObjectURL(data);
+        var tempLink = document.createElement('a');
+        tempLink.href = dataURL;
+        tempLink.setAttribute('download', `stimulation_${new Date().toISOString().substring(0, 10)}.json`);
+        tempLink.click();
+    }
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files === null) {
+            return;
+        }
+        const uploadedFile = e.target.files[0];
+
+        const fileReader = new FileReader();
+        if (uploadedFile !== undefined)
+            fileReader.readAsText(uploadedFile, "UTF-8");
+        fileReader.onload = () => {
+            try {
+                const values = JSON.parse(fileReader.result as string);
+                form.setValues(values);
+            }
+            catch (e) {
+                // TODO: display notification instead
+                console.error("**Not valid JSON file!**");
+            }
+        }
+    };
 
     return (
         <Box mx={"2%"}>
-            <Stepper active={activeStep} onStepClick={setActiveStep} breakpoint="sm" allowNextStepsSelect={false} sx={{ width: "100%" }}>
-                <Stepper.Step label={t("pages.stimulationTool.step1.title")} description={t("pages.stimulationTool.step1.description")}>
-                    <ElectrodeSetupStep form={form} onComplete={nextStep} />
-                </Stepper.Step>
-                <Stepper.Step label={t("pages.stimulationTool.step2.title")} description={t("pages.stimulationTool.step2.description")}>
-                    <StimulationsStep form={form} onComplete={nextStep} />
-                </Stepper.Step>
-                <Stepper.Completed>
-                    Completed!
-                </Stepper.Completed>
-            </Stepper>
+            <Group>
+                <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} style={{ display: 'none' }} />
+                <ActionIcon>
+                    <IconFolderOpen onClick={() => openInputFileRef.current?.click()} />
+                </ActionIcon>
+                <ActionIcon title="Download values">
+                    <IconDownload onClick={downloadFormValues} />
+                </ActionIcon>
+            </Group>
+            <Tabs value={activeTab} onTabChange={setActiveTab}>
+                <Tabs.List grow>
+                    <Tabs.Tab value="implantation">{t("pages.stimulationTool.implantation.tab_title")}</Tabs.Tab>
+                    <Tabs.Tab value="stimulation">{t("pages.stimulationTool.stimulation.tab_title")}</Tabs.Tab>
+                    <Tabs.Tab value="summary">{t("pages.stimulationTool.summary.tab_title")}</Tabs.Tab>
+                </Tabs.List>
+
+                <Tabs.Panel value="implantation"><ElectrodeSetupStep form={form} /></Tabs.Panel>
+                <Tabs.Panel value="stimulation"><StimulationsTab form={form} /></Tabs.Panel>
+                <Tabs.Panel value="summary"><SummaryTab form={form} /></Tabs.Panel>
+            </Tabs>
         </Box>
     );
 }

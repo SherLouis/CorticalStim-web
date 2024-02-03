@@ -3,26 +3,24 @@
         "title": "Cortical Stimulation Tool"
     },
     "pages": {
-        "default": {
-            "message": "Hello World!"
-        },
         "stimulationTool": {
             "validation": {
                 "electrodeLabel": "Cannot have duplicate electrode label"
             },
-            "step1": {
-                "title": "Electrode placement",
-                "description": "Define contact placement",
+            "implantation": {
+                "tab_title": "Implantation",
                 "contactConfiguration": "Contacts configuration",
-                "placement":"Placement",
+                "placement": "Placement",
                 "addElectrodeButton": "Add an electrode",
                 "electrodeLabel": "Name",
                 "nbContactsLabel": "Contacts",
                 "destrieuxRegionLabel": "Destrieux region"
             },
-            "step2": {
-                "title": "Stimulations",
-                "description": "Define stimulation parameters and effects"
+            "stimulation": {
+                "tab_title": "Stimulations"
+            },
+            "summary": {
+                "tab_title": "Summary"
             }
         }
     },

@@ -1,14 +1,21 @@
 export default interface StimulationFormValues {
+    electrode_params: {
+        type: string;
+        separation: number;
+        diameter: number;
+        length: number;
+    },
     electrodes: {
         label: string;
-        contacts: {
+        side: string;
+        n_contacts: number;
+        stim_points: {
             index: number;
             location: {
-                side: string;
-                lobe: string;
-                gyrus: string;
-                region: string;
+                vep: string;
                 destrieux: string;
+                mni: {x: number; y: number; z: number};
+                is_gray: boolean;
                 done: boolean;
             };
             stimulations: {
@@ -20,9 +27,11 @@ export default interface StimulationFormValues {
 };
 
 interface StimulationsParametersValues {
+    // TODO: to complete
     amplitude: number;
 };
 
 interface StimulationEffectsValues {
+    // TODO: to complete
     category: string;
 };

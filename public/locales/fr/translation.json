@@ -3,26 +3,24 @@
         "title": "Outil Stimulation Corticale"
     },
     "pages": {
-        "default": {
-            "message": "Bonjour!"
-        },
         "stimulationTool": {
             "validation": {
                 "electrodeLabel": "Les noms d'électrodes doivent être différents"
             },
-            "step1": {
-                "title": "Positionnement des électrodes",
-                "description": "Définir le positionnement des contacts",
+            "implantation": {
+                "tab_title": "Implantation",
                 "contactConfiguration": "Configuration des contacts",
-                "placement":"Positionnement",
+                "placement": "Positionnement",
                 "addElectrodeButton": "Ajouter une électrode",
                 "electrodeLabel": "Nom",
                 "nbContactsLabel": "Contacts",
                 "destrieuxRegionLabel": "Region Destrieux"
             },
-            "step2": {
-                "title": "Stimulations",
-                "description": "Définir les paramètres de stimulation et les effets"
+            "stimulation": {
+                "tab_title": "Stimulations"
+            },
+            "summary": {
+                "tab_title": "Résumé"
             }
         }
     },
