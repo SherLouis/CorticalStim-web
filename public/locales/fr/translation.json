@@ -9,11 +9,13 @@
             },
             "implantation": {
                 "tab_title": "Implantation",
+                "electrodeConfiguration": "Type d'électrodes",
                 "contactConfiguration": "Configuration des contacts",
                 "placement": "Positionnement",
                 "addElectrodeButton": "Ajouter une électrode",
                 "electrodeLabel": "Nom",
                 "nbContactsLabel": "Contacts",
+                "setLocationButtonLabel": "Appliquer",
                 "destrieuxRegionLabel": "Region Destrieux"
             },
             "stimulation": {

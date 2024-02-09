@@ -1,15 +1,13 @@
-import { Button, Container, Group, NativeSelect, Radio, Table } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useEffect } from "react";
+import { Container, NativeSelect } from "@mantine/core";
+import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 
 
 // TODO: VEP, Destrieux, MNI
 // TODO: from figure
 
-export default function StimulationPointLocationSelection({ onSubmit, onReset, formInitialValues }: StimulationPointLocationSelectionProps) {
+export default function StimulationPointLocationSelection({ form }: StimulationPointLocationSelectionProps) {
     const { t } = useTranslation();
-    const form = useForm<ElectrodeLocationFormValues>({ initialValues: formInitialValues })
 
     const getRoiDestrieuxOptions = (): { value: string; label: string; }[] => {
         return [
@@ -91,28 +89,18 @@ export default function StimulationPointLocationSelection({ onSubmit, onReset, f
         ];
     }
 
-    const handleSubmit = () => {
-        onSubmit(form.values);
-    }
-    useEffect(() => { form.reset(); form.setValues(formInitialValues); }, [formInitialValues]);
     return (
         <Container>
             <NativeSelect
                 label="Destrieux"
                 data={getRoiDestrieuxOptions()} {...form.getInputProps('destrieux')}
             />
-            <Group>
-                <Button type='submit' variant="filled" onClick={() => handleSubmit()}>{t('common.okButtonLabel')}</Button>
-                <Button type='reset' variant="light" color="red" onClick={() => onReset()}>{t('common.resetButtonLabel')}</Button>
-            </Group>
         </Container>
     )
 }
 
 interface StimulationPointLocationSelectionProps {
-    formInitialValues: ElectrodeLocationFormValues;
-    onSubmit: (values: ElectrodeLocationFormValues) => void;
-    onReset: () => void;
+    form: UseFormReturnType<ElectrodeLocationFormValues>;
 }
 
 export interface ElectrodeLocationFormValues {
