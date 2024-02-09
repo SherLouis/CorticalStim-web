@@ -166,7 +166,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                     <Title order={3}>{t('pages.stimulationTool.implantation.electrodeConfiguration')}</Title>
                     <NativeSelect
                         label="Configuration"
-                        data={[{ value: '', label: 'Pick One' }, ...ElectrodeOptions.keys()]}
+                        data={[{ value: '', label: '-' }, ...ElectrodeOptions.keys()]}
                         onChange={(event) => {
                             if (ElectrodeOptions.has(event.target.value)) {
                                 var option = ElectrodeOptions.get(event.target.value)!;
@@ -179,17 +179,17 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                     />
                     <Group position="apart" spacing={"sm"}>
                         <NumberInput
-                            label="Contact diameter (mm)"
+                            label={t('pages.stimulationTool.implantation.contactDiameterLabel')}
                             precision={1}
                             {...form.getInputProps('electrode_params.diameter')}
                         />
                         <NumberInput
-                            label="Contact separation (mm)"
+                            label={t('pages.stimulationTool.implantation.contactSeparationLabel')}
                             precision={1}
                             {...form.getInputProps('electrode_params.separation')}
                         />
                         <NumberInput
-                            label="Contact length (mm)"
+                            label={t('pages.stimulationTool.implantation.contactLengthLabel')}
                             precision={1}
                             {...form.getInputProps('electrode_params.length')}
                         />

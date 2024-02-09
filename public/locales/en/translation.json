@@ -10,6 +10,9 @@
             "implantation": {
                 "tab_title": "Implantation",
                 "electrodeConfiguration": "Electrodes type",
+                "contactDiameterLabel": "Contact diameter (mm)",
+                "contactSeparationLabel": "Contact separation (mm)",
+                "contactLengthLabel": "Contact length (mm)",
                 "contactConfiguration": "Contacts configuration",
                 "placement": "Placement",
                 "addElectrodeButton": "Add an electrode",
