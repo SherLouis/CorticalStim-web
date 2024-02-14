@@ -14,12 +14,15 @@
                 "contactSeparationLabel": "Séparation des contacts (mm)",
                 "contactLengthLabel": "Longueur des contacts (mm)",
                 "contactConfiguration": "Configuration des contacts",
+                "sideLabel": "Côté",
                 "placement": "Positionnement",
                 "addElectrodeButton": "Ajouter une électrode",
                 "electrodeLabel": "Nom",
                 "nbContactsLabel": "Contacts",
                 "setLocationButtonLabel": "Appliquer",
-                "destrieuxRegionLabel": "Region Destrieux"
+                "clearLocationButtonLabel": "Réinitialiser",
+                "destrieuxRegionLabel": "Region Destrieux",
+                "grayMatter": "Matière Grise"
             },
             "stimulation": {
                 "tab_title": "Stimulations"

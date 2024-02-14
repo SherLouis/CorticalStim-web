@@ -1,4 +1,4 @@
-import { ActionIcon, Badge, Box, Button, Chip, Container, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Badge, Box, Button, Chip, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
@@ -43,10 +43,10 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                     electrode.stim_points.forEach((stim_point, stim_point_i) => {
                         const stimId = getStimPointLabel(electrode.label, stim_point_i)
                         if (stimId === selectedStimPoint) {
+                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.type`, values.type);
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.vep`, values.vep);
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.destrieux`, values.destrieux);
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.mni`, values.mni);
-                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.is_gray`, values.is_gray);
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.done`, true);
                         }
                     });
@@ -61,20 +61,19 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
     const resetSelectedContacts = () => {
         if (selectedContacts === undefined) { return; }
-        for (let c of selectedContacts) {
-            const words = c.split('-');
-            const electrode_label = words.slice(0, -1).join('-');
-            const stim_point_index = words.at(-1);
+        for (let selectedStimPoint of selectedContacts) {
+            const electrode_label = selectedStimPoint.split('/').slice(0, -1).join('/');
 
             form.values.electrodes.forEach((electrode, electrode_i) => {
                 if (electrode.label === electrode_label) {
-                    electrode.stim_points.forEach((stim_point) => {
-                        if (stim_point.index.toString() === stim_point_index) {
-                            form.setFieldValue(`electrodes.${electrode_i}.contacts.${stim_point.index}.location.vep`, "");
-                            form.setFieldValue(`electrodes.${electrode_i}.contacts.${stim_point.index}.location.destrieux`, "");
-                            form.setFieldValue(`electrodes.${electrode_i}.contacts.${stim_point.index}.location.mni`, { x: 0, y: 0, z: 0 });
-                            form.setFieldValue(`electrodes.${electrode_i}.contacts.${stim_point.index}.location.is_gray`, false);
-                            form.setFieldValue(`electrodes.${electrode_i}.contacts.${stim_point.index}.location.done`, false);
+                    electrode.stim_points.forEach((stim_point, stim_point_i) => {
+                        const stimId = getStimPointLabel(electrode.label, stim_point_i)
+                        if (stimId === selectedStimPoint) {
+                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.type`, "");
+                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.vep`, "");
+                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.destrieux`, "");
+                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.mni`, { x: 0, y: 0, z: 0 });
+                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.done`, false);
                         }
                     });
                 }
@@ -86,32 +85,32 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     }
 
     const getSelectedContactsROIValue = (): ElectrodeLocationFormValues => {
+        var roi_type = "";
         var roi_vep = "";
         var roi_destrieux = "";
         var roi_mni = { x: 0, y: 0, z: 0 };
-        var roi_is_gray: boolean | null = null;
         selectedContacts.forEach((selectedStimPoint, selectedStimPoint_i) => {
             const electrode_label = selectedStimPoint.split('/').slice(0, -1).join('/');
             const stimPoint = form.values.electrodes.find((electrode) => electrode.label === electrode_label)?.stim_points.find((point) => getStimPointLabel(electrode_label, point.index) === selectedStimPoint);
+            const type = stimPoint?.location.type;
             const vep = stimPoint?.location.vep;
             const destrieux = stimPoint?.location.destrieux;
             const mni = stimPoint?.location.mni;
-            const is_gray = stimPoint?.location.is_gray;
 
             if (selectedStimPoint_i === 0) {
                 roi_vep = vep !== undefined ? vep : roi_vep;
                 roi_destrieux = destrieux !== undefined ? destrieux : roi_destrieux;
                 roi_mni = mni !== undefined ? mni : roi_mni;
-                roi_is_gray = is_gray !== undefined ? is_gray : null;
+                roi_type = type !== undefined ? type : roi_type;
             }
             else {
                 if ((vep === undefined && roi_vep !== "") || (vep !== undefined && roi_vep !== vep)) { roi_vep = "multiple"; }
                 if ((destrieux === undefined && roi_destrieux !== "") || (destrieux !== undefined && roi_destrieux !== destrieux)) { roi_destrieux = "multiple"; }
                 if ((mni === undefined && roi_mni.x !== 0) || (mni !== undefined && roi_mni.x !== 0)) { roi_mni = { x: 0, y: 0, z: 0 }; }
-                if ((is_gray === undefined && roi_is_gray !== null) || (is_gray !== undefined && roi_is_gray !== is_gray)) { roi_is_gray = null; }
+                if ((type === undefined && roi_type !== "") || (type !== undefined && roi_type !== type)) { roi_type = "multiple"; }
             }
         });
-        const return_value = { vep: roi_vep, destrieux: roi_destrieux, mni: roi_mni, is_gray: roi_is_gray === null ? false : roi_is_gray };
+        const return_value = { vep: roi_vep, destrieux: roi_destrieux, mni: roi_mni, type: roi_type };
         return return_value;
     }
 
@@ -158,7 +157,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
     // TODO: Make inner scrollArea work
 
-    // TODO new layout!
+    // TODO display change to be applied
     return (
         <Box mt={"md"}>
             <Box h={"5vh"}>
@@ -223,7 +222,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                         {...form.getInputProps(`electrodes.${electrode_i}.label`)}
                                     />
                                     <Input.Wrapper
-                                        label={"Side"} sx={{ flex: 3 }} required size="sm">
+                                        label={t("pages.stimulationTool.implantation.sideLabel")} sx={{ flex: 3 }} required size="sm">
                                         <SegmentedControl
                                             data={getSideOptions()}
                                             {...form.getInputProps(`electrodes.${electrode_i}.side`)}
@@ -271,11 +270,20 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                         })}
                     </Group>
                 </ScrollArea>
-                <Button
-                    onClick={handleElectrodeLocationFormSubmit}
-                    display={selectedContacts.length > 0 ? "block" : "none"}>
-                    {t("pages.stimulationTool.implantation.setLocationButtonLabel")}
-                </Button>
+                <Button.Group>
+                    <Button
+                        variant='light'
+                        onClick={resetSelectedContacts}
+                        display={selectedContacts.filter((s) => doneContacts.includes(s)).length > 0 ? "block" : "none"}>
+                        {t("pages.stimulationTool.implantation.clearLocationButtonLabel")}
+                    </Button>
+                    <Button
+                        variant="filled"
+                        onClick={handleElectrodeLocationFormSubmit}
+                        display={selectedContacts.length > 0 ? "block" : "none"}>
+                        {t("pages.stimulationTool.implantation.setLocationButtonLabel")}
+                    </Button>
+                </Button.Group>
             </Group>
 
 
