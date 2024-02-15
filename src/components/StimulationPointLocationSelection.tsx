@@ -1,4 +1,4 @@
-import { Box, Group, NumberInput, SegmentedControl, Select, Stack } from "@mantine/core";
+import { Box, Group, Input, NumberInput, SegmentedControl, Select, Stack, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 
@@ -177,14 +177,23 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
     return (
         <Box w={"100%"}>
             <Stack>
-                <SegmentedControl
-                    data={getRoiTypeOptions()}
-                    {...form.getInputProps('type')}
-                />
+                <Input.Wrapper
+                    error={form.getInputProps('type').error}
+                >
+                    <SegmentedControl
+                        fullWidth
+                        data={getRoiTypeOptions()}
+                        {...form.getInputProps('type')}
+                    />
+                </Input.Wrapper>
+                {form.getInputProps('type').value === "gray" &&
+                    <Title order={4}>{t('pages.stimulationTool.implantation.thisIsGrayMatter')}</Title>
+                }
                 {form.getInputProps('type').value === "vep" &&
                     <Select
                         label="VEP"
-                        data={getRoiVepOptions()} {...form.getInputProps('vep')}
+                        data={getRoiVepOptions()}
+                        {...form.getInputProps('vep')}
                         clearable
                         searchable
                         dropdownPosition="bottom"
@@ -193,7 +202,8 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
                 {form.getInputProps('type').value === "destrieux" &&
                     <Select
                         label="Destrieux"
-                        data={getRoiDestrieuxOptions()} {...form.getInputProps('destrieux')}
+                        data={getRoiDestrieuxOptions()}
+                        {...form.getInputProps('destrieux')}
                         clearable
                         searchable
                         dropdownPosition="bottom"
@@ -204,17 +214,17 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
                         <NumberInput
                             label="X"
                             precision={2}
-                            {...form.getInputProps('mni.x')}
+                            {...form.getInputProps('mni_x')}
                         />
                         <NumberInput
                             label="Y"
                             precision={2}
-                            {...form.getInputProps('mni.y')}
+                            {...form.getInputProps('mni_y')}
                         />
                         <NumberInput
                             label="Z"
                             precision={2}
-                            {...form.getInputProps('mni.z')}
+                            {...form.getInputProps('mni_z')}
                         />
                     </Group>
                 }
@@ -231,5 +241,7 @@ export interface ElectrodeLocationFormValues {
     type: string;
     vep: string;
     destrieux: string;
-    mni: { x: number; y: number; z: number };
+    mni_x: number;
+    mni_y: number; 
+    mni_z: number;
 }

@@ -5,6 +5,15 @@
     "pages": {
         "stimulationTool": {
             "validation": {
+                "electrode_params": {
+                    "separation": "Cannot be 0.",
+                    "diameter": "Cannot be 0.",
+                    "length": "Cannot be 0."
+                },
+                "electrodes": {
+                    "label": "Cannot have duplicate electrode label",
+                    "side": "Choose Left or Right"
+                },
                 "electrodeLabel": "Cannot have duplicate electrode label"
             },
             "implantation": {
@@ -22,7 +31,16 @@
                 "setLocationButtonLabel": "Set",
                 "clearLocationButtonLabel": "Reset",
                 "destrieuxRegionLabel": "Destrieux region",
-                "grayMatter": "Gray Matter"
+                "grayMatter": "Gray Matter",
+                "thisIsGrayMatter": "This is gray matter",
+                "validations": {
+                    "location": {
+                        "type": "Please choose a placement type.",
+                        "vep": "Please choose an item from the list.",
+                        "destrieux": "Please choose an item from the list.",
+                        "mni": "Please specify MNI coordinate"
+                    }
+                }
             },
             "stimulation": {
                 "tab_title": "Stimulations"

@@ -18,6 +18,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     const addElectrode = () => {
         form.insertListItem('electrodes', { label: nextElectrodeDefaultLabel, side: "", n_contacts: 0, stim_points: [] });
         setNextElectrodeDefaultLabel(letters.increment(nextElectrodeDefaultLabel));
+        form.validate();
     }
 
     const setContactsToElectrode = (electrodeIndex: number, nbContacts: number) => {
@@ -33,6 +34,9 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     }
 
     const handleElectrodeLocationFormSubmit = () => {
+        locationForm.validate();
+        console.log(locationForm.values);
+        if (!locationForm.isValid()) { return; }
         const values = locationForm.values;
         if (selectedContacts === undefined) { return; }
         for (let selectedStimPoint of selectedContacts) {
@@ -46,7 +50,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.type`, values.type);
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.vep`, values.vep);
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.destrieux`, values.destrieux);
-                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.mni`, values.mni);
+                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.mni`, { x: values.mni_x, y: values.mni_y, z: values.mni_z });
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.done`, true);
                         }
                     });
@@ -104,13 +108,13 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 roi_type = type !== undefined ? type : roi_type;
             }
             else {
-                if ((vep === undefined && roi_vep !== "") || (vep !== undefined && roi_vep !== vep)) { roi_vep = "multiple"; }
-                if ((destrieux === undefined && roi_destrieux !== "") || (destrieux !== undefined && roi_destrieux !== destrieux)) { roi_destrieux = "multiple"; }
+                if ((vep === undefined && roi_vep !== "") || (vep !== undefined && roi_vep !== vep)) { roi_vep = ""; }
+                if ((destrieux === undefined && roi_destrieux !== "") || (destrieux !== undefined && roi_destrieux !== destrieux)) { roi_destrieux = ""; }
                 if ((mni === undefined && roi_mni.x !== 0) || (mni !== undefined && roi_mni.x !== 0)) { roi_mni = { x: 0, y: 0, z: 0 }; }
-                if ((type === undefined && roi_type !== "") || (type !== undefined && roi_type !== type)) { roi_type = "multiple"; }
+                if ((type === undefined && roi_type !== "") || (type !== undefined && roi_type !== type)) { roi_type = ""; }
             }
         });
-        const return_value = { vep: roi_vep, destrieux: roi_destrieux, mni: roi_mni, type: roi_type };
+        const return_value = { vep: roi_vep, destrieux: roi_destrieux, mni_x: roi_mni.x, mni_y: roi_mni.y, mni_z: roi_mni.z, type: roi_type };
         return return_value;
     }
 
@@ -150,14 +154,26 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         })
     }
 
-    const locationForm = useForm<ElectrodeLocationFormValues>({ initialValues: getSelectedContactsROIValue() })
-    useEffect(() => { locationForm.reset(); locationForm.setValues(getSelectedContactsROIValue()); }, [selectedContacts]);
+    const locationForm = useForm<ElectrodeLocationFormValues>({
+        initialValues: getSelectedContactsROIValue(),
+        validate: (values) => ({
+            type: values.type === '' ? t("pages.stimulationTool.implantation.validations.location.type") : null,
+            vep: values.type !== 'vep' ? null : values.vep === '' ? t("pages.stimulationTool.implantation.validations.location.vep") : null,
+            destrieux: values.type !== 'destrieux' ? null : values.destrieux === '' ? t("pages.stimulationTool.implantation.validations.location.destrieux") : null,
+            mni_x: values.type !== 'mni' ? null : values.mni_x === 0 ? t("pages.stimulationTool.implantation.validations.location.mni") : null,
+            mni_y: values.type !== 'mni' ? null : values.mni_y === 0 ? t("pages.stimulationTool.implantation.validations.location.mni") : null,
+            mni_z: values.type !== 'mni' ? null : values.mni_z === 0 ? t("pages.stimulationTool.implantation.validations.location.mni") : null,
+        })
+    })
 
+    // Form change (from file open for example)
+    useEffect(() => { locationForm.reset(); locationForm.setValues(getSelectedContactsROIValue()); }, [selectedContacts]);
     useEffect(() => { updateDoneContacts(); }, [form])
 
     // TODO: Make inner scrollArea work
 
     // TODO display change to be applied
+    
     return (
         <Box mt={"md"}>
             <Box h={"5vh"}>
@@ -180,16 +196,19 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                         <NumberInput
                             label={t('pages.stimulationTool.implantation.contactDiameterLabel')}
                             precision={1}
+                            required
                             {...form.getInputProps('electrode_params.diameter')}
                         />
                         <NumberInput
                             label={t('pages.stimulationTool.implantation.contactSeparationLabel')}
                             precision={1}
+                            required
                             {...form.getInputProps('electrode_params.separation')}
                         />
                         <NumberInput
                             label={t('pages.stimulationTool.implantation.contactLengthLabel')}
                             precision={1}
+                            required
                             {...form.getInputProps('electrode_params.length')}
                         />
                     </Group>
@@ -222,7 +241,10 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                         {...form.getInputProps(`electrodes.${electrode_i}.label`)}
                                     />
                                     <Input.Wrapper
-                                        label={t("pages.stimulationTool.implantation.sideLabel")} sx={{ flex: 3 }} required size="sm">
+                                        label={t("pages.stimulationTool.implantation.sideLabel")} sx={{ flex: 3 }} size="sm"
+                                        required
+                                        error={form.getInputProps(`electrodes.${electrode_i}.side`).error}
+                                    >
                                         <SegmentedControl
                                             data={getSideOptions()}
                                             {...form.getInputProps(`electrodes.${electrode_i}.side`)}
@@ -287,7 +309,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
             </Group>
 
 
-            <ScrollArea w={"100%"} h={"40vh"} >
+            <ScrollArea w={"100%"} h={"39vh"} >
                 <Title order={3}>{t('pages.stimulationTool.implantation.placement')}</Title>
                 <Box display={(selectedContacts.length > 0) ? 'block' : 'none'}>
                     <Stack align='flex-start' justify='flex-start'>

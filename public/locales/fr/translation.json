@@ -5,6 +5,15 @@
     "pages": {
         "stimulationTool": {
             "validation": {
+                "electrode_params": {
+                    "separation": "Ne peut pas être 0.",
+                    "diameter": "Ne peut pas être 0.",
+                    "length": "Ne peut pas être 0."
+                },
+                "electrodes": {
+                    "label": "Les noms d'électrodes doivent être différents",
+                    "side": "Choisir Gauche ou Droite"
+                },
                 "electrodeLabel": "Les noms d'électrodes doivent être différents"
             },
             "implantation": {
@@ -22,7 +31,16 @@
                 "setLocationButtonLabel": "Appliquer",
                 "clearLocationButtonLabel": "Réinitialiser",
                 "destrieuxRegionLabel": "Region Destrieux",
-                "grayMatter": "Matière Grise"
+                "grayMatter": "Matière Grise",
+                "thisIsGrayMatter": "Ceci est de la matière grise",
+                "validations": {
+                    "location": {
+                        "type": "SVP choisir un type de localisation.",
+                        "vep": "SVP choisir un item depuis la liste.",
+                        "destrieux": "SVP choisir un item depuis la liste.",
+                        "mni": "SVP spécifier la coordonnée MNI."
+                    }
+                }
             },
             "stimulation": {
                 "tab_title": "Stimulations"

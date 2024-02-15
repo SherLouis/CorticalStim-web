@@ -23,8 +23,14 @@ export default function StimulationToolPage() {
             electrodes: []
         },
         validate: {
+            electrode_params: {
+                separation: (value) => value===0 ? t("pages.stimulationTool.validation.electrode_params.separation") : null,
+                diameter: (value) => value===0 ? t("pages.stimulationTool.validation.electrode_params.diameter") : null,
+                length: (value) => value===0 ? t("pages.stimulationTool.validation.electrode_params.length") : null
+            },
             electrodes: {
-                label: (value, values) => values.electrodes.map((e) => e.label).filter((v) => v === value).length > 1 ? t("pages.stimulationTool.validation.electrodeLabel") : null
+                label: (value, values) => values.electrodes.map((e) => e.label).filter((v) => v === value).length > 1 ? t("pages.stimulationTool.validation.electrodes.label") : null,
+                side: (value) => value === "" ? t("pages.stimulationTool.validation.electrodes.side") : null
             }
         },
         validateInputOnBlur: true
