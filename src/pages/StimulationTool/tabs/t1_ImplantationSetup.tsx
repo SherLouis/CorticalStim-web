@@ -1,4 +1,4 @@
-import { ActionIcon, Badge, Box, Button, Center, Chip, Divider, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Badge, Box, Button, Center, Chip, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
@@ -7,8 +7,6 @@ import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "
 import { TabProperties } from "./tab_properties";
 import { useForm } from "@mantine/form";
 
-
-// TODO: adjust page layout and everything else for implantation page
 export default function ElectrodeSetupStep({ form }: TabProperties) {
     const { t } = useTranslation();
     const [nextElectrodeDefaultLabel, setNextElectrodeDefaultLabel] = useState('A');

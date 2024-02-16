@@ -2,8 +2,6 @@ import { Box, Group, Input, NumberInput, SegmentedControl, Select, Stack, Title 
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 
-
-// TODO: VEP, Destrieux, MNI
 // TODO: from figure
 
 export default function StimulationPointLocationSelection({ form }: StimulationPointLocationSelectionProps) {
