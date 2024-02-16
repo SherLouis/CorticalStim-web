@@ -1,4 +1,4 @@
-import { ActionIcon, Badge, Box, Button, Chip, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Badge, Box, Button, Center, Chip, Divider, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
@@ -61,6 +61,13 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         const newDoneContacts = selectedContacts.filter((c) => !doneContacts.includes(c));
         setDoneContacts((prevDoneContacts) => [...prevDoneContacts, ...newDoneContacts]);
         setSelectedContacts([]);
+    }
+
+    const getNewElectrodeLocationFromForm = () => {
+        if (locationForm.values.type === 'gray') {return t('pages.stimulationTool.implantation.grayMatter');}
+        if (locationForm.values.type === 'vep') {return "vep (" + locationForm.values.vep + ")";}
+        if (locationForm.values.type === 'destrieux') {return "Destrieux (" + locationForm.values.destrieux + ")";}
+        if (locationForm.values.type === 'mni') {return "MNI (" + locationForm.values.mni_x + ',' + locationForm.values.mni_y + ',' + locationForm.values.mni_z + ")";}
     }
 
     const resetSelectedContacts = () => {
@@ -172,8 +179,6 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
     // TODO: Make inner scrollArea work
 
-    // TODO display change to be applied
-    
     return (
         <Box mt={"md"}>
             <Box h={"5vh"}>
@@ -283,7 +288,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
             </Box>
 
             <Group position="center" align="start" h={"5vh"} w={"100%"}>
-                <ScrollArea type="always" h={"100%"} w={"80%"} sx={{ alignItems: "center", padding: '0' }}>
+                <ScrollArea type="always" h={"100%"} w={"75%"} sx={{ alignItems: "center", padding: '0' }}>
                     <Group align="center" position="center" noWrap h={"100%"} w={"100%"}>
                         {selectedContacts.map((point) => {
                             return (
@@ -292,13 +297,17 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                         })}
                     </Group>
                 </ScrollArea>
-                <Button.Group>
-                    <Button
-                        variant='light'
-                        onClick={resetSelectedContacts}
-                        display={selectedContacts.filter((s) => doneContacts.includes(s)).length > 0 ? "block" : "none"}>
-                        {t("pages.stimulationTool.implantation.clearLocationButtonLabel")}
-                    </Button>
+                <Center w={"10%"}>
+                    {getNewElectrodeLocationFromForm()}
+                </Center>
+                <Button.Group w={"10%"}>
+                    {selectedContacts.filter((s) => doneContacts.includes(s)).length > 0 &&
+                        <Button
+                            variant='light'
+                            onClick={resetSelectedContacts}>
+                            {t("pages.stimulationTool.implantation.clearLocationButtonLabel")}
+                        </Button>
+                    }
                     <Button
                         variant="filled"
                         onClick={handleElectrodeLocationFormSubmit}
@@ -307,7 +316,6 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                     </Button>
                 </Button.Group>
             </Group>
-
 
             <ScrollArea w={"100%"} h={"39vh"} >
                 <Title order={3}>{t('pages.stimulationTool.implantation.placement')}</Title>
