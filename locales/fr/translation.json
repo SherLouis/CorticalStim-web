@@ -3,26 +3,50 @@
         "title": "Outil Stimulation Corticale"
     },
     "pages": {
-        "default": {
-            "message": "Bonjour!"
-        },
         "stimulationTool": {
             "validation": {
+                "electrode_params": {
+                    "separation": "Ne peut pas être 0.",
+                    "diameter": "Ne peut pas être 0.",
+                    "length": "Ne peut pas être 0."
+                },
+                "electrodes": {
+                    "label": "Les noms d'électrodes doivent être différents",
+                    "side": "Choisir Gauche ou Droite"
+                },
                 "electrodeLabel": "Les noms d'électrodes doivent être différents"
             },
-            "step1": {
-                "title": "Positionnement des électrodes",
-                "description": "Définir le positionnement des contacts",
+            "implantation": {
+                "tab_title": "Implantation",
+                "electrodeConfiguration": "Type d'électrodes",
+                "contactDiameterLabel": "Diamètre des contacts (mm)",
+                "contactSeparationLabel": "Séparation des contacts (mm)",
+                "contactLengthLabel": "Longueur des contacts (mm)",
                 "contactConfiguration": "Configuration des contacts",
-                "placement":"Positionnement",
+                "sideLabel": "Côté",
+                "placement": "Positionnement",
                 "addElectrodeButton": "Ajouter une électrode",
                 "electrodeLabel": "Nom",
                 "nbContactsLabel": "Contacts",
-                "destrieuxRegionLabel": "Region Destrieux"
+                "setLocationButtonLabel": "Appliquer",
+                "clearLocationButtonLabel": "Réinitialiser",
+                "destrieuxRegionLabel": "Region Destrieux",
+                "grayMatter": "Matière Grise",
+                "thisIsGrayMatter": "Ceci est de la matière grise",
+                "validations": {
+                    "location": {
+                        "type": "SVP choisir un type de localisation.",
+                        "vep": "SVP choisir un item depuis la liste.",
+                        "destrieux": "SVP choisir un item depuis la liste.",
+                        "mni": "SVP spécifier la coordonnée MNI."
+                    }
+                }
             },
-            "step2": {
-                "title": "Stimulations",
-                "description": "Définir les paramètres de stimulation et les effets"
+            "stimulation": {
+                "tab_title": "Stimulations"
+            },
+            "summary": {
+                "tab_title": "Résumé"
             }
         }
     },

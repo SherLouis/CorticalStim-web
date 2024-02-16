@@ -3,26 +3,50 @@
         "title": "Cortical Stimulation Tool"
     },
     "pages": {
-        "default": {
-            "message": "Hello World!"
-        },
         "stimulationTool": {
             "validation": {
+                "electrode_params": {
+                    "separation": "Cannot be 0.",
+                    "diameter": "Cannot be 0.",
+                    "length": "Cannot be 0."
+                },
+                "electrodes": {
+                    "label": "Cannot have duplicate electrode label",
+                    "side": "Choose Left or Right"
+                },
                 "electrodeLabel": "Cannot have duplicate electrode label"
             },
-            "step1": {
-                "title": "Electrode placement",
-                "description": "Define contact placement",
+            "implantation": {
+                "tab_title": "Implantation",
+                "electrodeConfiguration": "Electrodes type",
+                "contactDiameterLabel": "Contact diameter (mm)",
+                "contactSeparationLabel": "Contact separation (mm)",
+                "contactLengthLabel": "Contact length (mm)",
                 "contactConfiguration": "Contacts configuration",
-                "placement":"Placement",
+                "sideLabel": "Side",
+                "placement": "Placement",
                 "addElectrodeButton": "Add an electrode",
                 "electrodeLabel": "Name",
                 "nbContactsLabel": "Contacts",
-                "destrieuxRegionLabel": "Destrieux region"
+                "setLocationButtonLabel": "Set",
+                "clearLocationButtonLabel": "Reset",
+                "destrieuxRegionLabel": "Destrieux region",
+                "grayMatter": "Gray Matter",
+                "thisIsGrayMatter": "This is gray matter",
+                "validations": {
+                    "location": {
+                        "type": "Please choose a placement type.",
+                        "vep": "Please choose an item from the list.",
+                        "destrieux": "Please choose an item from the list.",
+                        "mni": "Please specify MNI coordinate"
+                    }
+                }
             },
-            "step2": {
-                "title": "Stimulations",
-                "description": "Define stimulation parameters and effects"
+            "stimulation": {
+                "tab_title": "Stimulations"
+            },
+            "summary": {
+                "tab_title": "Summary"
             }
         }
     },
