@@ -35,3 +35,7 @@ interface StimulationEffectsValues {
     // TODO: to complete
     category: string;
 };
+
+export const getStimPointLabel = (electrodeLabel: string, stim_point_index: number) => {
+    return `${electrodeLabel}/${stim_point_index + 1}-${stim_point_index + 2}`;
+}

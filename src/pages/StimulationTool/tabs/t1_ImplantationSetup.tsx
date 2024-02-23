@@ -6,6 +6,7 @@ import { letters } from "../../../lib/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";
 import { TabProperties } from "./tab_properties";
 import { useForm } from "@mantine/form";
+import { getStimPointLabel } from "../../../models/stimulationForm";
 
 export default function ElectrodeSetupStep({ form }: TabProperties) {
     const { t } = useTranslation();
@@ -25,10 +26,6 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         for (let i = 0; i < nbContacts - 1; i++) {
             form.insertListItem(`electrodes.${electrodeIndex}.stim_points`, { index: i, location: {}, stimulations: [] });
         }
-    }
-
-    const getStimPointLabel = (electrodeLabel: string, stim_point_index: number) => {
-        return `${electrodeLabel}/${stim_point_index + 1}-${stim_point_index + 2}`;
     }
 
     const handleElectrodeLocationFormSubmit = () => {
