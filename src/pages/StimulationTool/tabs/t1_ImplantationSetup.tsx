@@ -1,4 +1,4 @@
-import { ActionIcon, Badge, Box, Button, Center, Chip, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Badge, Box, Button, Center, Chip, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
@@ -24,7 +24,18 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         form.setFieldValue(`electrodes.${electrodeIndex}.stim_points`, []);
         form.setFieldValue(`electrodes.${electrodeIndex}.n_contacts`, nbContacts);
         for (let i = 0; i < nbContacts - 1; i++) {
-            form.insertListItem(`electrodes.${electrodeIndex}.stim_points`, { index: i, location: {}, stimulations: [] });
+            form.insertListItem(`electrodes.${electrodeIndex}.stim_points`,
+                {
+                    index: i,
+                    location: {
+                        type: 'vep',
+                        vep: "",
+                        destrieux: "",
+                        mni: { x: 0, y: 0, z: 0 },
+                        done: false,
+                    },
+                    stimulations: []
+                });
         }
     }
 
@@ -59,10 +70,10 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     }
 
     const getNewElectrodeLocationFromForm = () => {
-        if (locationForm.values.type === 'gray') {return t('pages.stimulationTool.implantation.grayMatter');}
-        if (locationForm.values.type === 'vep') {return "vep (" + locationForm.values.vep + ")";}
-        if (locationForm.values.type === 'destrieux') {return "Destrieux (" + locationForm.values.destrieux + ")";}
-        if (locationForm.values.type === 'mni') {return "MNI (" + locationForm.values.mni_x + ',' + locationForm.values.mni_y + ',' + locationForm.values.mni_z + ")";}
+        if (locationForm.values.type === 'gray') { return t('pages.stimulationTool.implantation.grayMatter'); }
+        if (locationForm.values.type === 'vep') { return "vep (" + locationForm.values.vep + ")"; }
+        if (locationForm.values.type === 'destrieux') { return "Destrieux (" + locationForm.values.destrieux + ")"; }
+        if (locationForm.values.type === 'mni') { return "MNI (" + locationForm.values.mni_x + ',' + locationForm.values.mni_y + ',' + locationForm.values.mni_z + ")"; }
     }
 
     const resetSelectedContacts = () => {
@@ -113,7 +124,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 if ((vep === undefined && roi_vep !== "") || (vep !== undefined && roi_vep !== vep)) { roi_vep = ""; }
                 if ((destrieux === undefined && roi_destrieux !== "") || (destrieux !== undefined && roi_destrieux !== destrieux)) { roi_destrieux = ""; }
                 if ((mni === undefined && roi_mni.x !== 0) || (mni !== undefined && roi_mni.x !== 0)) { roi_mni = { x: 0, y: 0, z: 0 }; }
-                if ((type === undefined && roi_type !== "") || (type !== undefined && roi_type !== type)) { roi_type = ""; }
+                if ((type === undefined && roi_type !== "") || (type !== undefined && roi_type !== type)) { roi_type = "vep"; }
             }
         });
         const return_value = { vep: roi_vep, destrieux: roi_destrieux, mni_x: roi_mni.x, mni_y: roi_mni.y, mni_z: roi_mni.z, type: roi_type };
@@ -156,12 +167,22 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         })
     }
 
+    const selectAllContacts = () => {
+        var allPointsLabel = form.values.electrodes.flatMap((electrode) => electrode.stim_points.map(point => getStimPointLabel(electrode.label, point.index)));
+        setSelectedContacts(allPointsLabel);
+    }
+
+    const selectAllNotDoneContacts = () => {
+        var allPointsLabel = form.values.electrodes.flatMap((electrode) => electrode.stim_points.map(point => getStimPointLabel(electrode.label, point.index)));
+        setSelectedContacts(allPointsLabel.filter(point => !doneContacts.includes(point)));
+    }
+
     const locationForm = useForm<ElectrodeLocationFormValues>({
         initialValues: getSelectedContactsROIValue(),
         validate: (values) => ({
             type: values.type === '' ? t("pages.stimulationTool.implantation.validations.location.type") : null,
-            vep: values.type !== 'vep' ? null : values.vep === '' ? t("pages.stimulationTool.implantation.validations.location.vep") : null,
-            destrieux: values.type !== 'destrieux' ? null : values.destrieux === '' ? t("pages.stimulationTool.implantation.validations.location.destrieux") : null,
+            vep: values.type !== 'vep' ? null : (values.vep === '' || values.vep === null) ? t("pages.stimulationTool.implantation.validations.location.vep") : null,
+            destrieux: values.type !== 'destrieux' ? null : (values.destrieux === '' || values.destrieux === null) ? t("pages.stimulationTool.implantation.validations.location.destrieux") : null,
             mni_x: values.type !== 'mni' ? null : values.mni_x === 0 ? t("pages.stimulationTool.implantation.validations.location.mni") : null,
             mni_y: values.type !== 'mni' ? null : values.mni_y === 0 ? t("pages.stimulationTool.implantation.validations.location.mni") : null,
             mni_z: values.type !== 'mni' ? null : values.mni_z === 0 ? t("pages.stimulationTool.implantation.validations.location.mni") : null,
@@ -172,7 +193,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     useEffect(() => { locationForm.reset(); locationForm.setValues(getSelectedContactsROIValue()); }, [selectedContacts]);
     useEffect(() => { updateDoneContacts(); }, [form])
 
-    // TODO: Make inner scrollArea work
+    // TODO: contacts max 2 lines of 10 elements
 
     return (
         <Box mt={"md"}>
@@ -215,7 +236,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Group>
             </Box>
 
-            <Box my={"md"} h={"30vh"}>
+            <Box my={"md"} h={"30vh"} p={'sm'}>
                 <Button onClick={addElectrode} size="xs">{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
                 <ScrollArea w={"100%"} h={"95%"} type="always" sx={{ alignItems: "center", padding: '0' }}>
                     {form.values.electrodes.map((electrode, electrode_i) => {
@@ -261,7 +282,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
                                 <Box h={"100%"} w={"75%"}>
                                     <Chip.Group multiple value={selectedContacts} onChange={setSelectedContacts}>
-                                        <Group align="center" noWrap w={"70vw"} py={"sm"} spacing={"xs"} sx={{ overflowX: 'auto' }}>
+                                        <SimpleGrid cols={10}>
                                             {electrode.stim_points.map((stim_point, stim_point_i) => {
                                                 const pointId = getStimPointLabel(electrode.label, stim_point_i);
                                                 return (
@@ -274,7 +295,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                                         {pointId}
                                                     </Chip>);
                                             })}
-                                        </Group>
+                                        </SimpleGrid>
                                     </Chip.Group>
                                 </Box>
                             </Group>)
@@ -282,7 +303,12 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </ScrollArea>
             </Box>
 
-            <Group position="center" align="start" h={"5vh"} w={"100%"}>
+            <Group position="center" align="center" h={"5vh"} w={"100%"} bg={'gray'}>
+                {selectedContacts.length === 0 &&
+                    <Group>
+                        <Button onClick={selectAllContacts}>{t("pages.stimulationTool.implantation.selectAllContactsButtonLabel")}</Button>
+                        <Button onClick={selectAllNotDoneContacts}>{t("pages.stimulationTool.implantation.selectAllNotDoneContactsButtonLabel")}</Button>
+                    </Group>}
                 <ScrollArea type="always" h={"100%"} w={"75%"} sx={{ alignItems: "center", padding: '0' }}>
                     <Group align="center" position="center" noWrap h={"100%"} w={"100%"}>
                         {selectedContacts.map((point) => {

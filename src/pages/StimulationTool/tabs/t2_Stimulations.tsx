@@ -1,11 +1,10 @@
-import { Box, Chip, Grid, Group, ScrollArea, Title } from "@mantine/core";
+import { Box, Chip, Divider, Grid, Group, ScrollArea, SimpleGrid, Stack, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { getStimPointLabel } from "../../../models/stimulationForm";
 import { useState } from "react";
 
 export default function StimulationsTab({ form }: TabProperties) {
     const [selectedPoint, setSelectedPoint] = useState<string>("");
-
     return (
         <Box mt={"md"} h={"83vh"}>
             <Grid h={"100%"} gutter={"xs"}>
@@ -53,35 +52,39 @@ const ContactSelection = ({ form_values, selectedContact, selectedChanged }: Con
         <ScrollArea w={"100%"} h={"100%"} sx={{ alignItems: "center", padding: '0' }}>
             {form_values.electrodes.map((electrode, electrode_i) => {
                 return (
-                    <Group noWrap
-                        spacing='md'
-                        position='left'
-                        align='center'
-                        mt={'sm'}
-                        key={'div_electrode_' + electrode_i}
-                        w={"100%"}
-                    >
-                        <Title order={4} w={"5%"} p={"md"}>{electrode.label}</Title>
+                    <Stack key={'div_group_electrode_' + electrode_i}>
+                        <Group noWrap
+                            spacing='md'
+                            position='left'
+                            align='center'
+                            mt={'sm'}
+                            key={'div_group_electrode_' + electrode_i}
+                            w={"100%"}
+                        >
+                            <Title order={4} w={"5%"} p={"md"}>{electrode.label}</Title>
 
-                        <Box h={"100%"} w={"95%"}>
-                            <ScrollArea w={"100%"} h={"100%"} type="always" sx={{ alignItems: "center", padding: '0' }}>
-                                <Chip.Group value={selectedContact} onChange={selectedChanged}>
-                                    <Group position="left" align="center" noWrap w={"100%"} py={"sm"} spacing={"xs"}>
+                            <Box h={"100%"} w={"95%"}>
+                                <ScrollArea w={"100%"} h={"100%"} type="always" sx={{ alignItems: "center", padding: '0' }}>
+
+                                    <SimpleGrid cols={10}>
                                         {electrode.stim_points.map((stim_point, stim_point_i) => {
                                             const pointId = getStimPointLabel(electrode.label, stim_point_i);
                                             return (
                                                 <Chip size='sm'
                                                     value={pointId}
                                                     key={pointId}
+                                                    onChange={(checked) => selectedChanged(checked ? pointId : "")}
                                                     color={selectedContact === pointId ? 'blue' : 'gray'}>
                                                     {pointId}
                                                 </Chip>);
                                         })}
-                                    </Group>
-                                </Chip.Group>
-                            </ScrollArea>
-                        </Box>
-                    </Group>)
+                                    </SimpleGrid>
+                                </ScrollArea>
+                            </Box>
+                        </Group>
+                        <Divider orientation='horizontal' size={'md'} color={'black'} />
+                    </Stack>
+                )
             })}
         </ScrollArea>
     );

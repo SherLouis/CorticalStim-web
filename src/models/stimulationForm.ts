@@ -12,7 +12,7 @@ export default interface StimulationFormValues {
         stim_points: {
             index: number;
             location: {
-                type: 'gray'|'vep'|'destrieux'|'mni';
+                type: 'white'|'vep'|'destrieux'|'mni';
                 vep: string;
                 destrieux: string;
                 mni: {x: number; y: number; z: number};

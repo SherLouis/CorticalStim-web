@@ -31,8 +31,10 @@
                 "setLocationButtonLabel": "Set",
                 "clearLocationButtonLabel": "Reset",
                 "destrieuxRegionLabel": "Destrieux region",
-                "grayMatter": "Gray Matter",
-                "thisIsGrayMatter": "This is gray matter",
+                "whiteMatter": "White Matter",
+                "thisIsWhiteMatter": "This is white matter",
+                "selectAllContactsButtonLabel": "Select all",
+                "selectAllNotDoneContactsButtonLabel": "Select all not done",
                 "validations": {
                     "location": {
                         "type": "Please choose a placement type.",

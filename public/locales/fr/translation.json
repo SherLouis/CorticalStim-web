@@ -31,8 +31,10 @@
                 "setLocationButtonLabel": "Appliquer",
                 "clearLocationButtonLabel": "Réinitialiser",
                 "destrieuxRegionLabel": "Region Destrieux",
-                "grayMatter": "Matière Grise",
-                "thisIsGrayMatter": "Ceci est de la matière grise",
+                "whiteMatter": "Matière Blanche",
+                "thisIsWhiteMatter": "Ceci est de la matière blanche",
+                "selectAllContactsButtonLabel": "Selectionner tous",
+                "selectAllNotDoneContactsButtonLabel": "Selectionner tous non-assignés",
                 "validations": {
                     "location": {
                         "type": "SVP choisir un type de localisation.",
