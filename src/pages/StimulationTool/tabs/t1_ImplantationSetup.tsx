@@ -193,8 +193,6 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     useEffect(() => { locationForm.reset(); locationForm.setValues(getSelectedContactsROIValue()); }, [selectedContacts]);
     useEffect(() => { updateDoneContacts(); }, [form])
 
-    // TODO: contacts max 2 lines of 10 elements
-
     return (
         <Box mt={"md"}>
             <Box h={"5vh"}>
@@ -305,11 +303,11 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
             <Group position="center" align="center" h={"5vh"} w={"100%"} bg={'gray'}>
                 {selectedContacts.length === 0 &&
-                    <Group>
+                    <Group position="center" align="center">
                         <Button onClick={selectAllContacts}>{t("pages.stimulationTool.implantation.selectAllContactsButtonLabel")}</Button>
                         <Button onClick={selectAllNotDoneContacts}>{t("pages.stimulationTool.implantation.selectAllNotDoneContactsButtonLabel")}</Button>
                     </Group>}
-                <ScrollArea type="always" h={"100%"} w={"75%"} sx={{ alignItems: "center", padding: '0' }}>
+                <ScrollArea type='auto' h={"100%"} w={"75%"} sx={{ alignItems: "center", padding: '0' }}>
                     <Group align="center" position="center" noWrap h={"100%"} w={"100%"}>
                         {selectedContacts.map((point) => {
                             return (

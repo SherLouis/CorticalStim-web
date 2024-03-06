@@ -172,6 +172,7 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
         ];
     }
 
+    // TODO: group VEP by blocks by region
     return (
         <Box w={"100%"}>
             <Stack>
