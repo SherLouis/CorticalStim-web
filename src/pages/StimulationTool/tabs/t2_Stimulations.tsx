@@ -1,10 +1,45 @@
-import { Box, Chip, Divider, Grid, Group, ScrollArea, SimpleGrid, Stack, Title } from "@mantine/core";
+import { Badge, Box, Chip, Divider, Grid, Group, ScrollArea, SimpleGrid, Stack, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { getStimPointLabel } from "../../../models/stimulationForm";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useForm } from "@mantine/form";
+import StimulationParametersSelection, { StimulationParametersFormValues } from "../../../components/StimulationParametersSelection";
 
 export default function StimulationsTab({ form }: TabProperties) {
+    const { t } = useTranslation();
+
     const [selectedPoint, setSelectedPoint] = useState<string>("");
+    const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 0, duration: 0, frequency: 0, lenght_path: 0 } });
+
+    const getSelectedPointFormInfo = () => {
+        for (const electrode of form.values.electrodes) {
+            let foundStimPoint = electrode.stim_points.find(point =>
+                selectedPoint === getStimPointLabel(electrode.label, point.index)
+            );
+
+            if (foundStimPoint) {
+                return foundStimPoint;
+            }
+        }
+    }
+
+    const getSelectedPointLocation = () => {
+        const point = getSelectedPointFormInfo();
+        switch (point?.location.type) {
+            case 'white':
+                return t('pages.stimulationTool.implantation.whiteMatter');
+            case 'vep':
+                return 'VEP - ' + point.location.vep;
+            case 'destrieux':
+                return 'Destrieux - ' + point.location.destrieux;
+            case 'mni':
+                return 'MNI - x=' + point.location.mni.x + ' y=' + point.location.mni.y + ' z=' + point.location.mni.z;
+            default:
+                return '-'
+        }
+    }
+
     return (
         <Box mt={"md"} h={"83vh"}>
             <Grid h={"100%"} gutter={"xs"}>
@@ -19,12 +54,19 @@ export default function StimulationsTab({ form }: TabProperties) {
                 </Grid.Col>
                 <Grid.Col span={4} h={"35%"}>
                     <Box h={"100%"} p={0} bg={"gray"}>
-                        2
+                        <StimulationParametersSelection form={params_form} />
                     </Box>
                 </Grid.Col>
                 <Grid.Col span={8} h={"15%"}>
-                    <Box h={"100%"} p={0} bg={"gray"}>
-                        3
+                    <Box h={"100%"} p={0} bg={"gray"} sx={{ "alignItems": "center", "display": "flex", "justifyContent": "center" }}>
+                        {selectedPoint !== "" &&
+                            <Group position="center" align="center">
+                                <Badge size="lg" variant="filled">{selectedPoint}</Badge>
+                                <Title order={4}>{getSelectedPointLocation()}</Title>
+                                <Title order={4}>{"TODO - Selected effect"}</Title>
+                                <Title order={4}>{"TODO - Post-discharge?"}</Title>
+                            </Group>
+                        }
                     </Box>
                 </Grid.Col>
                 <Grid.Col span={4} h={"15%"}>
@@ -64,22 +106,19 @@ const ContactSelection = ({ form_values, selectedContact, selectedChanged }: Con
                             <Title order={4} w={"5%"} p={"md"}>{electrode.label}</Title>
 
                             <Box h={"100%"} w={"95%"}>
-                                <ScrollArea w={"100%"} h={"100%"} type="always" sx={{ alignItems: "center", padding: '0' }}>
-
-                                    <SimpleGrid cols={10}>
-                                        {electrode.stim_points.map((stim_point, stim_point_i) => {
-                                            const pointId = getStimPointLabel(electrode.label, stim_point_i);
-                                            return (
-                                                <Chip size='sm'
-                                                    value={pointId}
-                                                    key={pointId}
-                                                    onChange={(checked) => selectedChanged(checked ? pointId : "")}
-                                                    color={selectedContact === pointId ? 'blue' : 'gray'}>
-                                                    {pointId}
-                                                </Chip>);
-                                        })}
-                                    </SimpleGrid>
-                                </ScrollArea>
+                                <SimpleGrid cols={10}>
+                                    {electrode.stim_points.map((stim_point, stim_point_i) => {
+                                        const pointId = getStimPointLabel(electrode.label, stim_point_i);
+                                        return (
+                                            <Chip size='sm'
+                                                value={pointId}
+                                                key={pointId}
+                                                onChange={(checked) => selectedChanged(checked ? pointId : "")}
+                                                color={selectedContact === pointId ? 'blue' : 'gray'}>
+                                                {pointId}
+                                            </Chip>);
+                                    })}
+                                </SimpleGrid>
                             </Box>
                         </Group>
                         <Divider orientation='horizontal' size={'md'} color={'black'} />
