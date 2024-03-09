@@ -31,8 +31,10 @@
                 "setLocationButtonLabel": "Set",
                 "clearLocationButtonLabel": "Reset",
                 "destrieuxRegionLabel": "Destrieux region",
-                "grayMatter": "Gray Matter",
-                "thisIsGrayMatter": "This is gray matter",
+                "whiteMatter": "White Matter",
+                "thisIsWhiteMatter": "This is white matter",
+                "selectAllContactsButtonLabel": "Select all",
+                "selectAllNotDoneContactsButtonLabel": "Select all not done",
                 "validations": {
                     "location": {
                         "type": "Please choose a placement type.",
@@ -43,7 +45,13 @@
                 }
             },
             "stimulation": {
-                "tab_title": "Stimulations"
+                "tab_title": "Stimulations",
+                "parameters_title": "Parameters",
+                "amplitude_label": "A",
+                "frequency_label": "F",
+                "duration_label": "D",
+                "length_path_label": "LP",
+                "task_title": "Task"
             },
             "summary": {
                 "tab_title": "Summary"
