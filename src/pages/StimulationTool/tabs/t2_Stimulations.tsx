@@ -12,6 +12,11 @@ export default function StimulationsTab({ form }: TabProperties) {
     const [selectedPoint, setSelectedPoint] = useState<string>("");
     const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 0, duration: 0, frequency: 0, lenght_path: 0 } });
 
+    const handleSelectedPointChanged = (newPointId: string) => {
+        params_form.reset();
+        setSelectedPoint(newPointId);
+    }
+
     const getSelectedPointFormInfo = () => {
         for (const electrode of form.values.electrodes) {
             let foundStimPoint = electrode.stim_points.find(point =>
@@ -48,7 +53,7 @@ export default function StimulationsTab({ form }: TabProperties) {
                         <ContactSelection
                             form_values={form.values}
                             selectedContact={selectedPoint}
-                            selectedChanged={setSelectedPoint}
+                            selectedChanged={handleSelectedPointChanged}
                         />
                     </Box>
                 </Grid.Col>
@@ -114,6 +119,8 @@ const ContactSelection = ({ form_values, selectedContact, selectedChanged }: Con
                                                 value={pointId}
                                                 key={pointId}
                                                 onChange={(checked) => selectedChanged(checked ? pointId : "")}
+                                                checked={selectedContact === pointId}
+                                                variant='filled'
                                                 color={selectedContact === pointId ? 'blue' : 'gray'}>
                                                 {pointId}
                                             </Chip>);
