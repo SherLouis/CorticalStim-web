@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 
 
 export default function StimulationParametersSelection({ form }: StimulationParametersSelectionProps) {
-    // TODO: translations
     const { t } = useTranslation();
 
     const handleAmplitudeButtonClick = (value: number) => {
@@ -21,15 +20,15 @@ export default function StimulationParametersSelection({ form }: StimulationPara
 
     return (
         <Box w={"100%"} mah={"100%"}>
-            <Stack mah={"100%"} spacing={0}>
-                <Title order={3}>{"Parameters"}</Title>
+            <Stack mah={"100%"} spacing={"xs"}>
+                <Title order={3}>{t('pages.stimulationTool.stimulation.parameters_title')}</Title>
                 <Group noWrap
                     spacing='xs'
                     position='left'
                     align='center'
                     w={"100%"}
                 >
-                    <Title order={4} w={"5%"} p={"md"}>{"A"}</Title>
+                    <Title order={4} w={"5%"} p={"md"}>{t('pages.stimulationTool.stimulation.amplitude_label')}</Title>
                     <SimpleGrid cols={5} spacing={1} verticalSpacing={1}>
                         <Button size="md" radius={0} compact variant={Math.floor(form.values.amplitude) === 1 ? 'filled' : 'light'} onClick={() => handleAmplitudeButtonClick(1)}>1</Button>
                         <Button size="md" radius={0} compact variant={Math.floor(form.values.amplitude) === 2 ? 'filled' : 'light'} onClick={() => handleAmplitudeButtonClick(2)}>2</Button>
@@ -62,14 +61,14 @@ export default function StimulationParametersSelection({ form }: StimulationPara
                     align='center'
                     w={"100%"}
                 >
-                    <Title order={4} w={"5%"} p={"md"}>{"F"}</Title>
+                    <Title order={4} w={"5%"} p={"md"}>{t('pages.stimulationTool.stimulation.frequency_label')}</Title>
                     <Group spacing='xs' position='left' align='center'>
                         <Button size="md" variant={form.values.frequency === 1 ? 'filled' : 'light'} onClick={() => form.setFieldValue('frequency', 1)} compact>1</Button>
                         <Button size="md" variant={form.values.frequency === 5 ? 'filled' : 'light'} onClick={() => form.setFieldValue('frequency', 5)} compact>5</Button>
                         <Button size="md" variant={form.values.frequency === 10 ? 'filled' : 'light'} onClick={() => form.setFieldValue('frequency', 10)} compact>10</Button>
                         <Button size="md" variant={form.values.frequency === 25 ? 'filled' : 'light'} onClick={() => form.setFieldValue('frequency', 25)} compact>25</Button>
                     </Group>
-                    <Title order={4} w={"5%"} p={"md"}>{"D"}</Title>
+                    <Title order={4} w={"5%"} p={"md"}>{t('pages.stimulationTool.stimulation.duration_label')}</Title>
                     <Group spacing='xs' position='left' align='center'>
                         <Button size="md" compact variant={form.values.duration === 5 ? 'filled' : 'light'} onClick={() => form.setFieldValue('duration', 5)}>5</Button>
                         <Button size="md" compact variant={form.values.duration === 10 ? 'filled' : 'light'} onClick={() => form.setFieldValue('duration', 10)}>10</Button>
@@ -83,7 +82,7 @@ export default function StimulationParametersSelection({ form }: StimulationPara
                     align='center'
                     w={"100%"}
                 >
-                    <Title order={4} w={"5%"} p={"md"}>{"PL"}</Title>
+                    <Title order={4} w={"5%"} p={"md"}>{t('pages.stimulationTool.stimulation.length_path_label')}</Title>
                     <Group spacing='xs' position='left' align='center'>
                         <Button size="md" variant={form.values.lenght_path === 5 ? 'filled' : 'light'} onClick={() => form.setFieldValue('lenght_path', 5)} compact>5</Button>
                     </Group>

@@ -45,7 +45,12 @@
                 }
             },
             "stimulation": {
-                "tab_title": "Stimulations"
+                "tab_title": "Stimulations",
+                "parameters_title": "Paramètres",
+                "amplitude_label": "A",
+                "frequency_label": "F",
+                "duration_label": "D",
+                "length_path_label": "LP"
             },
             "summary": {
                 "tab_title": "Résumé"

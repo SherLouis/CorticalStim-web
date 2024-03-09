@@ -1,4 +1,4 @@
-import { Badge, Box, Chip, Divider, Grid, Group, ScrollArea, SimpleGrid, Stack, Title } from "@mantine/core";
+import { Badge, Box, Chip, Divider, Grid, Group, NumberInput, ScrollArea, SimpleGrid, Stack, Title, rem } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { getStimPointLabel } from "../../../models/stimulationForm";
 import { useState } from "react";
@@ -75,8 +75,42 @@ export default function StimulationsTab({ form }: TabProperties) {
                     </Box>
                 </Grid.Col>
                 <Grid.Col span={4} h={"15%"}>
-                    <Box h={"100%"} p={0} bg={"gray"}>
-                        4
+                    <Box h={"100%"} p={"xs"} bg={"gray"}>
+                        <Group position="center" align="center" noWrap h={"100%"} w={"100%"}>
+                            <NumberInput w={"25%"} size="xl"
+                                label={t('pages.stimulationTool.stimulation.amplitude_label')}
+                                precision={2}
+                                step={0.01}
+                                styles={{input: {textAlign:"center"}}}
+                                {...params_form.getInputProps('amplitude')}
+                            />
+                            <Stack w={"75%"} align="center">
+                                <Group position="center" noWrap w={"100%"}>
+                                    <NumberInput size="md"
+                                        label={t('pages.stimulationTool.stimulation.frequency_label')}
+                                        precision={2}
+                                        step={0.01}
+                                        styles={{input: {textAlign:"center"}}}
+                                        {...params_form.getInputProps('frequency')}
+                                    />
+                                    <NumberInput size="md"
+                                        label={t('pages.stimulationTool.stimulation.duration_label')}
+                                        precision={2}
+                                        step={0.01}
+                                        styles={{input: {textAlign:"center"}}}
+                                        {...params_form.getInputProps('duration')}
+                                    />
+                                    <NumberInput size="md"
+                                        label={t('pages.stimulationTool.stimulation.length_path_label')}
+                                        precision={2}
+                                        step={0.01}
+                                        styles={{input: {textAlign:"center"}}}
+                                        {...params_form.getInputProps('lenght_path')}
+                                    />
+                                </Group>
+                                <Title order={4}>{"TODO - task selected"}</Title>
+                            </Stack>
+                        </Group>
                     </Box>
                 </Grid.Col>
                 <Grid.Col span={8} h={"50%"}>
