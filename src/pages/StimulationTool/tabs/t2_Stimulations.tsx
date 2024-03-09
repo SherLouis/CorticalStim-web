@@ -1,16 +1,18 @@
-import { Badge, Box, Chip, Divider, Grid, Group, NumberInput, ScrollArea, SimpleGrid, Stack, Title, rem } from "@mantine/core";
+import { Badge, Box, Chip, Divider, Grid, Group, NumberInput, ScrollArea, SimpleGrid, Stack, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { getStimPointLabel } from "../../../models/stimulationForm";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
 import StimulationParametersSelection, { StimulationParametersFormValues } from "../../../components/StimulationParametersSelection";
+import StimulationTaskSelection, { StimulationTaskFormValues } from "../../../components/StimulationTaskSelection";
 
 export default function StimulationsTab({ form }: TabProperties) {
     const { t } = useTranslation();
 
     const [selectedPoint, setSelectedPoint] = useState<string>("");
     const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 0, duration: 0, frequency: 0, lenght_path: 0 } });
+    const task_form = useForm<StimulationTaskFormValues>({ initialValues: { category: "", subcategory: "", characteristic: "" } });
 
     const handleSelectedPointChanged = (newPointId: string) => {
         params_form.reset();
@@ -81,7 +83,7 @@ export default function StimulationsTab({ form }: TabProperties) {
                                 label={t('pages.stimulationTool.stimulation.amplitude_label')}
                                 precision={2}
                                 step={0.01}
-                                styles={{input: {textAlign:"center"}}}
+                                styles={{ input: { textAlign: "center" } }}
                                 {...params_form.getInputProps('amplitude')}
                             />
                             <Stack w={"75%"} align="center">
@@ -90,21 +92,21 @@ export default function StimulationsTab({ form }: TabProperties) {
                                         label={t('pages.stimulationTool.stimulation.frequency_label')}
                                         precision={2}
                                         step={0.01}
-                                        styles={{input: {textAlign:"center"}}}
+                                        styles={{ input: { textAlign: "center" } }}
                                         {...params_form.getInputProps('frequency')}
                                     />
                                     <NumberInput size="md"
                                         label={t('pages.stimulationTool.stimulation.duration_label')}
                                         precision={2}
                                         step={0.01}
-                                        styles={{input: {textAlign:"center"}}}
+                                        styles={{ input: { textAlign: "center" } }}
                                         {...params_form.getInputProps('duration')}
                                     />
                                     <NumberInput size="md"
                                         label={t('pages.stimulationTool.stimulation.length_path_label')}
                                         precision={2}
                                         step={0.01}
-                                        styles={{input: {textAlign:"center"}}}
+                                        styles={{ input: { textAlign: "center" } }}
                                         {...params_form.getInputProps('lenght_path')}
                                     />
                                 </Group>
@@ -120,7 +122,7 @@ export default function StimulationsTab({ form }: TabProperties) {
                 </Grid.Col>
                 <Grid.Col span={4} h={"50%"}>
                     <Box h={"100%"} p={0} bg={"gray"}>
-                        6
+                        <StimulationTaskSelection form={task_form} />
                     </Box>
                 </Grid.Col>
             </Grid>

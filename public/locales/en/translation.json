@@ -50,7 +50,8 @@
                 "amplitude_label": "A",
                 "frequency_label": "F",
                 "duration_label": "D",
-                "length_path_label": "LP"
+                "length_path_label": "LP",
+                "task_title": "Task"
             },
             "summary": {
                 "tab_title": "Summary"
