@@ -1,4 +1,4 @@
-import { Box, Button, Group, SimpleGrid, Stack, Table, Title } from "@mantine/core";
+import { Box, Button, Group, SimpleGrid, Stack, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 
@@ -64,10 +64,10 @@ export default function StimulationParametersSelection({ form }: StimulationPara
                 >
                     <Title order={4} w={"5%"} p={"md"}>{"F"}</Title>
                     <Group spacing='xs' position='left' align='center'>
-                        <Button size="md" variant={form.values.frequency == 1 ? 'filled' : 'light'} onClick={() => form.setFieldValue('frequency', 1)} compact>1</Button>
-                        <Button size="md" variant={form.values.frequency == 5 ? 'filled' : 'light'} onClick={() => form.setFieldValue('frequency', 5)} compact>5</Button>
-                        <Button size="md" variant={form.values.frequency == 10 ? 'filled' : 'light'} onClick={() => form.setFieldValue('frequency', 10)} compact>10</Button>
-                        <Button size="md" variant={form.values.frequency == 25 ? 'filled' : 'light'} onClick={() => form.setFieldValue('frequency', 25)} compact>25</Button>
+                        <Button size="md" variant={form.values.frequency === 1 ? 'filled' : 'light'} onClick={() => form.setFieldValue('frequency', 1)} compact>1</Button>
+                        <Button size="md" variant={form.values.frequency === 5 ? 'filled' : 'light'} onClick={() => form.setFieldValue('frequency', 5)} compact>5</Button>
+                        <Button size="md" variant={form.values.frequency === 10 ? 'filled' : 'light'} onClick={() => form.setFieldValue('frequency', 10)} compact>10</Button>
+                        <Button size="md" variant={form.values.frequency === 25 ? 'filled' : 'light'} onClick={() => form.setFieldValue('frequency', 25)} compact>25</Button>
                     </Group>
                     <Title order={4} w={"5%"} p={"md"}>{"D"}</Title>
                     <Group spacing='xs' position='left' align='center'>
@@ -85,7 +85,7 @@ export default function StimulationParametersSelection({ form }: StimulationPara
                 >
                     <Title order={4} w={"5%"} p={"md"}>{"PL"}</Title>
                     <Group spacing='xs' position='left' align='center'>
-                        <Button size="md" variant={form.values.lenght_path == 5 ? 'filled' : 'light'} onClick={() => form.setFieldValue('lenght_path', 5)} compact>5</Button>
+                        <Button size="md" variant={form.values.lenght_path === 5 ? 'filled' : 'light'} onClick={() => form.setFieldValue('lenght_path', 5)} compact>5</Button>
                     </Group>
                 </Group>
             </Stack>
