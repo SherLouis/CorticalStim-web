@@ -16,6 +16,7 @@ export default function StimulationsTab({ form }: TabProperties) {
 
     const handleSelectedPointChanged = (newPointId: string) => {
         params_form.reset();
+        task_form.reset();
         setSelectedPoint(newPointId);
     }
 
@@ -45,6 +46,12 @@ export default function StimulationsTab({ form }: TabProperties) {
             default:
                 return '-'
         }
+    }
+
+    const formatSelectedTask = (): string => {
+        return task_form.values.category +
+            (task_form.values.subcategory !== "" ? ('/' + task_form.values.subcategory
+                + (task_form.values.characteristic !== "" ? ('/' + task_form.values.characteristic) : '')) : '')
     }
 
     return (
@@ -110,7 +117,7 @@ export default function StimulationsTab({ form }: TabProperties) {
                                         {...params_form.getInputProps('lenght_path')}
                                     />
                                 </Group>
-                                <Title order={4}>{"TODO - task selected"}</Title>
+                                <Title order={4}>{formatSelectedTask()}</Title>
                             </Stack>
                         </Group>
                     </Box>
