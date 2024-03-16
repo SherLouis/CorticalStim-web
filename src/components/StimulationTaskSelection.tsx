@@ -1,16 +1,13 @@
-import { Box, Stack, Table, Title } from "@mantine/core";
+import { Box, Button, List, Stack, Table, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import ColumnButtonSelect from "./ColumnButtonSelect";
-import { useListState } from "@mantine/hooks";
+import { StimulationTaskFormValues } from "../models/stimulationForm";
 
 
-export default function StimulationTaskSelection({ form }: StimulationTaskSelectionProps) {
+export default function StimulationTaskSelection({ form, last_values }: StimulationTaskSelectionProps) {
     const { t } = useTranslation();
-
-    const [lastValues, lastValuesHandlers] = useListState<TaskDdo>();
-
-    // TODO: last values
+    
     // TODO: preset
 
     const handleValueChange = (level: 'category' | 'subcategory' | 'characteristic', newValue: string) => {
@@ -26,8 +23,6 @@ export default function StimulationTaskSelection({ form }: StimulationTaskSelect
                 break;
             case 'characteristic':
                 form.setFieldValue("characteristic", newValue);
-                lastValuesHandlers.prepend({ level: 'characteristic', category: form.values.category, subcategory: form.values.subcategory, characteristic: newValue });
-                if(lastValues.length>3){lastValuesHandlers.pop();}
                 break;
         }
     }
@@ -36,14 +31,30 @@ export default function StimulationTaskSelection({ form }: StimulationTaskSelect
         <Box w={"100%"} mah={"100%"}>
             <Stack h={"100%"} spacing={"xs"}>
                 <Title order={3}>{t('pages.stimulationTool.stimulation.task_title')}</Title>
+
                 <Box>
-                    {/*lastValues.slice(0, 4).map((ddo) => ddo.characteristic)*/}
+                    <Title order={5}>{t('pages.stimulationTool.stimulation.task_last_used_title')}</Title>
+                    <Button.Group orientation='vertical'>
+                        {last_values.map(v => (
+                            <Button compact size="sm"
+                                variant={formatSelectedTask(form.values) === formatSelectedTask(v) ? "filled" : "light"}
+                                onClick={() => { form.setValues(v); }}>
+                                {formatSelectedTask(v)}
+                            </Button>
+                        ))}
+                    </Button.Group>
                 </Box>
 
                 <TaskTable form={form} handleValueChange={handleValueChange} />
             </Stack>
         </Box>
     );
+}
+
+export const formatSelectedTask = (task_values: StimulationTaskFormValues): string => {
+    return task_values.category +
+        (task_values.subcategory !== "" ? ('/' + task_values.subcategory
+            + (task_values.characteristic !== "" ? ('/' + task_values.characteristic) : '')) : '')
 }
 
 const TaskTable = ({ form, handleValueChange }: TaskTableProps) => {
@@ -123,7 +134,7 @@ interface TaskTableProps {
     handleValueChange: (level: 'category' | 'subcategory' | 'characteristic', newValue: string) => void
 }
 
-interface TaskDdo {
+export interface TaskDdo {
     level: string;
     category: string;
     subcategory: string;
@@ -132,10 +143,5 @@ interface TaskDdo {
 
 interface StimulationTaskSelectionProps {
     form: UseFormReturnType<StimulationTaskFormValues>;
-}
-
-export interface StimulationTaskFormValues {
-    category: string;
-    subcategory: string;
-    characteristic: string;
+    last_values: { category: string; subcategory: string; characteristic: string }[];
 }

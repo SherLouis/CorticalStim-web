@@ -51,7 +51,9 @@
                 "frequency_label": "F",
                 "duration_label": "D",
                 "length_path_label": "LP",
-                "task_title": "Tâche"
+                "task_title": "Tâche",
+                "task_last_used_title": "Derniers utilisés",
+                "saveButtonLabel": "Enregistrer"
             },
             "summary": {
                 "tab_title": "Résumé"

@@ -41,7 +41,6 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
     const handleElectrodeLocationFormSubmit = () => {
         locationForm.validate();
-        console.log(locationForm.values);
         if (!locationForm.isValid()) { return; }
         const values = locationForm.values;
         if (selectedContacts === undefined) { return; }

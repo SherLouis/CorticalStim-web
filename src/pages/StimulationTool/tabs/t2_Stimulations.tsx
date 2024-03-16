@@ -1,12 +1,14 @@
-import { Badge, Box, Chip, Divider, Grid, Group, NumberInput, ScrollArea, SimpleGrid, Stack, Title } from "@mantine/core";
+import { Badge, Box, Button, Chip, Divider, Grid, Group, NumberInput, ScrollArea, SimpleGrid, Stack, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
-import StimulationFormValues, { getStimPointLabel } from "../../../models/stimulationForm";
+import StimulationFormValues, { StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../models/stimulationForm";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
-import StimulationParametersSelection, { StimulationParametersFormValues } from "../../../components/StimulationParametersSelection";
-import StimulationTaskSelection, { StimulationTaskFormValues } from "../../../components/StimulationTaskSelection";
+import StimulationParametersSelection from "../../../components/StimulationParametersSelection";
+import StimulationTaskSelection, { formatSelectedTask } from "../../../components/StimulationTaskSelection";
+import { useListState } from "@mantine/hooks";
 
+// TODO: pouvoir ajouter plusieurs stimulations / afficher valeurs de stimulations enregistrées
 export default function StimulationsTab({ form }: TabProperties) {
     const { t } = useTranslation();
 
@@ -14,13 +16,66 @@ export default function StimulationsTab({ form }: TabProperties) {
     const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 0, duration: 0, frequency: 0, lenght_path: 0 } });
     const task_form = useForm<StimulationTaskFormValues>({ initialValues: { category: "", subcategory: "", characteristic: "" } });
 
+    const [lastTaskValues, lastTaskValuesHandlers] = useListState<{ category: string; subcategory: string; characteristic: string }>();
+
     const handleSelectedPointChanged = (newPointId: string) => {
         params_form.reset();
         task_form.reset();
         setSelectedPoint(newPointId);
     }
 
-    const getSelectedPointFormInfo = () => {
+    const handleSubmit = () => {
+        if (selectedPoint === undefined) { return; }
+
+        // validate forms
+        params_form.validate();
+        task_form.validate();
+        if (!params_form.isValid() || !task_form.isValid()) { return; }
+
+        const params_values = params_form.values;
+        const task_values = task_form.values;
+
+        const electrode_label = selectedPoint.split('/').slice(0, -1).join('/');
+
+        form.values.electrodes.forEach((electrode, electrode_i) => {
+            if (electrode.label === electrode_label) {
+                electrode.stim_points.forEach((stim_point, stim_point_i) => {
+                    const stimId = getStimPointLabel(electrode.label, stim_point_i)
+                    if (stimId === selectedPoint) {
+                        // Insert new stimulatinon for this stimulation point
+                        form.insertListItem(`electrodes.${electrode_i}.stim_points.${stim_point.index}.stimulations`,
+                            {
+                                paremeters: {
+                                    amplitude: params_values.amplitude,
+                                    duration: params_values.duration,
+                                    frequency: params_values.frequency,
+                                    lenght_path: params_values.lenght_path
+                                },
+                                task: {
+                                    category: task_values.category,
+                                    subcategory: task_values.subcategory,
+                                    characteristic: task_values.characteristic
+                                }
+                            });
+                        // Save last used task
+                        lastTaskValuesHandlers.prepend({ category: task_form.values.category, subcategory: task_form.values.subcategory, characteristic: task_form.values.characteristic });
+                        if (lastTaskValues.length >= 3) { lastTaskValues.pop(); }
+
+                        // TODO: save last used effect
+
+                        // unselect point and reset inner forms to prepare for next stimulation
+                        setSelectedPoint("");
+                        params_form.reset();
+                        task_form.reset();
+                        return;
+                    }
+                });
+            }
+        });
+    }
+
+
+    const getSelectedPointLocationFormInfo = () => {
         for (const electrode of form.values.electrodes) {
             let foundStimPoint = electrode.stim_points.find(point =>
                 selectedPoint === getStimPointLabel(electrode.label, point.index)
@@ -33,7 +88,7 @@ export default function StimulationsTab({ form }: TabProperties) {
     }
 
     const getSelectedPointLocation = () => {
-        const point = getSelectedPointFormInfo();
+        const point = getSelectedPointLocationFormInfo();
         switch (point?.location.type) {
             case 'white':
                 return t('pages.stimulationTool.implantation.whiteMatter');
@@ -46,12 +101,6 @@ export default function StimulationsTab({ form }: TabProperties) {
             default:
                 return '-'
         }
-    }
-
-    const formatSelectedTask = (): string => {
-        return task_form.values.category +
-            (task_form.values.subcategory !== "" ? ('/' + task_form.values.subcategory
-                + (task_form.values.characteristic !== "" ? ('/' + task_form.values.characteristic) : '')) : '')
     }
 
     return (
@@ -79,6 +128,7 @@ export default function StimulationsTab({ form }: TabProperties) {
                                 <Title order={4}>{getSelectedPointLocation()}</Title>
                                 <Title order={4}>{"TODO - Selected effect"}</Title>
                                 <Title order={4}>{"TODO - Post-discharge?"}</Title>
+                                <Button onClick={handleSubmit}>{t('pages.stimulationTool.stimulation.saveButtonLabel')}</Button>
                             </Group>
                         }
                     </Box>
@@ -117,7 +167,7 @@ export default function StimulationsTab({ form }: TabProperties) {
                                         {...params_form.getInputProps('lenght_path')}
                                     />
                                 </Group>
-                                <Title order={4}>{formatSelectedTask()}</Title>
+                                <Title order={4}>{formatSelectedTask(task_form.values)}</Title>
                             </Stack>
                         </Group>
                     </Box>
@@ -129,7 +179,7 @@ export default function StimulationsTab({ form }: TabProperties) {
                 </Grid.Col>
                 <Grid.Col span={4} h={"50%"}>
                     <Box h={"100%"} p={0} bg={"gray"}>
-                        <StimulationTaskSelection form={task_form} />
+                        <StimulationTaskSelection form={task_form} last_values={lastTaskValues}/>
                     </Box>
                 </Grid.Col>
             </Grid>

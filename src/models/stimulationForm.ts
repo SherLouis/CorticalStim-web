@@ -19,17 +19,26 @@ export default interface StimulationFormValues {
                 done: boolean;
             };
             stimulations: {
-                parameters: StimulationsParametersValues;
+                parameters: StimulationParametersFormValues;
+                task: StimulationTaskFormValues;
                 effects: StimulationEffectsValues;
             }[]
         }[]
     }[]
 };
 
-interface StimulationsParametersValues {
-    // TODO: to complete
+export interface StimulationParametersFormValues {
     amplitude: number;
-};
+    duration: number;
+    frequency: number;
+    lenght_path: number;
+}
+
+export interface StimulationTaskFormValues {
+    category: string;
+    subcategory: string;
+    characteristic: string;
+}
 
 interface StimulationEffectsValues {
     // TODO: to complete
