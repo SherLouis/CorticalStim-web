@@ -1,22 +1,27 @@
 import { Badge, Box, Button, Chip, Divider, Grid, Group, NumberInput, ScrollArea, SimpleGrid, Stack, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
-import StimulationFormValues, { StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../models/stimulationForm";
+import StimulationFormValues, { StimulationCognitiveEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../models/stimulationForm";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
 import StimulationParametersSelection from "../../../components/StimulationParametersSelection";
 import StimulationTaskSelection, { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
+import StimulationEffectSelection from "../../../components/StimulationEffectSelection";
 
 // TODO: pouvoir ajouter plusieurs stimulations / afficher valeurs de stimulations enregistrées
+
+// TODO: stimulation time
 export default function StimulationsTab({ form }: TabProperties) {
     const { t } = useTranslation();
 
     const [selectedPoint, setSelectedPoint] = useState<string>("");
     const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 0, duration: 0, frequency: 0, lenght_path: 0 } });
     const task_form = useForm<StimulationTaskFormValues>({ initialValues: { category: "", subcategory: "", characteristic: "" } });
+    const effect_form = useForm<StimulationEffectsValues>({ initialValues: { cognitive_effect: { category: "", semiology: "", characteristic: "" }, epi_manifestation: "", post_discharge: false, pd_duration: 0, pd_local: "", pd_type: "", crisis: false } });
 
     const [lastTaskValues, lastTaskValuesHandlers] = useListState<{ category: string; subcategory: string; characteristic: string }>();
+    const [lastCognitiveEffectValues, lastCognitiveEffectValuesHandlers] = useListState<StimulationCognitiveEffectFormValues>();
 
     const handleSelectedPointChanged = (newPointId: string) => {
         params_form.reset();
@@ -174,12 +179,12 @@ export default function StimulationsTab({ form }: TabProperties) {
                 </Grid.Col>
                 <Grid.Col span={8} h={"50%"}>
                     <Box h={"100%"} p={0} bg={"gray"}>
-                        5
+                        <StimulationEffectSelection form={effect_form} cognitive_effect_last_values={lastCognitiveEffectValues} />
                     </Box>
                 </Grid.Col>
                 <Grid.Col span={4} h={"50%"}>
                     <Box h={"100%"} p={0} bg={"gray"}>
-                        <StimulationTaskSelection form={task_form} last_values={lastTaskValues}/>
+                        <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
                     </Box>
                 </Grid.Col>
             </Grid>

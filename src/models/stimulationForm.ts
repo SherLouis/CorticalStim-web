@@ -12,10 +12,10 @@ export default interface StimulationFormValues {
         stim_points: {
             index: number;
             location: {
-                type: 'white'|'vep'|'destrieux'|'mni';
+                type: 'white' | 'vep' | 'destrieux' | 'mni';
                 vep: string;
                 destrieux: string;
-                mni: {x: number; y: number; z: number};
+                mni: { x: number; y: number; z: number };
                 done: boolean;
             };
             stimulations: {
@@ -40,10 +40,21 @@ export interface StimulationTaskFormValues {
     characteristic: string;
 }
 
-interface StimulationEffectsValues {
-    // TODO: to complete
-    category: string;
+export interface StimulationEffectsValues {
+    cognitive_effect: StimulationCognitiveEffectFormValues;
+    epi_manifestation: string;
+    post_discharge: boolean;
+    pd_duration: number;
+    pd_local: string;
+    pd_type: string;
+    crisis: boolean;
 };
+
+export interface StimulationCognitiveEffectFormValues {
+    category: string;
+    semiology: string;
+    characteristic: string;
+}
 
 export const getStimPointLabel = (electrodeLabel: string, stim_point_index: number) => {
     return `${electrodeLabel}/${stim_point_index + 1}-${stim_point_index + 2}`;
