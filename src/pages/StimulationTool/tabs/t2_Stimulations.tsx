@@ -7,7 +7,7 @@ import { useForm } from "@mantine/form";
 import StimulationParametersSelection from "../../../components/StimulationParametersSelection";
 import StimulationTaskSelection, { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
-import StimulationEffectSelection from "../../../components/StimulationEffectSelection";
+import StimulationEffectSelection, { formatSelectedCognitiveEffect } from "../../../components/StimulationEffectSelection";
 
 // TODO: pouvoir ajouter plusieurs stimulations / afficher valeurs de stimulations enregistrées
 
@@ -15,10 +15,12 @@ import StimulationEffectSelection from "../../../components/StimulationEffectSel
 export default function StimulationsTab({ form }: TabProperties) {
     const { t } = useTranslation();
 
+    console.log(form.values);
+
     const [selectedPoint, setSelectedPoint] = useState<string>("");
     const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 0, duration: 0, frequency: 0, lenght_path: 0 } });
     const task_form = useForm<StimulationTaskFormValues>({ initialValues: { category: "", subcategory: "", characteristic: "" } });
-    const effect_form = useForm<StimulationEffectsValues>({ initialValues: { cognitive_effect: { category: "", semiology: "", characteristic: "" }, epi_manifestation: "", post_discharge: false, pd_duration: 0, pd_local: "", pd_type: "", crisis: false } });
+    const effect_form = useForm<StimulationEffectsValues>({ initialValues: { cognitive_effect: { category: "", semiology: "", characteristic: "" }, epi_manifestation: [], post_discharge: false, pd_duration: 0, pd_local: "", pd_type: "", crisis: false } });
 
     const [lastTaskValues, lastTaskValuesHandlers] = useListState<{ category: string; subcategory: string; characteristic: string }>();
     const [lastCognitiveEffectValues, lastCognitiveEffectValuesHandlers] = useListState<StimulationCognitiveEffectFormValues>();
@@ -26,6 +28,7 @@ export default function StimulationsTab({ form }: TabProperties) {
     const handleSelectedPointChanged = (newPointId: string) => {
         params_form.reset();
         task_form.reset();
+        effect_form.reset();
         setSelectedPoint(newPointId);
     }
 
@@ -39,6 +42,7 @@ export default function StimulationsTab({ form }: TabProperties) {
 
         const params_values = params_form.values;
         const task_values = task_form.values;
+        const effect_values = effect_form.values;
 
         const electrode_label = selectedPoint.split('/').slice(0, -1).join('/');
 
@@ -60,18 +64,26 @@ export default function StimulationsTab({ form }: TabProperties) {
                                     category: task_values.category,
                                     subcategory: task_values.subcategory,
                                     characteristic: task_values.characteristic
-                                }
+                                },
+                                effect: effect_values
                             });
                         // Save last used task
                         lastTaskValuesHandlers.prepend({ category: task_form.values.category, subcategory: task_form.values.subcategory, characteristic: task_form.values.characteristic });
                         if (lastTaskValues.length >= 3) { lastTaskValues.pop(); }
 
-                        // TODO: save last used effect
+                        // Save last used effect
+                        lastCognitiveEffectValuesHandlers.prepend({
+                            category: effect_values.cognitive_effect.category,
+                            semiology: effect_values.cognitive_effect.semiology,
+                            characteristic: effect_values.cognitive_effect.characteristic
+                        });
+                        if (lastCognitiveEffectValues.length >= 3) { lastCognitiveEffectValuesHandlers.pop(); }
 
                         // unselect point and reset inner forms to prepare for next stimulation
                         setSelectedPoint("");
                         params_form.reset();
                         task_form.reset();
+                        effect_form.reset();
                         return;
                     }
                 });
@@ -108,10 +120,14 @@ export default function StimulationsTab({ form }: TabProperties) {
         }
     }
 
+    const getSelectedPointEffect = () => {
+        return formatSelectedCognitiveEffect(effect_form.values.cognitive_effect);
+    }
+
     return (
         <Box mt={"md"} h={"83vh"}>
             <Grid h={"100%"} gutter={"xs"}>
-                <Grid.Col span={8} h={"35%"}>
+                <Grid.Col span={8} h={"30%"}>
                     <Box h={"100%"} p={0} bg={"gray"}>
                         <ContactSelection
                             form_values={form.values}
@@ -120,7 +136,7 @@ export default function StimulationsTab({ form }: TabProperties) {
                         />
                     </Box>
                 </Grid.Col>
-                <Grid.Col span={4} h={"35%"}>
+                <Grid.Col span={4} h={"30%"}>
                     <Box h={"100%"} p={0} bg={"gray"}>
                         <StimulationParametersSelection form={params_form} />
                     </Box>
@@ -131,7 +147,7 @@ export default function StimulationsTab({ form }: TabProperties) {
                             <Group position="center" align="center">
                                 <Badge size="lg" variant="filled">{selectedPoint}</Badge>
                                 <Title order={4}>{getSelectedPointLocation()}</Title>
-                                <Title order={4}>{"TODO - Selected effect"}</Title>
+                                <Title order={4}>{getSelectedPointEffect()}</Title>
                                 <Title order={4}>{"TODO - Post-discharge?"}</Title>
                                 <Button onClick={handleSubmit}>{t('pages.stimulationTool.stimulation.saveButtonLabel')}</Button>
                             </Group>
@@ -177,12 +193,12 @@ export default function StimulationsTab({ form }: TabProperties) {
                         </Group>
                     </Box>
                 </Grid.Col>
-                <Grid.Col span={8} h={"50%"}>
+                <Grid.Col span={8} h={"55%"}>
                     <Box h={"100%"} p={0} bg={"gray"}>
                         <StimulationEffectSelection form={effect_form} cognitive_effect_last_values={lastCognitiveEffectValues} />
                     </Box>
                 </Grid.Col>
-                <Grid.Col span={4} h={"50%"}>
+                <Grid.Col span={4} h={"55%"}>
                     <Box h={"100%"} p={0} bg={"gray"}>
                         <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
                     </Box>

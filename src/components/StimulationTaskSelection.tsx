@@ -1,4 +1,4 @@
-import { Box, Button, List, Stack, Table, Title } from "@mantine/core";
+import { Box, Button, Stack, Table, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import ColumnButtonSelect from "./ColumnButtonSelect";
@@ -7,7 +7,7 @@ import { StimulationTaskFormValues } from "../models/stimulationForm";
 
 export default function StimulationTaskSelection({ form, last_values }: StimulationTaskSelectionProps) {
     const { t } = useTranslation();
-    
+
     // TODO: preset
 
     const handleValueChange = (level: 'category' | 'subcategory' | 'characteristic', newValue: string) => {
@@ -35,8 +35,8 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
                 <Box>
                     <Title order={5}>{t('pages.stimulationTool.stimulation.task_last_used_title')}</Title>
                     <Button.Group orientation='vertical'>
-                        {last_values.map(v => (
-                            <Button compact size="sm"
+                        {last_values.map((v, i) => (
+                            <Button compact size="sm" key={"btn_last_task_" + i}
                                 variant={formatSelectedTask(form.values) === formatSelectedTask(v) ? "filled" : "light"}
                                 onClick={() => { form.setValues(v); }}>
                                 {formatSelectedTask(v)}
@@ -54,7 +54,7 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
 export const formatSelectedTask = (task_values: StimulationTaskFormValues): string => {
     return task_values.category +
         (task_values.subcategory !== "" ? ('/' + task_values.subcategory
-            + (task_values.characteristic !== "" ? ('/' + task_values.characteristic) : '')) : '')
+            + (task_values.characteristic !== "" ? ('/' + task_values.characteristic) : '')) : '-')
 }
 
 const TaskTable = ({ form, handleValueChange }: TaskTableProps) => {

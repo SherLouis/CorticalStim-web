@@ -1,4 +1,4 @@
-import { Box, Group, Stack, Table, Title } from "@mantine/core";
+import { Box, Button, Checkbox, Group, Stack, Table, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import { StimulationEffectsValues, StimulationCognitiveEffectFormValues } from "../models/stimulationForm";
@@ -7,13 +7,10 @@ import ColumnButtonSelect from "./ColumnButtonSelect";
 export default function StimulationEffectSelection({ form, cognitive_effect_last_values }: StimulationEffectSelectionProps) {
     const { t } = useTranslation();
 
-    console.log(form.values);
-
-    // TODO: last values for cogitive effects
+    // TODO: EEG section
     // TODO: preset
-    // TODO: translations
 
-    const handleValueChange = (level: 'category' | 'semiology' | 'characteristic', newValue: string) => {
+    const handleCognitiveEffectValueChange = (level: 'category' | 'semiology' | 'characteristic', newValue: string) => {
         switch (level) {
             case 'category':
                 form.setFieldValue('cognitive_effect.characteristic', "");
@@ -30,23 +27,49 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
         }
     }
 
+    const getEpiManifestationOptions = () => {
+        return [
+            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_aura'), value: "typical_aura" },
+            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_crisis'), value: "typical_crisis" },
+            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.atypical_incomplete_crisis'), value: "atypical_incomplete_crisis" },
+            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.atypical_crisis'), value: "atypical_crisis" },
+            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.other'), value: "other" }
+        ]
+    }
+
     return (
         <Box w={"100%"} mah={"100%"}>
             <Group w={"100%"} h={"100%"} spacing={0} align='flex-start'>
                 <Stack w={"50%"}>
-                    <Title order={5}>Effet cognitif</Title>
+                    <Title order={5}>{t('pages.stimulationTool.stimulation.effect.cognitive_effect_label')}</Title>
+                    <Box mih={"25%"}>
+                        <Title order={5}>{t('pages.stimulationTool.stimulation.effect.last_used')}</Title>
+                        <Button.Group orientation='vertical'>
+                            {cognitive_effect_last_values.map((v, i) => (
+                                <Button compact size="sm" key={"btn_last_effect_" + i}
+                                    variant={formatSelectedCognitiveEffect(form.values.cognitive_effect) === formatSelectedCognitiveEffect(v) ? "filled" : "light"}
+                                    onClick={() => { form.setFieldValue('cognitive_effect', v); }}>
+                                    {formatSelectedCognitiveEffect(v)}
+                                </Button>
+                            ))}
+                        </Button.Group>
+                    </Box>
                     <Box>
-                        <CognitiveEffectTable cognitive_values={form.values.cognitive_effect} handleValueChange={handleValueChange} />
+                        <CognitiveEffectTable cognitive_values={form.values.cognitive_effect} handleValueChange={handleCognitiveEffectValueChange} />
                     </Box>
                 </Stack>
                 <Stack w={"25%"}>
-                    <Title order={5}>Manif. epi.</Title>
+                    <Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>
                     <Box>
-                        ...epi
+                        <Checkbox.Group {...form.getInputProps('epi_manifestation')}>
+                            <Stack>
+                                {getEpiManifestationOptions().map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label} />)}
+                            </Stack>
+                        </Checkbox.Group>
                     </Box>
                 </Stack>
                 <Stack w={"25%"}>
-                    <Title order={5}>EEG</Title>
+                    <Title order={5}>{t('pages.stimulationTool.stimulation.effect.eeg')}</Title>
                     <Box>
                         ...eeg
                     </Box>
@@ -127,4 +150,10 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: Cognitive
 interface CognitiveEffectTableProps {
     cognitive_values: StimulationCognitiveEffectFormValues;
     handleValueChange: (level: 'category' | 'semiology' | 'characteristic', newValue: string) => void
+}
+
+export const formatSelectedCognitiveEffect = (values: StimulationCognitiveEffectFormValues): string => {
+    return values.category !== "" ? (values.category +
+        (values.semiology !== "" ? ('/' + values.semiology
+            + (values.characteristic !== "" ? ('/' + values.characteristic) : '')) : '')) : "-"
 }

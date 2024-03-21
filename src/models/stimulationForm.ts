@@ -21,7 +21,7 @@ export default interface StimulationFormValues {
             stimulations: {
                 parameters: StimulationParametersFormValues;
                 task: StimulationTaskFormValues;
-                effects: StimulationEffectsValues;
+                effect: StimulationEffectsValues;
             }[]
         }[]
     }[]
@@ -42,7 +42,7 @@ export interface StimulationTaskFormValues {
 
 export interface StimulationEffectsValues {
     cognitive_effect: StimulationCognitiveEffectFormValues;
-    epi_manifestation: string;
+    epi_manifestation: string[];
     post_discharge: boolean;
     pd_duration: number;
     pd_local: string;

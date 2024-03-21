@@ -53,7 +53,20 @@
                 "length_path_label": "LP",
                 "task_title": "Task",
                 "task_last_used_title": "Last used",
-                "saveButtonLabel": "Save"
+                "saveButtonLabel": "Save",
+                "effect": {
+                    "cognitive_effect_label": "Cognitive Effect",
+                    "epi_manifestation": "Epi. manifestation",
+                    "eeg": "EEG",
+                    "last_used": "Last used",
+                    "epi_manifestation_options_labels": {
+                        "typical_aura": "Typical Aura",
+                        "typical_crisis": "Typical Crisis",
+                        "atypical_incomplete_crisis": "Atypical Crisis (Incomplete)",
+                        "atypical_crisis": "Atypical Crisis",
+                        "other": "Other"
+                    }
+                }
             },
             "summary": {
                 "tab_title": "Summary"
