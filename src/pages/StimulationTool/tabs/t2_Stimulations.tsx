@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Chip, Divider, Grid, Group, NumberInput, ScrollArea, SimpleGrid, Stack, Title } from "@mantine/core";
+import { Badge, Box, Button, Chip, Divider, Grid, Group, Modal, NumberInput, ScrollArea, SimpleGrid, Stack, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { StimulationCognitiveEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../models/stimulationForm";
 import { useState } from "react";
@@ -8,37 +8,47 @@ import StimulationParametersSelection from "../../../components/StimulationParam
 import StimulationTaskSelection, { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
 import StimulationEffectSelection, { formatSelectedCognitiveEffect } from "../../../components/StimulationEffectSelection";
+import { IconCircleX, IconTrash } from "@tabler/icons-react";
 
 // TODO: pouvoir ajouter plusieurs stimulations / afficher valeurs de stimulations enregistrées
 
-// TODO: stimulation time
 export default function StimulationsTab({ form }: TabProperties) {
     const { t } = useTranslation();
 
-    console.log(form.values);
-
     const [selectedPoint, setSelectedPoint] = useState<string>("");
+    const [showConfirmNoSave, setShowConfirmNoSave] = useState<boolean>(false);
+
+    const [stimulationTime, setStimulationTime] = useState<string>("");
+
     const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 0, duration: 0, frequency: 0, lenght_path: 0 } });
     const task_form = useForm<StimulationTaskFormValues>({ initialValues: { category: "", subcategory: "", characteristic: "" } });
-    const effect_form = useForm<StimulationEffectsValues>({ initialValues: { cognitive_effect: { category: "", semiology: "", characteristic: "" }, epi_manifestation: [], post_discharge: false, pd_duration: 0, pd_local: "", pd_type: "", crisis: false } });
+    const effect_form = useForm<StimulationEffectsValues>({ initialValues: { cognitive_effect: { category: "", semiology: "", characteristic: "" }, epi_manifestation: [], post_discharge: true, pd_duration: 0, pd_local: "", pd_type: "", crisis: false } });
 
     const [lastTaskValues, lastTaskValuesHandlers] = useListState<{ category: string; subcategory: string; characteristic: string }>();
     const [lastCognitiveEffectValues, lastCognitiveEffectValuesHandlers] = useListState<StimulationCognitiveEffectFormValues>();
 
     const handleSelectedPointChanged = (newPointId: string) => {
+        if (stimulationTime === '') { resetForNewPoint(newPointId); }
+        else { setShowConfirmNoSave(true); }
+    }
+
+    const resetForNewPoint = (newPointId: string) => {
         params_form.reset();
         task_form.reset();
         effect_form.reset();
         setSelectedPoint(newPointId);
+        setStimulationTime('');
     }
 
     const handleSubmit = () => {
         if (selectedPoint === undefined) { return; }
+        if (stimulationTime === '') { return; }
 
         // validate forms
         params_form.validate();
         task_form.validate();
-        if (!params_form.isValid() || !task_form.isValid()) { return; }
+        effect_form.validate();
+        if (!params_form.isValid() || !task_form.isValid() || !effect_form.isValid()) { return; }
 
         const params_values = params_form.values;
         const task_values = task_form.values;
@@ -54,6 +64,7 @@ export default function StimulationsTab({ form }: TabProperties) {
                         // Insert new stimulatinon for this stimulation point
                         form.insertListItem(`electrodes.${electrode_i}.stim_points.${stim_point.index}.stimulations`,
                             {
+                                time: stimulationTime,
                                 paremeters: {
                                     amplitude: params_values.amplitude,
                                     duration: params_values.duration,
@@ -68,29 +79,29 @@ export default function StimulationsTab({ form }: TabProperties) {
                                 effect: effect_values
                             });
                         // Save last used task
-                        lastTaskValuesHandlers.prepend({ category: task_form.values.category, subcategory: task_form.values.subcategory, characteristic: task_form.values.characteristic });
-                        if (lastTaskValues.length >= 3) { lastTaskValues.pop(); }
+                        if (lastTaskValues.length === 0 || formatSelectedTask(lastTaskValues[0]) !== formatSelectedTask(task_values)) {
+                            lastTaskValuesHandlers.prepend({ category: task_form.values.category, subcategory: task_form.values.subcategory, characteristic: task_form.values.characteristic });
+                            if (lastTaskValues.length >= 3) { lastTaskValues.pop(); }
+                        }
 
                         // Save last used effect
-                        lastCognitiveEffectValuesHandlers.prepend({
-                            category: effect_values.cognitive_effect.category,
-                            semiology: effect_values.cognitive_effect.semiology,
-                            characteristic: effect_values.cognitive_effect.characteristic
-                        });
-                        if (lastCognitiveEffectValues.length >= 3) { lastCognitiveEffectValuesHandlers.pop(); }
+                        if (lastCognitiveEffectValues.length === 0 || formatSelectedCognitiveEffect(lastCognitiveEffectValues[0]) !== formatSelectedCognitiveEffect(effect_values.cognitive_effect)) {
+                            lastCognitiveEffectValuesHandlers.prepend({
+                                category: effect_values.cognitive_effect.category,
+                                semiology: effect_values.cognitive_effect.semiology,
+                                characteristic: effect_values.cognitive_effect.characteristic
+                            });
+                            if (lastCognitiveEffectValues.length >= 3) { lastCognitiveEffectValuesHandlers.pop(); }
+                        }
 
                         // unselect point and reset inner forms to prepare for next stimulation
-                        setSelectedPoint("");
-                        params_form.reset();
-                        task_form.reset();
-                        effect_form.reset();
+                        resetForNewPoint('');
                         return;
                     }
                 });
             }
         });
     }
-
 
     const getSelectedPointLocationFormInfo = () => {
         for (const electrode of form.values.electrodes) {
@@ -121,14 +132,24 @@ export default function StimulationsTab({ form }: TabProperties) {
     }
 
     const getSelectedPointEffect = () => {
-        return formatSelectedCognitiveEffect(effect_form.values.cognitive_effect);
+        const cognitive_effect = formatSelectedCognitiveEffect(effect_form.values.cognitive_effect);
+        const effect_form_values = effect_form.values;
+        const post_discharge = effect_form_values.post_discharge ? ` PD: ${effect_form_values.pd_duration}s / ${effect_form_values.pd_local}` : ''
+        return cognitive_effect + post_discharge;
     }
 
     return (
         <Box mt={"md"} h={"83vh"}>
+            <Modal opened={showConfirmNoSave} onClose={() => setShowConfirmNoSave(false)} title={t('pages.stimulationTool.stimulation.alert_point_changed.title')}>
+                <Group position="apart">
+                    <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmNoSave(false)}>{t('pages.stimulationTool.stimulation.alert_point_changed.cancel_label')}</Button>
+                    <Button leftIcon={<IconTrash color="white" />} variant="filled" color="red" onClick={() => { setShowConfirmNoSave(false); resetForNewPoint('') }}>{t('pages.stimulationTool.stimulation.alert_point_changed.confirm_label')}</Button>
+                </Group>
+            </Modal>
+
             <Grid h={"100%"} gutter={"xs"}>
                 <Grid.Col span={8} h={"30%"}>
-                    <Box h={"100%"} p={0} bg={"gray"}>
+                    <Box h={"100%"} p={0} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
                         <ContactSelection
                             form_values={form.values}
                             selectedContact={selectedPoint}
@@ -137,25 +158,41 @@ export default function StimulationsTab({ form }: TabProperties) {
                     </Box>
                 </Grid.Col>
                 <Grid.Col span={4} h={"30%"}>
-                    <Box h={"100%"} p={0} bg={"gray"}>
+                    <Box h={"100%"} p={0} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
                         <StimulationParametersSelection form={params_form} />
                     </Box>
                 </Grid.Col>
                 <Grid.Col span={8} h={"15%"}>
-                    <Box h={"100%"} p={0} bg={"gray"} sx={{ "alignItems": "center", "display": "flex", "justifyContent": "center" }}>
+                    <Box h={"100%"} p={0} sx={{ alignItems: "center", display: "flex", justifyContent: "center", borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
                         {selectedPoint !== "" &&
                             <Group position="center" align="center">
                                 <Badge size="lg" variant="filled">{selectedPoint}</Badge>
+                                <Divider orientation='vertical' color='white' />
                                 <Title order={4}>{getSelectedPointLocation()}</Title>
+                                <Divider orientation='vertical' color='white' />
                                 <Title order={4}>{getSelectedPointEffect()}</Title>
-                                <Title order={4}>{"TODO - Post-discharge?"}</Title>
-                                <Button onClick={handleSubmit}>{t('pages.stimulationTool.stimulation.saveButtonLabel')}</Button>
+                                <Divider orientation='vertical' color='white' />
+                                {stimulationTime === '' &&
+                                    <Button onClick={() => setStimulationTime(new Date().toISOString())}>
+                                        {t('pages.stimulationTool.stimulation.set_time_label')}
+                                    </Button>
+                                }
+                                {stimulationTime !== '' &&
+                                    <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
+                                }
+                                <Divider orientation='vertical' color='white' />
+                                <Button
+                                    onClick={handleSubmit}
+                                    disabled={stimulationTime === ""}
+                                >
+                                    {t('pages.stimulationTool.stimulation.saveButtonLabel')}
+                                </Button>
                             </Group>
                         }
                     </Box>
                 </Grid.Col>
                 <Grid.Col span={4} h={"15%"}>
-                    <Box h={"100%"} p={"xs"} bg={"gray"}>
+                    <Box h={"100%"} p={"xs"} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
                         <Group position="center" align="center" noWrap h={"100%"} w={"100%"}>
                             <NumberInput w={"25%"} size="xl"
                                 label={t('pages.stimulationTool.stimulation.amplitude_label')}
@@ -194,13 +231,17 @@ export default function StimulationsTab({ form }: TabProperties) {
                     </Box>
                 </Grid.Col>
                 <Grid.Col span={8} h={"55%"}>
-                    <Box h={"100%"} p={0} bg={"gray"}>
-                        <StimulationEffectSelection form={effect_form} cognitive_effect_last_values={lastCognitiveEffectValues} />
+                    <Box h={"100%"} p={0} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
+                        {selectedPoint !== '' &&
+                            <StimulationEffectSelection form={effect_form} cognitive_effect_last_values={lastCognitiveEffectValues} />
+                        }
                     </Box>
                 </Grid.Col>
                 <Grid.Col span={4} h={"55%"}>
-                    <Box h={"100%"} p={0} bg={"gray"}>
-                        <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
+                    <Box h={"100%"} p={0} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
+                        {selectedPoint !== '' &&
+                            <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
+                        }
                     </Box>
                 </Grid.Col>
             </Grid>

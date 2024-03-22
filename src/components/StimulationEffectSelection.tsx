@@ -1,13 +1,13 @@
-import { Box, Button, Checkbox, Group, Stack, Table, Title } from "@mantine/core";
+import { Box, Button, Checkbox, Group, NumberInput, Radio, Stack, Switch, Table, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import { StimulationEffectsValues, StimulationCognitiveEffectFormValues } from "../models/stimulationForm";
 import ColumnButtonSelect from "./ColumnButtonSelect";
+import { TFunction } from "i18next";
 
 export default function StimulationEffectSelection({ form, cognitive_effect_last_values }: StimulationEffectSelectionProps) {
     const { t } = useTranslation();
 
-    // TODO: EEG section
     // TODO: preset
 
     const handleCognitiveEffectValueChange = (level: 'category' | 'semiology' | 'characteristic', newValue: string) => {
@@ -71,7 +71,7 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
                 <Stack w={"25%"}>
                     <Title order={5}>{t('pages.stimulationTool.stimulation.effect.eeg')}</Title>
                     <Box>
-                        ...eeg
+                        <EEGSection form={form} t={t} />
                     </Box>
                 </Stack>
             </Group>
@@ -150,6 +150,63 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: Cognitive
 interface CognitiveEffectTableProps {
     cognitive_values: StimulationCognitiveEffectFormValues;
     handleValueChange: (level: 'category' | 'semiology' | 'characteristic', newValue: string) => void
+}
+
+const EEGSection = ({ form, t }: EEGSectionProps) => {
+    const post_discharge_local_options = [
+        { label: t('pages.stimulationTool.stimulation.effect.eeg_section.localisation_options.local'), value: 'local' },
+        { label: t('pages.stimulationTool.stimulation.effect.eeg_section.localisation_options.regional'), value: 'regional' },
+        { label: t('pages.stimulationTool.stimulation.effect.eeg_section.localisation_options.wide'), value: 'wide' }
+    ];
+
+    const post_discharge_type = [
+        { label: "DATA1", value: "data1" },
+        { label: "DATA2", value: "data2" },
+        { label: "DATA3", value: "data3" }
+    ]
+
+    return (
+        <Stack>
+            <Switch
+                label={t('pages.stimulationTool.stimulation.effect.eeg_section.post_discharge_label')}
+                checked={form.values.post_discharge}
+                {...form.getInputProps('post_discharge')} />
+            {form.values.post_discharge &&
+                <Box>
+                    <NumberInput
+                        label={t('pages.stimulationTool.stimulation.effect.eeg_section.duration_label')}
+                        formatter={(value)=>`${value} sec`}
+                        {...form.getInputProps('pd_duration')}
+                    />
+                    <Radio.Group
+                        label={t('pages.stimulationTool.stimulation.effect.eeg_section.localisation_label')}
+                        {...form.getInputProps('pd_local')}
+                    >
+                        {post_discharge_local_options.map((v, i) =>
+                            <Radio value={v.value} label={v.label} key={'pd_local_option_' + i} />
+                        )}
+                    </Radio.Group>
+                    <Radio.Group
+                        label={t('pages.stimulationTool.stimulation.effect.eeg_section.type_label')}
+                        {...form.getInputProps('pd_type')}
+                    >
+                        {post_discharge_type.map((v, i) =>
+                            <Radio value={v.value} label={v.label} key={'pd_type_option_' + i}/>
+                        )}
+                    </Radio.Group>
+                </Box>
+            }
+            <Switch
+                label={t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_label')}
+                checked={form.values.crisis}
+                {...form.getInputProps('crisis')} />
+        </Stack>
+    );
+}
+
+interface EEGSectionProps {
+    form: UseFormReturnType<StimulationEffectsValues>;
+    t: TFunction;
 }
 
 export const formatSelectedCognitiveEffect = (values: StimulationCognitiveEffectFormValues): string => {

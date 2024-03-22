@@ -8,6 +8,7 @@ import StimulationsTab from "./tabs/t2_Stimulations";
 import SummaryTab from "./tabs/t3_Summary";
 import { IconFolderOpen, IconDownload } from "@tabler/icons-react";
 
+// TODO: empêcher de quitter la page si pas enregistré depuis dernières modifs
 export default function StimulationToolPage() {
     const { t } = useTranslation();
     const openInputFileRef = useRef<HTMLInputElement | null>(null);

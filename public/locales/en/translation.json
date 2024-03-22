@@ -53,6 +53,7 @@
                 "length_path_label": "LP",
                 "task_title": "Task",
                 "task_last_used_title": "Last used",
+                "set_time_label": "Set Time",
                 "saveButtonLabel": "Save",
                 "effect": {
                     "cognitive_effect_label": "Cognitive Effect",
@@ -65,7 +66,24 @@
                         "atypical_incomplete_crisis": "Atypical Crisis (Incomplete)",
                         "atypical_crisis": "Atypical Crisis",
                         "other": "Other"
+                    },
+                    "eeg_section": {
+                        "post_discharge_label": "Post Discharge",
+                        "duration_label": "Duration",
+                        "localisation_label": "Localisation",
+                        "localisation_options": {
+                            "local": "Local",
+                            "regional": "Regional",
+                            "wide": "Wide"
+                        },
+                        "type_label": "Type",
+                        "crisis_label": "Crisis"
                     }
+                },
+                "alert_point_changed": {
+                    "title": "Change point without saving?",
+                    "confirm_label": "Do not save",
+                    "cancel_label": "Cancel"
                 }
             },
             "summary": {

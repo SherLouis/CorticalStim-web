@@ -19,6 +19,7 @@ export default interface StimulationFormValues {
                 done: boolean;
             };
             stimulations: {
+                time: string,
                 parameters: StimulationParametersFormValues;
                 task: StimulationTaskFormValues;
                 effect: StimulationEffectsValues;
