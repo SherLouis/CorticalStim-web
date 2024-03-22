@@ -51,7 +51,40 @@
                 "frequency_label": "F",
                 "duration_label": "D",
                 "length_path_label": "LP",
-                "task_title": "Tâche"
+                "task_title": "Tâche",
+                "task_last_used_title": "Derniers utilisés",
+                "set_time_label": "Enregister Heure",
+                "saveButtonLabel": "Enregistrer",
+                "effect": {
+                    "cognitive_effect_label": "Effet Cognitif",
+                    "epi_manifestation": "Manif. epi.",
+                    "eeg": "EEG",
+                    "last_used": "Derniers utilisés",
+                    "epi_manifestation_options_labels": {
+                        "typical_aura": "Aura Typique",
+                        "typical_crisis": "Crise Typique",
+                        "atypical_incomplete_crisis": "Crise Atypique (Incomplète)",
+                        "atypical_crisis": "Crise Atypique",
+                        "other": "Autre"
+                    },
+                    "eeg_section": {
+                        "post_discharge_label": "Post Décharge",
+                        "duration_label": "Durée",
+                        "localisation_label": "Localisation",
+                        "localisation_options": {
+                            "local": "Locale",
+                            "regional": "Régionale",
+                            "wide": "Vaste"
+                        },
+                        "type_label": "Type",
+                        "crisis_label": "Crise"
+                    }
+                },
+                "alert_point_changed": {
+                    "title": "Changer de point sans enregistrer?",
+                    "confirm_label": "Ne pas enregistrer",
+                    "cancel_label": "Annuler"
+                }
             },
             "summary": {
                 "tab_title": "Résumé"
