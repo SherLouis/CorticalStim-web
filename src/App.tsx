@@ -6,6 +6,8 @@ import BasePage from './entry/BasePage';
 import { useTranslation } from 'react-i18next';
 import StimulationToolPage from './pages/StimulationTool/StimulationToolPage';
 
+// TODO: upgrade to mantine v7
+
 function App() {
     const [colorScheme, setColorScheme] = useState<ColorScheme>('dark');
     const toggleColorScheme = (value?: ColorScheme) =>

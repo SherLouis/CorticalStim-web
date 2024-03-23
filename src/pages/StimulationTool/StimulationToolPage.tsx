@@ -5,9 +5,10 @@ import StimulationFormValues from "../../models/stimulationForm";
 import { useRef, useState } from "react";
 import ElectrodeSetupStep from "./tabs/t1_ImplantationSetup";
 import StimulationsTab from "./tabs/t2_Stimulations";
-import SummaryTab from "./tabs/t3_Summary";
+import SummaryTab, { SummaryFilters } from "./tabs/t3_Summary";
 import { IconFolderOpen, IconDownload } from "@tabler/icons-react";
 
+// TODO: banière pour dire si modifications non enregistrées
 // TODO: empêcher de quitter la page si pas enregistré depuis dernières modifs
 export default function StimulationToolPage() {
     const { t } = useTranslation();
@@ -38,6 +39,7 @@ export default function StimulationToolPage() {
     })
 
     const [activeTab, setActiveTab] = useState<string | null>('implantation');
+    const [summaryFilters, setSummaryFilters] = useState<SummaryFilters>({});
 
     const downloadFormValues = () => {
         var data = new Blob([JSON.stringify(form.values)], { type: 'application/json' });
@@ -68,6 +70,11 @@ export default function StimulationToolPage() {
         }
     };
 
+    const handleViewPointSummary = (pointId: string) => {
+        setSummaryFilters({pointIds: [pointId]});
+        setActiveTab('summary');
+    }
+
     return (
         <Box mx={"2vh"} h={"90vh"}>
             <Group>
@@ -87,8 +94,8 @@ export default function StimulationToolPage() {
                 </Tabs.List>
 
                 <Tabs.Panel value="implantation"><ElectrodeSetupStep form={form} /></Tabs.Panel>
-                <Tabs.Panel value="stimulation"><StimulationsTab form={form} /></Tabs.Panel>
-                <Tabs.Panel value="summary"><SummaryTab form={form} /></Tabs.Panel>
+                <Tabs.Panel value="stimulation"><StimulationsTab form={form} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
+                <Tabs.Panel value="summary"><SummaryTab form={form} filters={summaryFilters}/></Tabs.Panel>
             </Tabs>
         </Box>
     );

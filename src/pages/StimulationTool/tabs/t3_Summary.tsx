@@ -1,7 +1,21 @@
 import { TabProperties } from "./tab_properties";
 
-export default function SummaryTab({form}: TabProperties) {
+// TODO: table with results summary
+// TODO: be able to filter table
+// TODO: be able to export table to csv / excel
+
+export default function SummaryTab({form, filters}: SummaryTabProps) {
     return (<>
-        TODO
+        {filters?.pointIds}
     </>)
+}
+
+interface SummaryTabProps extends TabProperties {
+    filters? : SummaryFilters
+}
+
+export interface SummaryFilters {
+    electrodes?: string[],
+    pointIds? : string[],
+
 }

@@ -11,8 +11,9 @@ import StimulationEffectSelection, { formatSelectedCognitiveEffect } from "../..
 import { IconCircleX, IconTrash } from "@tabler/icons-react";
 
 // TODO: pouvoir ajouter plusieurs stimulations / afficher valeurs de stimulations enregistrées
+// On click, ouvrir popover avec infos sur le nombre de stimulations, bouton pour aller voir tableau filtré pour ce point et bouton pour ajouter une stimulation
 
-export default function StimulationsTab({ form }: TabProperties) {
+export default function StimulationsTab({ form, viewPointSummary }: StimulationTabProps) {
     const { t } = useTranslation();
 
     const [selectedPoint, setSelectedPoint] = useState<string>("");
@@ -28,7 +29,10 @@ export default function StimulationsTab({ form }: TabProperties) {
     const [lastCognitiveEffectValues, lastCognitiveEffectValuesHandlers] = useListState<StimulationCognitiveEffectFormValues>();
 
     const handleSelectedPointChanged = (newPointId: string) => {
-        if (stimulationTime === '') { resetForNewPoint(newPointId); }
+        if (stimulationTime === '') {
+            //resetForNewPoint(newPointId);
+            viewPointSummary(newPointId);
+        }
         else { setShowConfirmNoSave(true); }
     }
 
@@ -247,6 +251,10 @@ export default function StimulationsTab({ form }: TabProperties) {
             </Grid>
         </Box>
     )
+}
+
+interface StimulationTabProps extends TabProperties {
+    viewPointSummary: (pointId: string) => void
 }
 
 const ContactSelection = ({ form_values, selectedContact, selectedChanged }: ContactSelectionProps) => {
