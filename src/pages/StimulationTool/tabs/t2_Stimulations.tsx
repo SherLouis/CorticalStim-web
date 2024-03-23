@@ -22,7 +22,7 @@ export default function StimulationsTab({ form }: TabProperties) {
 
     const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 0, duration: 0, frequency: 0, lenght_path: 0 } });
     const task_form = useForm<StimulationTaskFormValues>({ initialValues: { category: "", subcategory: "", characteristic: "" } });
-    const effect_form = useForm<StimulationEffectsValues>({ initialValues: { cognitive_effect: { category: "", semiology: "", characteristic: "" }, epi_manifestation: [], post_discharge: true, pd_duration: 0, pd_local: "", pd_type: "", crisis: false } });
+    const effect_form = useForm<StimulationEffectsValues>({ initialValues: { cognitive_effect: { class: "", descriptor: "", details: "" }, epi_manifestation: [], post_discharge: true, pd_duration: 0, pd_local: "", pd_type: "", crisis: false } });
 
     const [lastTaskValues, lastTaskValuesHandlers] = useListState<{ category: string; subcategory: string; characteristic: string }>();
     const [lastCognitiveEffectValues, lastCognitiveEffectValuesHandlers] = useListState<StimulationCognitiveEffectFormValues>();
@@ -87,9 +87,9 @@ export default function StimulationsTab({ form }: TabProperties) {
                         // Save last used effect
                         if (lastCognitiveEffectValues.length === 0 || formatSelectedCognitiveEffect(lastCognitiveEffectValues[0]) !== formatSelectedCognitiveEffect(effect_values.cognitive_effect)) {
                             lastCognitiveEffectValuesHandlers.prepend({
-                                category: effect_values.cognitive_effect.category,
-                                semiology: effect_values.cognitive_effect.semiology,
-                                characteristic: effect_values.cognitive_effect.characteristic
+                                class: effect_values.cognitive_effect.class,
+                                descriptor: effect_values.cognitive_effect.descriptor,
+                                details: effect_values.cognitive_effect.details
                             });
                             if (lastCognitiveEffectValues.length >= 3) { lastCognitiveEffectValuesHandlers.pop(); }
                         }
@@ -139,7 +139,7 @@ export default function StimulationsTab({ form }: TabProperties) {
     }
 
     return (
-        <Box mt={"md"} h={"83vh"}>
+        <Box mt={"md"} h={"87vh"}>
             <Modal opened={showConfirmNoSave} onClose={() => setShowConfirmNoSave(false)} title={t('pages.stimulationTool.stimulation.alert_point_changed.title')}>
                 <Group position="apart">
                     <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmNoSave(false)}>{t('pages.stimulationTool.stimulation.alert_point_changed.cancel_label')}</Button>
@@ -148,7 +148,7 @@ export default function StimulationsTab({ form }: TabProperties) {
             </Modal>
 
             <Grid h={"100%"} gutter={"xs"}>
-                <Grid.Col span={8} h={"30%"}>
+                <Grid.Col span={8} h={"25%"}>
                     <Box h={"100%"} p={0} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
                         <ContactSelection
                             form_values={form.values}
@@ -157,7 +157,7 @@ export default function StimulationsTab({ form }: TabProperties) {
                         />
                     </Box>
                 </Grid.Col>
-                <Grid.Col span={4} h={"30%"}>
+                <Grid.Col span={4} h={"25%"}>
                     <Box h={"100%"} p={0} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
                         <StimulationParametersSelection form={params_form} />
                     </Box>
@@ -230,14 +230,14 @@ export default function StimulationsTab({ form }: TabProperties) {
                         </Group>
                     </Box>
                 </Grid.Col>
-                <Grid.Col span={8} h={"55%"}>
+                <Grid.Col span={8} h={"60%"}>
                     <Box h={"100%"} p={0} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
                         {selectedPoint !== '' &&
                             <StimulationEffectSelection form={effect_form} cognitive_effect_last_values={lastCognitiveEffectValues} />
                         }
                     </Box>
                 </Grid.Col>
-                <Grid.Col span={4} h={"55%"}>
+                <Grid.Col span={4} h={"60%"}>
                     <Box h={"100%"} p={0} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
                         {selectedPoint !== '' &&
                             <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />

@@ -10,19 +10,19 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
 
     // TODO: preset
 
-    const handleCognitiveEffectValueChange = (level: 'category' | 'semiology' | 'characteristic', newValue: string) => {
+    const handleCognitiveEffectValueChange = (level: 'class' | 'descriptor' | 'details', newValue: string) => {
         switch (level) {
-            case 'category':
-                form.setFieldValue('cognitive_effect.characteristic', "");
-                form.setFieldValue('cognitive_effect.semiology', "");
-                form.setFieldValue('cognitive_effect.category', newValue);
+            case 'class':
+                form.setFieldValue('cognitive_effect.details', "");
+                form.setFieldValue('cognitive_effect.descriptor', "");
+                form.setFieldValue('cognitive_effect.class', newValue);
                 break;
-            case 'semiology':
-                form.setFieldValue('cognitive_effect.characteristic', "");
-                form.setFieldValue('cognitive_effect.semiology', newValue);
+            case 'descriptor':
+                form.setFieldValue('cognitive_effect.details', "");
+                form.setFieldValue('cognitive_effect.descriptor', newValue);
                 break;
-            case 'characteristic':
-                form.setFieldValue('cognitive_effect.characteristic', newValue);
+            case 'details':
+                form.setFieldValue('cognitive_effect.details', newValue);
                 break;
         }
     }
@@ -38,11 +38,11 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
     }
 
     return (
-        <Box w={"100%"} mah={"100%"}>
-            <Group w={"100%"} h={"100%"} spacing={0} align='flex-start'>
-                <Stack w={"50%"}>
+        <Box w={"100%"}>
+            <Group w={"100%"} h={"100%"} spacing={'sm'} align='flex-start'>
+                <Stack sx={{flex:6}}>
                     <Title order={5}>{t('pages.stimulationTool.stimulation.effect.cognitive_effect_label')}</Title>
-                    <Box mih={"25%"}>
+                    <Box>
                         <Title order={5}>{t('pages.stimulationTool.stimulation.effect.last_used')}</Title>
                         <Button.Group orientation='vertical'>
                             {cognitive_effect_last_values.map((v, i) => (
@@ -54,11 +54,11 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
                             ))}
                         </Button.Group>
                     </Box>
-                    <Box>
+                    <Box px={'sm'}>
                         <CognitiveEffectTable cognitive_values={form.values.cognitive_effect} handleValueChange={handleCognitiveEffectValueChange} />
                     </Box>
                 </Stack>
-                <Stack w={"25%"}>
+                <Stack sx={{flex:3}}>
                     <Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>
                     <Box>
                         <Checkbox.Group {...form.getInputProps('epi_manifestation')}>
@@ -68,7 +68,7 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
                         </Checkbox.Group>
                     </Box>
                 </Stack>
-                <Stack w={"25%"}>
+                <Stack sx={{flex:3}}>
                     <Title order={5}>{t('pages.stimulationTool.stimulation.effect.eeg')}</Title>
                     <Box>
                         <EEGSection form={form} t={t} />
@@ -86,25 +86,98 @@ interface StimulationEffectSelectionProps {
 
 const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: CognitiveEffectTableProps) => {
     const effects = [
-        { level: "category", category: "Consciousness", semiology: "", characteristic: "" },
-        { level: "semiology", category: "Consciousness", semiology: "Awareness", characteristic: "" },
-        { level: "semiology", category: "Consciousness", semiology: "Responsiveness", characteristic: "" },
-        { level: "category", category: "Sensory", semiology: "", characteristic: "" },
-        { level: "semiology", category: "Sensory", semiology: "Somatosensory", characteristic: "" },
-        { level: "characteristic", category: "Sensory", semiology: "Somatosensory", characteristic: "Non painful" },
-        { level: "characteristic", category: "Sensory", semiology: "Somatosensory", characteristic: "Painful" }];
+        { level: "class", class: "Consciousness", descriptor: "", details: "" },
+        { level: "descriptor", class: "Consciousness", descriptor: "Imp Awareness", details: "" },
+        { level: "descriptor", class: "Consciousness", descriptor: "Imp Responsiveness", details: "" },
+        { level: "class", class: "Sensory", descriptor: "", details: "" },
+        { level: "descriptor", class: "Sensory", descriptor: "Auditory", details: "" },
+        { level: "descriptor", class: "Sensory", descriptor: "Visual", details: "" },
+        { level: "descriptor", class: "Sensory", descriptor: "Vestibular", details: "" },
+        { level: "descriptor", class: "Sensory", descriptor: "Gustatory", details: "" },
+        { level: "descriptor", class: "Sensory", descriptor: "Olfactory", details: "" },
+        { level: "descriptor", class: "Sensory", descriptor: "Somatosensory", details: "" },
+        { level: "details", class: "Sensory", descriptor: "Somatosensory", details: "Painful" },
+        { level: "details", class: "Sensory", descriptor: "Somatosensory", details: "Non Painful" },
+        { level: "descriptor", class: "Sensory", descriptor: "Body-percetion", details: "" },
+        { level: "class", class: "Affective", descriptor: "", details: "" },
+        { level: "descriptor", class: "Affective", descriptor: "Anger", details: "" },
+        { level: "descriptor", class: "Affective", descriptor: "Anxiety", details: "" },
+        { level: "descriptor", class: "Affective", descriptor: "Ecstatic", details: "" },
+        { level: "descriptor", class: "Affective", descriptor: "Fear", details: "" },
+        { level: "descriptor", class: "Affective", descriptor: "Guilt", details: "" },
+        { level: "descriptor", class: "Affective", descriptor: "Mirth", details: "" },
+        { level: "descriptor", class: "Affective", descriptor: "Mystic", details: "" },
+        { level: "descriptor", class: "Affective", descriptor: "Sadness", details: "" },
+        { level: "descriptor", class: "Affective", descriptor: "Sexual", details: "" },
+        { level: "class", class: "Cognitive", descriptor: "", details: "" },
+        { level: "descriptor", class: "Cognitive", descriptor: "Aphasia", details: "" },
+        { level: "details", class: "Cognitive", descriptor: "Aphasia", details: "Anomia" },
+        { level: "details", class: "Cognitive", descriptor: "Aphasia", details: "Spech arrest" },
+        { level: "details", class: "Cognitive", descriptor: "Aphasia", details: "Receptive" },
+        { level: "descriptor", class: "Cognitive", descriptor: "Alexia", details: "" },
+        { level: "descriptor", class: "Cognitive", descriptor: "Dysmnesia", details: "" },
+        { level: "details", class: "Cognitive", descriptor: "Dysmnesia", details: "Dv/Dv" },
+        { level: "details", class: "Cognitive", descriptor: "Dysmnesia", details: "Reminiscence" },
+        { level: "descriptor", class: "Cognitive", descriptor: "Forced thinking", details: "" },
+        { level: "descriptor", class: "Cognitive", descriptor: "Depersonalisation", details: "" },
+        { level: "descriptor", class: "Cognitive", descriptor: "Prosopagnosia", details: "" },
+        { level: "class", class: "Motor Elementary", descriptor: "", details: "" },
+        { level: "descriptor", class: "Motor Elementary", descriptor: "Tonic", details: "" },
+        { level: "descriptor", class: "Motor Elementary", descriptor: "Clonic/Myoclonic", details: "" },
+        { level: "descriptor", class: "Motor Elementary", descriptor: "Versive", details: "" },
+        { level: "descriptor", class: "Motor Elementary", descriptor: "Gyratory", details: "" },
+        { level: "descriptor", class: "Motor Elementary", descriptor: "Spasm", details: "" },
+        { level: "descriptor", class: "Motor Elementary", descriptor: "Nystagmus", details: "" },
+        { level: "descriptor", class: "Motor Elementary", descriptor: "Dystonic", details: "" },
+        { level: "descriptor", class: "Motor Elementary", descriptor: "Atonic", details: "" },
+        { level: "descriptor", class: "Motor Elementary", descriptor: "Astatic", details: "" },
+        { level: "descriptor", class: "Motor Elementary", descriptor: "Akinetic", details: "" },
+        { level: "class", class: "Motor Complex", descriptor: "", details: "" },
+        { level: "descriptor", class: "Motor Complex", descriptor: "Automatisms", details: "" },
+        { level: "details", class: "Motor Complex", descriptor: "Automatisms", details: "Gestual" },
+        { level: "details", class: "Motor Complex", descriptor: "Automatisms", details: "Grasping" },
+        { level: "details", class: "Motor Complex", descriptor: "Automatisms", details: "Mimic" },
+        { level: "details", class: "Motor Complex", descriptor: "Automatisms", details: "Oro-Alimentary" },
+        { level: "details", class: "Motor Complex", descriptor: "Automatisms", details: "Verbal" },
+        { level: "details", class: "Motor Complex", descriptor: "Automatisms", details: "Vocal" },
+        { level: "class", class: "Autonomic", descriptor: "", details: "" },
+        { level: "descriptor", class: "Autonomic", descriptor: "Cardio Vascular", details: "" },
+        { level: "details", class: "Autonomic", descriptor: "Cardio Vascular", details: "Bradycardia" },
+        { level: "details", class: "Autonomic", descriptor: "Cardio Vascular", details: "Tachycardia" },
+        { level: "details", class: "Autonomic", descriptor: "Cardio Vascular", details: "Ictal Asystole" },
+        { level: "descriptor", class: "Autonomic", descriptor: "Cutaneous", details: "" },
+        { level: "details", class: "Autonomic", descriptor: "Cutaneous", details: "Flushing" },
+        { level: "details", class: "Autonomic", descriptor: "Cutaneous", details: "Pallor" },
+        { level: "details", class: "Autonomic", descriptor: "Cutaneous", details: "Piloerection" },
+        { level: "details", class: "Autonomic", descriptor: "Cutaneous", details: "Sweating" },
+        { level: "descriptor", class: "Autonomic", descriptor: "GastroIntestinal", details: "" },
+        { level: "details", class: "Autonomic", descriptor: "GastroIntestinal", details: "Epigastric" },
+        { level: "details", class: "Autonomic", descriptor: "GastroIntestinal", details: "Flatulence" },
+        { level: "details", class: "Autonomic", descriptor: "GastroIntestinal", details: "Hypersalivation" },
+        { level: "details", class: "Autonomic", descriptor: "GastroIntestinal", details: "Spitting" },
+        { level: "details", class: "Autonomic", descriptor: "GastroIntestinal", details: "Vomiting" },
+        { level: "descriptor", class: "Autonomic", descriptor: "Pupillary", details: "" },
+        { level: "details", class: "Autonomic", descriptor: "Pupillary", details: "Miosis" },
+        { level: "details", class: "Autonomic", descriptor: "Pupillary", details: "Mydriasis" },
+        { level: "descriptor", class: "Autonomic", descriptor: "Respiratory", details: "" },
+        { level: "details", class: "Autonomic", descriptor: "Respiratory", details: "Apnea" },
+        { level: "details", class: "Autonomic", descriptor: "Respiratory", details: "Chocking" },
+        { level: "details", class: "Autonomic", descriptor: "Respiratory", details: "Hyerventilation" },
+        { level: "details", class: "Autonomic", descriptor: "Respiratory", details: "Hypoventilation" },
+        { level: "descriptor", class: "Autonomic", descriptor: "Urinary", details: "" }
+    ];
 
-    const getEffectOptions = (level: 'category' | 'semiology' | 'characteristic') => {
+    const getEffectOptions = (level: 'class' | 'descriptor' | 'details') => {
         switch (level) {
-            case 'category':
-                return effects.filter((effect) => effect.level === level).map((effect) => effect.category);
-            case 'semiology':
+            case 'class':
+                return effects.filter((effect) => effect.level === level).map((effect) => effect.class);
+            case 'descriptor':
                 return effects.filter((effect) => effect.level === level
-                    && effect.category === cognitive_values.category).map((effect) => effect.semiology);
-            case 'characteristic':
+                    && effect.class === cognitive_values.class).map((effect) => effect.descriptor);
+            case 'details':
                 return effects.filter((effect) => effect.level === level
-                    && effect.category === cognitive_values.category
-                    && effect.semiology === cognitive_values.semiology).map((effect) => effect.characteristic);
+                    && effect.class === cognitive_values.class
+                    && effect.descriptor === cognitive_values.descriptor).map((effect) => effect.details);
             default:
                 return [];
         }
@@ -114,32 +187,32 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: Cognitive
         <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
             <thead>
                 <tr>
-                    <th>Category</th>
-                    <th>Semiology</th>
-                    <th>Characteristic</th>
+                    <th>Class</th>
+                    <th>Descriptor</th>
+                    <th>Details</th>
                 </tr>
             </thead>
             <tbody>
                 <tr key={"options"}>
-                    <td>
+                    <td style={{verticalAlign: 'top'}}>
                         <ColumnButtonSelect
-                            data={getEffectOptions('category')}
-                            currentValue={cognitive_values.category}
-                            onChange={(v) => handleValueChange('category', v)}
+                            data={getEffectOptions('class')}
+                            currentValue={cognitive_values.class}
+                            onChange={(v) => handleValueChange('class', v)}
                         />
                     </td>
-                    <td>
+                    <td style={{verticalAlign: 'top'}}>
                         <ColumnButtonSelect
-                            data={getEffectOptions('semiology')}
-                            currentValue={cognitive_values.semiology}
-                            onChange={(v) => handleValueChange('semiology', v)}
+                            data={getEffectOptions('descriptor')}
+                            currentValue={cognitive_values.descriptor}
+                            onChange={(v) => handleValueChange('descriptor', v)}
                         />
                     </td>
-                    <td>
+                    <td style={{verticalAlign: 'top'}}>
                         <ColumnButtonSelect
-                            data={getEffectOptions('characteristic')}
-                            currentValue={cognitive_values.characteristic}
-                            onChange={(v) => handleValueChange('characteristic', v)}
+                            data={getEffectOptions('details')}
+                            currentValue={cognitive_values.details}
+                            onChange={(v) => handleValueChange('details', v)}
                         />
                     </td>
                 </tr>
@@ -149,7 +222,7 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: Cognitive
 
 interface CognitiveEffectTableProps {
     cognitive_values: StimulationCognitiveEffectFormValues;
-    handleValueChange: (level: 'category' | 'semiology' | 'characteristic', newValue: string) => void
+    handleValueChange: (level: 'class' | 'descriptor' | 'details', newValue: string) => void
 }
 
 const EEGSection = ({ form, t }: EEGSectionProps) => {
@@ -175,7 +248,7 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
                 <Box>
                     <NumberInput
                         label={t('pages.stimulationTool.stimulation.effect.eeg_section.duration_label')}
-                        formatter={(value)=>`${value} sec`}
+                        formatter={(value) => `${value} sec`}
                         {...form.getInputProps('pd_duration')}
                     />
                     <Radio.Group
@@ -191,7 +264,7 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
                         {...form.getInputProps('pd_type')}
                     >
                         {post_discharge_type.map((v, i) =>
-                            <Radio value={v.value} label={v.label} key={'pd_type_option_' + i}/>
+                            <Radio value={v.value} label={v.label} key={'pd_type_option_' + i} />
                         )}
                     </Radio.Group>
                 </Box>
@@ -210,7 +283,7 @@ interface EEGSectionProps {
 }
 
 export const formatSelectedCognitiveEffect = (values: StimulationCognitiveEffectFormValues): string => {
-    return values.category !== "" ? (values.category +
-        (values.semiology !== "" ? ('/' + values.semiology
-            + (values.characteristic !== "" ? ('/' + values.characteristic) : '')) : '')) : "-"
+    return values.class !== "" ? (values.class +
+        (values.descriptor !== "" ? ('/' + values.descriptor
+            + (values.details !== "" ? ('/' + values.details) : '')) : '')) : "-"
 }

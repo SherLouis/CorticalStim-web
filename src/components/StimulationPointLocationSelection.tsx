@@ -94,8 +94,7 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
             { value: "S_temporal_transverse", label: "74-S_temporal_transverse" }
         ];
     }
-
-    // TODO: group VEP by blocks by region
+    
     // TODO: group Destrieux by blocks by region
     return (
         <Box w={"100%"}>

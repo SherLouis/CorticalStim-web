@@ -52,9 +52,9 @@ export interface StimulationEffectsValues {
 };
 
 export interface StimulationCognitiveEffectFormValues {
-    category: string;
-    semiology: string;
-    characteristic: string;
+    class: string;
+    descriptor: string;
+    details: string;
 }
 
 export const getStimPointLabel = (electrodeLabel: string, stim_point_index: number) => {
