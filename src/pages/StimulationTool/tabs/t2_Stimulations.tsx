@@ -30,8 +30,8 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
     const handleSelectedPointChanged = (newPointId: string) => {
         if (stimulationTime === '') {
-            //resetForNewPoint(newPointId);
-            viewPointSummary(newPointId);
+            resetForNewPoint(newPointId);
+            //viewPointSummary(newPointId);
         }
         else { setShowConfirmNoSave(true); }
     }
@@ -69,7 +69,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         form.insertListItem(`electrodes.${electrode_i}.stim_points.${stim_point.index}.stimulations`,
                             {
                                 time: stimulationTime,
-                                paremeters: {
+                                parameters: {
                                     amplitude: params_values.amplitude,
                                     duration: params_values.duration,
                                     frequency: params_values.frequency,
@@ -142,6 +142,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         return cognitive_effect + post_discharge;
     }
 
+    console.log(form.values);
     return (
         <Box mt={"md"} h={"87vh"}>
             <Modal opened={showConfirmNoSave} onClose={() => setShowConfirmNoSave(false)} title={t('pages.stimulationTool.stimulation.alert_point_changed.title')}>

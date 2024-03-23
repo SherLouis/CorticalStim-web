@@ -11,13 +11,7 @@ export default interface StimulationFormValues {
         n_contacts: number;
         stim_points: {
             index: number;
-            location: {
-                type: 'white' | 'vep' | 'destrieux' | 'mni';
-                vep: string;
-                destrieux: string;
-                mni: { x: number; y: number; z: number };
-                done: boolean;
-            };
+            location: StimulationLocationFormValues;
             stimulations: {
                 time: string,
                 parameters: StimulationParametersFormValues;
@@ -27,6 +21,14 @@ export default interface StimulationFormValues {
         }[]
     }[]
 };
+
+export interface StimulationLocationFormValues {
+    type: 'white' | 'vep' | 'destrieux' | 'mni';
+    vep: string;
+    destrieux: string;
+    mni: { x: number; y: number; z: number };
+    done: boolean;
+}
 
 export interface StimulationParametersFormValues {
     amplitude: number;

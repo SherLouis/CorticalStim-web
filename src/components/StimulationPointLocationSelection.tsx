@@ -94,7 +94,7 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
             { value: "S_temporal_transverse", label: "74-S_temporal_transverse" }
         ];
     }
-    
+
     // TODO: group Destrieux by blocks by region
     return (
         <Box w={"100%"}>
@@ -273,6 +273,7 @@ const VEPSelection = ({ form }: VEPSelectionProps) => {
                     <Button.Group orientation='vertical'>
                         {getFrontalGyriVepOptions().map(option =>
                             <Button compact
+                                key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
@@ -286,6 +287,7 @@ const VEPSelection = ({ form }: VEPSelectionProps) => {
                     <Button.Group orientation='vertical'>
                         {getFrontalSulciVepOptions().map(option =>
                             <Button compact
+                                key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
@@ -297,6 +299,7 @@ const VEPSelection = ({ form }: VEPSelectionProps) => {
                     <Button.Group orientation='vertical'>
                         {getOccipitalGyriVepOptions().map(option =>
                             <Button compact
+                                key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
@@ -308,6 +311,7 @@ const VEPSelection = ({ form }: VEPSelectionProps) => {
                     <Button.Group orientation='vertical'>
                         {getOccipitalSulciVepOptions().map(option =>
                             <Button compact
+                                key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
@@ -321,6 +325,7 @@ const VEPSelection = ({ form }: VEPSelectionProps) => {
                     <Button.Group orientation='vertical'>
                         {getTemporalGyriVepOptions().map(option =>
                             <Button compact
+                                key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
@@ -332,6 +337,7 @@ const VEPSelection = ({ form }: VEPSelectionProps) => {
                     <Button.Group orientation='vertical'>
                         {getTemporalSulciVepOptions().map(option =>
                             <Button compact
+                                key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
@@ -345,6 +351,7 @@ const VEPSelection = ({ form }: VEPSelectionProps) => {
                     <Button.Group orientation='vertical'>
                         {getParietalGyriVepOptions().map(option =>
                             <Button compact
+                                key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
@@ -356,6 +363,7 @@ const VEPSelection = ({ form }: VEPSelectionProps) => {
                     <Button.Group orientation='vertical'>
                         {getParietalSulciVepOptions().map(option =>
                             <Button compact
+                                key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
@@ -367,6 +375,7 @@ const VEPSelection = ({ form }: VEPSelectionProps) => {
                     <Button.Group orientation='vertical'>
                         {getInsulaVepOptions().map(option =>
                             <Button compact
+                                key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
