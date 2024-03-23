@@ -1,4 +1,4 @@
-import { Box, Group, Input, NumberInput, SegmentedControl, Select, Stack, Title } from "@mantine/core";
+import { Box, Button, Group, Input, NumberInput, ScrollArea, SegmentedControl, Select, SimpleGrid, Stack, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 
@@ -14,83 +14,6 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
             { label: "Destrieux", value: "destrieux" },
             { label: "MNI", value: "mni" }
         ]
-    }
-
-    const getRoiVepOptions = (): { value: string; label: string; }[] => {
-        return [
-            { value: "Pole_F_G", label: "1-Pole_F_G" },
-            { value: "Orbital_Cortex_F_G", label: "2-Orbital_Cortex_F_G" },
-            { value: "Rectus_F_G", label: "3-Rectus_F_G" },
-            { value: "Inferior_Orbitalis_F_G", label: "4-Inferior_Orbitalis_F_G" },
-            { value: "Inferior_Triangularis_F_G", label: "5-Inferior_Triangularis_F_G" },
-            { value: "Inferior_Opercularis_F_G", label: "6-Inferior_Opercularis_F_G" },
-            { value: "Inferior_F_S", label: "7-Inferior_F_S" },
-            { value: "Middle_Rostral_F_G", label: "8-Middle_Rostral_F_G" },
-            { value: "Middle_Caudal_F_G", label: "9-Middle_Caudal_F_G" },
-            { value: "Middle_F_S", label: "10-Middle_F_S" },
-            { value: "Sup_Rostral_F_S", label: "11-Sup_Rostral_F_S" },
-            { value: "Sup_Caudal_F_S", label: "12-Sup_Caudal_F_S" },
-            { value: "Sup_Mesial_Pre_F_G", label: "13-Sup_Mesial_Pre_F_G" },
-            { value: "Sup_Mesial_PreSMA_F_G", label: "14-Sup_Mesial_PreSMA_F_G" },
-            { value: "Sup_Mesial_SMA_F_G", label: "15-Sup_Mesial_SMA_F_G" },
-            { value: "Sup_Lateral_Pre_F_G", label: "16-Sup_Lateral_Pre_F_G" },
-            { value: "Sup_Lateral_Premotor_F_G", label: "17-Sup_Lateral_Premotor_F_G" },
-            { value: "Subcallosal_F_G", label: "18-Subcallosal_F_G" },
-            { value: "Precentral_Inferior_F_S", label: "19-Precentral_Inferior_F_S" },
-            { value: "Precentral_Superior_F_S", label: "20-Precentral_Superior_F_S" },
-            { value: "Precentral_head_face", label: "21-Precentral_head_face _F_G" },
-            { value: "Precentral_upper_limb_F_G", label: "22-Precentral_upper_limb_F_G" },
-            { value: "Central_head_face_F_S", label: "23-Central_head_face_F_S" },
-            { value: "Central_upper_limb_F_S", label: "24-Central_upper_limb_F_S" },
-            { value: "Paracentral_F_G", label: "25-Paracentral_F_G" },
-            { value: "Central_Operculum_F_G", label: "26-Central_Operculum_F_G" },
-            { value: "Parietal_Operculum_P_G", label: "27-Parietal_Operculum_P_G" },
-            { value: "Anterior_Cingulate_F_G", label: "28-Anterior_Cingulate_F_G" },
-            { value: "Middle_Cingulate_Ant_F_G", label: "29-Middle_Cingulate_Ant_F_G" },
-            { value: "Middle_Cingulate_Post_F_G", label: "30-Middle_Cingulate_Post_F_G" },
-            { value: "Posterior_Cingulate_Dorsal_P_G", label: "31-Posterior_Cingulate_Dorsal_P_G" },
-            { value: "Posterior_Cingulate_RetroSpl_P_G", label: "32-Posterior_Cingulate_RetroSpl_P_G" },
-            { value: "Insula-gyri-brevi", label: "33-Insula-gyri-brevi" },
-            { value: "Insula-gyri-longi", label: "34-Insula-gyri-longi" },
-            { value: "Pole_T_G", label: "35-Pole_T_G" },
-            { value: "Superior_Pl_Polare_T_G", label: "36-Superior_Pl_Polare_T_G" },
-            { value: "Superior_Heschl_T_G", label: "37-Superior_Heschl_T_G" },
-            { value: "Superior_Pl_Temporale_T_G", label: "38-Superior_Pl_Temporale_T_G" },
-            { value: "Superior_Lateral_Ant_T_G", label: "39-Superior_Lateral_Ant_T_G" },
-            { value: "Superior_Lateral_Post_T_G", label: "40-Superior_Lateral_Post_T_G" },
-            { value: "Superior_Ant_T_S", label: "41-Superior_Ant_T_S" },
-            { value: "Superior_Post_T_S", label: "42-Superior_Post_T_S" },
-            { value: "Inferior_Ant_T_S", label: "43-Inferior_Ant_T_S" },
-            { value: "Inferior_Post_T_S", label: "44-Inferior_Post_T_S" },
-            { value: "Middle_Ant_T_G", label: "45-Middle_Ant_T_G" },
-            { value: "Middle_Post_T_G", label: "46-Middle_Post_T_G" },
-            { value: "Inferior_Ant_T_G", label: "47-Inferior_Ant_T_G" },
-            { value: "Inferior_Post_T_G", label: "48-Inferior_Post_T_G" },
-            { value: "Fusiform_T_G", label: "49-Fusiform_T_G" },
-            { value: "Occipito_T_S", label: "50-Occipito_T_S" },
-            { value: "Coleral_T_S", label: "51-Coleral_T_S" },
-            { value: "Lingual_O_S", label: "52-Lingual_O_S" },
-            { value: "Parahippocampal_T_G", label: "53-Parahippocampal_T_G" },
-            { value: "Rhinal_T_G", label: "54-Rhinal_T_G" },
-            { value: "Postcentral_P_G", label: "55-Postcentral_P_G" },
-            { value: "Postcentral_P_S", label: "56-Postcentral_P_S" },
-            { value: "Superior_P_G", label: "57-Superior_P_G" },
-            { value: "Supramarginal_Ant_P_G", label: "58-Supramarginal_Ant_P_G" },
-            { value: "Supramarginal_Post_P_G", label: "59-Supramarginal_Post_P_G" },
-            { value: "Angular_P_G", label: "60-Angular_P_G" },
-            { value: "Intraparietal_P_S", label: "61-Intraparietal_P_S" },
-            { value: "Precuneus_P_G", label: "62-Precuneus_P_G" },
-            { value: "Marginal_Cingulate_P_S", label: "63-Marginal_Cingulate_P_S" },
-            { value: "Parieto_O_S", label: "64-Parieto_O_S" },
-            { value: "Anterior_O_S", label: "65-Anterior_O_S" },
-            { value: "Inferior_O_G", label: "66-Inferior_O_G" },
-            { value: "Middle_O_G", label: "67-Middle_O_G" },
-            { value: "Superior_O_G", label: "68-Superior_O_G" },
-            { value: "Pole_O_G", label: "69-Pole_O_G" },
-            { value: "Lingual_O_G", label: "70-Lingual_O_G" },
-            { value: "Calcarine_O_S", label: "71-Calcarine_O_S" },
-            { value: "Cuneus_O_G", label: "72-Cuneus_O_G" },
-        ];
     }
 
     const getRoiDestrieuxOptions = (): { value: string; label: string; }[] => {
@@ -173,9 +96,10 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
     }
 
     // TODO: group VEP by blocks by region
+    // TODO: group Destrieux by blocks by region
     return (
         <Box w={"100%"}>
-            <Stack>
+            <Stack h={"100%"}>
                 <Input.Wrapper
                     error={form.getInputProps('type').error}
                 >
@@ -186,54 +110,276 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
                         {...form.getInputProps('type')}
                     />
                 </Input.Wrapper>
-                {form.getInputProps('type').value === "white" &&
-                    <Title order={4}>{t('pages.stimulationTool.implantation.thisIsWhiteMatter')}</Title>
-                }
-                {form.getInputProps('type').value === "vep" &&
-                    <Select
-                        label="VEP"
-                        data={getRoiVepOptions()}
-                        {...form.getInputProps('vep')}
-                        clearable
-                        searchable
-                        dropdownPosition="bottom"
-                    />
-                }
-                {form.getInputProps('type').value === "destrieux" &&
-                    <Select
-                        label="Destrieux"
-                        data={getRoiDestrieuxOptions()}
-                        {...form.getInputProps('destrieux')}
-                        clearable
-                        searchable
-                        dropdownPosition="bottom"
-                    />
-                }
-                {form.getInputProps('type').value === "mni" &&
-                    <Group position="apart">
-                        <NumberInput
-                            label="X"
-                            precision={2}
-                            {...form.getInputProps('mni_x')}
+                <ScrollArea h={"45vh"}>
+                    {form.getInputProps('type').value === "white" &&
+                        <Title order={4}>{t('pages.stimulationTool.implantation.thisIsWhiteMatter')}</Title>
+                    }
+                    {form.getInputProps('type').value === "vep" &&
+                        <VEPSelection form={form} />
+                    }
+                    {form.getInputProps('type').value === "destrieux" &&
+                        <Select
+                            label="Destrieux"
+                            data={getRoiDestrieuxOptions()}
+                            {...form.getInputProps('destrieux')}
+                            clearable
+                            searchable
+                            dropdownPosition="bottom"
                         />
-                        <NumberInput
-                            label="Y"
-                            precision={2}
-                            {...form.getInputProps('mni_y')}
-                        />
-                        <NumberInput
-                            label="Z"
-                            precision={2}
-                            {...form.getInputProps('mni_z')}
-                        />
-                    </Group>
-                }
+                    }
+                    {form.getInputProps('type').value === "mni" &&
+                        <Group position="apart">
+                            <NumberInput
+                                label="X"
+                                precision={2}
+                                {...form.getInputProps('mni_x')}
+                            />
+                            <NumberInput
+                                label="Y"
+                                precision={2}
+                                {...form.getInputProps('mni_y')}
+                            />
+                            <NumberInput
+                                label="Z"
+                                precision={2}
+                                {...form.getInputProps('mni_z')}
+                            />
+                        </Group>
+                    }
+                </ScrollArea>
             </Stack>
         </Box>
     )
 }
 
 interface StimulationPointLocationSelectionProps {
+    form: UseFormReturnType<ElectrodeLocationFormValues>;
+}
+
+const VEPSelection = ({ form }: VEPSelectionProps) => {
+    const getFrontalGyriVepOptions = (): { value: string; label: string; }[] => {
+        return [
+            { value: "Pole_F_G", label: "1 - Pole_F_G" },
+            { value: "Orbital_Cortex_F_G", label: "2 - Orbital_Cortex_F_G" },
+            { value: "Rectus_F_G", label: "3 - Rectus_F_G" },
+            { value: "Inferior_Orbitalis_F_G", label: "4 - Inferior_Orbitalis_F_G" },
+            { value: "Inferior_Triangularis_F_G", label: "5 - Inferior_Triangularis_F_G" },
+            { value: "Inferior_Opercularis_F_G", label: "6 - Inferior_Opercularis_F_G" },
+            { value: "Middle_Rostral_F_G", label: "8 - Middle_Rostral_F_G" },
+            { value: "Middle_Caudal_F_G", label: "9 - Middle_Caudal_F_G" },
+            { value: "Sup_Mesial_Pre_F_G", label: "13 - Sup_Mesial_Pre_F_G" },
+            { value: "Sup_Mesial_PreSMA_F_G", label: "14 - Sup_Mesial_PreSMA_F_G" },
+            { value: "Sup_Mesial_SMA_F_G", label: "15 - Sup_Mesial_SMA_F_G" },
+            { value: "Sup_Lateral_Pre_F_G", label: "16 - Sup_Lateral_Pre_F_G" },
+            { value: "Sup_Lateral_Premotor_F_G", label: "17 - Sup_Lateral_Premotor_F_G" },
+            { value: "Subcallosal_F_G", label: "18 - Subcallosal_F_G" },
+            { value: "Precentral_head_face_F_G", label: "21 - Precentral_head_face_F_G" },
+            { value: "Precentral_upper_limb_F_G", label: "22 - Precentral_upper_limb_F_G" },
+            { value: "Paracentral_F_G", label: "25 - Paracentral_F_G" },
+            { value: "Central_Operculum_F_G", label: "26 - Central_Operculum_F_G" },
+            { value: "Anterior_Cingulate_F_G", label: "28 - Anterior_Cingulate_F_G" },
+            { value: "Middle_Cingulate_Ant_F_G", label: "29 - Middle_Cingulate_Ant_F_G" },
+            { value: "Middle_Cingulate_Post_F_G", label: "30 - Middle_Cingulate_Post_F_G" }
+        ];
+    }
+    const getFrontalSulciVepOptions = (): { value: string; label: string }[] => {
+        return [
+            { value: "Inferior_F_S", label: "7 - Inferior_F_S" },
+            { value: "Middle_F_S", label: "10 - Middle_F_S" },
+            { value: "Sup_Rostral_F_S", label: "11 - Sup_Rostral_F_S" },
+            { value: "Sup_Caudal_F_S", label: "12 - Sup_Caudal_F_S" },
+            { value: "Precentral_Inferior_F_S", label: "19 - Precentral_Inferior_F_S" },
+            { value: "Precentral_Superior_F_S", label: "20 - Precentral_Superior_F_S" },
+            { value: "Central_head_face_F_S", label: "23 - Central_head_face_F_S" },
+            { value: "Central_upper_limb_F_S", label: "24 - Central_upper_limb_F_S" }
+        ];
+    }
+    const getOccipitalGyriVepOptions = (): { value: string; label: string }[] => {
+        return [
+            { value: "Inferior_O_G", label: "66 - Inferior_O_G" },
+            { value: "Middle_O_G", label: "67 - Middle_O_G" },
+            { value: "Superior_O_G", label: "68 - Superior_O_G" },
+            { value: "Pole_O_G", label: "69 - Pole_O_G" },
+            { value: "Lingual_O_G", label: "70 - Lingual_O_G" },
+            { value: "Cuneus_O_G", label: "72 - Cuneus_O_G" }
+        ];
+    }
+    const getOccipitalSulciVepOptions = (): { value: string; label: string }[] => {
+        return [
+            { value: "Lingual_O_S", label: "52 - Lingual_O_S" },
+            { value: "Parieto_O_S", label: "64 - Parieto_O_S" },
+            { value: "Anterior_O_S", label: "65 - Anterior_O_S" },
+            { value: "Calcarine_O_S", label: "71 - Calcarine_O_S" }
+        ];
+    }
+    const getTemporalGyriVepOptions = (): { value: string; label: string }[] => {
+        return [
+            { value: "Pole_T_G", label: "35 - Pole_T_G" },
+            { value: "Superior_Pl_Polare_T_G", label: "36 - Superior_Pl_Polare_T_G" },
+            { value: "Superior_Heschl_T_G", label: "37 - Superior_Heschl_T_G" },
+            { value: "Superior_Pl_Temporale_T_G", label: "38 - Superior_Pl_Temporale_T_G" },
+            { value: "Superior_Lateral_Ant_T_G", label: "39 - Superior_Lateral_Ant_T_G" },
+            { value: "Superior_Lateral_Post_T_G", label: "40 - Superior_Lateral_Post_T_G" },
+            { value: "Middle_Ant_T_G", label: "45 - Middle_Ant_T_G" },
+            { value: "Middle_Post_T_G", label: "46 - Middle_Post_T_G" },
+            { value: "Inferior_Ant_T_G", label: "47 - Inferior_Ant_T_G" },
+            { value: "Inferior_Post_T_G", label: "48 - Inferior_Post_T_G" },
+            { value: "Fusiform_T_G", label: "49 - Fusiform_T_G" },
+            { value: "Parahippocampal_T_G", label: "53 - Parahippocampal_T_G" },
+            { value: "Rhinal_T_G", label: "54 - Rhinal_T_G" }
+        ];
+    }
+    const getTemporalSulciVepOptions = (): { value: string; label: string }[] => {
+        return [
+            { value: "Superior_Ant_T_S", label: "41 - Superior_Ant_T_S" },
+            { value: "Superior_Post_T_S", label: "42 - Superior_Post_T_S" },
+            { value: "Inferior_Ant_T_S", label: "43 - Inferior_Ant_T_S" },
+            { value: "Inferior_Post_T_S", label: "44 - Inferior_Post_T_S" },
+            { value: "Occipito_T_S", label: "50 - Occipito_T_S" },
+            { value: "Coleral_T_S", label: "51 - Coleral_T_S" }
+        ];
+    }
+    const getParietalGyriVepOptions = (): { value: string; label: string }[] => {
+        return [
+            { value: "Parietal_Operculum_P_G", label: "27 - Parietal_Operculum_P_G" },
+            { value: "Posterior_Cingulate_Dorsal_P_G", label: "31 - Posterior_Cingulate_Dorsal_P_G" },
+            { value: "Posterior_Cingulate_RetroSpl_P_G", label: "32 - Posterior_Cingulate_RetroSpl_P_G" },
+            { value: "Postcentral_P_G", label: "55 - Postcentral_P_G" },
+            { value: "Superior_P_G", label: "57 - Superior_P_G" },
+            { value: "Supramarginal_Ant_P_G", label: "58 - Supramarginal_Ant_P_G" },
+            { value: "Supramarginal_Post_P_G", label: "59 - Supramarginal_Post_P_G" },
+            { value: "Angular_P_G", label: "60 - Angular_P_G" },
+            { value: "Precuneus_P_G", label: "62 - Precuneus_P_G" }
+        ];
+    }
+    const getParietalSulciVepOptions = (): { value: string; label: string }[] => {
+        return [
+            { value: "Intraparietal_P_S", label: "61 - Intraparietal_P_S" },
+            { value: "Postcentral_P_S", label: "56 - Postcentral_P_S" },
+            { value: "Marginal_Cingulate_P_S", label: "63 - Marginal_Cingulate_P_S" }
+        ];
+    }
+    const getInsulaVepOptions = (): { value: string; label: string }[] => {
+        return [
+            { value: "Insula-gyri-brevi", label: "33 - Insula-gyri-brevi" },
+            { value: "Insula-gyri-longi", label: "34 - Insula-gyri-longi" }
+        ];
+    }
+
+    return (
+        <SimpleGrid cols={4}>
+            <Stack>
+                <Box>
+                    <Title order={5}>{"Frontal Gyri"}</Title>
+                    <Button.Group orientation='vertical'>
+                        {getFrontalGyriVepOptions().map(option =>
+                            <Button compact
+                                onClick={() => form.setFieldValue('vep', option.value)}
+                                variant={option.value === form.values.vep ? 'filled' : 'light'}>
+                                {option.label}
+                            </Button>)}
+                    </Button.Group>
+                </Box>
+            </Stack>
+            <Stack>
+                <Box>
+                    <Title order={5}>{"Frontal Sulci"}</Title>
+                    <Button.Group orientation='vertical'>
+                        {getFrontalSulciVepOptions().map(option =>
+                            <Button compact
+                                onClick={() => form.setFieldValue('vep', option.value)}
+                                variant={option.value === form.values.vep ? 'filled' : 'light'}>
+                                {option.label}
+                            </Button>)}
+                    </Button.Group>
+                </Box>
+                <Box>
+                    <Title order={5}>{"Occipital Gyri"}</Title>
+                    <Button.Group orientation='vertical'>
+                        {getOccipitalGyriVepOptions().map(option =>
+                            <Button compact
+                                onClick={() => form.setFieldValue('vep', option.value)}
+                                variant={option.value === form.values.vep ? 'filled' : 'light'}>
+                                {option.label}
+                            </Button>)}
+                    </Button.Group>
+                </Box>
+                <Box>
+                    <Title order={5}>{"Occipital Sulci"}</Title>
+                    <Button.Group orientation='vertical'>
+                        {getOccipitalSulciVepOptions().map(option =>
+                            <Button compact
+                                onClick={() => form.setFieldValue('vep', option.value)}
+                                variant={option.value === form.values.vep ? 'filled' : 'light'}>
+                                {option.label}
+                            </Button>)}
+                    </Button.Group>
+                </Box>
+            </Stack>
+            <Stack>
+                <Box>
+                    <Title order={5}>{"Temporal Gyri"}</Title>
+                    <Button.Group orientation='vertical'>
+                        {getTemporalGyriVepOptions().map(option =>
+                            <Button compact
+                                onClick={() => form.setFieldValue('vep', option.value)}
+                                variant={option.value === form.values.vep ? 'filled' : 'light'}>
+                                {option.label}
+                            </Button>)}
+                    </Button.Group>
+                </Box>
+                <Box>
+                    <Title order={5}>{"Temporal Sulci"}</Title>
+                    <Button.Group orientation='vertical'>
+                        {getTemporalSulciVepOptions().map(option =>
+                            <Button compact
+                                onClick={() => form.setFieldValue('vep', option.value)}
+                                variant={option.value === form.values.vep ? 'filled' : 'light'}>
+                                {option.label}
+                            </Button>)}
+                    </Button.Group>
+                </Box>
+            </Stack>
+            <Stack>
+                <Box>
+                    <Title order={5}>{"Parietal Gyri"}</Title>
+                    <Button.Group orientation='vertical'>
+                        {getParietalGyriVepOptions().map(option =>
+                            <Button compact
+                                onClick={() => form.setFieldValue('vep', option.value)}
+                                variant={option.value === form.values.vep ? 'filled' : 'light'}>
+                                {option.label}
+                            </Button>)}
+                    </Button.Group>
+                </Box>
+                <Box>
+                    <Title order={5}>{"Parietal Sulci"}</Title>
+                    <Button.Group orientation='vertical'>
+                        {getParietalSulciVepOptions().map(option =>
+                            <Button compact
+                                onClick={() => form.setFieldValue('vep', option.value)}
+                                variant={option.value === form.values.vep ? 'filled' : 'light'}>
+                                {option.label}
+                            </Button>)}
+                    </Button.Group>
+                </Box>
+                <Box>
+                    <Title order={5}>{"Insula"}</Title>
+                    <Button.Group orientation='vertical'>
+                        {getInsulaVepOptions().map(option =>
+                            <Button compact
+                                onClick={() => form.setFieldValue('vep', option.value)}
+                                variant={option.value === form.values.vep ? 'filled' : 'light'}>
+                                {option.label}
+                            </Button>)}
+                    </Button.Group>
+                </Box>
+            </Stack>
+        </SimpleGrid>
+    );
+}
+
+interface VEPSelectionProps {
     form: UseFormReturnType<ElectrodeLocationFormValues>;
 }
 

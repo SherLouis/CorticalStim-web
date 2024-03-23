@@ -85,7 +85,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                     electrode.stim_points.forEach((stim_point, stim_point_i) => {
                         const stimId = getStimPointLabel(electrode.label, stim_point_i)
                         if (stimId === selectedStimPoint) {
-                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.type`, "");
+                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.type`, "vep");
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.vep`, "");
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.destrieux`, "");
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.mni`, { x: 0, y: 0, z: 0 });
@@ -233,7 +233,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Group>
             </Box>
 
-            <Box my={"md"} h={"30vh"} p={'sm'}>
+            <Box my={"md"} h={"20vh"} p={'sm'}>
                 <Button onClick={addElectrode} size="xs">{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
                 <ScrollArea w={"100%"} h={"95%"} type="always" sx={{ alignItems: "center", padding: '0' }}>
                     {form.values.electrodes.map((electrode, electrode_i) => {
@@ -335,7 +335,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Button.Group>
             </Group>
 
-            <ScrollArea w={"100%"} h={"39vh"} >
+            <ScrollArea w={"100%"} h={"53vh"} >
                 <Title order={3}>{t('pages.stimulationTool.implantation.placement')}</Title>
                 <Box display={(selectedContacts.length > 0) ? 'block' : 'none'}>
                     <Stack align='flex-start' justify='flex-start'>

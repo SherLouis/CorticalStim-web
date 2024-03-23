@@ -17,9 +17,9 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
                 main: { backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
             })}
             header={
-                <Header height={"8vh"} p={"md"}>
+                <Header height={"5vh"} p={"md"}>
                     <Group position="apart">
-                        <Title>{props.title}</Title>
+                        <Title order={1}>{props.title}</Title>
 
                         <Group position="right">
                             <Menu withArrow position="bottom">
