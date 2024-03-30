@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Chip, Divider, Grid, Group, Modal, NumberInput, ScrollArea, SimpleGrid, Stack, Title } from "@mantine/core";
+import { Badge, Box, Button, Chip, Divider, Grid, Group, Modal, NumberInput, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { StimulationCognitiveEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../models/stimulationForm";
 import { useState } from "react";
@@ -8,7 +8,7 @@ import StimulationParametersSelection from "../../../components/StimulationParam
 import StimulationTaskSelection, { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
 import StimulationEffectSelection, { formatSelectedCognitiveEffect } from "../../../components/StimulationEffectSelection";
-import { IconCircleX, IconTrash } from "@tabler/icons-react";
+import { IconCircleX, IconEye, IconPlus, IconTrash } from "@tabler/icons-react";
 
 // TODO: pouvoir ajouter plusieurs stimulations / afficher valeurs de stimulations enregistrées
 // On click, ouvrir popover avec infos sur le nombre de stimulations, bouton pour aller voir tableau filtré pour ce point et bouton pour ajouter une stimulation
@@ -30,10 +30,17 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
     const handleSelectedPointChanged = (newPointId: string) => {
         if (stimulationTime === '') {
-            resetForNewPoint(newPointId);
-            //viewPointSummary(newPointId);
+            setSelectedPoint(newPointId)
         }
         else { setShowConfirmNoSave(true); }
+    }
+
+    const handleViewResultsForPoint = (pointId: string) => {
+        viewPointSummary(pointId);
+    }
+
+    const handleAddStimulationForPoint = (pointId: string) => {
+        resetForNewPoint(pointId);
     }
 
     const resetForNewPoint = (newPointId: string) => {
@@ -142,7 +149,6 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         return cognitive_effect + post_discharge;
     }
 
-    console.log(form.values);
     return (
         <Box mt={"md"} h={"87vh"}>
             <Modal opened={showConfirmNoSave} onClose={() => setShowConfirmNoSave(false)} title={t('pages.stimulationTool.stimulation.alert_point_changed.title')}>
@@ -158,7 +164,9 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         <ContactSelection
                             form_values={form.values}
                             selectedContact={selectedPoint}
-                            selectedChanged={handleSelectedPointChanged}
+                            onSelectedChanged={handleSelectedPointChanged}
+                            onViewResultsForPoint={handleViewResultsForPoint}
+                            onAddStimulationForPoint={handleAddStimulationForPoint}
                         />
                     </Box>
                 </Grid.Col>
@@ -258,7 +266,8 @@ interface StimulationTabProps extends TabProperties {
     viewPointSummary: (pointId: string) => void
 }
 
-const ContactSelection = ({ form_values, selectedContact, selectedChanged }: ContactSelectionProps) => {
+const ContactSelection = ({ form_values, selectedContact, onSelectedChanged: selectedChanged, onViewResultsForPoint: handleViewResultsForPoint, onAddStimulationForPoint: handleAddStimulationForPoint }: ContactSelectionProps) => {
+    // TODO: translation for popover
     return (
         <ScrollArea w={"100%"} h={"100%"} sx={{ alignItems: "center", padding: '0' }}>
             {form_values.electrodes.map((electrode, electrode_i) => {
@@ -279,15 +288,25 @@ const ContactSelection = ({ form_values, selectedContact, selectedChanged }: Con
                                     {electrode.stim_points.map((stim_point, stim_point_i) => {
                                         const pointId = getStimPointLabel(electrode.label, stim_point_i);
                                         return (
-                                            <Chip size='sm'
-                                                value={pointId}
-                                                key={pointId}
-                                                onChange={(checked) => selectedChanged(checked ? pointId : "")}
-                                                checked={selectedContact === pointId}
-                                                variant='filled'
-                                                color={selectedContact === pointId ? 'blue' : 'gray'}>
-                                                {pointId}
-                                            </Chip>);
+                                            <Popover position='bottom'>
+                                                <Popover.Target>
+                                                    <Chip size='sm'
+                                                        value={pointId}
+                                                        key={pointId}
+                                                        onChange={(checked) => selectedChanged(checked ? pointId : "")}
+                                                        checked={selectedContact === pointId}
+                                                        variant='filled'
+                                                        color={selectedContact === pointId ? 'blue' : 'gray'}>
+                                                        {pointId}
+                                                    </Chip>
+                                                </Popover.Target>
+                                                <Popover.Dropdown>
+                                                    <Text>{"Stimulations: " + stim_point.stimulations.length}</Text>
+                                                    {stim_point.stimulations.length > 0 && <Button compact leftIcon={<IconEye />} onClick={() => handleViewResultsForPoint(pointId)}>{'View results'}</Button>}
+                                                    <Button compact leftIcon={<IconPlus />} onClick={() => handleAddStimulationForPoint(pointId)}>{'Add stimulation'}</Button>
+                                                </Popover.Dropdown>
+                                            </Popover>
+                                        );
                                     })}
                                 </SimpleGrid>
                             </Box>
@@ -303,5 +322,7 @@ const ContactSelection = ({ form_values, selectedContact, selectedChanged }: Con
 interface ContactSelectionProps {
     form_values: StimulationFormValues,
     selectedContact: string,
-    selectedChanged: (newValue: string) => void
+    onSelectedChanged: (newValue: string) => void
+    onViewResultsForPoint: (pointId: string) => void
+    onAddStimulationForPoint: (pointId: string) => void
 }

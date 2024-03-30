@@ -9,6 +9,7 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
     const { t } = useTranslation();
 
     // TODO: preset
+    // TODO: when click on selected, unselect
 
     const handleCognitiveEffectValueChange = (level: 'class' | 'descriptor' | 'details', newValue: string) => {
         switch (level) {
