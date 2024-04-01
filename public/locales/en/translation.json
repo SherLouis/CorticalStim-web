@@ -55,6 +55,8 @@
                 "task_last_used_title": "Last used",
                 "set_time_label": "Set Time",
                 "saveButtonLabel": "Save",
+                "numberOfStimulationsLabel": "Stimulations: ",
+                "viewResultsForPointIdLabel": "View results",
                 "effect": {
                     "cognitive_effect_label": "Cognitive Effect",
                     "epi_manifestation": "Epi. manifestation",
@@ -87,7 +89,22 @@
                 }
             },
             "summary": {
-                "tab_title": "Summary"
+                "tab_title": "Summary",
+                "results_table": {
+                    "implantation_group_title": "Implantation",
+                    "electrode_title": "Electrode",
+                    "pointId_title": "Point",
+                    "roi_title": "Location",
+                    "stimulation_parameters_group_title": "Stimulation",
+                    "stimulation_time_title": "Time",
+                    "parameters_title": "Parameters",
+                    "task_title": "Task",
+                    "effects_group_title": "Effects",
+                    "epi_manifestation_title": "Epi. Manif.",
+                    "post_discharge_title": "Post Discharge",
+                    "post_discharge_details_title": "Post Discharge Details",
+                    "crisis_title": "Crisis"
+                }
             }
         }
     },

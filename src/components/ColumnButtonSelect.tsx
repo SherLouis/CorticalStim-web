@@ -10,6 +10,7 @@ const ColumnButtonSelect = ({ data, onChange, currentValue }: ColumnButtonSelect
         <Stack spacing={"xs"} justify="flex-start">
             {data.map((value, index) =>
                 <Button w={"85%"} m={0} p={0}
+                    key={value + index}
                     compact
                     variant={currentValue === value ? "filled" : "default"}
                     onClick={() => handleClick(value)}>{value}</Button>

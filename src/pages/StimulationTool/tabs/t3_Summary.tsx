@@ -3,15 +3,15 @@ import { StimulationLocationFormValues, getStimPointLabel } from "../../../model
 import { useTranslation } from "react-i18next";
 import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { formatSelectedCognitiveEffect } from "../../../components/StimulationEffectSelection";
-import { DataTable, DataTableSortStatus } from "mantine-datatable";
+import { DataTable, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
 import { useEffect, useState } from "react";
 import sortBy from 'lodash.sortby';
 import { useListState } from "@mantine/hooks";
 import { MultiSelect } from "@mantine/core";
 
-// TODO: translations for column titles
-// TODO: able to select what columns to show
+// TODO: bouton pour clear all filters
 // TODO: be able to export table to csv / excel
+// TODO: able to select what columns to show
 
 export default function SummaryTab({ form, filters }: SummaryTabProps) {
     const { t } = useTranslation();
@@ -27,11 +27,11 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                             electrode: elec.label,
                             pointId: getStimPointLabel(elec.label, point.index),
                             roi: formatPointLocation(point.location),
-                            stimulation_time: stim.time,
+                            stimulation_time: new Date(stim.time).toLocaleString(),
                             parameters: stim.parameters,
                             task: formatSelectedTask(stim.task),
                             cognitive_effect: formatSelectedCognitiveEffect(stim.effect.cognitive_effect),
-                            epi_manifestation: stim.effect.epi_manifestation.join(','),
+                            epi_manifestation: stim.effect.epi_manifestation.map(manif => t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.' + manif)).join(','),
                             post_discharge: stim.effect.post_discharge,
                             post_discharge_details: stim.effect.post_discharge ? stim.effect.pd_duration + 's, ' + stim.effect.pd_local + ', ' + stim.effect.pd_type : '-',
                             crisis: stim.effect.crisis
@@ -72,6 +72,43 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         setPointIdListHandlers.setState(filters ? (filters.pointIds ? filters.pointIds : []) : [])
     }, [filters, setPointIdListHandlers])
 
+    const allColumnsProps = { sortable: true, resizable: true };
+
+    // FixME: does not work with groups.
+    const { effectiveColumns, resetColumnsWidth } = useDataTableColumns<Result>({
+        key: 'result_table_columns',
+        columns: [
+            { accessor: 'electrode', title: t('pages.stimulationTool.summary.results_table.electrode_title'), ...allColumnsProps },
+            {
+                accessor: 'pointId', title: t('pages.stimulationTool.summary.results_table.pointId_title'),
+                filter: (
+                    <MultiSelect
+                        data={getRecordsFromForm().flatMap((r) => r.pointId)}
+                        value={pointIdList}
+                        label="Points"
+                        searchable
+                        onChange={(newValues) => setPointIdListHandlers.setState(newValues)}
+                    />
+                ),
+                filtering: pointIdList.length !== 0,
+                ...allColumnsProps
+            },
+            { accessor: 'roi', title: t('pages.stimulationTool.summary.results_table.roi_title'), ...allColumnsProps },
+            { accessor: 'stimulation_time', title: t('pages.stimulationTool.summary.results_table.stimulation_time_title'), ...allColumnsProps },
+            {
+                accessor: 'parameters',
+                title: t('pages.stimulationTool.summary.results_table.parameters_title'),
+                render: (result) => (result.parameters ? (result.parameters.amplitude + 'mA, ' + result.parameters.duration + 's,' + result.parameters.frequency + 'Hz, ' + result.parameters.lenght_path + 's') : '-'),
+                ...allColumnsProps
+            },
+            { accessor: 'task', title: t('pages.stimulationTool.summary.results_table.task_title'), ...allColumnsProps },
+            { accessor: 'epi_manifestation', title: t('pages.stimulationTool.summary.results_table.epi_manifestation_title'), ...allColumnsProps },
+            { accessor: 'post_discharge', title: t('pages.stimulationTool.summary.results_table.post_discharge_title'), render: (result) => String(result.post_discharge), ...allColumnsProps },
+            { accessor: 'post_discharge_details', title: t('pages.stimulationTool.summary.results_table.post_discharge_details_title'), ...allColumnsProps },
+            { accessor: 'crisis', title: t('pages.stimulationTool.summary.results_table.crisis_title'), render: (result) => String(result.crisis), ...allColumnsProps }
+        ]
+    })
+
     return (<>
         <DataTable
             withColumnBorders
@@ -81,34 +118,22 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
             sortStatus={sortStatus}
             onSortStatusChange={setSortStatus}
             records={records}
-            columns={[
-                { accessor: 'electrode', title: 'Electrode', sortable: true },
+            groups={[
                 {
-                    accessor: 'pointId', title: 'Point', sortable: true,
-                    filter: (
-                        <MultiSelect
-                            data={getRecordsFromForm().flatMap((r) => r.pointId)}
-                            value={pointIdList}
-                            label="Points"
-                            searchable
-                            onChange={(newValues) => setPointIdListHandlers.setState(newValues)}
-                        />
-                    ),
-                    filtering: pointIdList.length !== 0
+                    id: 'implantation_group',
+                    title: t('pages.stimulationTool.summary.results_table.implantation_group_title'),
+                    columns: effectiveColumns.filter((c) => ['electrode', 'pointId', 'roi'].includes(c.accessor))
                 },
-                { accessor: 'roi', title: 'Location', sortable: true },
-                { accessor: 'stimulation_time', title: 'Time', sortable: true },
                 {
-                    accessor: 'parameters',
-                    title: 'Parameters',
-                    render: (result) => (result.parameters ? (result.parameters.amplitude + 'mA, ' + result.parameters.duration + 's,' + result.parameters.frequency + 'Hz, ' + result.parameters.lenght_path + 's') : '-'),
-                    sortable: true
+                    id: 'stimulation_parameters_group',
+                    title: t('pages.stimulationTool.summary.results_table.stimulation_parameters_group_title'),
+                    columns: effectiveColumns.filter((c) => ['stimulation_time', 'parameters', 'task'].includes(c.accessor))
                 },
-                { accessor: 'task', title: 'Task', sortable: true },
-                { accessor: 'epi_manifestation', title: 'Epi. Manif.', sortable: true },
-                { accessor: 'post_discharge', title: 'Post Discharge', render: (result) => String(result.post_discharge), sortable: true },
-                { accessor: 'post_discharge_details', title: 'Post Discharge Details', sortable: true },
-                { accessor: 'crisis', title: 'Crisis', render: (result) => String(result.crisis), sortable: true }
+                {
+                    id: 'effects_group',
+                    title: t('pages.stimulationTool.summary.results_table.effects_group_title'),
+                    columns: effectiveColumns.filter((c) => ['epi_manifestation', 'post_discharge', 'post_discharge_details', 'crisis'].includes(c.accessor))
+                }
             ]}
         />
     </>)

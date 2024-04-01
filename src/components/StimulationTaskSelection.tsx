@@ -15,14 +15,14 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
             case 'category':
                 form.setFieldValue("characteristic", "");
                 form.setFieldValue("subcategory", "");
-                form.setFieldValue("category", newValue);
+                form.setFieldValue("category", newValue === form.values.category ? "" : newValue);
                 break;
             case 'subcategory':
                 form.setFieldValue("characteristic", "");
-                form.setFieldValue("subcategory", newValue);
+                form.setFieldValue("subcategory", newValue === form.values.subcategory ? "" : newValue);
                 break;
             case 'characteristic':
-                form.setFieldValue("characteristic", newValue);
+                form.setFieldValue("characteristic", newValue === form.values.characteristic ? "" : newValue);
                 break;
         }
     }

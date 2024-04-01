@@ -9,21 +9,20 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
     const { t } = useTranslation();
 
     // TODO: preset
-    // TODO: when click on selected, unselect
 
     const handleCognitiveEffectValueChange = (level: 'class' | 'descriptor' | 'details', newValue: string) => {
         switch (level) {
             case 'class':
                 form.setFieldValue('cognitive_effect.details', "");
                 form.setFieldValue('cognitive_effect.descriptor', "");
-                form.setFieldValue('cognitive_effect.class', newValue);
+                form.setFieldValue('cognitive_effect.class', newValue === form.values.cognitive_effect.class ? "" : newValue);
                 break;
             case 'descriptor':
                 form.setFieldValue('cognitive_effect.details', "");
-                form.setFieldValue('cognitive_effect.descriptor', newValue);
+                form.setFieldValue('cognitive_effect.descriptor', newValue === form.values.cognitive_effect.descriptor ? "" : newValue);
                 break;
             case 'details':
-                form.setFieldValue('cognitive_effect.details', newValue);
+                form.setFieldValue('cognitive_effect.details', newValue === form.values.cognitive_effect.details ? "" : newValue);
                 break;
         }
     }
@@ -41,7 +40,7 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
     return (
         <Box w={"100%"}>
             <Group w={"100%"} h={"100%"} spacing={'sm'} align='flex-start'>
-                <Stack sx={{flex:6}}>
+                <Stack sx={{ flex: 6 }}>
                     <Title order={5}>{t('pages.stimulationTool.stimulation.effect.cognitive_effect_label')}</Title>
                     <Box>
                         <Title order={5}>{t('pages.stimulationTool.stimulation.effect.last_used')}</Title>
@@ -59,7 +58,7 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
                         <CognitiveEffectTable cognitive_values={form.values.cognitive_effect} handleValueChange={handleCognitiveEffectValueChange} />
                     </Box>
                 </Stack>
-                <Stack sx={{flex:3}}>
+                <Stack sx={{ flex: 3 }}>
                     <Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>
                     <Box>
                         <Checkbox.Group {...form.getInputProps('epi_manifestation')}>
@@ -69,7 +68,7 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
                         </Checkbox.Group>
                     </Box>
                 </Stack>
-                <Stack sx={{flex:3}}>
+                <Stack sx={{ flex: 3 }}>
                     <Title order={5}>{t('pages.stimulationTool.stimulation.effect.eeg')}</Title>
                     <Box>
                         <EEGSection form={form} t={t} />
@@ -195,21 +194,21 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: Cognitive
             </thead>
             <tbody>
                 <tr key={"options"}>
-                    <td style={{verticalAlign: 'top'}}>
+                    <td style={{ verticalAlign: 'top' }}>
                         <ColumnButtonSelect
                             data={getEffectOptions('class')}
                             currentValue={cognitive_values.class}
                             onChange={(v) => handleValueChange('class', v)}
                         />
                     </td>
-                    <td style={{verticalAlign: 'top'}}>
+                    <td style={{ verticalAlign: 'top' }}>
                         <ColumnButtonSelect
                             data={getEffectOptions('descriptor')}
                             currentValue={cognitive_values.descriptor}
                             onChange={(v) => handleValueChange('descriptor', v)}
                         />
                     </td>
-                    <td style={{verticalAlign: 'top'}}>
+                    <td style={{ verticalAlign: 'top' }}>
                         <ColumnButtonSelect
                             data={getEffectOptions('details')}
                             currentValue={cognitive_values.details}

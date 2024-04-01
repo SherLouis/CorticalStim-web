@@ -55,6 +55,8 @@
                 "task_last_used_title": "Derniers utilisés",
                 "set_time_label": "Enregister Heure",
                 "saveButtonLabel": "Enregistrer",
+                "numberOfStimulationsLabel": "Stimulations: ",
+                "viewResultsForPointIdLabel": "Voir résultats",
                 "effect": {
                     "cognitive_effect_label": "Effet Cognitif",
                     "epi_manifestation": "Manif. epi.",
@@ -87,7 +89,22 @@
                 }
             },
             "summary": {
-                "tab_title": "Résumé"
+                "tab_title": "Résumé",
+                "results_table": {
+                    "implantation_group_title": "Implantation",
+                    "electrode_title": "Électrode",
+                    "pointId_title": "Point",
+                    "roi_title": "Positionnement",
+                    "stimulation_parameters_group_title": "Stimulation",
+                    "stimulation_time_title": "Heure",
+                    "parameters_title": "Paramètres",
+                    "task_title": "Tâche",
+                    "effects_group_title": "Effets",
+                    "epi_manifestation_title": "Manif. Epi.",
+                    "post_discharge_title": "Post Décharge",
+                    "post_discharge_details_title": "Post Décharge - Details",
+                    "crisis_title": "Crise"
+                }
             }
         }
     },
