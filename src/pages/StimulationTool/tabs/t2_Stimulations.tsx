@@ -282,7 +282,7 @@ const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onV
                                     {electrode.stim_points.map((stim_point, stim_point_i) => {
                                         const pointId = getStimPointLabel(electrode.label, stim_point_i);
                                         return (
-                                            <Popover position='bottom' opened={selectedContact===pointId}>
+                                            <Popover position='bottom' opened={selectedContact===pointId} key={pointId}>
                                                 <Popover.Target>
                                                     <Chip size='sm'
                                                         value={pointId}

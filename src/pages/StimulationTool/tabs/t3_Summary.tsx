@@ -4,10 +4,12 @@ import { useTranslation } from "react-i18next";
 import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { formatSelectedCognitiveEffect } from "../../../components/StimulationEffectSelection";
 import { DataTable, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import sortBy from 'lodash.sortby';
 import { useListState } from "@mantine/hooks";
-import { MultiSelect } from "@mantine/core";
+import { ActionIcon, Group, MultiSelect } from "@mantine/core";
+import { IconFilterOff, IconFileTypeCsv } from "@tabler/icons-react";
+import { CSVLink } from "react-csv";
 
 // TODO: bouton pour clear all filters
 // TODO: be able to export table to csv / excel
@@ -58,8 +60,23 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
     const [records, setRecords] = useState(getRecordsFromForm());
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'pointId', direction: 'desc' });
     const [pointIdList, setPointIdListHandlers] = useListState(filters ? filters.pointIds : []);
+    const csvFileRef = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
+
+    const clearAllFilters = () => {
+        setPointIdListHandlers.setState([]);
+    }
+
+    const downloadRecordsToCsv = () => {
+        csvFileRef?.current?.link.click();
+    }
+
+    const getCsvData = () => {
+        // TODO: change this to change data in csv
+        return records;
+    }
 
     useEffect(() => {
+        console.log(pointIdList);
         var data = sortBy(getRecordsFromForm(), sortStatus.columnAccessor);
         data = data.filter((result) => {
             if (pointIdList.length !== 0 && !pointIdList.includes(result.pointId)) { return false; }
@@ -70,7 +87,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
 
     useEffect(() => {
         setPointIdListHandlers.setState(filters ? (filters.pointIds ? filters.pointIds : []) : [])
-    }, [filters, setPointIdListHandlers])
+    }, [filters])
 
     const allColumnsProps = { sortable: true, resizable: true };
 
@@ -110,6 +127,21 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
     })
 
     return (<>
+        <CSVLink
+            data={getCsvData()}
+            filename='results.csv'
+            hidden
+            ref={csvFileRef}
+            target='_blank'
+        />
+        <Group>
+            <ActionIcon>
+                <IconFilterOff onClick={clearAllFilters} />
+            </ActionIcon>
+            <ActionIcon>
+                <IconFileTypeCsv onClick={downloadRecordsToCsv} />
+            </ActionIcon>
+        </Group>
         <DataTable
             withColumnBorders
             striped
