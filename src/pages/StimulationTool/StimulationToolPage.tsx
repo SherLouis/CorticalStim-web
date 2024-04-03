@@ -26,9 +26,9 @@ export default function StimulationToolPage() {
         },
         validate: {
             electrode_params: {
-                separation: (value) => value===0 ? t("pages.stimulationTool.validation.electrode_params.separation") : null,
-                diameter: (value) => value===0 ? t("pages.stimulationTool.validation.electrode_params.diameter") : null,
-                length: (value) => value===0 ? t("pages.stimulationTool.validation.electrode_params.length") : null
+                separation: (value) => value === 0 ? t("pages.stimulationTool.validation.electrode_params.separation") : null,
+                diameter: (value) => value === 0 ? t("pages.stimulationTool.validation.electrode_params.diameter") : null,
+                length: (value) => value === 0 ? t("pages.stimulationTool.validation.electrode_params.length") : null
             },
             electrodes: {
                 label: (value, values) => values.electrodes.map((e) => e.label).filter((v) => v === value).length > 1 ? t("pages.stimulationTool.validation.electrodes.label") : null,
@@ -71,18 +71,18 @@ export default function StimulationToolPage() {
     };
 
     const handleViewPointSummary = (pointId: string) => {
-        setSummaryFilters({pointIds: [pointId]});
+        setSummaryFilters({ pointIds: [pointId] });
         setActiveTab('summary');
     }
-
+    
     return (
         <Box mx={"2vh"} h={"90vh"}>
             <Group>
                 <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} style={{ display: 'none' }} />
-                <ActionIcon>
+                <ActionIcon title={t('pages.stimulationTool.button_open_form')}>
                     <IconFolderOpen onClick={() => openInputFileRef.current?.click()} />
                 </ActionIcon>
-                <ActionIcon title="Download values">
+                <ActionIcon title={t('pages.stimulationTool.button_download_form')}>
                     <IconDownload onClick={downloadFormValues} />
                 </ActionIcon>
             </Group>
@@ -95,7 +95,7 @@ export default function StimulationToolPage() {
 
                 <Tabs.Panel value="implantation"><ElectrodeSetupStep form={form} /></Tabs.Panel>
                 <Tabs.Panel value="stimulation"><StimulationsTab form={form} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
-                <Tabs.Panel value="summary"><SummaryTab form={form} filters={summaryFilters}/></Tabs.Panel>
+                <Tabs.Panel value="summary"><SummaryTab form={form} filters={summaryFilters} /></Tabs.Panel>
             </Tabs>
         </Box>
     );

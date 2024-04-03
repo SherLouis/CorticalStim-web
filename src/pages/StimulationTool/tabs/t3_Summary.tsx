@@ -3,17 +3,14 @@ import { StimulationLocationFormValues, getStimPointLabel } from "../../../model
 import { useTranslation } from "react-i18next";
 import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { formatSelectedCognitiveEffect } from "../../../components/StimulationEffectSelection";
-import { DataTable, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
+import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
 import { useEffect, useRef, useState } from "react";
 import sortBy from 'lodash.sortby';
 import { useListState } from "@mantine/hooks";
-import { ActionIcon, Group, MultiSelect } from "@mantine/core";
-import { IconFilterOff, IconFileTypeCsv } from "@tabler/icons-react";
+import { ActionIcon, Checkbox, Group, MultiSelect, Popover } from "@mantine/core";
+import { IconFilterOff, IconFileTypeCsv, IconTableOptions } from "@tabler/icons-react";
 import { CSVLink } from "react-csv";
-
-// TODO: bouton pour clear all filters
-// TODO: be able to export table to csv / excel
-// TODO: able to select what columns to show
+import { DataTableColumnToggle } from "mantine-datatable/dist/hooks";
 
 export default function SummaryTab({ form, filters }: SummaryTabProps) {
     const { t } = useTranslation();
@@ -30,7 +27,10 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                             pointId: getStimPointLabel(elec.label, point.index),
                             roi: formatPointLocation(point.location),
                             stimulation_time: new Date(stim.time).toLocaleString(),
-                            parameters: stim.parameters,
+                            amplitude: stim.parameters.amplitude,
+                            duration: stim.parameters.duration,
+                            frequency: stim.parameters.frequency,
+                            lenght_path: stim.parameters.lenght_path,
                             task: formatSelectedTask(stim.task),
                             cognitive_effect: formatSelectedCognitiveEffect(stim.effect.cognitive_effect),
                             epi_manifestation: stim.effect.epi_manifestation.map(manif => t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.' + manif)).join(','),
@@ -62,21 +62,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
     const [pointIdList, setPointIdListHandlers] = useListState(filters ? filters.pointIds : []);
     const csvFileRef = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
 
-    const clearAllFilters = () => {
-        setPointIdListHandlers.setState([]);
-    }
-
-    const downloadRecordsToCsv = () => {
-        csvFileRef?.current?.link.click();
-    }
-
-    const getCsvData = () => {
-        // TODO: change this to change data in csv
-        return records;
-    }
-
     useEffect(() => {
-        console.log(pointIdList);
         var data = sortBy(getRecordsFromForm(), sortStatus.columnAccessor);
         data = data.filter((result) => {
             if (pointIdList.length !== 0 && !pointIdList.includes(result.pointId)) { return false; }
@@ -89,56 +75,115 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         setPointIdListHandlers.setState(filters ? (filters.pointIds ? filters.pointIds : []) : [])
     }, [filters])
 
-    const allColumnsProps = { sortable: true, resizable: true };
+    const clearAllFilters = () => {
+        setPointIdListHandlers.setState([]);
+    }
 
-    // FixME: does not work with groups.
-    const { effectiveColumns, resetColumnsWidth } = useDataTableColumns<Result>({
-        key: 'result_table_columns',
-        columns: [
-            { accessor: 'electrode', title: t('pages.stimulationTool.summary.results_table.electrode_title'), ...allColumnsProps },
-            {
-                accessor: 'pointId', title: t('pages.stimulationTool.summary.results_table.pointId_title'),
-                filter: (
-                    <MultiSelect
-                        data={getRecordsFromForm().flatMap((r) => r.pointId)}
-                        value={pointIdList}
-                        label="Points"
-                        searchable
-                        onChange={(newValues) => setPointIdListHandlers.setState(newValues)}
-                    />
-                ),
-                filtering: pointIdList.length !== 0,
-                ...allColumnsProps
-            },
-            { accessor: 'roi', title: t('pages.stimulationTool.summary.results_table.roi_title'), ...allColumnsProps },
-            { accessor: 'stimulation_time', title: t('pages.stimulationTool.summary.results_table.stimulation_time_title'), ...allColumnsProps },
-            {
-                accessor: 'parameters',
-                title: t('pages.stimulationTool.summary.results_table.parameters_title'),
-                render: (result) => (result.parameters ? (result.parameters.amplitude + 'mA, ' + result.parameters.duration + 's,' + result.parameters.frequency + 'Hz, ' + result.parameters.lenght_path + 's') : '-'),
-                ...allColumnsProps
-            },
-            { accessor: 'task', title: t('pages.stimulationTool.summary.results_table.task_title'), ...allColumnsProps },
-            { accessor: 'epi_manifestation', title: t('pages.stimulationTool.summary.results_table.epi_manifestation_title'), ...allColumnsProps },
-            { accessor: 'post_discharge', title: t('pages.stimulationTool.summary.results_table.post_discharge_title'), render: (result) => String(result.post_discharge), ...allColumnsProps },
-            { accessor: 'post_discharge_details', title: t('pages.stimulationTool.summary.results_table.post_discharge_details_title'), ...allColumnsProps },
-            { accessor: 'crisis', title: t('pages.stimulationTool.summary.results_table.crisis_title'), render: (result) => String(result.crisis), ...allColumnsProps }
-        ]
+    const allColumnsProps = { sortable: true, resizable: false, draggable: false, toggleable: false };
+
+    const columnsLocalStorageKey = 'result_table_columns';
+    const tableColumns = [
+        { accessor: 'electrode', title: t('pages.stimulationTool.summary.results_table.electrode_title'), ...allColumnsProps },
+        {
+            accessor: 'pointId', title: t('pages.stimulationTool.summary.results_table.pointId_title'),
+            filter: (
+                <MultiSelect
+                    data={getRecordsFromForm().flatMap((r) => r.pointId)}
+                    value={pointIdList}
+                    label="Points"
+                    searchable
+                    onChange={(newValues) => setPointIdListHandlers.setState(newValues)}
+                />
+            ),
+            filtering: pointIdList.length !== 0,
+            ...allColumnsProps
+        },
+        { accessor: 'roi', title: t('pages.stimulationTool.summary.results_table.roi_title'), ...allColumnsProps },
+        { accessor: 'stimulation_time', title: t('pages.stimulationTool.summary.results_table.stimulation_time_title'), ...allColumnsProps },
+        {
+            accessor: 'amplitude',
+            title: t('pages.stimulationTool.summary.results_table.amplitude_title'),
+            render: (result) => result.amplitude + 'mA',
+            ...allColumnsProps
+        },
+        {
+            accessor: 'duration',
+            title: t('pages.stimulationTool.summary.results_table.duration_title'),
+            render: (result) => result.duration + 's',
+            ...allColumnsProps
+        },
+        {
+            accessor: 'frequency',
+            title: t('pages.stimulationTool.summary.results_table.frequency_title'),
+            render: (result) => result.frequency + 'Hz',
+            ...allColumnsProps
+        },
+        {
+            accessor: 'lenght_path',
+            title: t('pages.stimulationTool.summary.results_table.length_path_title'),
+            render: (result) => result.lenght_path + 's',
+            ...allColumnsProps
+        },
+        { accessor: 'task', title: t('pages.stimulationTool.summary.results_table.task_title'), ...allColumnsProps },
+        { accessor: 'epi_manifestation', title: t('pages.stimulationTool.summary.results_table.epi_manifestation_title'), ...allColumnsProps },
+        { accessor: 'post_discharge', title: t('pages.stimulationTool.summary.results_table.post_discharge_title'), render: (result) => String(result.post_discharge), ...allColumnsProps },
+        { accessor: 'post_discharge_details', title: t('pages.stimulationTool.summary.results_table.post_discharge_details_title'), ...allColumnsProps },
+        { accessor: 'crisis', title: t('pages.stimulationTool.summary.results_table.crisis_title'), render: (result) => String(result.crisis), ...allColumnsProps }
+    ] as DataTableColumn<Result>[];
+    const { effectiveColumns, columnsToggle, setColumnsToggle } = useDataTableColumns<Result>({
+        key: columnsLocalStorageKey,
+        columns: tableColumns
     })
+
+    const downloadRecordsToCsv = () => {
+        csvFileRef?.current?.link.click();
+    }
+
+    const getCsvData = () => {
+        // TODO: change this to change data in csv
+        return records;
+    }
+
+    const getCsvHeaders = () => {
+        return tableColumns.map(c => {
+            const columnTitle = c?.title as string;
+            return { key: c.accessor, label: columnTitle };
+        })
+    }
 
     return (<>
         <CSVLink
             data={getCsvData()}
+            headers={getCsvHeaders()}
             filename='results.csv'
             hidden
             ref={csvFileRef}
             target='_blank'
         />
-        <Group>
-            <ActionIcon>
+        <Group position='right'>
+            <ActionIcon title={t('pages.stimulationTool.summary.button_filter_off')}>
                 <IconFilterOff onClick={clearAllFilters} />
             </ActionIcon>
-            <ActionIcon>
+            <Popover position='bottom-end'>
+                <Popover.Target>
+                    <ActionIcon title={t('pages.stimulationTool.summary.button_select_columns')}>
+                        <IconTableOptions />
+                    </ActionIcon>
+                </Popover.Target>
+                <Popover.Dropdown>
+                    <Checkbox.Group
+                        value={columnsToggle.filter((col) => col.toggled).map(col => col.accessor)}
+                        onChange={(checkedValues) => { setColumnsToggle((prevToggleState) => prevToggleState.map(toggle => { return { ...toggle, toggled: checkedValues.includes(toggle.accessor) } as DataTableColumnToggle })) }}
+                        label={t('pages.stimulationTool.summary.button_select_columns')}
+                    >
+                        {columnsToggle.map(c =>
+                            <Checkbox value={c.accessor} label={effectiveColumns.filter(ec => ec.accessor === c.accessor).length > 0 ? effectiveColumns.filter(ec => ec.accessor === c.accessor)[0].title : ''} />
+                        )}
+                    </Checkbox.Group>
+                </Popover.Dropdown>
+            </Popover>
+
+            <ActionIcon title={t('pages.stimulationTool.summary.button_download_csv')}>
                 <IconFileTypeCsv onClick={downloadRecordsToCsv} />
             </ActionIcon>
         </Group>
@@ -149,6 +194,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
             idAccessor={(record) => String(record.id)}
             sortStatus={sortStatus}
             onSortStatusChange={setSortStatus}
+            storeColumnsKey={columnsLocalStorageKey}
             records={records}
             groups={[
                 {
@@ -159,7 +205,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                 {
                     id: 'stimulation_parameters_group',
                     title: t('pages.stimulationTool.summary.results_table.stimulation_parameters_group_title'),
-                    columns: effectiveColumns.filter((c) => ['stimulation_time', 'parameters', 'task'].includes(c.accessor))
+                    columns: effectiveColumns.filter((c) => ['stimulation_time', 'amplitude', 'duration', 'frequency', 'lenght_path', 'task'].includes(c.accessor))
                 },
                 {
                     id: 'effects_group',
@@ -177,12 +223,10 @@ interface Result {
     pointId: string;
     roi: string;
     stimulation_time: string;
-    parameters: {
-        amplitude: number;
-        duration: number;
-        frequency: number;
-        lenght_path: number;
-    };
+    amplitude: number;
+    duration: number;
+    frequency: number;
+    lenght_path: number;
     task: string;
     cognitive_effect: string;
     epi_manifestation: string;

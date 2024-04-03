@@ -4,6 +4,8 @@
     },
     "pages": {
         "stimulationTool": {
+            "button_download_form": "Save to file",
+            "button_open_form": "Open from previously saved",
             "validation": {
                 "electrode_params": {
                     "separation": "Cannot be 0.",
@@ -90,6 +92,9 @@
             },
             "summary": {
                 "tab_title": "Summary",
+                "button_filter_off": "Reset filters",
+                "button_select_columns": "Select columns",
+                "button_download_csv": "Download as CSV",
                 "results_table": {
                     "implantation_group_title": "Implantation",
                     "electrode_title": "Electrode",
@@ -97,7 +102,10 @@
                     "roi_title": "Location",
                     "stimulation_parameters_group_title": "Stimulation",
                     "stimulation_time_title": "Time",
-                    "parameters_title": "Parameters",
+                    "amplitude_title": "Amplitude",
+                    "duration_title": "Duration",
+                    "frequency_title": "Frequency",
+                    "length_path_title": "LP",
                     "task_title": "Task",
                     "effects_group_title": "Effects",
                     "epi_manifestation_title": "Epi. Manif.",
