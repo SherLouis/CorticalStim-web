@@ -4,6 +4,18 @@
     },
     "pages": {
         "stimulationTool": {
+            "button_download_form": "Save to file",
+            "button_open_form": "Open from previously saved",
+            "unsaved_alert_title": "Unsaved changes",
+            "unsaved_alert_text": "Save to file to avoid loosing changes.",
+            "notifications": {
+                "loading_data_from_file_title": "Loading data from selected file...",
+                "loading_data_from_file_message": "Please wait while the data is being loaded",
+                "success_loaded_from_file_title": "Data loaded",
+                "success_loaded_from_file_message": "Data successfuly loaded from files",
+                "failed_loading_from_file_title": "Données not loaded",
+                "failed_loading_from_file_message": "An error occured while trying to load data from selected file"
+            },
             "validation": {
                 "electrode_params": {
                     "separation": "Cannot be 0.",
@@ -55,6 +67,8 @@
                 "task_last_used_title": "Last used",
                 "set_time_label": "Set Time",
                 "saveButtonLabel": "Save",
+                "numberOfStimulationsLabel": "Stimulations: ",
+                "viewResultsForPointIdLabel": "View results",
                 "effect": {
                     "cognitive_effect_label": "Cognitive Effect",
                     "epi_manifestation": "Epi. manifestation",
@@ -87,7 +101,28 @@
                 }
             },
             "summary": {
-                "tab_title": "Summary"
+                "tab_title": "Summary",
+                "button_filter_off": "Reset filters",
+                "button_select_columns": "Select columns",
+                "button_download_csv": "Download as CSV",
+                "results_table": {
+                    "implantation_group_title": "Implantation",
+                    "electrode_title": "Electrode",
+                    "pointId_title": "Point",
+                    "roi_title": "Location",
+                    "stimulation_parameters_group_title": "Stimulation",
+                    "stimulation_time_title": "Time",
+                    "amplitude_title": "Amplitude",
+                    "duration_title": "Duration",
+                    "frequency_title": "Frequency",
+                    "length_path_title": "LP",
+                    "task_title": "Task",
+                    "effects_group_title": "Effects",
+                    "epi_manifestation_title": "Epi. Manif.",
+                    "post_discharge_title": "Post Discharge",
+                    "post_discharge_details_title": "Post Discharge Details",
+                    "crisis_title": "Crisis"
+                }
             }
         }
     },
