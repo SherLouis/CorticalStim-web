@@ -6,6 +6,19 @@
         "stimulationTool": {
             "button_download_form": "Sauvegarder sur disque",
             "button_open_form": "Ouvrir une sauvegarde",
+            "unsaved_alert_title": "Changements non sauvegardés",
+            "unsaved_alert_text": "Sauvegarder sur disquer pour éviter de perdre les changements effectués.",
+            "blocker_title": "Êtes vous sûr de vouloir quitter la page? Tous changement non enregistrés seront perdus!",
+            "blocker_cancel": "Non, rester",
+            "blocker_proceed":"Oui, quitter sans sauvegarder",
+            "notifications": {
+                "loading_data_from_file_title": "Chargement des données depuis le fichier...",
+                "loading_data_from_file_message": "SVP patienter pendant que les données sont chargées",
+                "success_loaded_from_file_title": "Données chargées",
+                "success_loaded_from_file_message": "Les données ont été chargées avec succès",
+                "failed_loading_from_file_title": "Données non chargées",
+                "failed_loading_from_file_message": "Une erreur est survenue lors du chargement des données"
+            },
             "validation": {
                 "electrode_params": {
                     "separation": "Ne peut pas être 0.",

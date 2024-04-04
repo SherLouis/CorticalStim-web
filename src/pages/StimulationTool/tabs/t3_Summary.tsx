@@ -177,7 +177,10 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                         label={t('pages.stimulationTool.summary.button_select_columns')}
                     >
                         {columnsToggle.map(c =>
-                            <Checkbox value={c.accessor} label={effectiveColumns.filter(ec => ec.accessor === c.accessor).length > 0 ? effectiveColumns.filter(ec => ec.accessor === c.accessor)[0].title : ''} />
+                            <Checkbox
+                                value={c.accessor}
+                                key={c.accessor}
+                                label={effectiveColumns.filter(ec => ec.accessor === c.accessor).length > 0 ? effectiveColumns.filter(ec => ec.accessor === c.accessor)[0].title : ''} />
                         )}
                     </Checkbox.Group>
                 </Popover.Dropdown>

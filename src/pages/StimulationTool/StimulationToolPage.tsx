@@ -1,29 +1,30 @@
-import { ActionIcon, Box, Group, Tabs } from "@mantine/core";
+import { ActionIcon, Text, Box, Group, Tabs, Alert } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import StimulationFormValues from "../../models/stimulationForm";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ElectrodeSetupStep from "./tabs/t1_ImplantationSetup";
 import StimulationsTab from "./tabs/t2_Stimulations";
 import SummaryTab, { SummaryFilters } from "./tabs/t3_Summary";
-import { IconFolderOpen, IconDownload } from "@tabler/icons-react";
+import { IconFolderOpen, IconDownload, IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 
-// TODO: banière pour dire si modifications non enregistrées
 // TODO: empêcher de quitter la page si pas enregistré depuis dernières modifs
 export default function StimulationToolPage() {
     const { t } = useTranslation();
     const openInputFileRef = useRef<HTMLInputElement | null>(null);
 
-    const form = useForm<StimulationFormValues>({
-        initialValues: {
-            electrode_params: {
-                type: "",
-                separation: 0,
-                diameter: 0,
-                length: 0
-            },
-            electrodes: []
+    const [form_previous_values, set_form_previous_values] = useState<StimulationFormValues>({
+        electrode_params: {
+            type: "",
+            separation: 0,
+            diameter: 0,
+            length: 0
         },
+        electrodes: []
+    });
+    const form = useForm<StimulationFormValues>({
+        initialValues: form_previous_values,
         validate: {
             electrode_params: {
                 separation: (value) => value === 0 ? t("pages.stimulationTool.validation.electrode_params.separation") : null,
@@ -40,6 +41,7 @@ export default function StimulationToolPage() {
 
     const [activeTab, setActiveTab] = useState<string | null>('implantation');
     const [summaryFilters, setSummaryFilters] = useState<SummaryFilters>({});
+    const [hasUnsavedData, setHasUnsavedData] = useState(false);
 
     const downloadFormValues = () => {
         var data = new Blob([JSON.stringify(form.values)], { type: 'application/json' });
@@ -48,24 +50,49 @@ export default function StimulationToolPage() {
         tempLink.href = dataURL;
         tempLink.setAttribute('download', `stimulation_${new Date().toISOString().substring(0, 10)}.json`);
         tempLink.click();
+        set_form_previous_values(form.values);
     }
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files === null) {
             return;
         }
+
         const uploadedFile = e.target.files[0];
 
         const fileReader = new FileReader();
         if (uploadedFile !== undefined)
-            fileReader.readAsText(uploadedFile, "UTF-8");
+            notifications.show({
+                id: 'opened_file',
+                title: t('pages.stimulationTool.notifications.loading_data_from_file_title'),
+                message: t('pages.stimulationTool.notifications.loading_data_from_file_message'),
+                loading: true
+            });
+        fileReader.readAsText(uploadedFile, "UTF-8");
         fileReader.onload = () => {
             try {
                 const values = JSON.parse(fileReader.result as string);
                 form.setValues(values);
+                set_form_previous_values(values);
+                notifications.update({
+                    id: 'opened_file',
+                    title: t('pages.stimulationTool.notifications.success_loaded_from_file_title'),
+                    message: t('pages.stimulationTool.notifications.success_loaded_from_file_message'),
+                    autoClose: 2000,
+                    icon: <IconCheck />,
+                    color: 'green',
+                    loading: false
+                });
             }
             catch (e) {
-                // TODO: display notification instead
-                console.error("**Not valid JSON file!**");
+                notifications.update({
+                    id: 'opened_file',
+                    title: t('pages.stimulationTool.notifications.failed_loading_from_file_title'),
+                    message: t('pages.stimulationTool.notifications.failed_loading_from_file_message'),
+                    autoClose: 2000,
+                    icon: <IconX />,
+                    color: 'red',
+                    loading: false
+                });
             }
         }
     };
@@ -74,7 +101,13 @@ export default function StimulationToolPage() {
         setSummaryFilters({ pointIds: [pointId] });
         setActiveTab('summary');
     }
-    
+
+    const computeShouldDisplayUnsavedMessage = () => {
+        return JSON.stringify(form.values) !== JSON.stringify(form_previous_values);
+    }
+
+    useEffect(() => setHasUnsavedData(computeShouldDisplayUnsavedMessage()), [form.values, form_previous_values]);
+
     return (
         <Box mx={"2vh"} h={"90vh"}>
             <Group>
@@ -85,6 +118,14 @@ export default function StimulationToolPage() {
                 <ActionIcon title={t('pages.stimulationTool.button_download_form')}>
                     <IconDownload onClick={downloadFormValues} />
                 </ActionIcon>
+                {hasUnsavedData &&
+                    <Alert color='yellow' icon={<IconAlertCircle size="1rem" />} radius={'lg'} p={'xs'}>
+                        <Group>
+                            <Text fw={700} >{t('pages.stimulationTool.unsaved_alert_title')}</Text>
+                            <Text >{t('pages.stimulationTool.unsaved_alert_text')}</Text>
+                        </Group>
+                    </Alert>
+                }
             </Group>
             <Tabs value={activeTab} onTabChange={setActiveTab}>
                 <Tabs.List grow>

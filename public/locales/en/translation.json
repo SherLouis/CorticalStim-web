@@ -6,6 +6,19 @@
         "stimulationTool": {
             "button_download_form": "Save to file",
             "button_open_form": "Open from previously saved",
+            "unsaved_alert_title": "Unsaved changes",
+            "unsaved_alert_text": "Save to file to avoid loosing changes.",
+            "blocker_title": "Are you sure you want to quit this page? All unsaved changes will be lost!",
+            "blocker_cancel": "No, stay",
+            "blocker_proceed":"Yes, quit without saving",
+            "notifications": {
+                "loading_data_from_file_title": "Loading data from selected file...",
+                "loading_data_from_file_message": "Please wait while the data is being loaded",
+                "success_loaded_from_file_title": "Data loaded",
+                "success_loaded_from_file_message": "Data successfuly loaded from files",
+                "failed_loading_from_file_title": "Données not loaded",
+                "failed_loading_from_file_message": "An error occured while trying to load data from selected file"
+            },
             "validation": {
                 "electrode_params": {
                     "separation": "Cannot be 0.",
