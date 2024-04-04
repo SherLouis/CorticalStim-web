@@ -8,9 +8,6 @@
             "button_open_form": "Ouvrir une sauvegarde",
             "unsaved_alert_title": "Changements non sauvegardés",
             "unsaved_alert_text": "Sauvegarder sur disquer pour éviter de perdre les changements effectués.",
-            "blocker_title": "Êtes vous sûr de vouloir quitter la page? Tous changement non enregistrés seront perdus!",
-            "blocker_cancel": "Non, rester",
-            "blocker_proceed":"Oui, quitter sans sauvegarder",
             "notifications": {
                 "loading_data_from_file_title": "Chargement des données depuis le fichier...",
                 "loading_data_from_file_message": "SVP patienter pendant que les données sont chargées",
