@@ -95,7 +95,6 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
         ];
     }
 
-    // TODO: group Destrieux by blocks by region
     return (
         <Box w={"100%"}>
             <Stack h={"100%"}>
@@ -264,7 +263,22 @@ const VEPSelection = ({ form }: VEPSelectionProps) => {
             { value: "Insula-gyri-longi", label: "34 - Insula-gyri-longi" }
         ];
     }
+    const getSubcorticalStructuresOptions = (): { value: string; label: string }[] => {
+        return [
+            { value: "hippocampus_anterior", label: "73 -  Hippocampus anterior" },
+            { value: "hippocampus_posterior", label: "74 -  Hippocampus posterior" },
+            { value: "amygdala", label: "75 -  Amygdala" },
+            { value: "thalamus", label: "76 -  Thalamus" },
+            { value: "caudate_nucleus", label: "77 -  Caudate nucleus" },
+            { value: "putamen", label: "78 -  Putamen" },
+            { value: "pallidum", label: "79 -  Pallidum" },
+            { value: "nucleus_accumbens", label: "80 -  Nucleus accumbens" },
+            { value: "cerebellar_cortex", label: "81 -  Cerebellar cortex" }
 
+        ];
+    }
+
+    // TODO: translations for block titles
     return (
         <SimpleGrid cols={4}>
             <Stack>
@@ -374,6 +388,18 @@ const VEPSelection = ({ form }: VEPSelectionProps) => {
                     <Title order={5}>{"Insula"}</Title>
                     <Button.Group orientation='vertical'>
                         {getInsulaVepOptions().map(option =>
+                            <Button compact
+                                key={'vep_' + option.value}
+                                onClick={() => form.setFieldValue('vep', option.value)}
+                                variant={option.value === form.values.vep ? 'filled' : 'light'}>
+                                {option.label}
+                            </Button>)}
+                    </Button.Group>
+                </Box>
+                <Box>
+                    <Title order={5}>{"Subcortical structures"}</Title>
+                    <Button.Group orientation='vertical'>
+                        {getSubcorticalStructuresOptions().map(option =>
                             <Button compact
                                 key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}

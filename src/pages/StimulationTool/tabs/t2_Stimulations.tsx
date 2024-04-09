@@ -40,7 +40,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     }
 
     const resetForNewPoint = (newPointId: string) => {
-        params_form.reset();
+        // Do not reset params_form to keep previously selected values
         task_form.reset();
         effect_form.reset();
         setSelectedPoint(newPointId);
