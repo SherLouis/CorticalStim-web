@@ -23,7 +23,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
     const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 0, duration: 0, frequency: 0, lenght_path: 0 } });
     const task_form = useForm<StimulationTaskFormValues>({ initialValues: { category: "", subcategory: "", characteristic: "" } });
-    const effect_form = useForm<StimulationEffectsValues>({ initialValues: { cognitive_effect: { class: "", descriptor: "", details: "" }, epi_manifestation: [], post_discharge: true, pd_duration: 0, pd_local: "", pd_type: "", crisis: false } });
+    const effect_form = useForm<StimulationEffectsValues>({ initialValues: { cognitive_effect: { class: "", descriptor: "", details: "" }, epi_manifestation: "", post_discharge: false, pd_duration: 0, pd_local: "", pd_type: "", crisis: false } });
 
     const [lastTaskValues, lastTaskValuesHandlers] = useListState<{ category: string; subcategory: string; characteristic: string }>();
     const [lastCognitiveEffectValues, lastCognitiveEffectValuesHandlers] = useListState<StimulationCognitiveEffectFormValues>();

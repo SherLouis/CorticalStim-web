@@ -31,7 +31,6 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
         return [
             { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_aura'), value: "typical_aura" },
             { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_crisis'), value: "typical_crisis" },
-            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.atypical_incomplete_crisis'), value: "atypical_incomplete_crisis" },
             { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.atypical_crisis'), value: "atypical_crisis" },
             { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.other'), value: "other" }
         ]
@@ -61,11 +60,12 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
                 <Stack sx={{ flex: 3 }}>
                     <Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>
                     <Box>
-                        <Checkbox.Group {...form.getInputProps('epi_manifestation')}>
-                            <Stack>
-                                {getEpiManifestationOptions().map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label} />)}
-                            </Stack>
-                        </Checkbox.Group>
+                        <Stack>
+                            {getEpiManifestationOptions().map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label}
+                                onChange={(e) => form.setFieldValue('epi_manifestation', e.target.checked ? e.target.value : "")}
+                                checked={option.value===form.values.epi_manifestation}
+                                />)}
+                        </Stack>
                     </Box>
                 </Stack>
                 <Stack sx={{ flex: 3 }}>

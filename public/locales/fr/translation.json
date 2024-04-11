@@ -77,7 +77,6 @@
                     "epi_manifestation_options_labels": {
                         "typical_aura": "Aura Typique",
                         "typical_crisis": "Crise Typique",
-                        "atypical_incomplete_crisis": "Crise Atypique (Incomplète)",
                         "atypical_crisis": "Crise Atypique",
                         "other": "Autre"
                     },
