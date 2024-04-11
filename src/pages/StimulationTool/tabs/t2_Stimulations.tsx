@@ -281,22 +281,24 @@ const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onV
                                 <SimpleGrid cols={10}>
                                     {electrode.stim_points.map((stim_point, stim_point_i) => {
                                         const pointId = getStimPointLabel(electrode.label, stim_point_i);
+                                        const nbStims = stim_point.stimulations.length;
+                                        const color = selectedContact === pointId ? 'blue' : (nbStims > 0 ? (nbStims === 1 ? 'green' : 'orange') : 'gray');
                                         return (
-                                            <Popover position='bottom' opened={selectedContact===pointId} key={pointId}>
+                                            <Popover position='bottom' opened={selectedContact === pointId} key={pointId}>
                                                 <Popover.Target>
                                                     <Chip size='sm'
                                                         value={pointId}
                                                         key={pointId}
-                                                        onChange={(checked) => onSelectedChanged(checked ? pointId : "")}
-                                                        checked={selectedContact === pointId}
-                                                        variant='filled'
-                                                        color={selectedContact === pointId ? 'blue' : 'gray'}>
+                                                        onChange={(checked) => onSelectedChanged(selectedContact !== pointId ? pointId : "")}
+                                                        checked={selectedContact === pointId || nbStims > 0}
+                                                        variant={selectedContact === pointId || nbStims > 0 ? 'filled' : 'light'}
+                                                        color={color}>
                                                         {pointId}
                                                     </Chip>
                                                 </Popover.Target>
                                                 <Popover.Dropdown>
                                                     <Text>{t('pages.stimulationTool.stimulation.numberOfStimulationsLabel') + stim_point.stimulations.length}</Text>
-                                                    {stim_point.stimulations.length > 0 && <Button compact leftIcon={<IconEye />} onClick={() => onViewResultsForPoint(pointId)}>{t('pages.stimulationTool.stimulation.viewResultsForPointIdLabel')}</Button>}
+                                                    {nbStims > 0 && <Button compact leftIcon={<IconEye />} onClick={() => onViewResultsForPoint(pointId)}>{t('pages.stimulationTool.stimulation.viewResultsForPointIdLabel')}</Button>}
                                                 </Popover.Dropdown>
                                             </Popover>
                                         );

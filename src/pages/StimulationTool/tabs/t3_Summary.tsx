@@ -33,7 +33,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                             lenght_path: stim.parameters.lenght_path,
                             task: formatSelectedTask(stim.task),
                             cognitive_effect: formatSelectedCognitiveEffect(stim.effect.cognitive_effect),
-                            epi_manifestation: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.' + stim.effect.epi_manifestation),
+                            epi_manifestation: stim.effect.epi_manifestation!=='' ? t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.' + stim.effect.epi_manifestation) : '-',
                             post_discharge: stim.effect.post_discharge,
                             post_discharge_details: stim.effect.post_discharge ? stim.effect.pd_duration + 's, ' + stim.effect.pd_local + ', ' + stim.effect.pd_type : '-',
                             crisis: stim.effect.crisis
