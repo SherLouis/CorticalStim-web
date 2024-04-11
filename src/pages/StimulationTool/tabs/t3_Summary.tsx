@@ -33,7 +33,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                             lenght_path: stim.parameters.lenght_path,
                             task: formatSelectedTask(stim.task),
                             cognitive_effect: formatSelectedCognitiveEffect(stim.effect.cognitive_effect),
-                            epi_manifestation: stim.effect.epi_manifestation!=='' ? t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.' + stim.effect.epi_manifestation) : '-',
+                            epi_manifestation: stim.effect.epi_manifestation !== '' ? t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.' + stim.effect.epi_manifestation) : '-',
                             post_discharge: stim.effect.post_discharge,
                             post_discharge_details: stim.effect.post_discharge ? stim.effect.pd_duration + 's, ' + stim.effect.pd_local + ', ' + stim.effect.pd_type : '-',
                             crisis: stim.effect.crisis
@@ -47,14 +47,21 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
             case 'white':
                 return t('pages.stimulationTool.implantation.whiteMatter');
             case 'vep':
-                return 'VEP - ' + point_location.vep;
+                return point_location.vep;
             case 'destrieux':
-                return 'Destrieux - ' + point_location.destrieux;
+                return point_location.destrieux;
             case 'mni':
-                return 'MNI - x=' + point_location.mni.x + ' y=' + point_location.mni.y + ' z=' + point_location.mni.z;
+                return 'x=' + point_location.mni.x + ' y=' + point_location.mni.y + ' z=' + point_location.mni.z;
             default:
                 return '-'
         }
+    }
+
+    const formatBool = (value: boolean) => {
+        if (value === true) {
+            return t('common.yes');
+        }
+        return t('common.no');
     }
 
     const [records, setRecords] = useState(getRecordsFromForm());
@@ -125,10 +132,11 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
             ...allColumnsProps
         },
         { accessor: 'task', title: t('pages.stimulationTool.summary.results_table.task_title'), ...allColumnsProps },
+        { accessor: 'cognitive_effect', title: t('pages.stimulationTool.summary.results_table.cognitive_effect_title'), ...allColumnsProps },
         { accessor: 'epi_manifestation', title: t('pages.stimulationTool.summary.results_table.epi_manifestation_title'), ...allColumnsProps },
-        { accessor: 'post_discharge', title: t('pages.stimulationTool.summary.results_table.post_discharge_title'), render: (result) => String(result.post_discharge), ...allColumnsProps },
+        { accessor: 'post_discharge', title: t('pages.stimulationTool.summary.results_table.post_discharge_title'), render: (result) => formatBool(result.post_discharge), ...allColumnsProps },
         { accessor: 'post_discharge_details', title: t('pages.stimulationTool.summary.results_table.post_discharge_details_title'), ...allColumnsProps },
-        { accessor: 'crisis', title: t('pages.stimulationTool.summary.results_table.crisis_title'), render: (result) => String(result.crisis), ...allColumnsProps }
+        { accessor: 'crisis', title: t('pages.stimulationTool.summary.results_table.crisis_title'), render: (result) => formatBool(result.crisis), ...allColumnsProps }
     ] as DataTableColumn<Result>[];
     const { effectiveColumns, columnsToggle, setColumnsToggle } = useDataTableColumns<Result>({
         key: columnsLocalStorageKey,
@@ -213,7 +221,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                 {
                     id: 'effects_group',
                     title: t('pages.stimulationTool.summary.results_table.effects_group_title'),
-                    columns: effectiveColumns.filter((c) => ['epi_manifestation', 'post_discharge', 'post_discharge_details', 'crisis'].includes(c.accessor))
+                    columns: effectiveColumns.filter((c) => ['cognitive_effect', 'epi_manifestation', 'post_discharge', 'post_discharge_details', 'crisis'].includes(c.accessor))
                 }
             ]}
         />
