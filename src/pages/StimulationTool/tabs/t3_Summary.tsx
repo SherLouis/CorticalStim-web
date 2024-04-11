@@ -129,14 +129,27 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
             accessor: 'lenght_path',
             title: t('pages.stimulationTool.summary.results_table.length_path_title'),
             render: (result) => result.lenght_path + 's',
+            defaultToggle: false,
             ...allColumnsProps
         },
         { accessor: 'task', title: t('pages.stimulationTool.summary.results_table.task_title'), ...allColumnsProps },
         { accessor: 'cognitive_effect', title: t('pages.stimulationTool.summary.results_table.cognitive_effect_title'), ...allColumnsProps },
         { accessor: 'epi_manifestation', title: t('pages.stimulationTool.summary.results_table.epi_manifestation_title'), ...allColumnsProps },
-        { accessor: 'post_discharge', title: t('pages.stimulationTool.summary.results_table.post_discharge_title'), render: (result) => formatBool(result.post_discharge), ...allColumnsProps },
+        {
+            accessor: 'post_discharge',
+            title: t('pages.stimulationTool.summary.results_table.post_discharge_title'),
+            render: (result) => formatBool(result.post_discharge),
+            defaultToggle: false,
+            ...allColumnsProps
+        },
         { accessor: 'post_discharge_details', title: t('pages.stimulationTool.summary.results_table.post_discharge_details_title'), ...allColumnsProps },
-        { accessor: 'crisis', title: t('pages.stimulationTool.summary.results_table.crisis_title'), render: (result) => formatBool(result.crisis), ...allColumnsProps }
+        {
+            accessor: 'crisis',
+            title: t('pages.stimulationTool.summary.results_table.crisis_title'),
+            render: (result) => formatBool(result.crisis),
+            defaultToggle: false,
+            ...allColumnsProps
+        }
     ] as DataTableColumn<Result>[];
     const { effectiveColumns, columnsToggle, setColumnsToggle } = useDataTableColumns<Result>({
         key: columnsLocalStorageKey,
