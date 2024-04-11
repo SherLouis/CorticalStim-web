@@ -54,25 +54,41 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
 export const formatSelectedTask = (task_values: StimulationTaskFormValues): string => {
     return task_values.category +
         (task_values.subcategory !== "" ? ('/' + task_values.subcategory
-            + (task_values.characteristic !== "" ? ('/' + task_values.characteristic) : '')) : '-')
+            + (task_values.characteristic !== "" ? ('/' + task_values.characteristic) : '')) : '')
 }
 
 const TaskTable = ({ form, handleValueChange }: TaskTableProps) => {
     const tasks: TaskDdo[] = [
-        { level: "category", category: "Category1", subcategory: "", characteristic: "" },
-        { level: "subcategory", category: "Category1", subcategory: "Subcategory1", characteristic: "" },
-        { level: "characteristic", category: "Category1", subcategory: "Subcategory1", characteristic: "characteristic1" },
-        { level: "characteristic", category: "Category1", subcategory: "Subcategory1", characteristic: "characteristic2" },
-        { level: "subcategory", category: "Category1", subcategory: "Subcategory2", characteristic: "" },
-        { level: "characteristic", category: "Category1", subcategory: "Subcategory2", characteristic: "characteristic1" },
-        { level: "characteristic", category: "Category1", subcategory: "Subcategory2", characteristic: "characteristic2" },
-        { level: "category", category: "Category2", subcategory: "", characteristic: "" },
-        { level: "subcategory", category: "Category2", subcategory: "Subcategory1", characteristic: "" },
-        { level: "characteristic", category: "Category2", subcategory: "Subcategory1", characteristic: "characteristic1" },
-        { level: "characteristic", category: "Category2", subcategory: "Subcategory1", characteristic: "characteristic2" },
-        { level: "subcategory", category: "Category2", subcategory: "Subcategory2", characteristic: "" },
-        { level: "characteristic", category: "Category2", subcategory: "Subcategory2", characteristic: "characteristic1" },
-        { level: "characteristic", category: "Category2", subcategory: "Subcategory2", characteristic: "characteristic2" },
+        { level: "category", category: "Sensitive", subcategory: "", characteristic: "" },
+        { level: "subcategory", category: "Sensitive", subcategory: "Somatic", characteristic: "" },
+        { level: "subcategory", category: "Sensitive", subcategory: "Visual", characteristic: "" },
+        { level: "subcategory", category: "Sensitive", subcategory: "Auditory", characteristic: "" },
+        { level: "category", category: "Motor", subcategory: "", characteristic: "" },
+        { level: "subcategory", category: "Motor", subcategory: "Positive", characteristic: "" },
+        { level: "subcategory", category: "Motor", subcategory: "Negative", characteristic: "" },
+        { level: "subcategory", category: "Motor", subcategory: "Coordination", characteristic: "" },
+        { level: "category", category: "Language", subcategory: "", characteristic: "" },
+        { level: "subcategory", category: "Language", subcategory: "Expressive", characteristic: "" },
+        { level: "characteristic", category: "Language", subcategory: "Expressive", characteristic: "Oral" },
+        { level: "characteristic", category: "Language", subcategory: "Expressive", characteristic: "Writen" },
+        { level: "subcategory", category: "Language", subcategory: "Receptive", characteristic: "" },
+        { level: "characteristic", category: "Language", subcategory: "Receptive", characteristic: "Reading" },
+        { level: "characteristic", category: "Language", subcategory: "Receptive", characteristic: "Auditory" },
+        { level: "subcategory", category: "Language", subcategory: "Semantic", characteristic: "" },
+        { level: "subcategory", category: "Language", subcategory: "Naming", characteristic: "" },
+        { level: "characteristic", category: "Language", subcategory: "Naming", characteristic: "Visual" },
+        { level: "characteristic", category: "Language", subcategory: "Naming", characteristic: "Auditory" },
+        { level: "subcategory", category: "Language", subcategory: "Counting", characteristic: "" },
+        { level: "category", category: "Memory", subcategory: "", characteristic: "" },
+        { level: "subcategory", category: "Memory", subcategory: "Episodic", characteristic: "" },
+        { level: "characteristic", category: "Memory", subcategory: "Episodic", characteristic: "Verbal" },
+        { level: "characteristic", category: "Memory", subcategory: "Episodic", characteristic: "Visual" },
+        { level: "subcategory", category: "Memory", subcategory: "Working", characteristic: "" },
+        { level: "characteristic", category: "Memory", subcategory: "Working", characteristic: "Verbal" },
+        { level: "characteristic", category: "Memory", subcategory: "Working", characteristic: "Visual" },
+        { level: "subcategory", category: "Memory", subcategory: "Semantic", characteristic: "" },
+        { level: "category", category: "Executive", subcategory: "", characteristic: "" },
+        { level: "subcategory", category: "Executive", subcategory: "Calcul", characteristic: "" },
     ];
 
     const getTaskOptions = (level: 'category' | 'subcategory' | 'characteristic') => {
