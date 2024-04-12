@@ -1,6 +1,6 @@
 import { ActionIcon, Badge, Box, Button, Center, Chip, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
-import { IconTrash } from "@tabler/icons-react";
+import { IconCircleCheck, IconRestore, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { letters } from "../../../lib/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";
@@ -320,18 +320,23 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Center>
                 <Button.Group w={"10%"}>
                     {selectedContacts.filter((s) => doneContacts.includes(s)).length > 0 &&
-                        <Button
-                            variant='light'
-                            onClick={resetSelectedContacts}>
-                            {t("pages.stimulationTool.implantation.clearLocationButtonLabel")}
-                        </Button>
+                        <ActionIcon
+                            variant='outline'
+                            size={'xl'}
+                            color='red'
+                            onClick={resetSelectedContacts}
+                            display={selectedContacts.filter((s) => doneContacts.includes(s)).length > 0 ? 'block' : 'none'}>
+                            <IconRestore size={'xl'} />
+                        </ActionIcon>
                     }
-                    <Button
-                        variant="filled"
+                    <ActionIcon
+                        variant='filled'
+                        size={'xl'}
+                        color='green'
                         onClick={handleElectrodeLocationFormSubmit}
                         display={selectedContacts.length > 0 ? "block" : "none"}>
-                        {t("pages.stimulationTool.implantation.setLocationButtonLabel")}
-                    </Button>
+                        <IconCircleCheck size={'xl'} />
+                    </ActionIcon>
                 </Button.Group>
             </Group>
 

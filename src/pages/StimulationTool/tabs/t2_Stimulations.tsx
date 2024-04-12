@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Chip, Divider, Grid, Group, Modal, NumberInput, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { ActionIcon, Badge, Box, Button, Chip, Divider, Grid, Group, Modal, NumberInput, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { StimulationCognitiveEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../models/stimulationForm";
 import { useState } from "react";
@@ -8,7 +8,7 @@ import StimulationParametersSelection from "../../../components/StimulationParam
 import StimulationTaskSelection, { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
 import StimulationEffectSelection, { formatSelectedCognitiveEffect } from "../../../components/StimulationEffectSelection";
-import { IconCircleX, IconEye, IconTrash } from "@tabler/icons-react";
+import { IconCircleCheck, IconCircleX, IconEye, IconTrash } from "@tabler/icons-react";
 import { t } from "i18next";
 
 export default function StimulationsTab({ form, viewPointSummary }: StimulationTabProps) {
@@ -195,12 +195,9 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                                     <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
                                 }
                                 <Divider orientation='vertical' color='white' />
-                                <Button
-                                    onClick={handleSubmit}
-                                    disabled={stimulationTime === ""}
-                                >
-                                    {t('pages.stimulationTool.stimulation.saveButtonLabel')}
-                                </Button>
+                                <ActionIcon variant='filled' size={'xl'} color='green' onClick={handleSubmit} disabled={stimulationTime === ""}>
+                                    <IconCircleCheck size={'xl'} />
+                                </ActionIcon>
                             </Group>
                         }
                     </Box>
