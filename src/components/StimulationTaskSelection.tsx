@@ -52,9 +52,9 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
 }
 
 export const formatSelectedTask = (task_values: StimulationTaskFormValues): string => {
-    return task_values.category +
+    return task_values.category !== "" ? (task_values.category +
         (task_values.subcategory !== "" ? ('/' + task_values.subcategory
-            + (task_values.characteristic !== "" ? ('/' + task_values.characteristic) : '')) : '')
+            + (task_values.characteristic !== "" ? ('/' + task_values.characteristic) : '')) : '')) : '-'
 }
 
 const TaskTable = ({ form, handleValueChange }: TaskTableProps) => {

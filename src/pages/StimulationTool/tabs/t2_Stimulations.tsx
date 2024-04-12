@@ -86,13 +86,19 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                                 effect: effect_values
                             });
                         // Save last used task
-                        if (lastTaskValues.length === 0 || formatSelectedTask(lastTaskValues[0]) !== formatSelectedTask(task_values)) {
-                            lastTaskValuesHandlers.prepend({ category: task_form.values.category, subcategory: task_form.values.subcategory, characteristic: task_form.values.characteristic });
+                        if (lastTaskValues.map(t => formatSelectedTask(t)).includes(formatSelectedTask(task_values))) {
+                            lastTaskValuesHandlers.reorder({ from: lastTaskValues.findIndex(t => formatSelectedTask(t) === formatSelectedTask(task_values)), to: 0 });
+                        }
+                        else {
+                            lastTaskValuesHandlers.prepend(task_values);
                             if (lastTaskValues.length >= 3) { lastTaskValues.pop(); }
                         }
 
                         // Save last used effect
-                        if (lastCognitiveEffectValues.length === 0 || formatSelectedCognitiveEffect(lastCognitiveEffectValues[0]) !== formatSelectedCognitiveEffect(effect_values.cognitive_effect)) {
+                        if (lastCognitiveEffectValues.map(e => formatSelectedCognitiveEffect(e)).includes(formatSelectedCognitiveEffect(effect_values.cognitive_effect))) {
+                            lastCognitiveEffectValuesHandlers.reorder({ from: lastCognitiveEffectValues.findIndex(e => formatSelectedCognitiveEffect(e) === formatSelectedCognitiveEffect(effect_values.cognitive_effect)), to: 0 });
+                        }
+                        else {
                             lastCognitiveEffectValuesHandlers.prepend({
                                 class: effect_values.cognitive_effect.class,
                                 descriptor: effect_values.cognitive_effect.descriptor,
