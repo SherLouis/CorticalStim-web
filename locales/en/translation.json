@@ -117,6 +117,7 @@
                     "length_path_title": "LP",
                     "task_title": "Task",
                     "effects_group_title": "Effects",
+                    "cognitive_effect_title": "Cognitive Effect",
                     "epi_manifestation_title": "Epi. Manif.",
                     "post_discharge_title": "Post Discharge",
                     "post_discharge_details_title": "Post Discharge Details",
@@ -127,6 +128,8 @@
     },
     "common": {
         "okButtonLabel": "OK",
-        "resetButtonLabel": "Reset"
+        "resetButtonLabel": "Reset",
+        "yes": "yes",
+        "no": "no"
     }
 }
