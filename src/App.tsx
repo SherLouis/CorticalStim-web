@@ -9,7 +9,7 @@ import StimulationToolPage from './pages/StimulationTool/StimulationToolPage';
 // TODO: upgrade to mantine v7
 
 function App() {
-    const [colorScheme, setColorScheme] = useState<ColorScheme>('dark');
+    const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
     const toggleColorScheme = (value?: ColorScheme) =>
         setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
