@@ -193,8 +193,8 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     useEffect(() => { updateDoneContacts(); }, [form])
 
     return (
-        <Box mt={"md"}>
-            <Box h={"5vh"}>
+        <Box mt={"md"} h={"100%"}>
+            <Box h={"10%"}>
                 <Group>
                     <Title order={3}>{t('pages.stimulationTool.implantation.electrodeConfiguration')}</Title>
                     <NativeSelect
@@ -233,9 +233,9 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Group>
             </Box>
 
-            <Box my={"md"} h={"20vh"} p={'sm'}>
+            <Box my={"md"} h={"60%"} p={'sm'}>
                 <Button onClick={addElectrode} size="xs">{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
-                <ScrollArea w={"100%"} h={"95%"} type="always" sx={{ alignItems: "center", padding: '0' }}>
+                <ScrollArea w={"100%"} mih={"100%"} type="always" sx={{ alignItems: "center", padding: '0' }}>
                     {form.values.electrodes.map((electrode, electrode_i) => {
                         return (
                             <Group noWrap
@@ -277,7 +277,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                     />
                                 </Group>
 
-                                <Box h={"100%"} w={"75%"}>
+                                <Box mih={"100%"} w={"75%"}>
                                     <Chip.Group multiple value={selectedContacts} onChange={setSelectedContacts}>
                                         <SimpleGrid cols={10}>
                                             {electrode.stim_points.map((stim_point, stim_point_i) => {
@@ -300,7 +300,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </ScrollArea>
             </Box>
 
-            <Group position="center" align="center" h={"5vh"} w={"100%"} bg={'gray'}>
+            <Group position="center" align="center" h={"10%"} w={"100%"} bg={'gray'}>
                 {selectedContacts.length === 0 &&
                     <Group position="center" align="center">
                         <Button onClick={selectAllContacts}>{t("pages.stimulationTool.implantation.selectAllContactsButtonLabel")}</Button>
@@ -340,7 +340,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Button.Group>
             </Group>
 
-            <ScrollArea w={"100%"} h={"53vh"} >
+            <ScrollArea w={"100%"} h={"50%"} >
                 <Title order={3}>{t('pages.stimulationTool.implantation.placement')}</Title>
                 <Box display={(selectedContacts.length > 0) ? 'block' : 'none'}>
                     <Stack align='flex-start' justify='flex-start'>

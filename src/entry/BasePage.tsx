@@ -1,22 +1,26 @@
-import { ActionIcon, AppShell, Avatar, Group, Header, Menu, Title, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, AppShell, Avatar, Burger, Container, Group, Header, Menu, Title, useMantineColorScheme } from '@mantine/core';
 import { PropsWithChildren } from 'react'
 import { IconSun, IconMoonStars } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
+import { useDisclosure } from '@mantine/hooks';
 
 export default function BasePage(props: PropsWithChildren<BasePageProps>) {
     const { colorScheme } = useMantineColorScheme();
 
+    const headerHeight = "4rem";
+
     return (
         <AppShell
             h={"100vh"}
-            padding="1vh"
+            padding={0}
             styles={(theme) => ({
-                main: { backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[2] },
+                main: { backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[2], paddingTop:headerHeight, height:"100%" },
             })}
             header={
-                <Header height={"5%"} p={"md"}>
+                <Header height={headerHeight} p={"sm"}>
                     <Group position="apart">
-                        <Title order={1}>{props.title}</Title>
+                        <Title size={'2rem'}>{props.title}</Title>
+
                         <Group position="right">
                             <LanguageSelectionMenu />
                             <ThemeToggleIcon />

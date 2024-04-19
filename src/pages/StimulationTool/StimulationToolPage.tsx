@@ -110,8 +110,8 @@ export default function StimulationToolPage() {
     useEffect(() => setHasUnsavedData(computeShouldDisplayUnsavedMessage()), [form.values, form_previous_values]);
 
     return (
-        <Box mx={"2vh"} h={"90vh"}>
-            <Group>
+        <Box mx={"sm"} h={"100%"} m={0} p={0}>
+            <Group h={"5%"}>
                 <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} style={{ display: 'none' }} />
                 <ActionIcon title={t('pages.stimulationTool.button_open_form')}>
                     <IconFolderOpen onClick={() => openInputFileRef.current?.click()} />
@@ -128,16 +128,16 @@ export default function StimulationToolPage() {
                     </Alert>
                 }
             </Group>
-            <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={useCustomTabStyle().classes}>
+            <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={useCustomTabStyle().classes} h={"95%"}>
                 <Tabs.List grow>
                     <Tabs.Tab value="implantation">{t("pages.stimulationTool.implantation.tab_title")}</Tabs.Tab>
                     <Tabs.Tab value="stimulation">{t("pages.stimulationTool.stimulation.tab_title")}</Tabs.Tab>
                     <Tabs.Tab value="summary">{t("pages.stimulationTool.summary.tab_title")}</Tabs.Tab>
                 </Tabs.List>
 
-                <Tabs.Panel value="implantation"><ElectrodeSetupStep form={form} /></Tabs.Panel>
-                <Tabs.Panel value="stimulation"><StimulationsTab form={form} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
-                <Tabs.Panel value="summary"><SummaryTab form={form} filters={summaryFilters} /></Tabs.Panel>
+                <Tabs.Panel value="implantation" h={"100%"}><ElectrodeSetupStep form={form} /></Tabs.Panel>
+                <Tabs.Panel value="stimulation" h={"100%"}><StimulationsTab form={form} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
+                <Tabs.Panel value="summary" h={"100%"}><SummaryTab form={form} filters={summaryFilters} /></Tabs.Panel>
             </Tabs>
         </Box>
     );
