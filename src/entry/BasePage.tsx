@@ -11,14 +11,14 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
             h={"100vh"}
             padding={0}
             styles={(theme) => ({
-                main: { backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[2], minHeight: "95vh", height: "95vh" },
+                main: { backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[2], minHeight: "96vh", height: "96vh" },
             })}
             header={
-                <Container h={"5vh"} fluid px={"sm"}>
+                <Container h={"4vh"} fluid px={"sm"}>
                     <Group position="apart" align='center' h={"100%"} noWrap>
                         <Title size={'2vh'}>{props.title}</Title>
 
-                        <Group position="right" h={"60%"} p={0} noWrap spacing={"xs"}>
+                        <Group position="right" h={"70%"} p={0} noWrap spacing={"xs"}>
                             <LanguageSelectionMenu />
                             <ThemeToggleIcon />
                         </Group>
@@ -52,8 +52,8 @@ const LanguageSelectionMenu = () => {
         <Menu withArrow position="bottom">
             <Menu.Target>
                 { }
-                <ActionIcon size={"80%"}>
-                    <Avatar src={getSvgPathForLanguage(currentLanguage)} size={"90%"} />
+                <ActionIcon>
+                    <Avatar src={getSvgPathForLanguage(currentLanguage)}/>
                 </ActionIcon>
             </Menu.Target>
             <Menu.Dropdown>
@@ -84,13 +84,12 @@ const ThemeToggleIcon = () => {
 
     return (
         <ActionIcon
-            size={"80%"}
             variant="outline"
             color={isDarkTheme ? 'yellow' : 'blue'}
             onClick={() => toggleColorScheme()}
             title="Toggle color scheme"
         >
-            {isDarkTheme ? <IconSun size="100%" /> : <IconMoonStars size="100%" />}
+            {isDarkTheme ? <IconSun /> : <IconMoonStars />}
         </ActionIcon>
     );
 }

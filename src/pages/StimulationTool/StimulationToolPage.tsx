@@ -113,7 +113,7 @@ export default function StimulationToolPage() {
 
     return (
         <Box mx={"sm"} h={"100%"} m={0} p={0}>
-            <Group h={"5%"}>
+            <Group h={"4%"}>
                 <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} style={{ display: 'none' }} />
                 <ActionIcon title={t('pages.stimulationTool.button_open_form')}>
                     <IconFolderOpen onClick={() => openInputFileRef.current?.click()} />
@@ -130,7 +130,7 @@ export default function StimulationToolPage() {
                     </Alert>
                 }
             </Group>
-            <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={useCustomTabStyle().classes} h={"95%"}>
+            <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={useCustomTabStyle().classes} h={"96%"}>
                 <Tabs.List grow mah={"5%"}>
                     <Tabs.Tab value="implantation">{t("pages.stimulationTool.implantation.tab_title")}</Tabs.Tab>
                     <Tabs.Tab value="stimulation">{t("pages.stimulationTool.stimulation.tab_title")}</Tabs.Tab>
