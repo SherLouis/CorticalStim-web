@@ -300,7 +300,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </ScrollArea>
             </Box>
 
-            <Group position="center" align="center" h={"10%"} w={"100%"} bg={'gray'}>
+            <Group position="center" align="center" h={"10%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid'}}>
                 {selectedContacts.length === 0 &&
                     <Group position="center" align="center">
                         <Button onClick={selectAllContacts}>{t("pages.stimulationTool.implantation.selectAllContactsButtonLabel")}</Button>

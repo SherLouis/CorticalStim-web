@@ -10,6 +10,8 @@ import { IconFolderOpen, IconDownload, IconAlertCircle, IconCheck, IconX } from 
 import { notifications } from "@mantine/notifications";
 import { useCustomTabStyle } from "../../components/StyledComponents/StyledTabs";
 
+// TODO: make everything (text, sizes, layout) responsive
+
 // TODO: empêcher de quitter la page si pas enregistré depuis dernières modifs
 export default function StimulationToolPage() {
     const { t } = useTranslation();
