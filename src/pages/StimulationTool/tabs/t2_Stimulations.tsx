@@ -152,7 +152,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     }
 
     return (
-        <Box mt={"md"} h={"87vh"}>
+        <Box pt={"md"} h={"100%"}>
             <Modal opened={showConfirmNoSave} onClose={() => setShowConfirmNoSave(false)} title={t('pages.stimulationTool.stimulation.alert_point_changed.title')}>
                 <Group position="apart">
                     <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmNoSave(false)}>{t('pages.stimulationTool.stimulation.alert_point_changed.cancel_label')}</Button>
@@ -257,7 +257,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                 </Grid.Col>
             </Grid>
         </Box>
-    )
+    );
 }
 
 interface StimulationTabProps extends TabProperties {

@@ -7,7 +7,7 @@ import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } 
 import { useEffect, useRef, useState } from "react";
 import sortBy from 'lodash.sortby';
 import { useListState } from "@mantine/hooks";
-import { ActionIcon, Checkbox, Group, MultiSelect, Popover } from "@mantine/core";
+import { ActionIcon, Box, Checkbox, Group, MultiSelect, Popover } from "@mantine/core";
 import { IconFilterOff, IconFileTypeCsv, IconTableOptions } from "@tabler/icons-react";
 import { CSVLink } from "react-csv";
 import { DataTableColumnToggle } from "mantine-datatable/dist/hooks";
@@ -172,73 +172,76 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         })
     }
 
-    return (<>
-        <CSVLink
-            data={getCsvData()}
-            headers={getCsvHeaders()}
-            filename='results.csv'
-            hidden
-            ref={csvFileRef}
-            target='_blank'
-        />
-        <Group position='right'>
-            <ActionIcon title={t('pages.stimulationTool.summary.button_filter_off')}>
-                <IconFilterOff onClick={clearAllFilters} />
-            </ActionIcon>
-            <Popover position='bottom-end'>
-                <Popover.Target>
-                    <ActionIcon title={t('pages.stimulationTool.summary.button_select_columns')}>
-                        <IconTableOptions />
-                    </ActionIcon>
-                </Popover.Target>
-                <Popover.Dropdown>
-                    <Checkbox.Group
-                        value={columnsToggle.filter((col) => col.toggled).map(col => col.accessor)}
-                        onChange={(checkedValues) => { setColumnsToggle((prevToggleState) => prevToggleState.map(toggle => { return { ...toggle, toggled: checkedValues.includes(toggle.accessor) } as DataTableColumnToggle })) }}
-                        label={t('pages.stimulationTool.summary.button_select_columns')}
-                    >
-                        {columnsToggle.map(c =>
-                            <Checkbox
-                                value={c.accessor}
-                                key={c.accessor}
-                                label={effectiveColumns.filter(ec => ec.accessor === c.accessor).length > 0 ? effectiveColumns.filter(ec => ec.accessor === c.accessor)[0].title : ''} />
-                        )}
-                    </Checkbox.Group>
-                </Popover.Dropdown>
-            </Popover>
+    return (
+        <Box h={"100%"}>
+            <CSVLink
+                data={getCsvData()}
+                headers={getCsvHeaders()}
+                filename='results.csv'
+                hidden
+                ref={csvFileRef}
+                target='_blank'
+            />
+            <Group position='right' h={"4%"}>
+                <ActionIcon title={t('pages.stimulationTool.summary.button_filter_off')}>
+                    <IconFilterOff onClick={clearAllFilters} />
+                </ActionIcon>
+                <Popover position='bottom-end'>
+                    <Popover.Target>
+                        <ActionIcon title={t('pages.stimulationTool.summary.button_select_columns')}>
+                            <IconTableOptions />
+                        </ActionIcon>
+                    </Popover.Target>
+                    <Popover.Dropdown>
+                        <Checkbox.Group
+                            value={columnsToggle.filter((col) => col.toggled).map(col => col.accessor)}
+                            onChange={(checkedValues) => { setColumnsToggle((prevToggleState) => prevToggleState.map(toggle => { return { ...toggle, toggled: checkedValues.includes(toggle.accessor) } as DataTableColumnToggle })) }}
+                            label={t('pages.stimulationTool.summary.button_select_columns')}
+                        >
+                            {columnsToggle.map(c =>
+                                <Checkbox
+                                    value={c.accessor}
+                                    key={c.accessor}
+                                    label={effectiveColumns.filter(ec => ec.accessor === c.accessor).length > 0 ? effectiveColumns.filter(ec => ec.accessor === c.accessor)[0].title : ''} />
+                            )}
+                        </Checkbox.Group>
+                    </Popover.Dropdown>
+                </Popover>
 
-            <ActionIcon title={t('pages.stimulationTool.summary.button_download_csv')}>
-                <IconFileTypeCsv onClick={downloadRecordsToCsv} />
-            </ActionIcon>
-        </Group>
-        <DataTable
-            withColumnBorders
-            striped
-            highlightOnHover
-            idAccessor={(record) => String(record.id)}
-            sortStatus={sortStatus}
-            onSortStatusChange={setSortStatus}
-            storeColumnsKey={columnsLocalStorageKey}
-            records={records}
-            groups={[
-                {
-                    id: 'implantation_group',
-                    title: t('pages.stimulationTool.summary.results_table.implantation_group_title'),
-                    columns: effectiveColumns.filter((c) => ['electrode', 'pointId', 'roi'].includes(c.accessor))
-                },
-                {
-                    id: 'stimulation_parameters_group',
-                    title: t('pages.stimulationTool.summary.results_table.stimulation_parameters_group_title'),
-                    columns: effectiveColumns.filter((c) => ['stimulation_time', 'amplitude', 'duration', 'frequency', 'lenght_path', 'task'].includes(c.accessor))
-                },
-                {
-                    id: 'effects_group',
-                    title: t('pages.stimulationTool.summary.results_table.effects_group_title'),
-                    columns: effectiveColumns.filter((c) => ['cognitive_effect', 'epi_manifestation', 'post_discharge', 'post_discharge_details', 'crisis'].includes(c.accessor))
-                }
-            ]}
-        />
-    </>)
+                <ActionIcon title={t('pages.stimulationTool.summary.button_download_csv')}>
+                    <IconFileTypeCsv onClick={downloadRecordsToCsv} />
+                </ActionIcon>
+            </Group>
+            <DataTable
+                height={"96%"}
+                withColumnBorders
+                striped
+                highlightOnHover
+                idAccessor={(record) => String(record.id)}
+                sortStatus={sortStatus}
+                onSortStatusChange={setSortStatus}
+                storeColumnsKey={columnsLocalStorageKey}
+                records={records}
+                groups={[
+                    {
+                        id: 'implantation_group',
+                        title: t('pages.stimulationTool.summary.results_table.implantation_group_title'),
+                        columns: effectiveColumns.filter((c) => ['electrode', 'pointId', 'roi'].includes(c.accessor))
+                    },
+                    {
+                        id: 'stimulation_parameters_group',
+                        title: t('pages.stimulationTool.summary.results_table.stimulation_parameters_group_title'),
+                        columns: effectiveColumns.filter((c) => ['stimulation_time', 'amplitude', 'duration', 'frequency', 'lenght_path', 'task'].includes(c.accessor))
+                    },
+                    {
+                        id: 'effects_group',
+                        title: t('pages.stimulationTool.summary.results_table.effects_group_title'),
+                        columns: effectiveColumns.filter((c) => ['cognitive_effect', 'epi_manifestation', 'post_discharge', 'post_discharge_details', 'crisis'].includes(c.accessor))
+                    }
+                ]}
+            />
+        </Box>
+    );
 }
 
 interface Result {

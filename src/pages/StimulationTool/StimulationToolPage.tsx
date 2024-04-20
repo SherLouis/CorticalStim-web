@@ -129,15 +129,15 @@ export default function StimulationToolPage() {
                 }
             </Group>
             <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={useCustomTabStyle().classes} h={"95%"}>
-                <Tabs.List grow>
+                <Tabs.List grow mah={"5%"}>
                     <Tabs.Tab value="implantation">{t("pages.stimulationTool.implantation.tab_title")}</Tabs.Tab>
                     <Tabs.Tab value="stimulation">{t("pages.stimulationTool.stimulation.tab_title")}</Tabs.Tab>
                     <Tabs.Tab value="summary">{t("pages.stimulationTool.summary.tab_title")}</Tabs.Tab>
                 </Tabs.List>
 
-                <Tabs.Panel value="implantation" h={"100%"}><ElectrodeSetupStep form={form} /></Tabs.Panel>
-                <Tabs.Panel value="stimulation" h={"100%"}><StimulationsTab form={form} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
-                <Tabs.Panel value="summary" h={"100%"}><SummaryTab form={form} filters={summaryFilters} /></Tabs.Panel>
+                <Tabs.Panel value="implantation" h={"95%"}><ElectrodeSetupStep form={form} /></Tabs.Panel>
+                <Tabs.Panel value="stimulation" h={"95%"}><StimulationsTab form={form} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
+                <Tabs.Panel value="summary" h={"95%"} ><SummaryTab form={form} filters={summaryFilters} /></Tabs.Panel>
             </Tabs>
         </Box>
     );

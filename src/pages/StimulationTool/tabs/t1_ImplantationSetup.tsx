@@ -193,7 +193,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     useEffect(() => { updateDoneContacts(); }, [form])
 
     return (
-        <Box mt={"md"} h={"100%"}>
+        <Box pt={"md"} h={"100%"}>
             <Box h={"10%"}>
                 <Group>
                     <Title order={3}>{t('pages.stimulationTool.implantation.electrodeConfiguration')}</Title>
@@ -233,7 +233,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Group>
             </Box>
 
-            <Box my={"md"} h={"60%"} p={'sm'}>
+            <Box py={"md"} h={"35%"} p={'0'}>
                 <Button onClick={addElectrode} size="xs">{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
                 <ScrollArea w={"100%"} mih={"100%"} type="always" sx={{ alignItems: "center", padding: '0' }}>
                     {form.values.electrodes.map((electrode, electrode_i) => {
@@ -340,7 +340,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Button.Group>
             </Group>
 
-            <ScrollArea w={"100%"} h={"50%"} >
+            <ScrollArea w={"100%"} h={"45%"} >
                 <Title order={3}>{t('pages.stimulationTool.implantation.placement')}</Title>
                 <Box display={(selectedContacts.length > 0) ? 'block' : 'none'}>
                     <Stack align='flex-start' justify='flex-start'>
