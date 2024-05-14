@@ -10,6 +10,14 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
 
     // TODO: preset
 
+    // TODO: new layout with last values and preset on firs column. Then table with 3 columns
+
+    // TODO: renomer effets cognitifs par effet observé
+
+    // TODO: ajouter champs commentaires libres pour effet observé
+
+    // TODO: ajouter champs pour spécifier autres
+
     const handleCognitiveEffectValueChange = (level: 'class' | 'descriptor' | 'details', newValue: string) => {
         switch (level) {
             case 'class':

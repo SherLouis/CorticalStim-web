@@ -235,7 +235,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
             <Box py={"md"} h={"35%"} p={'0'}>
                 <Button onClick={addElectrode} size="xs">{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
-                <ScrollArea w={"100%"} mih={"100%"} type="always" sx={{ alignItems: "center", padding: '0' }}>
+                <ScrollArea w={"100%"} h={"95%"} py={"xs"} type="always" sx={{ alignItems: "center", padding: '0' }}>
                     {form.values.electrodes.map((electrode, electrode_i) => {
                         return (
                             <Group noWrap

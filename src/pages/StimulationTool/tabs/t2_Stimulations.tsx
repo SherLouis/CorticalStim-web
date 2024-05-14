@@ -1,4 +1,4 @@
-import { ActionIcon, Badge, Box, Button, Chip, Divider, Grid, Group, Modal, NumberInput, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { ActionIcon, Badge, Box, Button, Chip, Container, Divider, Grid, Group, Modal, NumberInput, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { StimulationCognitiveEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../models/stimulationForm";
 import { useState } from "react";
@@ -160,102 +160,91 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                 </Group>
             </Modal>
 
-            <Grid h={"100%"} gutter={"xs"}>
-                <Grid.Col span={8} h={"25%"}>
-                    <Box h={"100%"} p={0} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
-                        <ContactSelection
-                            form_values={form.values}
-                            selectedContact={selectedPoint}
-                            onSelectedChanged={handleSelectedPointChanged}
-                            onViewResultsForPoint={handleViewResultsForPoint}
-                        />
-                    </Box>
-                </Grid.Col>
-                <Grid.Col span={4} h={"25%"}>
-                    <Box h={"100%"} p={0} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
-                        <StimulationParametersSelection form={params_form} />
-                    </Box>
-                </Grid.Col>
-                <Grid.Col span={8} h={"15%"}>
-                    <Box h={"100%"} p={0} sx={{ alignItems: "center", display: "flex", justifyContent: "center", borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
-                        {selectedPoint !== "" &&
-                            <Group position="center" align="center">
-                                <Badge size="lg" variant="filled">{selectedPoint}</Badge>
-                                <Divider orientation='vertical' color='white' />
-                                <Title order={4}>{getSelectedPointLocation()}</Title>
-                                <Divider orientation='vertical' color='white' />
-                                <Title order={4}>{getSelectedPointEffect()}</Title>
-                                <Divider orientation='vertical' color='white' />
-                                {stimulationTime === '' &&
-                                    <Button onClick={() => setStimulationTime(new Date().toISOString())}>
-                                        {t('pages.stimulationTool.stimulation.set_time_label')}
-                                    </Button>
-                                }
-                                {stimulationTime !== '' &&
-                                    <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
-                                }
-                                <Divider orientation='vertical' color='white' />
-                                <ActionIcon variant='filled' size={'xl'} color='green' onClick={handleSubmit} disabled={stimulationTime === ""}>
-                                    <IconCircleCheck size={'xl'} />
-                                </ActionIcon>
-                            </Group>
-                        }
-                    </Box>
-                </Grid.Col>
-                <Grid.Col span={4} h={"15%"}>
-                    <Box h={"100%"} p={"xs"} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
-                        <Group position="center" align="center" noWrap h={"100%"} w={"100%"}>
-                            <NumberInput w={"25%"} size="xl"
-                                label={t('pages.stimulationTool.stimulation.amplitude_label')}
+            <Group h={"45%"} >
+                <Box h={"100%"} p={0} sx={{ flex: 6 }}>
+                    <ContactSelection
+                        form_values={form.values}
+                        selectedContact={selectedPoint}
+                        onSelectedChanged={handleSelectedPointChanged}
+                        onViewResultsForPoint={handleViewResultsForPoint}
+                    />
+                </Box>
+                <Box h={"100%"} p={0} sx={{ flex: 6 }}>
+                    {selectedPoint !== '' &&
+                        <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
+                    }
+                </Box>
+            </Group>
+
+            {/*TODO: Adjust central work bar*/}
+            <Group position="center" align="center" h={"10%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
+                <Box sx={{ flex: 6 }}>
+                    {selectedPoint !== "" &&
+                        <Group position="center" align="center">
+                            <Badge size="lg" variant="filled">{selectedPoint}</Badge>
+                            <Divider orientation='vertical' color='white' />
+                            <Title order={4}>{getSelectedPointLocation()}</Title>
+                            <Divider orientation='vertical' color='white' />
+                            <Title order={4}>{getSelectedPointEffect()}</Title>
+                            <Divider orientation='vertical' color='white' />
+                            {stimulationTime === '' &&
+                                <Button onClick={() => setStimulationTime(new Date().toISOString())}>
+                                    {t('pages.stimulationTool.stimulation.set_time_label')}
+                                </Button>
+                            }
+                            {stimulationTime !== '' &&
+                                <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
+                            }
+                            <Divider orientation='vertical' color='white' />
+                            <ActionIcon variant='filled' size={'xl'} color='green' onClick={handleSubmit} disabled={stimulationTime === ""}>
+                                <IconCircleCheck size={'xl'} />
+                            </ActionIcon>
+                        </Group>
+                    }
+                </Box>
+                <Group position="center" align="center" noWrap h={"100%"} sx={{ flex: 6 }}>
+                    <NumberInput w={"25%"} size="md"
+                        label={t('pages.stimulationTool.stimulation.amplitude_label')}
+                        precision={2}
+                        step={0.01}
+                        styles={{ input: { textAlign: "center" } }}
+                        {...params_form.getInputProps('amplitude')}
+                    />
+                    <Stack w={"75%"} align="center">
+                        <Title order={5} h={"50%"}>{formatSelectedTask(task_form.values)}</Title>
+                        <Group position="center" noWrap w={"100%"} h={"50%"}>
+                            <NumberInput size="sm"
+                                label={t('pages.stimulationTool.stimulation.frequency_label')}
                                 precision={2}
                                 step={0.01}
                                 styles={{ input: { textAlign: "center" } }}
-                                {...params_form.getInputProps('amplitude')}
+                                {...params_form.getInputProps('frequency')}
                             />
-                            <Stack w={"75%"} align="center">
-                                <Group position="center" noWrap w={"100%"}>
-                                    <NumberInput size="md"
-                                        label={t('pages.stimulationTool.stimulation.frequency_label')}
-                                        precision={2}
-                                        step={0.01}
-                                        styles={{ input: { textAlign: "center" } }}
-                                        {...params_form.getInputProps('frequency')}
-                                    />
-                                    <NumberInput size="md"
-                                        label={t('pages.stimulationTool.stimulation.duration_label')}
-                                        precision={2}
-                                        step={0.01}
-                                        styles={{ input: { textAlign: "center" } }}
-                                        {...params_form.getInputProps('duration')}
-                                    />
-                                    <NumberInput size="md"
-                                        label={t('pages.stimulationTool.stimulation.length_path_label')}
-                                        precision={2}
-                                        step={0.01}
-                                        styles={{ input: { textAlign: "center" } }}
-                                        {...params_form.getInputProps('lenght_path')}
-                                    />
-                                </Group>
-                                <Title order={4}>{formatSelectedTask(task_form.values)}</Title>
-                            </Stack>
+                            <NumberInput size="sm"
+                                label={t('pages.stimulationTool.stimulation.duration_label')}
+                                precision={2}
+                                step={0.01}
+                                styles={{ input: { textAlign: "center" } }}
+                                {...params_form.getInputProps('duration')}
+                            />
+                            <NumberInput size="sm"
+                                label={t('pages.stimulationTool.stimulation.length_path_label')}
+                                precision={2}
+                                step={0.01}
+                                styles={{ input: { textAlign: "center" } }}
+                                {...params_form.getInputProps('lenght_path')}
+                            />
                         </Group>
-                    </Box>
-                </Grid.Col>
-                <Grid.Col span={8} h={"60%"}>
-                    <Box h={"100%"} p={0} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
-                        {selectedPoint !== '' &&
-                            <StimulationEffectSelection form={effect_form} cognitive_effect_last_values={lastCognitiveEffectValues} />
-                        }
-                    </Box>
-                </Grid.Col>
-                <Grid.Col span={4} h={"60%"}>
-                    <Box h={"100%"} p={0} sx={{ borderColor: 'grey', borderWidth: '2px', borderStyle: 'solid' }}>
-                        {selectedPoint !== '' &&
-                            <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
-                        }
-                    </Box>
-                </Grid.Col>
-            </Grid>
+
+                    </Stack>
+                </Group>
+            </Group>
+
+            <Group h={"45%"}>
+                {selectedPoint !== '' &&
+                    <StimulationEffectSelection form={effect_form} cognitive_effect_last_values={lastCognitiveEffectValues} />
+                }
+            </Group>
         </Box>
     );
 }
@@ -289,15 +278,17 @@ const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onV
                                         return (
                                             <Popover position='bottom' opened={selectedContact === pointId} key={pointId}>
                                                 <Popover.Target>
-                                                    <Chip size='sm'
-                                                        value={pointId}
-                                                        key={pointId}
-                                                        onChange={(checked) => onSelectedChanged(selectedContact !== pointId ? pointId : "")}
-                                                        checked={selectedContact === pointId || nbStims > 0}
-                                                        variant={selectedContact === pointId || nbStims > 0 ? 'filled' : 'light'}
-                                                        color={color}>
-                                                        {pointId}
-                                                    </Chip>
+                                                    <Container>
+                                                        <Chip size='sm'
+                                                            value={pointId}
+                                                            key={pointId}
+                                                            onChange={(checked) => onSelectedChanged(selectedContact !== pointId ? pointId : "")}
+                                                            checked={selectedContact === pointId || nbStims > 0}
+                                                            variant={selectedContact === pointId || nbStims > 0 ? 'filled' : 'light'}
+                                                            color={color}>
+                                                            {pointId}
+                                                        </Chip>
+                                                    </Container>
                                                 </Popover.Target>
                                                 <Popover.Dropdown>
                                                     <Text>{t('pages.stimulationTool.stimulation.numberOfStimulationsLabel') + stim_point.stimulations.length}</Text>

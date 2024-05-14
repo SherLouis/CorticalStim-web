@@ -10,6 +10,7 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
 
     // TODO: preset
 
+    // TODO: adjust for new layout with last values in first column
     const handleValueChange = (level: 'category' | 'subcategory' | 'characteristic', newValue: string) => {
         switch (level) {
             case 'category':
