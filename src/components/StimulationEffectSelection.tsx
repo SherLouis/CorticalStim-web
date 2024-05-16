@@ -44,44 +44,50 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
         ]
     }
 
+    // TODO: FIX THIS layout!!
     return (
         <Box w={"100%"}>
-            <Group w={"100%"} h={"100%"} spacing={'sm'} align='flex-start'>
-                <Stack sx={{ flex: 6 }}>
+            <Group w={"100%"} h={"100%"} align='flex-start'>
+                <Stack sx={{ flex: 7 }}>
                     <Title order={5}>{t('pages.stimulationTool.stimulation.effect.cognitive_effect_label')}</Title>
-                    <Box>
-                        <Title order={5}>{t('pages.stimulationTool.stimulation.effect.last_used')}</Title>
-                        <Button.Group orientation='vertical'>
-                            {cognitive_effect_last_values.map((v, i) => (
-                                <Button compact size="sm" key={"btn_last_effect_" + i}
-                                    variant={formatSelectedCognitiveEffect(form.values.cognitive_effect) === formatSelectedCognitiveEffect(v) ? "filled" : "light"}
-                                    onClick={() => { form.setFieldValue('cognitive_effect', v); }}>
-                                    {formatSelectedCognitiveEffect(v)}
-                                </Button>
-                            ))}
-                        </Button.Group>
-                    </Box>
-                    <Box px={'sm'}>
-                        <CognitiveEffectTable cognitive_values={form.values.cognitive_effect} handleValueChange={handleCognitiveEffectValueChange} />
-                    </Box>
-                </Stack>
-                <Stack sx={{ flex: 3 }}>
-                    <Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>
-                    <Box>
-                        <Stack>
-                            {getEpiManifestationOptions().map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label}
-                                onChange={(e) => form.setFieldValue('epi_manifestation', e.target.checked ? e.target.value : "")}
-                                checked={option.value===form.values.epi_manifestation}
-                                />)}
+                    <Group w={"100%"} h={"100%"} spacing={'sm'} align='flex-start'>
+                        <Stack sx={{ flex: 4 }}>
+                            <Title order={5}>{t('pages.stimulationTool.stimulation.effect.last_used')}</Title>
+                            <Button.Group orientation='vertical'>
+                                {cognitive_effect_last_values.map((v, i) => (
+                                    <Button compact size="sm" key={"btn_last_effect_" + i}
+                                        variant={formatSelectedCognitiveEffect(form.values.cognitive_effect) === formatSelectedCognitiveEffect(v) ? "filled" : "light"}
+                                        onClick={() => { form.setFieldValue('cognitive_effect', v); }}>
+                                        {formatSelectedCognitiveEffect(v)}
+                                    </Button>
+                                ))}
+                            </Button.Group>
                         </Stack>
-                    </Box>
+                        <Box sx={{ flex: 8 }} px={"sm"}>
+                            <CognitiveEffectTable cognitive_values={form.values.cognitive_effect} handleValueChange={handleCognitiveEffectValueChange} />
+                        </Box>
+                    </Group>
                 </Stack>
-                <Stack sx={{ flex: 3 }}>
-                    <Title order={5}>{t('pages.stimulationTool.stimulation.effect.eeg')}</Title>
-                    <Box>
-                        <EEGSection form={form} t={t} />
-                    </Box>
-                </Stack>
+
+                <Group sx={{ flex: 5 }} h={"100%"} spacing={'sm'} align='flex-start'>
+                    <Stack sx={{ flex: 6 }} >
+                        <Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>
+                        <Box>
+                            <Stack w={"100%"}>
+                                {getEpiManifestationOptions().map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label}
+                                    onChange={(e) => form.setFieldValue('epi_manifestation', e.target.checked ? e.target.value : "")}
+                                    checked={option.value === form.values.epi_manifestation}
+                                />)}
+                            </Stack>
+                        </Box>
+                    </Stack>
+                    <Stack sx={{ flex: 6 }}>
+                        <Title order={5}>{t('pages.stimulationTool.stimulation.effect.eeg')}</Title>
+                        <Box>
+                            <EEGSection form={form} t={t} />
+                        </Box>
+                    </Stack>
+                </Group>
             </Group>
         </Box>
     );

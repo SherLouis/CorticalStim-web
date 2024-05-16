@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Table, Title } from "@mantine/core";
+import { Box, Button, Group, Stack, Table, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import ColumnButtonSelect from "./ColumnButtonSelect";
@@ -32,21 +32,20 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
         <Box w={"100%"} mah={"100%"}>
             <Stack h={"100%"} spacing={"xs"}>
                 <Title order={3}>{t('pages.stimulationTool.stimulation.task_title')}</Title>
-
-                <Box>
-                    <Title order={5}>{t('pages.stimulationTool.stimulation.task_last_used_title')}</Title>
-                    <Button.Group orientation='vertical'>
-                        {last_values.map((v, i) => (
-                            <Button compact size="sm" key={"btn_last_task_" + i}
-                                variant={formatSelectedTask(form.values) === formatSelectedTask(v) ? "filled" : "light"}
-                                onClick={() => { form.setValues(v); }}>
-                                {formatSelectedTask(v)}
-                            </Button>
-                        ))}
-                    </Button.Group>
-                </Box>
-
                 <TaskTable form={form} handleValueChange={handleValueChange} />
+
+                {last_values.length > 0 &&
+                    <Box px={"sm"}>
+                        <Group position='left'>
+                            {last_values.map((v, i) => (
+                                <Button compact size="sm" key={"btn_last_task_" + i}
+                                    variant={formatSelectedTask(form.values) === formatSelectedTask(v) ? "filled" : "light"}
+                                    onClick={() => { form.setValues(v); }}>
+                                    {formatSelectedTask(v)}
+                                </Button>
+                            ))}
+                        </Group>
+                    </Box>}
             </Stack>
         </Box>
     );
@@ -110,13 +109,6 @@ const TaskTable = ({ form, handleValueChange }: TaskTableProps) => {
 
     return (
         <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
-            <thead>
-                <tr>
-                    <th>Category</th>
-                    <th>Subcategory</th>
-                    <th>Characteristic</th>
-                </tr>
-            </thead>
             <tbody>
                 <tr key={"options"}>
                     <td valign="top">

@@ -139,10 +139,14 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
             accessor: 'post_discharge',
             title: t('pages.stimulationTool.summary.results_table.post_discharge_title'),
             render: (result) => formatBool(result.post_discharge),
+            ...allColumnsProps
+        },
+        {
+            accessor: 'post_discharge_details',
+            title: t('pages.stimulationTool.summary.results_table.post_discharge_details_title'),
             defaultToggle: false,
             ...allColumnsProps
         },
-        { accessor: 'post_discharge_details', title: t('pages.stimulationTool.summary.results_table.post_discharge_details_title'), ...allColumnsProps },
         {
             accessor: 'crisis',
             title: t('pages.stimulationTool.summary.results_table.crisis_title'),
