@@ -179,68 +179,70 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                 </Group>
             </Box>
 
-            <Group position="center" align="center" h={"15%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
-                <Box sx={{ flex: 6 }}>
-                    {selectedPoint !== "" &&
-                        <Group position="center" align="center">
-                            <Badge size="lg" variant="filled">{selectedPoint}</Badge>
-                            <Divider orientation='vertical' color='white' />
-                            <Title order={4}>{getSelectedPointLocation()}</Title>
-                            <Divider orientation='vertical' color='white' />
-                            <Title order={4}>{getSelectedPointEffect()}</Title>
-                            <Divider orientation='vertical' color='white' />
-                            {stimulationTime === '' &&
-                                <Button onClick={() => setStimulationTime(new Date().toISOString())}>
-                                    {t('pages.stimulationTool.stimulation.set_time_label')}
-                                </Button>
-                            }
-                            {stimulationTime !== '' &&
-                                <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
-                            }
-                            <Divider orientation='vertical' color='white' />
-                            <ActionIcon variant='filled' size={'xl'} color='green' onClick={handleSubmit} disabled={stimulationTime === ""}>
-                                <IconCircleCheck size={'xl'} />
-                            </ActionIcon>
-                        </Group>
-                    }
-                </Box>
-                <Group position="center" align="center" noWrap h={"100%"} sx={{ flex: 6 }}>
-                    <NumberInput w={"25%"} size="md"
-                        label={t('pages.stimulationTool.stimulation.amplitude_label')}
-                        precision={2}
-                        step={0.01}
-                        styles={{ input: { textAlign: "center" } }}
-                        {...params_form.getInputProps('amplitude')}
-                    />
-                    <Stack w={"75%"} align="center">
-                        <Title order={5} h={"50%"}>{formatSelectedTask(task_form.values)}</Title>
-                        <Group position="center" noWrap w={"100%"} h={"50%"}>
-                            <NumberInput size="sm"
-                                label={t('pages.stimulationTool.stimulation.frequency_label')}
-                                precision={2}
-                                step={0.01}
-                                styles={{ input: { textAlign: "center" } }}
-                                {...params_form.getInputProps('frequency')}
-                            />
-                            <NumberInput size="sm"
-                                label={t('pages.stimulationTool.stimulation.duration_label')}
-                                precision={2}
-                                step={0.01}
-                                styles={{ input: { textAlign: "center" } }}
-                                {...params_form.getInputProps('duration')}
-                            />
-                            <NumberInput size="sm"
-                                label={t('pages.stimulationTool.stimulation.length_path_label')}
-                                precision={2}
-                                step={0.01}
-                                styles={{ input: { textAlign: "center" } }}
-                                {...params_form.getInputProps('lenght_path')}
-                            />
-                        </Group>
+            <Box h={"15%"} w={"100%"}>
+                <Group position="center" align="center" h={"100%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
+                    <Box sx={{ flex: 6 }} h={"100%"}>
+                        {selectedPoint !== "" &&
+                            <Group position="center" align="center">
+                                <Badge size="lg" variant="filled">{selectedPoint}</Badge>
+                                <Divider orientation='vertical' color='white' />
+                                <Title order={4}>{getSelectedPointLocation()}</Title>
+                                <Divider orientation='vertical' color='white' />
+                                <Title order={4}>{getSelectedPointEffect()}</Title>
+                                <Divider orientation='vertical' color='white' />
+                                {stimulationTime === '' &&
+                                    <Button onClick={() => setStimulationTime(new Date().toISOString())}>
+                                        {t('pages.stimulationTool.stimulation.set_time_label')}
+                                    </Button>
+                                }
+                                {stimulationTime !== '' &&
+                                    <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
+                                }
+                                <Divider orientation='vertical' color='white' />
+                                <ActionIcon variant='filled' size={'xl'} color='green' onClick={handleSubmit} disabled={stimulationTime === ""}>
+                                    <IconCircleCheck size={'xl'} />
+                                </ActionIcon>
+                            </Group>
+                        }
+                    </Box>
+                    <Group position="center" align="center" h={"100%"} sx={{ flex: 6 }} spacing={0}>
+                        <NumberInput w={"25%"} size="md"
+                            label={t('pages.stimulationTool.stimulation.amplitude_label')}
+                            precision={2}
+                            step={0.01}
+                            styles={{ input: { textAlign: "center" } }}
+                            {...params_form.getInputProps('amplitude')}
+                        />
+                        <Stack w={"75%"} align="center">
+                            <Title order={5} h={"50%"}>{formatSelectedTask(task_form.values)}</Title>
+                            <Group position="center" noWrap w={"100%"} h={"50%"}>
+                                <NumberInput size="sm"
+                                    label={t('pages.stimulationTool.stimulation.frequency_label')}
+                                    precision={2}
+                                    step={0.01}
+                                    styles={{ input: { textAlign: "center" } }}
+                                    {...params_form.getInputProps('frequency')}
+                                />
+                                <NumberInput size="sm"
+                                    label={t('pages.stimulationTool.stimulation.duration_label')}
+                                    precision={2}
+                                    step={0.01}
+                                    styles={{ input: { textAlign: "center" } }}
+                                    {...params_form.getInputProps('duration')}
+                                />
+                                <NumberInput size="sm"
+                                    label={t('pages.stimulationTool.stimulation.length_path_label')}
+                                    precision={2}
+                                    step={0.01}
+                                    styles={{ input: { textAlign: "center" } }}
+                                    {...params_form.getInputProps('lenght_path')}
+                                />
+                            </Group>
 
-                    </Stack>
+                        </Stack>
+                    </Group>
                 </Group>
-            </Group>
+            </Box>
 
             <Box h={"45%"}>
                 {selectedPoint !== '' &&
@@ -249,6 +251,10 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
             </Box>
         </Box>
     );
+
+    const CentralBar = () => {
+
+    }
 }
 
 interface StimulationTabProps extends TabProperties {
