@@ -1,36 +1,28 @@
-import { Box, Button, Checkbox, Group, NumberInput, Radio, Stack, Switch, Table, Title } from "@mantine/core";
+import { Box, Button, Checkbox, Group, NumberInput, Radio, Stack, Switch, Table, TextInput, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
-import { StimulationEffectsValues, StimulationCognitiveEffectFormValues } from "../models/stimulationForm";
+import { StimulationEffectsValues, StimulationObservedEffectFormValues } from "../models/stimulationForm";
 import ColumnButtonSelect from "./ColumnButtonSelect";
 import { TFunction } from "i18next";
 
-export default function StimulationEffectSelection({ form, cognitive_effect_last_values }: StimulationEffectSelectionProps) {
+export default function StimulationEffectSelection({ form, observed_effect_last_values }: StimulationEffectSelectionProps) {
     const { t } = useTranslation();
 
     // TODO: preset
 
-    // TODO: new layout with last values and preset on firs column. Then table with 3 columns
-
-    // TODO: renomer effets cognitifs par effet observé
-
-    // TODO: ajouter champs commentaires libres pour effet observé
-
-    // TODO: ajouter champs pour spécifier autres
-
     const handleCognitiveEffectValueChange = (level: 'class' | 'descriptor' | 'details', newValue: string) => {
         switch (level) {
             case 'class':
-                form.setFieldValue('cognitive_effect.details', "");
-                form.setFieldValue('cognitive_effect.descriptor', "");
-                form.setFieldValue('cognitive_effect.class', newValue === form.values.cognitive_effect.class ? "" : newValue);
+                form.setFieldValue('observed_effect.details', "");
+                form.setFieldValue('observed_effect.descriptor', "");
+                form.setFieldValue('observed_effect.class', newValue === form.values.observed_effect.class ? "" : newValue);
                 break;
             case 'descriptor':
-                form.setFieldValue('cognitive_effect.details', "");
-                form.setFieldValue('cognitive_effect.descriptor', newValue === form.values.cognitive_effect.descriptor ? "" : newValue);
+                form.setFieldValue('observed_effect.details', "");
+                form.setFieldValue('observed_effect.descriptor', newValue === form.values.observed_effect.descriptor ? "" : newValue);
                 break;
             case 'details':
-                form.setFieldValue('cognitive_effect.details', newValue === form.values.cognitive_effect.details ? "" : newValue);
+                form.setFieldValue('observed_effect.details', newValue === form.values.observed_effect.details ? "" : newValue);
                 break;
         }
     }
@@ -39,55 +31,63 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
         return [
             { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_aura'), value: "typical_aura" },
             { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_crisis'), value: "typical_crisis" },
-            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.atypical_crisis'), value: "atypical_crisis" },
-            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.other'), value: "other" }
+            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.atypical_crisis'), value: "atypical_crisis" }
         ]
     }
 
-    // TODO: FIX THIS layout!!
     return (
         <Box w={"100%"}>
             <Group w={"100%"} h={"100%"} align='flex-start'>
-                <Stack sx={{ flex: 7 }}>
-                    <Title order={5}>{t('pages.stimulationTool.stimulation.effect.cognitive_effect_label')}</Title>
-                    <Group w={"100%"} h={"100%"} spacing={'sm'} align='flex-start'>
-                        <Stack sx={{ flex: 4 }}>
+                <Box sx={{ flex: 7 }} >
+                    <Title order={5}>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}</Title>
+                    <Group w={"100%"} h={"100%"} align='flex-start'>
+                        <Stack sx={{ flex: 3 }}>
                             <Title order={5}>{t('pages.stimulationTool.stimulation.effect.last_used')}</Title>
                             <Button.Group orientation='vertical'>
-                                {cognitive_effect_last_values.map((v, i) => (
+                                {observed_effect_last_values.map((v, i) => (
                                     <Button compact size="sm" key={"btn_last_effect_" + i}
-                                        variant={formatSelectedCognitiveEffect(form.values.cognitive_effect) === formatSelectedCognitiveEffect(v) ? "filled" : "light"}
-                                        onClick={() => { form.setFieldValue('cognitive_effect', v); }}>
+                                        variant={formatSelectedCognitiveEffect(form.values.observed_effect) === formatSelectedCognitiveEffect(v) ? "filled" : "light"}
+                                        onClick={() => { form.setFieldValue('observed_effect', v); }}>
                                         {formatSelectedCognitiveEffect(v)}
                                     </Button>
                                 ))}
                             </Button.Group>
+                            <TextInput
+                                label={t("pages.stimulationTool.stimulation.effect.comments_label")}
+                                {...form.getInputProps('observed_effect_comments')}
+                            />
                         </Stack>
-                        <Box sx={{ flex: 8 }} px={"sm"}>
-                            <CognitiveEffectTable cognitive_values={form.values.cognitive_effect} handleValueChange={handleCognitiveEffectValueChange} />
+                        <Box sx={{ flex: 9 }} px={"sm"}>
+                            <CognitiveEffectTable cognitive_values={form.values.observed_effect} handleValueChange={handleCognitiveEffectValueChange} />
                         </Box>
                     </Group>
-                </Stack>
+                </Box>
 
-                <Group sx={{ flex: 5 }} h={"100%"} spacing={'sm'} align='flex-start'>
-                    <Stack sx={{ flex: 6 }} >
-                        <Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>
-                        <Box>
-                            <Stack w={"100%"}>
-                                {getEpiManifestationOptions().map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label}
-                                    onChange={(e) => form.setFieldValue('epi_manifestation', e.target.checked ? e.target.value : "")}
-                                    checked={option.value === form.values.epi_manifestation}
-                                />)}
-                            </Stack>
-                        </Box>
-                    </Stack>
-                    <Stack sx={{ flex: 6 }}>
-                        <Title order={5}>{t('pages.stimulationTool.stimulation.effect.eeg')}</Title>
-                        <Box>
-                            <EEGSection form={form} t={t} />
-                        </Box>
-                    </Stack>
-                </Group>
+                <Box sx={{ flex: 5 }} h={"100%"}>
+                    <Group w={"100%"} h={"100%"} align='flex-start'>
+                        <Stack sx={{ flex: 6 }} >
+                            <Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>
+                            <Box>
+                                <Stack w={"100%"}>
+                                    {getEpiManifestationOptions().map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label}
+                                        onChange={(e) => form.setFieldValue('epi_manifestation', e.target.checked ? e.target.value : "")}
+                                        checked={option.value === form.values.epi_manifestation}
+                                    />)}
+                                    <TextInput
+                                        placeholder={t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.other')}
+                                        {...form.getInputProps('epi_manifestation')}
+                                    />
+                                </Stack>
+                            </Box>
+                        </Stack>
+                        <Stack sx={{ flex: 6 }}>
+                            <Title order={5}>{t('pages.stimulationTool.stimulation.effect.eeg')}</Title>
+                            <Box>
+                                <EEGSection form={form} t={t} />
+                            </Box>
+                        </Stack>
+                    </Group>
+                </Box>
             </Group>
         </Box>
     );
@@ -95,7 +95,7 @@ export default function StimulationEffectSelection({ form, cognitive_effect_last
 
 interface StimulationEffectSelectionProps {
     form: UseFormReturnType<StimulationEffectsValues>;
-    cognitive_effect_last_values: StimulationCognitiveEffectFormValues[];
+    observed_effect_last_values: StimulationObservedEffectFormValues[];
 }
 
 const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: CognitiveEffectTableProps) => {
@@ -235,7 +235,7 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: Cognitive
 }
 
 interface CognitiveEffectTableProps {
-    cognitive_values: StimulationCognitiveEffectFormValues;
+    cognitive_values: StimulationObservedEffectFormValues;
     handleValueChange: (level: 'class' | 'descriptor' | 'details', newValue: string) => void
 }
 
@@ -296,7 +296,7 @@ interface EEGSectionProps {
     t: TFunction;
 }
 
-export const formatSelectedCognitiveEffect = (values: StimulationCognitiveEffectFormValues): string => {
+export const formatSelectedCognitiveEffect = (values: StimulationObservedEffectFormValues): string => {
     return values.class !== "" ? (values.class +
         (values.descriptor !== "" ? ('/' + values.descriptor
             + (values.details !== "" ? ('/' + values.details) : '')) : '')) : "-"

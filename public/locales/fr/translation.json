@@ -70,7 +70,8 @@
                 "numberOfStimulationsLabel": "Stimulations: ",
                 "viewResultsForPointIdLabel": "Voir résultats",
                 "effect": {
-                    "cognitive_effect_label": "Effet Cognitif",
+                    "observed_effect_label": "Effet Observé",
+                    "comments_label": "Commentaires",
                     "epi_manifestation": "Manif. epi.",
                     "eeg": "EEG",
                     "last_used": "Derniers utilisés",
@@ -117,7 +118,7 @@
                     "length_path_title": "LP",
                     "task_title": "Tâche",
                     "effects_group_title": "Effets",
-                    "cognitive_effect_title": "Cognitive Effect",
+                    "observed_effect_title": "Cognitive Effect",
                     "epi_manifestation_title": "Manif. Epi.",
                     "post_discharge_title": "Post Décharge",
                     "post_discharge_details_title": "Post Décharge - Details",

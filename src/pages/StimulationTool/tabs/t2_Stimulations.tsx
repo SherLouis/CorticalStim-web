@@ -1,10 +1,9 @@
 import { ActionIcon, Badge, Box, Button, Chip, Container, Divider, Grid, Group, Modal, NumberInput, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
-import StimulationFormValues, { StimulationCognitiveEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../models/stimulationForm";
+import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../models/stimulationForm";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
-import StimulationParametersSelection from "../../../components/StimulationParametersSelection";
 import StimulationTaskSelection, { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
 import StimulationEffectSelection, { formatSelectedCognitiveEffect } from "../../../components/StimulationEffectSelection";
@@ -23,10 +22,10 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
     const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 0, duration: 0, frequency: 0, lenght_path: 0 } });
     const task_form = useForm<StimulationTaskFormValues>({ initialValues: { category: "", subcategory: "", characteristic: "" } });
-    const effect_form = useForm<StimulationEffectsValues>({ initialValues: { cognitive_effect: { class: "", descriptor: "", details: "" }, epi_manifestation: "", post_discharge: false, pd_duration: 0, pd_local: "", pd_type: "", crisis: false } });
+    const effect_form = useForm<StimulationEffectsValues>({ initialValues: { observed_effect: { class: "", descriptor: "", details: "" }, observed_effect_comments: "", epi_manifestation: "", post_discharge: false, pd_duration: 0, pd_local: "", pd_type: "", crisis: false } });
 
     const [lastTaskValues, lastTaskValuesHandlers] = useListState<{ category: string; subcategory: string; characteristic: string }>();
-    const [lastCognitiveEffectValues, lastCognitiveEffectValuesHandlers] = useListState<StimulationCognitiveEffectFormValues>();
+    const [lastCognitiveEffectValues, lastCognitiveEffectValuesHandlers] = useListState<StimulationObservedEffectFormValues>();
 
     const handleSelectedPointChanged = (newPointId: string) => {
         if (stimulationTime === '') {
@@ -95,14 +94,14 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         }
 
                         // Save last used effect
-                        if (lastCognitiveEffectValues.map(e => formatSelectedCognitiveEffect(e)).includes(formatSelectedCognitiveEffect(effect_values.cognitive_effect))) {
-                            lastCognitiveEffectValuesHandlers.reorder({ from: lastCognitiveEffectValues.findIndex(e => formatSelectedCognitiveEffect(e) === formatSelectedCognitiveEffect(effect_values.cognitive_effect)), to: 0 });
+                        if (lastCognitiveEffectValues.map(e => formatSelectedCognitiveEffect(e)).includes(formatSelectedCognitiveEffect(effect_values.observed_effect))) {
+                            lastCognitiveEffectValuesHandlers.reorder({ from: lastCognitiveEffectValues.findIndex(e => formatSelectedCognitiveEffect(e) === formatSelectedCognitiveEffect(effect_values.observed_effect)), to: 0 });
                         }
                         else {
                             lastCognitiveEffectValuesHandlers.prepend({
-                                class: effect_values.cognitive_effect.class,
-                                descriptor: effect_values.cognitive_effect.descriptor,
-                                details: effect_values.cognitive_effect.details
+                                class: effect_values.observed_effect.class,
+                                descriptor: effect_values.observed_effect.descriptor,
+                                details: effect_values.observed_effect.details
                             });
                             if (lastCognitiveEffectValues.length >= 3) { lastCognitiveEffectValuesHandlers.pop(); }
                         }
@@ -145,12 +144,14 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     }
 
     const getSelectedPointEffect = () => {
-        const cognitive_effect = formatSelectedCognitiveEffect(effect_form.values.cognitive_effect);
+        const cognitive_effect = formatSelectedCognitiveEffect(effect_form.values.observed_effect);
         const effect_form_values = effect_form.values;
         const post_discharge = effect_form_values.post_discharge ? ` PD: ${effect_form_values.pd_duration}s / ${effect_form_values.pd_local}` : ''
         return cognitive_effect + post_discharge;
     }
 
+
+    // TODO: ajuster barre centrale. Optimiser utilisation de l'espace. Ne devrait pas bouger selon le contenu. Section de droite pour tâche et paramètres de stimulation.
     return (
         <Box pt={"md"} h={"100%"}>
             <Modal opened={showConfirmNoSave} onClose={() => setShowConfirmNoSave(false)} title={t('pages.stimulationTool.stimulation.alert_point_changed.title')}>
@@ -160,24 +161,25 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                 </Group>
             </Modal>
 
-            <Group h={"45%"} >
-                <Box h={"100%"} p={0} sx={{ flex: 6 }}>
-                    <ContactSelection
-                        form_values={form.values}
-                        selectedContact={selectedPoint}
-                        onSelectedChanged={handleSelectedPointChanged}
-                        onViewResultsForPoint={handleViewResultsForPoint}
-                    />
-                </Box>
-                <Box h={"100%"} p={0} sx={{ flex: 6 }}>
-                    {selectedPoint !== '' &&
-                        <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
-                    }
-                </Box>
-            </Group>
+            <Box h={"40%"} w={"100%"}>
+                <Group w={"100%"} h={"100%"} align='flex-start' >
+                    <Box h={"100%"} sx={{ flex: 8 }}>
+                        <ContactSelection
+                            form_values={form.values}
+                            selectedContact={selectedPoint}
+                            onSelectedChanged={handleSelectedPointChanged}
+                            onViewResultsForPoint={handleViewResultsForPoint}
+                        />
+                    </Box>
+                    <Box h={"100%"} sx={{ flex: 4 }}>
+                        {selectedPoint !== '' &&
+                            <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
+                        }
+                    </Box>
+                </Group>
+            </Box>
 
-            {/*TODO: Adjust central work bar*/}
-            <Group position="center" align="center" h={"10%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
+            <Group position="center" align="center" h={"15%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
                 <Box sx={{ flex: 6 }}>
                     {selectedPoint !== "" &&
                         <Group position="center" align="center">
@@ -240,11 +242,11 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                 </Group>
             </Group>
 
-            <Group h={"45%"}>
+            <Box h={"45%"}>
                 {selectedPoint !== '' &&
-                    <StimulationEffectSelection form={effect_form} cognitive_effect_last_values={lastCognitiveEffectValues} />
+                    <StimulationEffectSelection form={effect_form} observed_effect_last_values={lastCognitiveEffectValues} />
                 }
-            </Group>
+            </Box>
         </Box>
     );
 }

@@ -44,7 +44,8 @@ export interface StimulationTaskFormValues {
 }
 
 export interface StimulationEffectsValues {
-    cognitive_effect: StimulationCognitiveEffectFormValues;
+    observed_effect: StimulationObservedEffectFormValues;
+    observed_effect_comments: string;
     epi_manifestation: string;
     post_discharge: boolean;
     pd_duration: number;
@@ -53,7 +54,7 @@ export interface StimulationEffectsValues {
     crisis: boolean;
 };
 
-export interface StimulationCognitiveEffectFormValues {
+export interface StimulationObservedEffectFormValues {
     class: string;
     descriptor: string;
     details: string;

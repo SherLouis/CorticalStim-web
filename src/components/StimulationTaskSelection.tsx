@@ -9,8 +9,6 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
     const { t } = useTranslation();
 
     // TODO: preset
-
-    // TODO: adjust for new layout with last values in first column
     const handleValueChange = (level: 'category' | 'subcategory' | 'characteristic', newValue: string) => {
         switch (level) {
             case 'category':
@@ -30,7 +28,7 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
 
     return (
         <Box w={"100%"} mah={"100%"}>
-            <Stack h={"100%"} spacing={"xs"}>
+            <Stack h={"100%"} spacing={"xs"} w={"100%"}>
                 <Title order={3}>{t('pages.stimulationTool.stimulation.task_title')}</Title>
                 <TaskTable form={form} handleValueChange={handleValueChange} />
 
@@ -109,31 +107,29 @@ const TaskTable = ({ form, handleValueChange }: TaskTableProps) => {
 
     return (
         <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
-            <tbody>
-                <tr key={"options"}>
-                    <td valign="top">
-                        <ColumnButtonSelect
-                            data={getTaskOptions('category')}
-                            currentValue={form.values.category}
-                            onChange={(v) => handleValueChange('category', v)}
-                        />
-                    </td>
-                    <td valign="top">
-                        <ColumnButtonSelect
-                            data={getTaskOptions('subcategory')}
-                            currentValue={form.values.subcategory}
-                            onChange={(v) => handleValueChange('subcategory', v)}
-                        />
-                    </td>
-                    <td valign="top">
-                        <ColumnButtonSelect
-                            data={getTaskOptions('characteristic')}
-                            currentValue={form.values.characteristic}
-                            onChange={(v) => handleValueChange('characteristic', v)}
-                        />
-                    </td>
-                </tr>
-            </tbody>
+            <tr key={"options"}>
+                <td valign="top">
+                    <ColumnButtonSelect
+                        data={getTaskOptions('category')}
+                        currentValue={form.values.category}
+                        onChange={(v) => handleValueChange('category', v)}
+                    />
+                </td>
+                <td valign="top">
+                    <ColumnButtonSelect
+                        data={getTaskOptions('subcategory')}
+                        currentValue={form.values.subcategory}
+                        onChange={(v) => handleValueChange('subcategory', v)}
+                    />
+                </td>
+                <td valign="top">
+                    <ColumnButtonSelect
+                        data={getTaskOptions('characteristic')}
+                        currentValue={form.values.characteristic}
+                        onChange={(v) => handleValueChange('characteristic', v)}
+                    />
+                </td>
+            </tr>
         </Table>
     );
 }

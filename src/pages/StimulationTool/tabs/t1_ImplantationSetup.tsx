@@ -192,6 +192,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     useEffect(() => { locationForm.reset(); locationForm.setValues(getSelectedContactsROIValue()); }, [selectedContacts]);
     useEffect(() => { updateDoneContacts(); }, [form])
 
+    // TODO: revoir layout pour que ce soit plus clair quoi faire et mieux utiliser l'espace
     return (
         <Box pt={"md"} h={"100%"}>
             <Box h={"10%"}>
@@ -233,7 +234,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Group>
             </Box>
 
-            <Box py={"md"} h={"35%"} p={'0'}>
+            <Box py={"md"} h={"30%"} p={'0'}>
                 <Button onClick={addElectrode} size="xs">{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
                 <ScrollArea w={"100%"} h={"95%"} py={"xs"} type="always" sx={{ alignItems: "center", padding: '0' }}>
                     {form.values.electrodes.map((electrode, electrode_i) => {
@@ -300,7 +301,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </ScrollArea>
             </Box>
 
-            <Group position="center" align="center" h={"10%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid'}}>
+            <Group position="center" align="center" h={"15%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid'}}>
                 {selectedContacts.length === 0 &&
                     <Group position="center" align="center">
                         <Button onClick={selectAllContacts}>{t("pages.stimulationTool.implantation.selectAllContactsButtonLabel")}</Button>
