@@ -150,62 +150,36 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         return cognitive_effect + post_discharge;
     }
 
-
     // TODO: ajuster barre centrale. Optimiser utilisation de l'espace. Ne devrait pas bouger selon le contenu. Section de droite pour tâche et paramètres de stimulation.
-    return (
-        <Box pt={"md"} h={"100%"}>
-            <Modal opened={showConfirmNoSave} onClose={() => setShowConfirmNoSave(false)} title={t('pages.stimulationTool.stimulation.alert_point_changed.title')}>
-                <Group position="apart">
-                    <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmNoSave(false)}>{t('pages.stimulationTool.stimulation.alert_point_changed.cancel_label')}</Button>
-                    <Button leftIcon={<IconTrash color="white" />} variant="filled" color="red" onClick={() => { setShowConfirmNoSave(false); resetForNewPoint('') }}>{t('pages.stimulationTool.stimulation.alert_point_changed.confirm_label')}</Button>
-                </Group>
-            </Modal>
-
-            <Box h={"40%"} w={"100%"}>
-                <Group w={"100%"} h={"100%"} align='flex-start' >
-                    <Box h={"100%"} sx={{ flex: 8 }}>
-                        <ContactSelection
-                            form_values={form.values}
-                            selectedContact={selectedPoint}
-                            onSelectedChanged={handleSelectedPointChanged}
-                            onViewResultsForPoint={handleViewResultsForPoint}
-                        />
-                    </Box>
-                    <Box h={"100%"} sx={{ flex: 4 }}>
-                        {selectedPoint !== '' &&
-                            <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
+    const CentralBar = () => {
+        return (
+            <Box h={"100%"} display={selectedPoint != "" ? "block" : "none"}>
+                <Group position="center" align="center" h={"100%"} w={"100%"}>
+                    {/*TODO: flex 5: première ligne: selected contact + ROI. Deuxième ligne: Effet observé, epi, eeg*/}
+                    <Group position="center" align="center" sx={{ flex: 5 }} h={"100%"}>
+                        <Badge size="lg" variant="filled">{selectedPoint}</Badge>
+                        <Divider orientation='vertical' color='white' />
+                        <Title order={4}>{getSelectedPointLocation()}</Title>
+                        <Divider orientation='vertical' color='white' />
+                        <Title order={4}>{getSelectedPointEffect()}</Title>
+                        <Divider orientation='vertical' color='white' />
+                    </Group>
+                    {/*TODO: flex 2: set stimulation time + save en evidence*/}
+                    <Group position="center" align="center" sx={{ flex: 2 }} h={"100%"}>
+                        {stimulationTime === '' &&
+                            <Button onClick={() => setStimulationTime(new Date().toISOString())}>
+                                {t('pages.stimulationTool.stimulation.set_time_label')}
+                            </Button>
                         }
-                    </Box>
-                </Group>
-            </Box>
-
-            <Box h={"15%"} w={"100%"}>
-                <Group position="center" align="center" h={"100%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
-                    <Box sx={{ flex: 6 }} h={"100%"}>
-                        {selectedPoint !== "" &&
-                            <Group position="center" align="center">
-                                <Badge size="lg" variant="filled">{selectedPoint}</Badge>
-                                <Divider orientation='vertical' color='white' />
-                                <Title order={4}>{getSelectedPointLocation()}</Title>
-                                <Divider orientation='vertical' color='white' />
-                                <Title order={4}>{getSelectedPointEffect()}</Title>
-                                <Divider orientation='vertical' color='white' />
-                                {stimulationTime === '' &&
-                                    <Button onClick={() => setStimulationTime(new Date().toISOString())}>
-                                        {t('pages.stimulationTool.stimulation.set_time_label')}
-                                    </Button>
-                                }
-                                {stimulationTime !== '' &&
-                                    <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
-                                }
-                                <Divider orientation='vertical' color='white' />
-                                <ActionIcon variant='filled' size={'xl'} color='green' onClick={handleSubmit} disabled={stimulationTime === ""}>
-                                    <IconCircleCheck size={'xl'} />
-                                </ActionIcon>
-                            </Group>
+                        {stimulationTime !== '' &&
+                            <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
                         }
-                    </Box>
-                    <Group position="center" align="center" h={"100%"} sx={{ flex: 6 }} spacing={0}>
+                        <ActionIcon variant='filled' size={'xl'} color='green' onClick={handleSubmit} disabled={stimulationTime === ""}>
+                            <IconCircleCheck size={'xl'} />
+                        </ActionIcon>
+                    </Group>
+                    {/*TODO: flex 5: première ligne:Tâche. Deuxième ligne: Selection des paramètres (amplitude, fréquence, durée, dPhase */}
+                    <Group position="center" align="center" h={"100%"} sx={{ flex: 5 }} spacing={0}>
                         <NumberInput w={"25%"} size="md"
                             label={t('pages.stimulationTool.stimulation.amplitude_label')}
                             precision={2}
@@ -243,6 +217,39 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                     </Group>
                 </Group>
             </Box>
+        );
+    }
+
+    return (
+        <Box pt={"md"} h={"100%"}>
+            <Modal opened={showConfirmNoSave} onClose={() => setShowConfirmNoSave(false)} title={t('pages.stimulationTool.stimulation.alert_point_changed.title')}>
+                <Group position="apart">
+                    <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmNoSave(false)}>{t('pages.stimulationTool.stimulation.alert_point_changed.cancel_label')}</Button>
+                    <Button leftIcon={<IconTrash color="white" />} variant="filled" color="red" onClick={() => { setShowConfirmNoSave(false); resetForNewPoint('') }}>{t('pages.stimulationTool.stimulation.alert_point_changed.confirm_label')}</Button>
+                </Group>
+            </Modal>
+
+            <Box h={"40%"} w={"100%"}>
+                <Group w={"100%"} h={"100%"} align='flex-start' >
+                    <Box h={"100%"} sx={{ flex: 8 }}>
+                        <ContactSelection
+                            form_values={form.values}
+                            selectedContact={selectedPoint}
+                            onSelectedChanged={handleSelectedPointChanged}
+                            onViewResultsForPoint={handleViewResultsForPoint}
+                        />
+                    </Box>
+                    <Box h={"100%"} sx={{ flex: 4 }}>
+                        {selectedPoint !== '' &&
+                            <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
+                        }
+                    </Box>
+                </Group>
+            </Box>
+
+            <Box h={"15%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
+                <CentralBar />
+            </Box>
 
             <Box h={"45%"}>
                 {selectedPoint !== '' &&
@@ -252,9 +259,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         </Box>
     );
 
-    const CentralBar = () => {
 
-    }
 }
 
 interface StimulationTabProps extends TabProperties {
