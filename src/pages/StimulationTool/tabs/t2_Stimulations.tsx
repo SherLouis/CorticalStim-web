@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
 import StimulationTaskSelection, { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
-import StimulationEffectSelection, { formatSelectedCognitiveEffect } from "../../../components/StimulationEffectSelection";
+import StimulationEffectSelection, { formatEegPostDichargeLocale, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
 import { IconCircleCheck, IconCircleX, IconEye, IconTrash } from "@tabler/icons-react";
 import { t } from "i18next";
 
@@ -22,7 +22,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
     const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 0, duration: 0, frequency: 0, lenght_path: 0 } });
     const task_form = useForm<StimulationTaskFormValues>({ initialValues: { category: "", subcategory: "", characteristic: "" } });
-    const effect_form = useForm<StimulationEffectsValues>({ initialValues: { observed_effect: { class: "", descriptor: "", details: "" }, observed_effect_comments: "", epi_manifestation: "", post_discharge: false, pd_duration: 0, pd_local: "", pd_type: "", crisis: false } });
+    const effect_form = useForm<StimulationEffectsValues>({ initialValues: { observed_effect: { class: "", descriptor: "", details: "" }, observed_effect_comments: "", epi_manifestation: "", post_discharge: false, pd_duration: 0, pd_local: "local", pd_type: "", crisis: false } });
 
     const [lastTaskValues, lastTaskValuesHandlers] = useListState<{ category: string; subcategory: string; characteristic: string }>();
     const [lastCognitiveEffectValues, lastCognitiveEffectValuesHandlers] = useListState<StimulationObservedEffectFormValues>();
@@ -94,8 +94,8 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         }
 
                         // Save last used effect
-                        if (lastCognitiveEffectValues.map(e => formatSelectedCognitiveEffect(e)).includes(formatSelectedCognitiveEffect(effect_values.observed_effect))) {
-                            lastCognitiveEffectValuesHandlers.reorder({ from: lastCognitiveEffectValues.findIndex(e => formatSelectedCognitiveEffect(e) === formatSelectedCognitiveEffect(effect_values.observed_effect)), to: 0 });
+                        if (lastCognitiveEffectValues.map(e => formatSelectedObservedEffect(e)).includes(formatSelectedObservedEffect(effect_values.observed_effect))) {
+                            lastCognitiveEffectValuesHandlers.reorder({ from: lastCognitiveEffectValues.findIndex(e => formatSelectedObservedEffect(e) === formatSelectedObservedEffect(effect_values.observed_effect)), to: 0 });
                         }
                         else {
                             lastCognitiveEffectValuesHandlers.prepend({
@@ -133,38 +133,51 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
             case 'white':
                 return t('pages.stimulationTool.implantation.whiteMatter');
             case 'vep':
-                return 'VEP - ' + point.location.vep;
+                return point.location.vep;
             case 'destrieux':
-                return 'Destrieux - ' + point.location.destrieux;
+                return point.location.destrieux;
             case 'mni':
-                return 'MNI - x=' + point.location.mni.x + ' y=' + point.location.mni.y + ' z=' + point.location.mni.z;
+                return 'x=' + point.location.mni.x + ' y=' + point.location.mni.y + ' z=' + point.location.mni.z;
             default:
                 return '-'
         }
     }
 
-    const getSelectedPointEffect = () => {
-        const cognitive_effect = formatSelectedCognitiveEffect(effect_form.values.observed_effect);
-        const effect_form_values = effect_form.values;
-        const post_discharge = effect_form_values.post_discharge ? ` PD: ${effect_form_values.pd_duration}s / ${effect_form_values.pd_local}` : ''
-        return cognitive_effect + post_discharge;
+    const getSelectedPointObservedEffect = () => {
+        return formatSelectedObservedEffect(effect_form.values.observed_effect);
     }
 
+    const getSelectedPointEpiManifEffect = () => {
+        return effect_form.values.epi_manifestation !== "" ? effect_form.values.epi_manifestation : "-";
+    }
+
+    const getSelectedPointEEGEffect = () => {
+        const effect_form_values = effect_form.values;
+        const post_discharge = effect_form.values.post_discharge ? `PD: ${effect_form_values.pd_duration}s / ${formatEegPostDichargeLocale(effect_form_values.pd_local, t)}` : '-'
+        return `${post_discharge} ${effect_form_values.crisis ? t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_label') : ""}`
+    }
+
+    // TODO: traductions
     // TODO: ajuster barre centrale. Optimiser utilisation de l'espace. Ne devrait pas bouger selon le contenu. Section de droite pour tâche et paramètres de stimulation.
     const CentralBar = () => {
         return (
             <Box h={"100%"} display={selectedPoint != "" ? "block" : "none"}>
                 <Group position="center" align="center" h={"100%"} w={"100%"}>
-                    {/*TODO: flex 5: première ligne: selected contact + ROI. Deuxième ligne: Effet observé, epi, eeg*/}
-                    <Group position="center" align="center" sx={{ flex: 5 }} h={"100%"}>
-                        <Badge size="lg" variant="filled">{selectedPoint}</Badge>
-                        <Divider orientation='vertical' color='white' />
-                        <Title order={4}>{getSelectedPointLocation()}</Title>
-                        <Divider orientation='vertical' color='white' />
-                        <Title order={4}>{getSelectedPointEffect()}</Title>
-                        <Divider orientation='vertical' color='white' />
-                    </Group>
-                    {/*TODO: flex 2: set stimulation time + save en evidence*/}
+                    <Stack sx={{ flex: 5 }} h={"100%"} spacing={"xs"}>
+                        <Group position="left" align="center" h={"50%"} w={"100%"}>
+                            <Text><strong>{t('pages.stimulationTool.stimulation.selectedStimPoint')}:</strong> </Text>
+                            <Badge size="lg" variant="filled">{selectedPoint}</Badge>
+                            <Text>({getSelectedPointLocation()})</Text>
+                        </Group>
+                        <Stack align="left" h={"50%"} w={"100%"} spacing={"0"}>
+                            <Text><strong>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}: </strong>{getSelectedPointObservedEffect()}</Text>
+                            <Group>
+                                <Text><strong>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}:</strong> {getSelectedPointEpiManifEffect()}</Text>
+                                <Text><strong>{t('pages.stimulationTool.stimulation.effect.eeg')} :</strong> {getSelectedPointEEGEffect()}</Text>
+                            </Group>
+                        </Stack>
+                    </Stack>
+
                     <Group position="center" align="center" sx={{ flex: 2 }} h={"100%"}>
                         {stimulationTime === '' &&
                             <Button onClick={() => setStimulationTime(new Date().toISOString())}>
@@ -178,45 +191,45 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                             <IconCircleCheck size={'xl'} />
                         </ActionIcon>
                     </Group>
-                    {/*TODO: flex 5: première ligne:Tâche. Deuxième ligne: Selection des paramètres (amplitude, fréquence, durée, dPhase */}
-                    <Group position="center" align="center" h={"100%"} sx={{ flex: 5 }} spacing={0}>
-                        <NumberInput w={"25%"} size="md"
-                            label={t('pages.stimulationTool.stimulation.amplitude_label')}
-                            precision={2}
-                            step={0.01}
-                            styles={{ input: { textAlign: "center" } }}
-                            {...params_form.getInputProps('amplitude')}
-                        />
-                        <Stack w={"75%"} align="center">
-                            <Title order={5} h={"50%"}>{formatSelectedTask(task_form.values)}</Title>
-                            <Group position="center" noWrap w={"100%"} h={"50%"}>
-                                <NumberInput size="sm"
-                                    label={t('pages.stimulationTool.stimulation.frequency_label')}
-                                    precision={2}
-                                    step={0.01}
-                                    styles={{ input: { textAlign: "center" } }}
-                                    {...params_form.getInputProps('frequency')}
-                                />
-                                <NumberInput size="sm"
-                                    label={t('pages.stimulationTool.stimulation.duration_label')}
-                                    precision={2}
-                                    step={0.01}
-                                    styles={{ input: { textAlign: "center" } }}
-                                    {...params_form.getInputProps('duration')}
-                                />
-                                <NumberInput size="sm"
-                                    label={t('pages.stimulationTool.stimulation.length_path_label')}
-                                    precision={2}
-                                    step={0.01}
-                                    styles={{ input: { textAlign: "center" } }}
-                                    {...params_form.getInputProps('lenght_path')}
-                                />
-                            </Group>
-
-                        </Stack>
-                    </Group>
+                    <Stack sx={{ flex: 5 }} h={"100%"} align="center" spacing={"sm"}>
+                        <Text h={"20%"}><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
+                        <Group position="center" align="center" h={"80%"} noWrap>
+                            <NumberInput
+                                h={"100%"}
+                                label={t('pages.stimulationTool.stimulation.amplitude_label')}
+                                precision={1}
+                                step={0.1}
+                                styles={{ input: { textAlign: "center" } }}
+                                {...params_form.getInputProps('amplitude')}
+                            />
+                            <NumberInput
+                                h={"100%"}
+                                label={t('pages.stimulationTool.stimulation.frequency_label')}
+                                precision={0}
+                                step={1}
+                                styles={{ input: { textAlign: "center" } }}
+                                {...params_form.getInputProps('frequency')}
+                            />
+                            <NumberInput
+                                h={"100%"}
+                                label={t('pages.stimulationTool.stimulation.duration_label')}
+                                precision={0}
+                                step={1}
+                                styles={{ input: { textAlign: "center" } }}
+                                {...params_form.getInputProps('duration')}
+                            />
+                            <NumberInput
+                                h={"100%"}
+                                label={t('pages.stimulationTool.stimulation.length_path_label')}
+                                precision={0}
+                                step={1}
+                                styles={{ input: { textAlign: "center" } }}
+                                {...params_form.getInputProps('lenght_path')}
+                            />
+                        </Group>
+                    </Stack>
                 </Group>
-            </Box>
+            </Box >
         );
     }
 
