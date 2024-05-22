@@ -157,7 +157,6 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         return `${post_discharge} ${effect_form_values.crisis ? t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_label') : ""}`
     }
 
-    // TODO: traductions
     // TODO: ajuster barre centrale. Optimiser utilisation de l'espace. Ne devrait pas bouger selon le contenu. Section de droite pour tâche et paramètres de stimulation.
     const CentralBar = () => {
         return (

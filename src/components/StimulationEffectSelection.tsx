@@ -101,7 +101,6 @@ interface StimulationEffectSelectionProps {
     observed_effect_last_values: StimulationObservedEffectFormValues[];
 }
 
-// TODO: put in scroll 
 const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: CognitiveEffectTableProps) => {
     const effects = [
         { level: "class", class: "Consciousness", descriptor: "", details: "" },
