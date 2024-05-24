@@ -1,4 +1,4 @@
-import { ActionIcon, Badge, Box, Button, Chip, Container, Divider, Grid, Group, Modal, NumberInput, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Badge, Box, Button, Chip, Container, Divider, Group, Modal, NumberInput, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../models/stimulationForm";
 import { useState } from "react";
@@ -7,8 +7,9 @@ import { useForm } from "@mantine/form";
 import StimulationTaskSelection, { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
 import StimulationEffectSelection, { formatEegPostDichargeLocale, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
-import { IconCircleCheck, IconCircleX, IconEye, IconTrash } from "@tabler/icons-react";
+import { IconCircleCheck, IconCircleX, IconClockCheck, IconEye, IconTrash } from "@tabler/icons-react";
 import { t } from "i18next";
+import CustomNumberInput from "../../../components/CustomNumberInput";
 
 export default function StimulationsTab({ form, viewPointSummary }: StimulationTabProps) {
     // TODO: ajouter validations (ex: post discharge time cannot be 0 or negative if set to true)
@@ -156,8 +157,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         const post_discharge = effect_form.values.post_discharge ? `PD: ${effect_form_values.pd_duration}s / ${formatEegPostDichargeLocale(effect_form_values.pd_local, t)}` : '-'
         return `${post_discharge} ${effect_form_values.crisis ? t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_label') : ""}`
     }
-
-    // TODO: ajuster barre centrale. Optimiser utilisation de l'espace. Ne devrait pas bouger selon le contenu. Section de droite pour tâche et paramètres de stimulation.
+    
     const CentralBar = () => {
         return (
             <Box h={"100%"} display={selectedPoint != "" ? "block" : "none"}>
@@ -179,26 +179,28 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
                     <Group position="center" align="center" sx={{ flex: 2 }} h={"100%"}>
                         {stimulationTime === '' &&
-                            <Button onClick={() => setStimulationTime(new Date().toISOString())}>
-                                {t('pages.stimulationTool.stimulation.set_time_label')}
+                            <Button size="md" onClick={() => setStimulationTime(new Date().toISOString())} leftIcon={<IconClockCheck />}>
+                                <Text>{t('pages.stimulationTool.stimulation.set_time_label')}</Text>
                             </Button>
                         }
                         {stimulationTime !== '' &&
                             <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
                         }
-                        <ActionIcon variant='filled' size={'xl'} color='green' onClick={handleSubmit} disabled={stimulationTime === ""}>
-                            <IconCircleCheck size={'xl'} />
-                        </ActionIcon>
+                        <Button variant="filled" size="md" color="green" leftIcon={<IconCircleCheck />}
+                            display={stimulationTime !== '' ? 'block' : 'none'}
+                            onClick={handleSubmit} disabled={stimulationTime === ""}>
+                            {t('pages.stimulationTool.stimulation.saveButtonLabel')}
+                        </Button>
                     </Group>
                     <Stack sx={{ flex: 5 }} h={"100%"} align="center" spacing={"sm"}>
                         <Text h={"20%"}><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
                         <Group position="center" align="center" h={"80%"} noWrap>
-                            <NumberInput
+                            <CustomNumberInput
                                 h={"100%"}
                                 label={t('pages.stimulationTool.stimulation.amplitude_label')}
                                 precision={1}
-                                step={0.1}
-                                styles={{ input: { textAlign: "center" } }}
+                                digit_step={1}
+                                decimal_step={0.1}
                                 {...params_form.getInputProps('amplitude')}
                             />
                             <NumberInput
