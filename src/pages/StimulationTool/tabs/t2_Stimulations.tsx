@@ -21,7 +21,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
     const [stimulationTime, setStimulationTime] = useState<string>("");
 
-    const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 0, duration: 0, frequency: 0, lenght_path: 0 } });
+    const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 1.0, duration: 0, frequency: 0, lenght_path: 0 } });
     const task_form = useForm<StimulationTaskFormValues>({ initialValues: { category: "", subcategory: "", characteristic: "" } });
     const effect_form = useForm<StimulationEffectsValues>({ initialValues: { observed_effect: { class: "", descriptor: "", details: "" }, observed_effect_comments: "", epi_manifestation: "", post_discharge: false, pd_duration: 0, pd_local: "local", pd_type: "", crisis: false } });
 
@@ -157,7 +157,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         const post_discharge = effect_form.values.post_discharge ? `PD: ${effect_form_values.pd_duration}s / ${formatEegPostDichargeLocale(effect_form_values.pd_local, t)}` : '-'
         return `${post_discharge} ${effect_form_values.crisis ? t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_label') : ""}`
     }
-    
+
     const CentralBar = () => {
         return (
             <Box h={"100%"} display={selectedPoint != "" ? "block" : "none"}>
@@ -193,40 +193,79 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         </Button>
                     </Group>
                     <Stack sx={{ flex: 5 }} h={"100%"} align="center" spacing={"sm"}>
-                        <Text h={"20%"}><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
-                        <Group position="center" align="center" h={"80%"} noWrap>
+                        <Text h={"10%"}><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
+                        <Group position="center" align="top" h={"90%"} noWrap>
                             <CustomNumberInput
                                 h={"100%"}
                                 label={t('pages.stimulationTool.stimulation.amplitude_label')}
                                 precision={1}
                                 digit_step={1}
                                 decimal_step={0.1}
+                                min={0}
+                                max={10}
+                                variant='default'
+                                useCustom={true}
                                 {...params_form.getInputProps('amplitude')}
                             />
-                            <NumberInput
-                                h={"100%"}
-                                label={t('pages.stimulationTool.stimulation.frequency_label')}
-                                precision={0}
-                                step={1}
-                                styles={{ input: { textAlign: "center" } }}
-                                {...params_form.getInputProps('frequency')}
-                            />
-                            <NumberInput
-                                h={"100%"}
-                                label={t('pages.stimulationTool.stimulation.duration_label')}
-                                precision={0}
-                                step={1}
-                                styles={{ input: { textAlign: "center" } }}
-                                {...params_form.getInputProps('duration')}
-                            />
-                            <NumberInput
-                                h={"100%"}
-                                label={t('pages.stimulationTool.stimulation.length_path_label')}
-                                precision={0}
-                                step={1}
-                                styles={{ input: { textAlign: "center" } }}
-                                {...params_form.getInputProps('lenght_path')}
-                            />
+                            <Stack align="center" h={"100%"} spacing={0}>
+                                <CustomNumberInput
+                                    label={t('pages.stimulationTool.stimulation.frequency_label')}
+                                    precision={0}
+                                    step={1}
+                                    min={0}
+                                    styles={{ input: { textAlign: "center" } }}
+                                    {...params_form.getInputProps('frequency')}
+                                />
+                                <Group spacing={0} grow w={"100%"}>
+                                    {[1, 5, 50, 55].map((v) =>
+                                        <Button compact
+                                            onClick={() => params_form.setFieldValue('frequency', v)}
+                                            variant={params_form.values.frequency === v ? 'filled' : 'default'}>
+                                            {v}
+                                        </Button>
+                                    )}
+                                </Group>
+                            </Stack>
+
+                            <Stack align="center" h={"100%"} spacing={0}>
+                                <CustomNumberInput
+                                    label={t('pages.stimulationTool.stimulation.duration_label')}
+                                    precision={0}
+                                    step={1}
+                                    min={0}
+                                    styles={{ input: { textAlign: "center" } }}
+                                    {...params_form.getInputProps('duration')}
+                                />
+                                <Group spacing={0} grow w={"100%"}>
+                                    {[5, 10, 30, 60].map((v) =>
+                                        <Button compact
+                                            onClick={() => params_form.setFieldValue('duration', v)}
+                                            variant={params_form.values.duration === v ? 'filled' : 'default'}>
+                                            {v}
+                                        </Button>
+                                    )}
+                                </Group>
+                            </Stack>
+
+                            <Stack align="center" h={"100%"} spacing={0}>
+                                <CustomNumberInput
+                                    label={t('pages.stimulationTool.stimulation.length_path_label')}
+                                    precision={0}
+                                    step={1}
+                                    min={0}
+                                    styles={{ input: { textAlign: "center" } }}
+                                    {...params_form.getInputProps('lenght_path')}
+                                />
+                                <Group spacing={0} grow w={"100%"}>
+                                    {[300, 500].map((v) =>
+                                        <Button compact
+                                            onClick={() => params_form.setFieldValue('lenght_path', v)}
+                                            variant={params_form.values.lenght_path === v ? 'filled' : 'default'}>
+                                            {v}
+                                        </Button>
+                                    )}
+                                </Group>
+                            </Stack>
                         </Group>
                     </Stack>
                 </Group>
