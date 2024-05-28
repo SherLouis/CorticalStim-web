@@ -30,7 +30,7 @@
             },
             "implantation": {
                 "tab_title": "Implantation",
-                "electrodeConfiguration": "Type d'électrodes",
+                "electrodeConfiguration": "Configuration des électrodes",
                 "contactDiameterLabel": "Diamètre des contacts (mm)",
                 "contactSeparationLabel": "Séparation des contacts (mm)",
                 "contactLengthLabel": "Longueur des contacts (mm)",
@@ -58,6 +58,8 @@
             },
             "stimulation": {
                 "tab_title": "Stimulations",
+                "guide_alert_title": "Sélectionner un point de stimulation pour commencer.",
+                "guide_alert_text": "Vous pourrez ensuite préciser la tâche effectuée, les paramètres de stimulation et noter les effets observés.",
                 "parameters_title": "Paramètres",
                 "amplitude_label": "Amplitude",
                 "frequency_label": "Fréquence",

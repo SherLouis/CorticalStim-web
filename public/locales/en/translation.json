@@ -30,7 +30,7 @@
             },
             "implantation": {
                 "tab_title": "Implantation",
-                "electrodeConfiguration": "Electrodes type",
+                "electrodeConfiguration": "Electrodes Configuration",
                 "contactDiameterLabel": "Contact diameter (mm)",
                 "contactSeparationLabel": "Contact separation (mm)",
                 "contactLengthLabel": "Contact length (mm)",
@@ -58,6 +58,8 @@
             },
             "stimulation": {
                 "tab_title": "Stimulations",
+                "guide_alert_title": "Select a stimulation point to get started.",
+                "guide_alert_text": "You will then be able to select the performed task, stimulation parameters and take note of the observed effects.",
                 "parameters_title": "Parameters",
                 "amplitude_label": "Amplitude",
                 "frequency_label": "Frequency",

@@ -193,6 +193,10 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     useEffect(() => { updateDoneContacts(); }, [form])
 
     // TODO: revoir layout pour que ce soit plus clair quoi faire et mieux utiliser l'espace
+    // TODO: info box pour choix de configuration des électrodes
+    // TODO: Si aucun contact sélectionné, afficher alerte dans barre centrale avec infos
+    // TODO: Si contact sélectionné, afficher guide dans barre central pour indiquer choix d'atlas et positionnement
+    // TODO: Cacher / afficher sections selon sélection ? (cacher positionnement si pas de contact sélectionné ?)
     return (
         <Box pt={"md"} h={"100%"}>
             <Box h={"10%"}>
