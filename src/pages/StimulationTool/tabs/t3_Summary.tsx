@@ -12,6 +12,7 @@ import { IconFilterOff, IconFileTypeCsv, IconTableOptions } from "@tabler/icons-
 import { CSVLink } from "react-csv";
 import { DataTableColumnToggle } from "mantine-datatable/dist/hooks";
 
+//TODO: si aucun contact, afficher message pour dire de compléter le volet implantation et stimulation en premier
 export default function SummaryTab({ form, filters }: SummaryTabProps) {
     const { t } = useTranslation();
 

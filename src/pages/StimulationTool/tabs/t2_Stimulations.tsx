@@ -13,6 +13,7 @@ import CustomNumberInput from "../../../components/CustomNumberInput";
 
 export default function StimulationsTab({ form, viewPointSummary }: StimulationTabProps) {
     // TODO: ajouter validations (ex: post discharge time cannot be 0 or negative if set to true)
+    // TODO: si aucun contact, afficher message pour dire de compléter le volet implantation en premier
 
     const { t } = useTranslation();
 
