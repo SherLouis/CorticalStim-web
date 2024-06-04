@@ -30,6 +30,8 @@
             },
             "implantation": {
                 "tab_title": "Implantation",
+                "guide_params_title": "Sélectionnez la configuration des électrodes.",
+                "guide_params_text": "Choisir parmi les choix de configuration proposés ou entrer manuellement les paramètres d'implantation.",
                 "electrodeConfiguration": "Configuration des électrodes",
                 "contactDiameterLabel": "Diamètre des contacts (mm)",
                 "contactSeparationLabel": "Séparation des contacts (mm)",
@@ -60,6 +62,8 @@
                 "tab_title": "Stimulations",
                 "guide_alert_title": "Sélectionner un point de stimulation pour commencer.",
                 "guide_alert_text": "Vous pourrez ensuite préciser la tâche effectuée, les paramètres de stimulation et noter les effets observés.",
+                "guide_alert_no_electrode_title": "Aucune électrode configurée",
+                "guide_alert_no_electrode_text": "Allez à l'onglet Implantation afin de configurer la disposition des électrodes et le positionnement des contacts.",
                 "parameters_title": "Paramètres",
                 "amplitude_label": "Amplitude",
                 "frequency_label": "Fréquence",

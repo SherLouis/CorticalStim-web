@@ -13,7 +13,6 @@ import CustomNumberInput from "../../../components/CustomNumberInput";
 
 export default function StimulationsTab({ form, viewPointSummary }: StimulationTabProps) {
     // TODO: ajouter validations (ex: post discharge time cannot be 0 or negative if set to true)
-    // TODO: si aucun contact, afficher message pour dire de compléter le volet implantation en premier
 
     const { t } = useTranslation();
 
@@ -162,124 +161,132 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     const CentralBar = () => {
         return (
             <Box h={"100%"}>
-                <Group align='center' position='center' h={"100%"} w={"100%"} display={selectedPoint === "" ? "block" : "none"}>
+                <Group align='center' position='center' h={"100%"} w={"100%"} display={form.values.electrodes.length === 0 || form.values.electrodes.flatMap(e => e.stim_points).length === 0 ? "block" : "none"}>
                     <Alert h={"100%"}
                         icon={<IconAlertCircle size="1rem" />}
-                        title={t('pages.stimulationTool.stimulation.guide_alert_title')}>
-                        {t('pages.stimulationTool.stimulation.guide_alert_text')}
+                        title={t('pages.stimulationTool.stimulation.guide_alert_no_electrode_title')}>
+                        {t('pages.stimulationTool.stimulation.guide_alert_no_electrode_text')}
                     </Alert>
                 </Group>
+                <Box h={"100%"} display={form.values.electrodes.length > 0 && form.values.electrodes.flatMap(e => e.stim_points).length > 0 ? 'block' : 'none'}>
+                    <Group align='center' position='center' h={"100%"} w={"100%"} display={selectedPoint === "" ? "block" : "none"}>
+                        <Alert h={"100%"}
+                            icon={<IconAlertCircle size="1rem" />}
+                            title={t('pages.stimulationTool.stimulation.guide_alert_title')}>
+                            {t('pages.stimulationTool.stimulation.guide_alert_text')}
+                        </Alert>
+                    </Group>
+                    <Box h={"100%"} display={selectedPoint !== "" ? "block" : "none"}>
+                        <Group position="center" align="center" h={"100%"} w={"100%"}>
+                            <Stack sx={{ flex: 5 }} h={"100%"} spacing={"xs"}>
+                                <Group position="left" align="center" h={"50%"} w={"100%"}>
+                                    <Text><strong>{t('pages.stimulationTool.stimulation.selectedStimPoint')}:</strong> </Text>
+                                    <Badge size="lg" variant="filled">{selectedPoint}</Badge>
+                                    <Text>({getSelectedPointLocation()})</Text>
+                                </Group>
+                                <Stack align="left" h={"50%"} w={"100%"} spacing={"0"}>
+                                    <Text><strong>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}: </strong>{getSelectedPointObservedEffect()}</Text>
+                                    <Group>
+                                        <Text><strong>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}:</strong> {getSelectedPointEpiManifEffect()}</Text>
+                                        <Text><strong>{t('pages.stimulationTool.stimulation.effect.eeg')} :</strong> {getSelectedPointEEGEffect()}</Text>
+                                    </Group>
+                                </Stack>
+                            </Stack>
 
-                <Box h={"100%"} display={selectedPoint !== "" ? "block" : "none"}>
-                    <Group position="center" align="center" h={"100%"} w={"100%"}>
-                        <Stack sx={{ flex: 5 }} h={"100%"} spacing={"xs"}>
-                            <Group position="left" align="center" h={"50%"} w={"100%"}>
-                                <Text><strong>{t('pages.stimulationTool.stimulation.selectedStimPoint')}:</strong> </Text>
-                                <Badge size="lg" variant="filled">{selectedPoint}</Badge>
-                                <Text>({getSelectedPointLocation()})</Text>
+                            <Group position="center" align="center" sx={{ flex: 2 }} h={"100%"}>
+                                {stimulationTime === '' &&
+                                    <Button size="md" onClick={() => setStimulationTime(new Date().toISOString())} leftIcon={<IconClockCheck />}>
+                                        <Text>{t('pages.stimulationTool.stimulation.set_time_label')}</Text>
+                                    </Button>
+                                }
+                                {stimulationTime !== '' &&
+                                    <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
+                                }
+                                <Button variant="filled" size="md" color="green" leftIcon={<IconCircleCheck />}
+                                    display={stimulationTime !== '' ? 'block' : 'none'}
+                                    onClick={handleSubmit} disabled={stimulationTime === ""}>
+                                    {t('pages.stimulationTool.stimulation.saveButtonLabel')}
+                                </Button>
                             </Group>
-                            <Stack align="left" h={"50%"} w={"100%"} spacing={"0"}>
-                                <Text><strong>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}: </strong>{getSelectedPointObservedEffect()}</Text>
-                                <Group>
-                                    <Text><strong>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}:</strong> {getSelectedPointEpiManifEffect()}</Text>
-                                    <Text><strong>{t('pages.stimulationTool.stimulation.effect.eeg')} :</strong> {getSelectedPointEEGEffect()}</Text>
+                            <Stack sx={{ flex: 5 }} h={"100%"} align="center" spacing={"sm"}>
+                                <Text h={"10%"}><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
+                                <Group position="center" align="top" h={"90%"} noWrap>
+                                    <CustomNumberInput
+                                        h={"100%"}
+                                        label={t('pages.stimulationTool.stimulation.amplitude_label')}
+                                        precision={1}
+                                        digit_step={1}
+                                        decimal_step={0.1}
+                                        min={0}
+                                        max={10}
+                                        variant='default'
+                                        useCustom={true}
+                                        {...params_form.getInputProps('amplitude')}
+                                    />
+                                    <Stack align="center" h={"100%"} spacing={0}>
+                                        <CustomNumberInput
+                                            label={t('pages.stimulationTool.stimulation.frequency_label')}
+                                            precision={0}
+                                            step={1}
+                                            min={0}
+                                            styles={{ input: { textAlign: "center" } }}
+                                            {...params_form.getInputProps('frequency')}
+                                        />
+                                        <Group spacing={0} grow w={"100%"}>
+                                            {[1, 5, 50, 55].map((v) =>
+                                                <Button compact
+                                                    onClick={() => params_form.setFieldValue('frequency', v)}
+                                                    variant={params_form.values.frequency === v ? 'filled' : 'default'}>
+                                                    {v}
+                                                </Button>
+                                            )}
+                                        </Group>
+                                    </Stack>
+
+                                    <Stack align="center" h={"100%"} spacing={0}>
+                                        <CustomNumberInput
+                                            label={t('pages.stimulationTool.stimulation.duration_label')}
+                                            precision={0}
+                                            step={1}
+                                            min={0}
+                                            styles={{ input: { textAlign: "center" } }}
+                                            {...params_form.getInputProps('duration')}
+                                        />
+                                        <Group spacing={0} grow w={"100%"}>
+                                            {[5, 10, 30, 60].map((v) =>
+                                                <Button compact
+                                                    onClick={() => params_form.setFieldValue('duration', v)}
+                                                    variant={params_form.values.duration === v ? 'filled' : 'default'}>
+                                                    {v}
+                                                </Button>
+                                            )}
+                                        </Group>
+                                    </Stack>
+
+                                    <Stack align="center" h={"100%"} spacing={0}>
+                                        <CustomNumberInput
+                                            label={t('pages.stimulationTool.stimulation.length_path_label')}
+                                            precision={0}
+                                            step={1}
+                                            min={0}
+                                            styles={{ input: { textAlign: "center" } }}
+                                            {...params_form.getInputProps('lenght_path')}
+                                        />
+                                        <Group spacing={0} grow w={"100%"}>
+                                            {[300, 500].map((v) =>
+                                                <Button compact
+                                                    onClick={() => params_form.setFieldValue('lenght_path', v)}
+                                                    variant={params_form.values.lenght_path === v ? 'filled' : 'default'}>
+                                                    {v}
+                                                </Button>
+                                            )}
+                                        </Group>
+                                    </Stack>
                                 </Group>
                             </Stack>
-                        </Stack>
-
-                        <Group position="center" align="center" sx={{ flex: 2 }} h={"100%"}>
-                            {stimulationTime === '' &&
-                                <Button size="md" onClick={() => setStimulationTime(new Date().toISOString())} leftIcon={<IconClockCheck />}>
-                                    <Text>{t('pages.stimulationTool.stimulation.set_time_label')}</Text>
-                                </Button>
-                            }
-                            {stimulationTime !== '' &&
-                                <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
-                            }
-                            <Button variant="filled" size="md" color="green" leftIcon={<IconCircleCheck />}
-                                display={stimulationTime !== '' ? 'block' : 'none'}
-                                onClick={handleSubmit} disabled={stimulationTime === ""}>
-                                {t('pages.stimulationTool.stimulation.saveButtonLabel')}
-                            </Button>
                         </Group>
-                        <Stack sx={{ flex: 5 }} h={"100%"} align="center" spacing={"sm"}>
-                            <Text h={"10%"}><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
-                            <Group position="center" align="top" h={"90%"} noWrap>
-                                <CustomNumberInput
-                                    h={"100%"}
-                                    label={t('pages.stimulationTool.stimulation.amplitude_label')}
-                                    precision={1}
-                                    digit_step={1}
-                                    decimal_step={0.1}
-                                    min={0}
-                                    max={10}
-                                    variant='default'
-                                    useCustom={true}
-                                    {...params_form.getInputProps('amplitude')}
-                                />
-                                <Stack align="center" h={"100%"} spacing={0}>
-                                    <CustomNumberInput
-                                        label={t('pages.stimulationTool.stimulation.frequency_label')}
-                                        precision={0}
-                                        step={1}
-                                        min={0}
-                                        styles={{ input: { textAlign: "center" } }}
-                                        {...params_form.getInputProps('frequency')}
-                                    />
-                                    <Group spacing={0} grow w={"100%"}>
-                                        {[1, 5, 50, 55].map((v) =>
-                                            <Button compact
-                                                onClick={() => params_form.setFieldValue('frequency', v)}
-                                                variant={params_form.values.frequency === v ? 'filled' : 'default'}>
-                                                {v}
-                                            </Button>
-                                        )}
-                                    </Group>
-                                </Stack>
-
-                                <Stack align="center" h={"100%"} spacing={0}>
-                                    <CustomNumberInput
-                                        label={t('pages.stimulationTool.stimulation.duration_label')}
-                                        precision={0}
-                                        step={1}
-                                        min={0}
-                                        styles={{ input: { textAlign: "center" } }}
-                                        {...params_form.getInputProps('duration')}
-                                    />
-                                    <Group spacing={0} grow w={"100%"}>
-                                        {[5, 10, 30, 60].map((v) =>
-                                            <Button compact
-                                                onClick={() => params_form.setFieldValue('duration', v)}
-                                                variant={params_form.values.duration === v ? 'filled' : 'default'}>
-                                                {v}
-                                            </Button>
-                                        )}
-                                    </Group>
-                                </Stack>
-
-                                <Stack align="center" h={"100%"} spacing={0}>
-                                    <CustomNumberInput
-                                        label={t('pages.stimulationTool.stimulation.length_path_label')}
-                                        precision={0}
-                                        step={1}
-                                        min={0}
-                                        styles={{ input: { textAlign: "center" } }}
-                                        {...params_form.getInputProps('lenght_path')}
-                                    />
-                                    <Group spacing={0} grow w={"100%"}>
-                                        {[300, 500].map((v) =>
-                                            <Button compact
-                                                onClick={() => params_form.setFieldValue('lenght_path', v)}
-                                                variant={params_form.values.lenght_path === v ? 'filled' : 'default'}>
-                                                {v}
-                                            </Button>
-                                        )}
-                                    </Group>
-                                </Stack>
-                            </Group>
-                        </Stack>
-                    </Group>
-                </Box >
+                    </Box >
+                </Box>
             </Box>
         );
     }

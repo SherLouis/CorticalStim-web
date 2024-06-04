@@ -1,6 +1,6 @@
-import { ActionIcon, Badge, Box, Button, Center, Chip, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Alert, Badge, Box, Button, Center, Chip, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
-import { IconCircleCheck, IconRestore, IconTrash } from "@tabler/icons-react";
+import { IconAlertCircle, IconCircleCheck, IconRestore, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { letters } from "../../../lib/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";
@@ -193,7 +193,6 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     useEffect(() => { updateDoneContacts(); }, [form])
 
     // TODO: revoir layout pour que ce soit plus clair quoi faire et mieux utiliser l'espace
-    // TODO: info box pour choix de configuration des électrodes
     // TODO: Si aucun contact sélectionné, afficher alerte dans barre centrale avec infos
     // TODO: Si contact sélectionné, afficher guide dans barre central pour indiquer choix d'atlas et positionnement
     // TODO: Cacher / afficher sections selon sélection ? (cacher positionnement si pas de contact sélectionné ?)
@@ -277,6 +276,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                         sx={{ flex: 4 }}
                                         size="sm"
                                         label={t("pages.stimulationTool.implantation.nbContactsLabel")}
+                                        min={0}
                                         defaultValue={electrode.n_contacts}
                                         onChange={(v) => setContactsToElectrode(electrode_i, v === "" ? 0 : v)}
                                     />
@@ -305,12 +305,18 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </ScrollArea>
             </Box>
 
-            <Group position="center" align="center" h={"15%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid'}}>
-                {selectedContacts.length === 0 &&
-                    <Group position="center" align="center">
-                        <Button onClick={selectAllContacts}>{t("pages.stimulationTool.implantation.selectAllContactsButtonLabel")}</Button>
-                        <Button onClick={selectAllNotDoneContacts}>{t("pages.stimulationTool.implantation.selectAllNotDoneContactsButtonLabel")}</Button>
-                    </Group>}
+            <Group position="center" align="center" h={"15%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
+                <Group align='center' position='center' h={"100%"} w={"100%"} display={form.values.electrode_params.diameter === 0 ? "flex" : "none"}>
+                    <Alert h={"100%"} w={"100%"}
+                        icon={<IconAlertCircle size="1rem" />}
+                        title={t('pages.stimulationTool.implantation.guide_params_title')}>
+                        {t('pages.stimulationTool.implantation.guide_params_text')}
+                    </Alert>
+                </Group>
+                <Group position="center" align="center" display={selectedContacts.length === 0 ? 'flex' : 'none'}>
+                    <Button onClick={selectAllContacts}>{t("pages.stimulationTool.implantation.selectAllContactsButtonLabel")}</Button>
+                    <Button onClick={selectAllNotDoneContacts}>{t("pages.stimulationTool.implantation.selectAllNotDoneContactsButtonLabel")}</Button>
+                </Group>
                 <ScrollArea type='auto' h={"100%"} w={"75%"} sx={{ alignItems: "center", padding: '0' }}>
                     <Group align="center" position="center" noWrap h={"100%"} w={"100%"}>
                         {selectedContacts.map((point) => {
