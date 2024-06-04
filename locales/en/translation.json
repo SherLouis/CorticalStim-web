@@ -30,6 +30,8 @@
             },
             "implantation": {
                 "tab_title": "Implantation",
+                "guide_params_title": "Select electrodes configuration.",
+                "guide_params_text": "Choose from the configuration dropdown or manually input electrode configuration parameters.",
                 "electrodeConfiguration": "Electrodes Configuration",
                 "contactDiameterLabel": "Contact diameter (mm)",
                 "contactSeparationLabel": "Contact separation (mm)",
@@ -60,6 +62,8 @@
                 "tab_title": "Stimulations",
                 "guide_alert_title": "Select a stimulation point to get started.",
                 "guide_alert_text": "You will then be able to select the performed task, stimulation parameters and take note of the observed effects.",
+                "guide_alert_no_electrode_title": "No electrode configured",
+                "guide_alert_no_electrode_text": "Go to the implantation tab to configure electrode and contact placement.",
                 "parameters_title": "Parameters",
                 "amplitude_label": "Amplitude",
                 "frequency_label": "Frequency",
