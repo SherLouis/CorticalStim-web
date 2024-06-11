@@ -192,9 +192,113 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     useEffect(() => { locationForm.reset(); locationForm.setValues(getSelectedContactsROIValue()); }, [selectedContacts]);
     useEffect(() => { updateDoneContacts(); }, [form])
 
-    // TODO: revoir layout pour que ce soit plus clair quoi faire et mieux utiliser l'espace
     // TODO: Si aucun contact sélectionné, afficher alerte dans barre centrale avec infos
     // TODO: Si contact sélectionné, afficher guide dans barre central pour indiquer choix d'atlas et positionnement
+    const CentralBar = () => {
+        const electrode_parameters_selected = form.values.electrode_params.diameter > 0;
+        const contacts_configured = form.values.electrodes.flatMap(e => e.stim_points).length > 0;
+        const contacts_selected = selectedContacts.length > 0;
+        return (
+            <Box h={"100%"} >
+                {/** Electrode parameters are not set */}
+                <Box h={"100%"} display={!electrode_parameters_selected ? "block" : "none"}>
+                    <Alert w={"100%"} h={"100%"}
+                        icon={<IconAlertCircle size="1rem" />}
+                        title={t('pages.stimulationTool.implantation.guide_params_title')}>
+                        {t('pages.stimulationTool.implantation.guide_params_text')}
+                    </Alert>
+                </Box>
+
+                {/** No contact exists */}
+                <Box h={"100%"} display={electrode_parameters_selected && !contacts_configured ? "block" : "none"}>
+                    <Alert w={"100%"} h={"100%"}
+                        display={form.values.electrodes.flatMap(e => e.stim_points).length === 0 ? "flex" : "none"}
+                        icon={<IconAlertCircle size="1rem" />}
+                        title={"TODO: Configure electrodes and number of contacts for each."}>
+                        {"TODO"}
+                    </Alert>
+                </Box >
+
+                {/** Contact exists but none selected */}
+                <Box h={"100%"} w={"100%"} display={electrode_parameters_selected && contacts_configured && !contacts_selected ? "block" : "none"}>
+                    <Group h={"100%"} display={"flex"} w={"100%"}>
+                        <Alert
+                            h={"100%"}
+                            sx={{ flex: 9 }}
+                            icon={<IconAlertCircle size="1rem" />}
+                            title={"TODO: Select contact to specify placement"}>
+                            {"TODO"}
+                        </Alert>
+                        {/** Select all and selct all not done buttons */}
+                        <Stack sx={{ flex: 3 }}>
+                            <Button onClick={selectAllContacts}>{t("pages.stimulationTool.implantation.selectAllContactsButtonLabel")}</Button>
+                            <Button onClick={selectAllNotDoneContacts}>{t("pages.stimulationTool.implantation.selectAllNotDoneContactsButtonLabel")}</Button>
+                        </Stack>
+                    </Group>
+                </Box>
+
+                {/** Contact(s) selected */}
+                <Box h={"100%"} w={"100%"} display={electrode_parameters_selected && contacts_configured && contacts_selected ? "block" : "none"}>
+                    <Group position='apart' align='flex-start' h={"100%"} w={"100%"}>
+                        <Stack w={"80%"} h={"100%"} spacing={0}>
+                            {/** Selected contacts */}
+                            <Group h={"35%"} w={"100%"} noWrap>
+                                {/** TODO: translation */}
+                                Selected contacts:
+                                <ScrollArea type='always' h={"100%"} w={"90%"} sx={{ alignItems: "center", padding: '0' }}>
+                                    <Group align="center" position='left' noWrap h={"100%"} w={"100%"}>
+                                        {selectedContacts.map((point) => {
+                                            return (
+                                                <Badge key={point} size="lg" variant="filled">{point}</Badge>
+                                            );
+                                        })}
+                                    </Group>
+                                </ScrollArea>
+                            </Group>
+                            <Alert w={"100%"}
+                                h={"60%"}
+                                icon={<IconAlertCircle size="1rem" />}
+                                title={"TODO: Choose an anatomic atlas and specify selected contact(s) location."}>
+                                {"TODO"}
+                            </Alert>
+                        </Stack>
+
+                        <Stack w={"15%"} align="center">
+                            {/** Display selected location */}
+                            {/** TODO: translation */}
+                            Selected location: {getNewElectrodeLocationFromForm()}
+                            {/** Confirm buttons */}
+                            <Button
+                                variant='filled'
+                                color='green'
+                                size="lg"
+                                leftIcon={<IconCircleCheck />}
+                                onClick={handleElectrodeLocationFormSubmit}
+                                display={selectedContacts.length > 0 ? "block" : "none"}
+                            >Save
+                            </Button>
+                        </Stack>
+                    </Group>
+                </Box>
+
+                {/**<Button.Group w={"10%"}>
+                    {selectedContacts.filter((s) => doneContacts.includes(s)).length > 0 &&
+                        <ActionIcon
+                            variant='outline'
+                            size={'xl'}
+                            color='red'
+                            onClick={resetSelectedContacts}
+                            display={selectedContacts.filter((s) => doneContacts.includes(s)).length > 0 ? 'block' : 'none'}>
+                            <IconRestore size={'xl'} />
+                        </ActionIcon>
+                    }
+                </Button.Group>
+                */}
+            </Box>
+        )
+    }
+
+    // TODO: revoir layout pour que ce soit plus clair quoi faire et mieux utiliser l'espace
     // TODO: Cacher / afficher sections selon sélection ? (cacher positionnement si pas de contact sélectionné ?)
     return (
         <Box pt={"md"} h={"100%"}>
@@ -306,75 +410,9 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
             </Box>
 
             {/* Central bar */}
-            <Group position="center" align="center" h={"15%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
-
-                {/** Electrode parameters are not set */}
-                <Alert w={"100%"}
-                    display={form.values.electrode_params.diameter === 0 ? "flex" : "none"}
-                    icon={<IconAlertCircle size="1rem" />}
-                    title={t('pages.stimulationTool.implantation.guide_params_title')}>
-                    {t('pages.stimulationTool.implantation.guide_params_text')}
-                </Alert>
-                {/** No contact exists */}
-                <Alert w={"100%"}
-                    display={form.values.electrodes.flatMap(e => e.stim_points).length === 0 ? "flex" : "none"}
-                    icon={<IconAlertCircle size="1rem" />}
-                    title={"TODO: Configure electrodes and number of contacts for each."}>
-                    {"TODO"}
-                </Alert>
-                {/** Contact exists but none selected */}
-                <Alert w={"100%"}
-                    display={form.values.electrodes.flatMap(e => e.stim_points).length > 0 && selectedContacts.length === 0 ? "flex" : "none"}
-                    icon={<IconAlertCircle size="1rem" />}
-                    title={"TODO: Select contact to specify placement"}>
-                    {"TODO"}
-                </Alert>
-
-                {/** Contact(s) selected */}
-                <Alert w={"100%"}
-                    display={selectedContacts.length > 0 ? "flex" : "none"}
-                    icon={<IconAlertCircle size="1rem" />}
-                    title={"TODO: Choose an anatomic atlas and specify selected contact(s) location."}>
-                    {"TODO"}
-                </Alert>
-
-                <Group position="center" align="center" display={selectedContacts.length === 0 ? 'flex' : 'none'}>
-                    <Button onClick={selectAllContacts}>{t("pages.stimulationTool.implantation.selectAllContactsButtonLabel")}</Button>
-                    <Button onClick={selectAllNotDoneContacts}>{t("pages.stimulationTool.implantation.selectAllNotDoneContactsButtonLabel")}</Button>
-                </Group>
-                <ScrollArea type='auto' h={"100%"} w={"75%"} sx={{ alignItems: "center", padding: '0' }}>
-                    <Group align="center" position="center" noWrap h={"100%"} w={"100%"}>
-                        {selectedContacts.map((point) => {
-                            return (
-                                <Badge key={point} size="lg" variant="filled">{point}</Badge>
-                            );
-                        })}
-                    </Group>
-                </ScrollArea>
-                <Center w={"10%"}>
-                    {getNewElectrodeLocationFromForm()}
-                </Center>
-                <Button.Group w={"10%"}>
-                    {selectedContacts.filter((s) => doneContacts.includes(s)).length > 0 &&
-                        <ActionIcon
-                            variant='outline'
-                            size={'xl'}
-                            color='red'
-                            onClick={resetSelectedContacts}
-                            display={selectedContacts.filter((s) => doneContacts.includes(s)).length > 0 ? 'block' : 'none'}>
-                            <IconRestore size={'xl'} />
-                        </ActionIcon>
-                    }
-                    <ActionIcon
-                        variant='filled'
-                        size={'xl'}
-                        color='green'
-                        onClick={handleElectrodeLocationFormSubmit}
-                        display={selectedContacts.length > 0 ? "block" : "none"}>
-                        <IconCircleCheck size={'xl'} />
-                    </ActionIcon>
-                </Button.Group>
-            </Group>
+            <Box h={"15%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
+                <CentralBar />
+            </Box>
 
             <ScrollArea w={"100%"} h={"45%"} >
                 <Title order={3}>{t('pages.stimulationTool.implantation.placement')}</Title>
