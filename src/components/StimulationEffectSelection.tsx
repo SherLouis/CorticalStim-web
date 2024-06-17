@@ -29,9 +29,9 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
 
     const getEpiManifestationOptions = () => {
         return [
-            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_aura'), value: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_aura') },
-            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_crisis'), value: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_crisis') },
-            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.atypical_crisis'), value: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.atypical_crisis') }
+            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_aura'), value: 'typical_aura' },
+            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_crisis'), value: 'typical_crisis' },
+            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.atypical_crisis'), value: 'atypical_crisis' }
         ]
     }
 
@@ -309,6 +309,10 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
 interface EEGSectionProps {
     form: UseFormReturnType<StimulationEffectsValues>;
     t: TFunction;
+}
+
+export const formatEpiManifestation= (epiManif: string, t: TFunction): string => {
+    return (epiManif) !== '' ? t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.' + epiManif) : '-'
 }
 
 export const formatSelectedObservedEffect = (values: StimulationObservedEffectFormValues): string => {

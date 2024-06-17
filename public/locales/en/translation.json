@@ -118,6 +118,8 @@
             },
             "summary": {
                 "tab_title": "Summary",
+                "alert_no_data_title": "No data!",
+                "alert_no_data_text": "There is no data to display. Complete the implantation and stimulation tabs first.",
                 "button_filter_off": "Reset filters",
                 "button_select_columns": "Select columns",
                 "button_download_csv": "Download as CSV",

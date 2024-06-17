@@ -118,6 +118,8 @@
             },
             "summary": {
                 "tab_title": "Résumé",
+                "alert_no_data_title": "Aucune donnée!",
+                "alert_no_data_text": "Il n'y a pas de donnée à afficher. Compléter les volets implantation et stimulation pour ajouter des données.",
                 "button_filter_off": "Réinitialiser les filtres",
                 "button_select_columns": "Sélectionner les colonnes",
                 "button_download_csv": "Télécharger au format CSV",
@@ -134,7 +136,7 @@
                     "length_path_title": "LP",
                     "task_title": "Tâche",
                     "effects_group_title": "Effets",
-                    "observed_effect_title": "Cognitive Effect",
+                    "observed_effect_title": "Effet cognitif",
                     "epi_manifestation_title": "Manif. Epi.",
                     "post_discharge_title": "Post Décharge",
                     "post_discharge_details_title": "Post Décharge - Details",

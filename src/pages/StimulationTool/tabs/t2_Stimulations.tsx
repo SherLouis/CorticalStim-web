@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
 import StimulationTaskSelection, { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
-import StimulationEffectSelection, { formatEegPostDichargeLocale, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
+import StimulationEffectSelection, { formatEegPostDichargeLocale, formatEpiManifestation, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
 import { IconAlertCircle, IconCircleCheck, IconCircleX, IconClockCheck, IconEye, IconTrash } from "@tabler/icons-react";
 import { t } from "i18next";
 import CustomNumberInput from "../../../components/CustomNumberInput";
@@ -149,7 +149,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     }
 
     const getSelectedPointEpiManifEffect = () => {
-        return effect_form.values.epi_manifestation !== "" ? effect_form.values.epi_manifestation : "-";
+        return formatEpiManifestation(effect_form.values.epi_manifestation, t);
     }
 
     const getSelectedPointEEGEffect = () => {
