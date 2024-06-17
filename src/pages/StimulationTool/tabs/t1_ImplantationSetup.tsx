@@ -191,9 +191,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     // Form change (from file open for example)
     useEffect(() => { locationForm.reset(); locationForm.setValues(getSelectedContactsROIValue()); }, [selectedContacts]);
     useEffect(() => { updateDoneContacts(); }, [form])
-
-    // TODO: Si aucun contact sélectionné, afficher alerte dans barre centrale avec infos
-    // TODO: Si contact sélectionné, afficher guide dans barre central pour indiquer choix d'atlas et positionnement
+    
     const CentralBar = () => {
         const electrode_parameters_selected = form.values.electrode_params.diameter > 0;
         const contacts_configured = form.values.electrodes.flatMap(e => e.stim_points).length > 0;
@@ -214,8 +212,8 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                     <Alert w={"100%"} h={"100%"}
                         display={form.values.electrodes.flatMap(e => e.stim_points).length === 0 ? "flex" : "none"}
                         icon={<IconAlertCircle size="1rem" />}
-                        title={"TODO: Configure electrodes and number of contacts for each."}>
-                        {"TODO"}
+                        title={t("pages.stimulationTool.implantation.guide_configure_electrodes_title")}>
+                        {t("pages.stimulationTool.implantation.guide_configure_electrodes_text")}
                     </Alert>
                 </Box >
 
@@ -226,8 +224,8 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                             h={"100%"}
                             sx={{ flex: 9 }}
                             icon={<IconAlertCircle size="1rem" />}
-                            title={"TODO: Select contact to specify placement"}>
-                            {"TODO"}
+                            title={t("pages.stimulationTool.implantation.guide_select_contact_title")}>
+                            {t("pages.stimulationTool.implantation.guide_select_contact_text")}
                         </Alert>
                         {/** Select all and selct all not done buttons */}
                         <Stack sx={{ flex: 3 }}>
@@ -243,9 +241,8 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                         <Stack w={"80%"} h={"100%"} spacing={0}>
                             {/** Selected contacts */}
                             <Group h={"35%"} w={"100%"} noWrap>
-                                {/** TODO: translation */}
-                                Selected contacts:
-                                <ScrollArea type='always' h={"100%"} w={"90%"} sx={{ alignItems: "center", padding: '0' }}>
+                                {t('pages.stimulationTool.implantation.selected_contacts') + ':'}
+                                <ScrollArea type='always' h={"100%"} w={"80%"} sx={{ alignItems: "center", padding: '0' }}>
                                     <Group align="center" position='left' noWrap h={"100%"} w={"100%"}>
                                         {selectedContacts.map((point) => {
                                             return (
@@ -258,15 +255,14 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                             <Alert w={"100%"}
                                 h={"60%"}
                                 icon={<IconAlertCircle size="1rem" />}
-                                title={"TODO: Choose an anatomic atlas and specify selected contact(s) location."}>
-                                {"TODO"}
+                                title={t('pages.stimulationTool.implantation.guide_placement_title')}>
+                                {t('pages.stimulationTool.implantation.guide_placement_text')}
                             </Alert>
                         </Stack>
 
                         <Stack w={"15%"} align="center">
                             {/** Display selected location */}
-                            {/** TODO: translation */}
-                            Selected location: {getNewElectrodeLocationFromForm()}
+                            {t('pages.stimulationTool.implantation.selected_location')}: {getNewElectrodeLocationFromForm()}
                             {/** Confirm buttons */}
                             <Button
                                 variant='filled'
@@ -275,25 +271,11 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                 leftIcon={<IconCircleCheck />}
                                 onClick={handleElectrodeLocationFormSubmit}
                                 display={selectedContacts.length > 0 ? "block" : "none"}
-                            >Save
+                            > {t('pages.stimulationTool.implantation.saveButtonLabel')}
                             </Button>
                         </Stack>
                     </Group>
                 </Box>
-
-                {/**<Button.Group w={"10%"}>
-                    {selectedContacts.filter((s) => doneContacts.includes(s)).length > 0 &&
-                        <ActionIcon
-                            variant='outline'
-                            size={'xl'}
-                            color='red'
-                            onClick={resetSelectedContacts}
-                            display={selectedContacts.filter((s) => doneContacts.includes(s)).length > 0 ? 'block' : 'none'}>
-                            <IconRestore size={'xl'} />
-                        </ActionIcon>
-                    }
-                </Button.Group>
-                */}
             </Box>
         )
     }

@@ -32,6 +32,13 @@
                 "tab_title": "Implantation",
                 "guide_params_title": "Select electrodes configuration.",
                 "guide_params_text": "Choose from the configuration dropdown or manually input electrode configuration parameters.",
+                "guide_configure_electrodes_title": "Configure electrodes.",
+                "guide_configure_electrodes_text": "For each electrode, specify the label, the lateralization and number of contacts. To add an electrode click on the + button.",
+                "guide_select_contact_title": "Select contact to specify placement.",
+                "guide_select_contact_text": "Select one or more contacts from the above section to specify anatomical placement.",
+                "guide_placement_title": "Choose an anatomic atlas and specify selected contact(s) location.",
+                "guide_placement_text": "Choose an anatomic atlas from the bellow options and specify selected contact(s) location.",
+                "selected_contacts": "Selected contact",
                 "electrodeConfiguration": "Electrodes Configuration",
                 "contactDiameterLabel": "Contact diameter (mm)",
                 "contactSeparationLabel": "Contact separation (mm)",
@@ -49,6 +56,8 @@
                 "thisIsWhiteMatter": "This is white matter",
                 "selectAllContactsButtonLabel": "Select all",
                 "selectAllNotDoneContactsButtonLabel": "Select all not done",
+                "selected_location": "Selected location",
+                "saveButtonLabel": "Save",
                 "validations": {
                     "location": {
                         "type": "Please choose a placement type.",
