@@ -1,6 +1,6 @@
 import { Alert, Badge, Box, Button, Chip, Container, Divider, Group, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
-import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../models/stimulationForm";
+import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../core/models/stimulationForm";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";

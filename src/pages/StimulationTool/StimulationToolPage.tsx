@@ -1,7 +1,7 @@
 import { ActionIcon, Text, Box, Group, Tabs, Alert } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
-import StimulationFormValues from "../../models/stimulationForm";
+import StimulationFormValues from "../../core/models/stimulationForm";
 import { useEffect, useRef, useState } from "react";
 import ElectrodeSetupStep from "./tabs/t1_ImplantationSetup";
 import StimulationsTab from "./tabs/t2_Stimulations";

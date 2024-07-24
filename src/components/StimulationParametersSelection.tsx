@@ -1,7 +1,7 @@
 import { Box, Button, Group, SimpleGrid, Stack, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
-import { StimulationParametersFormValues } from "../models/stimulationForm";
+import { StimulationParametersFormValues } from "../core/models/stimulationForm";
 
 
 export default function StimulationParametersSelection({ form }: StimulationParametersSelectionProps) {

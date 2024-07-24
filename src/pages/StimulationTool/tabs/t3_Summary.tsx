@@ -1,5 +1,5 @@
 import { TabProperties } from "./tab_properties";
-import { StimulationLocationFormValues, getStimPointLabel } from "../../../models/stimulationForm";
+import { StimulationLocationFormValues, getStimPointLabel } from "../../../core/models/stimulationForm";
 import { useTranslation } from "react-i18next";
 import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { formatEpiManifestation, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";

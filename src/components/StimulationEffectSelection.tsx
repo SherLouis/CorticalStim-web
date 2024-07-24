@@ -1,7 +1,7 @@
 import { Box, Button, Checkbox, Group, NumberInput, Radio, ScrollArea, Stack, Switch, Table, TextInput, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
-import { StimulationEffectsValues, StimulationObservedEffectFormValues } from "../models/stimulationForm";
+import { StimulationEffectsValues, StimulationObservedEffectFormValues } from "../core/models/stimulationForm";
 import ColumnButtonSelect from "./ColumnButtonSelect";
 import { TFunction } from "i18next";
 

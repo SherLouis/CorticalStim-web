@@ -2,7 +2,7 @@ import { Box, Button, Group, Stack, Table, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import ColumnButtonSelect from "./ColumnButtonSelect";
-import { StimulationTaskFormValues } from "../models/stimulationForm";
+import { StimulationTaskFormValues } from "../core/models/stimulationForm";
 
 
 export default function StimulationTaskSelection({ form, last_values }: StimulationTaskSelectionProps) {

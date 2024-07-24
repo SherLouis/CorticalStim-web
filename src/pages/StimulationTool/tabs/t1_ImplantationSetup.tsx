@@ -6,7 +6,7 @@ import { letters } from "../../../lib/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";
 import { TabProperties } from "./tab_properties";
 import { useForm } from "@mantine/form";
-import { getStimPointLabel } from "../../../models/stimulationForm";
+import { getStimPointLabel } from "../../../core/models/stimulationForm";
 
 export default function ElectrodeSetupStep({ form }: TabProperties) {
     const { t } = useTranslation();
