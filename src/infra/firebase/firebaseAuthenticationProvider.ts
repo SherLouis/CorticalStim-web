@@ -1,4 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, Auth } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, sendEmailVerification, Auth, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { User as FirebaseUser } from "firebase/auth";
 import firebaseApp from './firebaseApp'
 import { AuthenticationProvider } from "../../core/auth/authenticationProvider";
@@ -14,6 +14,7 @@ export default class firebaseAuthenticationProvider implements AuthenticationPro
 
     constructor() {
         this.auth = getAuth(firebaseApp);
+        setPersistence(this.auth, browserSessionPersistence);
         // Initialize auth state observer
         this.initAuthStateObserver();
     }
@@ -57,19 +58,35 @@ export default class firebaseAuthenticationProvider implements AuthenticationPro
         }
     }
 
-    public createUser(username: string, password: string, displayName?: string): Promise<User> {
-        // TODO: send email for verification once user is created
+    private async setDisplayName(displayName: string) {
+        if (this.auth.currentUser == null) { return; }
+        return updateProfile(this.auth.currentUser, { displayName: displayName })
+            .then(() => {
+                if (this.auth.currentUser != null) {
+                    let user = this.assembleUserFromFirebaseUser(this.auth.currentUser);
+                    user.displayName = displayName;
+                    this.currentUser = user;
+                    this.notifyObservers();
+                }
+            });
+    }
+
+    public async createUser(username: string, password: string, displayName?: string): Promise<User> {
         return createUserWithEmailAndPassword(this.auth, username, password)
             .then((userCredential) => {
                 // Signed up 
                 const firebaseUser = userCredential.user;
                 if (displayName) {
-                    return updateProfile(firebaseUser, { displayName: displayName })
+                    return this.setDisplayName(displayName)
                         .then(() => {
-                            return this.assembleUserFromFirebaseUser(firebaseUser);
-                        }).catch((error) => {
+                            let user = this.assembleUserFromFirebaseUser(firebaseUser);
+                            user.displayName = displayName;
+                            return user;
+                        })
+                        .catch((error) => {
                             throw new AuthenticationError("Error updating profile", this.mapFirebaseErrorMessageToAuthenticationErrorReason(error.message));
-                        });
+                        })
+                        .finally(() => this.sendVerification());
                 }
                 else {
                     return this.assembleUserFromFirebaseUser(firebaseUser);
@@ -80,7 +97,7 @@ export default class firebaseAuthenticationProvider implements AuthenticationPro
             });
     }
 
-    public signIn(username: string, password: string): Promise<User> {
+    public async signIn(username: string, password: string): Promise<User> {
         return signInWithEmailAndPassword(this.auth, username, password)
             .then((userCredential) => {
                 // Signed in 
@@ -93,14 +110,8 @@ export default class firebaseAuthenticationProvider implements AuthenticationPro
             });
     }
 
-    public signOut(): Promise<void> {
-        // TODO: implement signout method
+    public async signOut(): Promise<void> {
         return signOut(this.auth).catch((error) => { console.error(error); });
-    }
-
-    public deleteUser(username: string, password: string): void {
-        // TODO: implement delete user method
-        throw new Error("Method not implemented.");
     }
 
     public observeCurrentUser(observer: (user: User | null) => void) {
@@ -108,6 +119,12 @@ export default class firebaseAuthenticationProvider implements AuthenticationPro
         this.userObservers.push(observer);
         // Immediately notify the observer with the current user
         observer(this.currentUser);
-      }
+    }
+
+    public async sendVerification(): Promise<void> {
+        if (this.auth.currentUser != null) {
+            await sendEmailVerification(this.auth.currentUser)
+        }
+    }
 
 }
