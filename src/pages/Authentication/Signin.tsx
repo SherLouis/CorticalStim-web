@@ -14,6 +14,8 @@ import {
     Stack,
 } from '@mantine/core';
 import { authProvider } from '../../App';
+import { useEffect, useState } from 'react';
+import User from '../../core/auth/user';
 
 export function AuthenticationForm(props: PaperProps) {
     // TODO: error if invalid credentials for sigin
@@ -31,19 +33,31 @@ export function AuthenticationForm(props: PaperProps) {
             password: (val) => (val.length <= 6 ? 'Password should include at least 6 characters' : null),
         },
     });
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        authProvider.observeCurrentUser((user) => {
+            setCurrentUser(user);
+        });
+    }, [])
+
 
     const handleSubmit = () => {
         if (type === 'register') {
             // TODO: Use user info to update context, etc. 
             authProvider.createUser(form.values.email, form.values.password, form.values.name)
-                .then((user) => { console.log(user) })
+                .then((user) => { console.log(user.displayName + ' registered') })
                 .catch((error) => { console.error(error) })
         }
         else {
             authProvider.signIn(form.values.email, form.values.password)
-                .then((user) => { console.log(user); })
+                .then((user) => { console.log(user.displayName + ' signed in'); })
                 .catch((error) => { console.error(error); })
         }
+    }
+
+    const handlerSignOut = () => {
+        authProvider.signOut().then();
     }
 
     return (
@@ -104,6 +118,8 @@ export function AuthenticationForm(props: PaperProps) {
                     </Button>
                 </Group>
             </form>
+
+            <Button onClick={() => handlerSignOut()}>Sign Out</Button>
         </Paper>
     );
 }

@@ -9,4 +9,6 @@ export interface AuthenticationProvider {
     signOut(): Promise<void>;
 
     deleteUser(username: string, password: string): void;
+
+    observeCurrentUser(observer: (user: User | null) => void) : void;
 }
