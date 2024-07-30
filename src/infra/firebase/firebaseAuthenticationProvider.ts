@@ -11,16 +11,17 @@ export default class firebaseAuthenticationProvider implements AuthenticationPro
 
     private currentUser: User | null = null;
     private userObservers: ((user: User | null) => void)[] = [];
+    private unsubscribe: () => void;
 
     constructor() {
         this.auth = getAuth(firebaseApp);
         setPersistence(this.auth, browserSessionPersistence);
         // Initialize auth state observer
-        this.initAuthStateObserver();
+        this.unsubscribe = this.initAuthStateObserver();
     }
 
     private initAuthStateObserver() {
-        this.auth.onAuthStateChanged((firebaseUser) => {
+        return this.auth.onAuthStateChanged((firebaseUser) => {
             if (firebaseUser) {
                 // User is signed in
                 this.currentUser = this.assembleUserFromFirebaseUser(firebaseUser);
@@ -114,11 +115,12 @@ export default class firebaseAuthenticationProvider implements AuthenticationPro
         return signOut(this.auth).catch((error) => { console.error(error); });
     }
 
-    public observeCurrentUser(observer: (user: User | null) => void) {
+    public observeCurrentUser(observer: (user: User | null) => void): () => void {
         // Add observer to the list
         this.userObservers.push(observer);
         // Immediately notify the observer with the current user
         observer(this.currentUser);
+        return this.unsubscribe;
     }
 
     public async sendVerification(): Promise<void> {

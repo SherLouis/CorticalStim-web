@@ -1,13 +1,15 @@
 import { ColorScheme, ColorSchemeProvider, MantineProvider, Skeleton } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
-import { Suspense, useState } from 'react';
+import { Suspense, createContext, useContext, useEffect, useState } from 'react';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import BasePage from './entry/BasePage';
 import { useTranslation } from 'react-i18next';
 import StimulationToolPage from './pages/StimulationTool/StimulationToolPage';
-import { AuthenticationForm } from './pages/Authentication/Signin';
+import { LoginPage } from './pages/Authentication/Login';
 import firebaseAuthenticationProvider from './infra/firebase/firebaseAuthenticationProvider';
 import { AuthenticationProvider } from './core/auth/authenticationProvider';
+import { RegisterPage } from './pages/Authentication/Register';
+import User from './core/auth/user';
 
 // TODO: upgrade to mantine v7
 
@@ -21,7 +23,11 @@ function App() {
     const router = createHashRouter([
         {
             path: "login",
-            element: <AuthenticationForm />
+            element: <LoginPage />
+        },
+        {
+            path: "register",
+            element: <RegisterPage />
         },
         {
             path: "*",
@@ -41,7 +47,19 @@ function App() {
     );
 }
 
-export const authProvider = new firebaseAuthenticationProvider() as AuthenticationProvider;
+const authProvider = new firebaseAuthenticationProvider() as AuthenticationProvider;
+const [currentUser, setCurrentUser] = useState<User | null>(null);
+useEffect(() => {
+    authProvider.observeCurrentUser((user) => {
+        setCurrentUser(user);
+        console.log(currentUser);
+    });
+}, [])
+export const AuthContext = createContext({ user: currentUser, authProvider: authProvider});
+export const useAuthState = () => {
+    const auth = useContext(AuthContext)
+    return { ...auth, isAuthenticated: auth.user != null }
+  }
 
 export default function WrappedApp() {
     const fallback = (<div>

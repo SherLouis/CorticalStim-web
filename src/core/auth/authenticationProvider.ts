@@ -8,7 +8,7 @@ export interface AuthenticationProvider {
 
     signOut(): Promise<void>;
 
-    observeCurrentUser(observer: (user: User | null) => void) : void;
+    observeCurrentUser(observer: (user: User | null) => void) : () => void;
 
     sendVerification(): Promise<void>;
 }
