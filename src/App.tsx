@@ -1,6 +1,6 @@
 import { ColorScheme, ColorSchemeProvider, MantineProvider, Skeleton } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
-import { Suspense, createContext, useContext, useEffect, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import BasePage from './entry/BasePage';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +9,7 @@ import { LoginPage } from './pages/Authentication/Login';
 import firebaseAuthenticationProvider from './infra/firebase/firebaseAuthenticationProvider';
 import { AuthenticationProvider } from './core/auth/authenticationProvider';
 import { RegisterPage } from './pages/Authentication/Register';
-import User from './core/auth/user';
+import { AuthContextProvider } from './context/AuthContext';
 
 // TODO: upgrade to mantine v7
 
@@ -19,6 +19,7 @@ function App() {
         setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
     const { t } = useTranslation();
+    const authProvider = new firebaseAuthenticationProvider() as AuthenticationProvider;
 
     const router = createHashRouter([
         {
@@ -38,28 +39,16 @@ function App() {
     return (
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
             <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-                <Notifications position="top-right" />
-                <BasePage title={t('app.title')}>
-                    <RouterProvider router={router} />
-                </BasePage>
+                <AuthContextProvider authProvider={authProvider}>
+                    <Notifications position="top-right" />
+                    <BasePage title={t('app.title')}>
+                        <RouterProvider router={router} />
+                    </BasePage>
+                </AuthContextProvider>
             </MantineProvider>
         </ColorSchemeProvider>
     );
 }
-
-const authProvider = new firebaseAuthenticationProvider() as AuthenticationProvider;
-const [currentUser, setCurrentUser] = useState<User | null>(null);
-useEffect(() => {
-    authProvider.observeCurrentUser((user) => {
-        setCurrentUser(user);
-        console.log(currentUser);
-    });
-}, [])
-export const AuthContext = createContext({ user: currentUser, authProvider: authProvider});
-export const useAuthState = () => {
-    const auth = useContext(AuthContext)
-    return { ...auth, isAuthenticated: auth.user != null }
-  }
 
 export default function WrappedApp() {
     const fallback = (<div>

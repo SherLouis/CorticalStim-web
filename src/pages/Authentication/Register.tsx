@@ -11,9 +11,9 @@ import {
     Stack,
     Box,
 } from '@mantine/core';
-import { useAuthState } from '../../App';
 import { useNavigate } from 'react-router-dom';
 import AuthenticationError from '../../core/auth/authenticationError';
+import { useAuthState } from '../../context/AuthContext';
 
 export function RegisterPage(props: PaperProps) {
     // TODO: password validation only for account creation (maybe 2 pages?)

@@ -1,4 +1,3 @@
-import { useToggle, upperFirst } from '@mantine/hooks';
 import { useForm } from '@mantine/form';
 import {
     TextInput,
@@ -8,16 +7,12 @@ import {
     Group,
     PaperProps,
     Button,
-    Divider,
-    Checkbox,
     Anchor,
     Stack,
     Box,
 } from '@mantine/core';
-import { useAuthState } from '../../App';
-import { useEffect, useState } from 'react';
-import User from '../../core/auth/user';
 import { useNavigate } from 'react-router-dom';
+import { useAuthState } from '../../context/AuthContext';
 
 export function LoginPage(props: PaperProps) {
     // TODO: error if invalid credentials for sigin
