@@ -11,10 +11,13 @@ import {
     Stack,
     Box,
 } from '@mantine/core';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthState } from '../../context/AuthContext';
+import { useEffect } from 'react';
+
 
 export function LoginPage(props: PaperProps) {
+    // TODO use useForm from mantine instead
     // TODO: error if invalid credentials for sigin
     const form = useForm({
         initialValues: {
@@ -26,6 +29,14 @@ export function LoginPage(props: PaperProps) {
     const authState = useAuthState();
 
     const navigate = useNavigate();
+    const { state } = useLocation();
+
+    // Redirect to original location if user already authenticated
+    useEffect(() => {
+        if (authState.isAuthenticated) {
+            navigate(state?.path);
+        }
+    }, [authState, state, navigate])
 
     const handleSubmit = () => {
 
@@ -33,6 +44,7 @@ export function LoginPage(props: PaperProps) {
             .then((user) => {
                 console.log(user.displayName + ' signed in:');
                 console.log(user);
+                if (state != null) { navigate(state?.path); }
             })
             .catch((error) => { console.error(error); })
     }

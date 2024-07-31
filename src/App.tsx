@@ -10,6 +10,7 @@ import firebaseAuthenticationProvider from './infra/firebase/firebaseAuthenticat
 import { AuthenticationProvider } from './core/auth/authenticationProvider';
 import { RegisterPage } from './pages/Authentication/Register';
 import { AuthContextProvider } from './context/AuthContext';
+import { RequireAuth } from './components/routing/RequireAuth';
 
 // TODO: upgrade to mantine v7
 
@@ -32,7 +33,10 @@ function App() {
         },
         {
             path: "*",
-            element: <StimulationToolPage />
+            element:
+                <RequireAuth>
+                    <StimulationToolPage />
+                </RequireAuth>
         },
     ]);
 

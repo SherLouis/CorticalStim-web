@@ -234,7 +234,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                                         />
                                         <Group spacing={0} grow w={"100%"}>
                                             {[1, 5, 50, 55].map((v) =>
-                                                <Button compact
+                                                <Button compact key={"freq_" + v}
                                                     onClick={() => params_form.setFieldValue('frequency', v)}
                                                     variant={params_form.values.frequency === v ? 'filled' : 'default'}>
                                                     {v}
@@ -254,7 +254,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                                         />
                                         <Group spacing={0} grow w={"100%"}>
                                             {[5, 10, 30, 60].map((v) =>
-                                                <Button compact
+                                                <Button compact key={"duration_" + v}
                                                     onClick={() => params_form.setFieldValue('duration', v)}
                                                     variant={params_form.values.duration === v ? 'filled' : 'default'}>
                                                     {v}
@@ -274,7 +274,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                                         />
                                         <Group spacing={0} grow w={"100%"}>
                                             {[300, 500].map((v) =>
-                                                <Button compact
+                                                <Button compact key={"lp_" + v}
                                                     onClick={() => params_form.setFieldValue('lenght_path', v)}
                                                     variant={params_form.values.lenght_path === v ? 'filled' : 'default'}>
                                                     {v}

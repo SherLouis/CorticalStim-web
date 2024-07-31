@@ -16,7 +16,7 @@ const AuthContextProvider = ({ authProvider, children }: AuthContextProps) => {
         const unsubscribe = authProvider.observeCurrentUser((user) => {
             setUser(user);
         });
-        //return unsubscribe;
+        return unsubscribe;
     }, [authProvider])
 
     return (

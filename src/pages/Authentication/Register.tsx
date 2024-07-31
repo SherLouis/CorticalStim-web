@@ -17,6 +17,7 @@ import { useAuthState } from '../../context/AuthContext';
 
 export function RegisterPage(props: PaperProps) {
     // TODO: password validation only for account creation (maybe 2 pages?)
+    // TODO use useForm from mantine instead
     const form = useForm({
         initialValues: {
             email: '',
