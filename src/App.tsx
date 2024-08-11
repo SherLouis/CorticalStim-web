@@ -11,6 +11,8 @@ import { AuthenticationProvider } from './core/auth/authenticationProvider';
 import { RegisterPage } from './pages/Authentication/Register';
 import { AuthContextProvider } from './context/AuthContext';
 import { RequireAuth } from './components/routing/RequireAuth';
+import { VerifyEmailPage } from './pages/Authentication/VerifyEmail';
+import { RequireVerifiedUser } from './components/routing/RequireVerifiedUser';
 
 // TODO: upgrade to mantine v7
 
@@ -24,18 +26,24 @@ function App() {
 
     const router = createHashRouter([
         {
-            path: "login",
+            path: "/login",
             element: <LoginPage />
         },
         {
-            path: "register",
+            path: "/register",
             element: <RegisterPage />
         },
         {
-            path: "*",
+            path: "/verifyEmail",
+            element: <VerifyEmailPage />
+        },
+        {
+            path: "/*",
             element:
-                <RequireAuth>
-                    <StimulationToolPage />
+                <RequireAuth noAuthRedirect='/login'>
+                    <RequireVerifiedUser notVerifiedPage='/verifyEmail'>
+                        <StimulationToolPage />
+                    </RequireVerifiedUser>
                 </RequireAuth>
         },
     ]);

@@ -16,8 +16,12 @@ import AuthenticationError from '../../core/auth/authenticationError';
 import { useAuthState } from '../../context/AuthContext';
 
 export function RegisterPage(props: PaperProps) {
-    // TODO: password validation only for account creation (maybe 2 pages?)
-    // TODO use useForm from mantine instead
+    // TODO: traductions
+    const isPasswordSecure = (value: string) => {
+        // Au moins 8 caractères avec au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial
+        let regex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-])[A-Za-z\d!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]{8,}$/);
+        return regex.test(value);
+    }
     const form = useForm({
         initialValues: {
             email: '',
@@ -27,7 +31,7 @@ export function RegisterPage(props: PaperProps) {
 
         validate: {
             email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
-            password: (val) => (val.length <= 6 ? 'Password should include at least 6 characters' : null),
+            password: (val) => (!isPasswordSecure(val) ? 'Password should include at least 8 characters and include at least one capital letter, one number and one special character' : null),
         },
     });
 
@@ -40,6 +44,7 @@ export function RegisterPage(props: PaperProps) {
             .then((user) => { console.log(user.displayName + ' registered') })
             .catch((error: AuthenticationError) => { console.error(error) })
             // TODO: check error reason. If already exists, then alert to suggest login instead.
+            // TODO, upoon successful register, navigate to home page ?
     }
 
     return (
@@ -62,20 +67,16 @@ export function RegisterPage(props: PaperProps) {
                             required
                             label="Email"
                             placeholder="you@email.com"
-                            value={form.values.email}
-                            onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
-                            error={form.errors.email && 'Invalid email'}
                             radius="md"
+                            {...form.getInputProps('email')}
                         />
 
                         <PasswordInput
                             required
                             label="Password"
                             placeholder="Your password"
-                            value={form.values.password}
-                            onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
-                            error={form.errors.password && 'Password should include at least 6 characters'}
                             radius="md"
+                            {...form.getInputProps('password')}
                         />
                     </Stack>
 

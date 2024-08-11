@@ -17,8 +17,8 @@ import { useEffect } from 'react';
 
 
 export function LoginPage(props: PaperProps) {
-    // TODO use useForm from mantine instead
     // TODO: error if invalid credentials for sigin
+    // TODO: traductions
     const form = useForm({
         initialValues: {
             email: '',
@@ -74,18 +74,16 @@ export function LoginPage(props: PaperProps) {
                                 required
                                 label="Email"
                                 placeholder="you@email.com"
-                                value={form.values.email}
-                                onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
                                 radius="md"
+                                {...form.getInputProps('email')}
                             />
 
                             <PasswordInput
                                 required
                                 label="Password"
                                 placeholder="Your password"
-                                value={form.values.password}
-                                onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
                                 radius="md"
+                                {...form.getInputProps('password')}
                             />
                         </Stack>
 
