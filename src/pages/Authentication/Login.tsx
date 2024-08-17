@@ -88,7 +88,7 @@ export function LoginPage(props: PaperProps) {
                         </Stack>
 
                         <Group position='apart' mt="xl">
-                            <Anchor component="button" type="button" c="dimmed" onClick={() => navigate("/register")} size="xs">
+                            <Anchor component="button" type="button" c="dimmed" onClick={() => navigate("/register", state)} size="xs">
                                 {"Don't have an account? Register"}
                             </Anchor>
                             <Button type="submit" radius="xl">

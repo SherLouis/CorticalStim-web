@@ -1,9 +1,10 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, sendEmailVerification, Auth, setPersistence, browserSessionPersistence } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, sendEmailVerification, Auth, setPersistence, browserSessionPersistence, AuthErrorCodes } from "firebase/auth";
 import { User as FirebaseUser } from "firebase/auth";
 import firebaseApp from './firebaseApp'
 import { AuthenticationProvider } from "../../core/auth/authenticationProvider";
 import User from "../../core/auth/user";
 import AuthenticationError, { AuthenticationErrorReason } from "../../core/auth/authenticationError";
+import { FirebaseError } from "firebase/app";
 
 export default class firebaseAuthenticationProvider implements AuthenticationProvider {
 
@@ -46,13 +47,13 @@ export default class firebaseAuthenticationProvider implements AuthenticationPro
         } as User;
     }
 
-    private mapFirebaseErrorMessageToAuthenticationErrorReason(errorMessage: string): AuthenticationErrorReason {
-        switch (errorMessage) {
-            case "EMAIL_EXISTS":
+    private mapFirebaseErrorCodeToAuthenticationErrorReason(errorCode: string): AuthenticationErrorReason {
+        switch (errorCode) {
+            case AuthErrorCodes.EMAIL_EXISTS:
                 return AuthenticationErrorReason.EMAIL_EXISTS;
-            case "INVALID_LOGIN_CREDENTIALS":
+            case AuthErrorCodes.INVALID_LOGIN_CREDENTIALS:
                 return AuthenticationErrorReason.INVALID_LOGIN_CREDENTIALS;
-            case "USER_DISABLED":
+            case AuthErrorCodes.USER_DISABLED:
                 return AuthenticationErrorReason.USER_DISABLED;
             default:
                 return AuthenticationErrorReason.UNKNOWN;
@@ -84,8 +85,8 @@ export default class firebaseAuthenticationProvider implements AuthenticationPro
                             user.displayName = displayName;
                             return user;
                         })
-                        .catch((error) => {
-                            throw new AuthenticationError("Error updating profile", this.mapFirebaseErrorMessageToAuthenticationErrorReason(error.message));
+                        .catch((error: FirebaseError) => {
+                            throw new AuthenticationError("Error updating profile", this.mapFirebaseErrorCodeToAuthenticationErrorReason(error.code));
                         })
                         .finally(() => this.sendVerification());
                 }
@@ -93,8 +94,8 @@ export default class firebaseAuthenticationProvider implements AuthenticationPro
                     return this.assembleUserFromFirebaseUser(firebaseUser);
                 }
             })
-            .catch((error) => {
-                throw new AuthenticationError("Error creating account", this.mapFirebaseErrorMessageToAuthenticationErrorReason(error.message));
+            .catch((error: FirebaseError) => {
+                throw new AuthenticationError("Error creating account", this.mapFirebaseErrorCodeToAuthenticationErrorReason(error.code));
             });
     }
 
@@ -106,8 +107,8 @@ export default class firebaseAuthenticationProvider implements AuthenticationPro
                 return this.assembleUserFromFirebaseUser(firebaseUser);
                 // ...
             })
-            .catch((error) => {
-                throw new AuthenticationError("Error signing in user", this.mapFirebaseErrorMessageToAuthenticationErrorReason(error.message));
+            .catch((error: FirebaseError) => {
+                throw new AuthenticationError("Error signing in user", this.mapFirebaseErrorCodeToAuthenticationErrorReason(error.code));
             });
     }
 

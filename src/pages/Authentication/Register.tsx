@@ -10,10 +10,13 @@ import {
     Anchor,
     Stack,
     Box,
+    Alert,
 } from '@mantine/core';
-import { useNavigate } from 'react-router-dom';
-import AuthenticationError from '../../core/auth/authenticationError';
+import { useLocation, useNavigate } from 'react-router-dom';
+import AuthenticationError, { AuthenticationErrorReason } from '../../core/auth/authenticationError';
 import { useAuthState } from '../../context/AuthContext';
+import { useState } from 'react';
+import { IconAlertCircle } from '@tabler/icons-react';
 
 export function RegisterPage(props: PaperProps) {
     // TODO: traductions
@@ -36,15 +39,23 @@ export function RegisterPage(props: PaperProps) {
     });
 
     const navigate = useNavigate();
+    const { state } = useLocation();
+    console.log(state);
+    const [authError, setAuthError] = useState<AuthenticationErrorReason | null>(null);
 
     const authProvider = useAuthState().authProvider;
 
     const handleSubmit = () => {
         authProvider.createUser(form.values.email, form.values.password, form.values.name)
-            .then((user) => { console.log(user.displayName + ' registered') })
-            .catch((error: AuthenticationError) => { console.error(error) })
-            // TODO: check error reason. If already exists, then alert to suggest login instead.
-            // TODO, upoon successful register, navigate to home page ?
+            .then((user) => {
+                console.log(user.displayName + ' registered');
+                navigate(state !== null ? state.path : "/login")
+            })
+            .catch((error: AuthenticationError) => {
+                setAuthError(error.reason);
+            })
+        // TODO: check error reason. If already exists, then alert to suggest login instead.
+        // TODO, upoon successful register, navigate to home page ?
     }
 
     return (
@@ -53,6 +64,18 @@ export function RegisterPage(props: PaperProps) {
                 <Text size="lg" fw={500}>
                     {"Welcome, please register to continue."}
                 </Text>
+                {authError !== null &&
+                    <Alert color='yellow' icon={<IconAlertCircle size="1rem" />} radius={'lg'} p={'xs'}>
+                        {authError === AuthenticationErrorReason.EMAIL_EXISTS &&
+                            <Anchor component="button" type="button" onClick={() => navigate("/login")} size="md">
+                                {"It seems you already have an account. Try to Login in instead."}
+                            </Anchor>
+                        }
+                        {authError !== AuthenticationErrorReason.EMAIL_EXISTS &&
+                            "Something went wrong. Please try again later. "
+                        }
+                    </Alert>
+                }
                 <form onSubmit={form.onSubmit(handleSubmit)}>
                     <Stack>
                         <TextInput
