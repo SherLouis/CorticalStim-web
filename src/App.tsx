@@ -36,7 +36,10 @@ function App() {
         },
         {
             path: AppPath.EMAIL_VERIFY,
-            element: <VerifyEmailPage />
+            element:
+                <RequireAuth noAuthRedirect={AppPath.LOGIN}>
+                    <VerifyEmailPage />
+                </RequireAuth>
         },
         {
             path: "/*",
