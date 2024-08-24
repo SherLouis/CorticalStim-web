@@ -17,6 +17,8 @@ import AuthenticationError, { AuthenticationErrorReason } from '../../core/auth/
 import { useAuthState } from '../../context/AuthContext';
 import { useState } from 'react';
 import { IconAlertCircle } from '@tabler/icons-react';
+import { AppPath } from '../Routes';
+
 
 export function RegisterPage(props: PaperProps) {
     // TODO: traductions
@@ -34,13 +36,12 @@ export function RegisterPage(props: PaperProps) {
 
         validate: {
             email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
-            password: (val) => (!isPasswordSecure(val) ? 'Password should include at least 8 characters and include at least one capital letter, one number and one special character' : null),
+            password: (val) => (!isPasswordSecure(val) ? 'Password must include at least 8 characters and include at least one capital letter, one number and one special character' : null),
         },
     });
 
     const navigate = useNavigate();
     const { state } = useLocation();
-    console.log(state);
     const [authError, setAuthError] = useState<AuthenticationErrorReason | null>(null);
 
     const authProvider = useAuthState().authProvider;
@@ -49,13 +50,11 @@ export function RegisterPage(props: PaperProps) {
         authProvider.createUser(form.values.email, form.values.password, form.values.name)
             .then((user) => {
                 console.log(user.displayName + ' registered');
-                navigate(state !== null ? state.path : "/login")
+                navigate(state !== null ? state.path : AppPath.APP_ROOT)
             })
             .catch((error: AuthenticationError) => {
                 setAuthError(error.reason);
             })
-        // TODO: check error reason. If already exists, then alert to suggest login instead.
-        // TODO, upoon successful register, navigate to home page ?
     }
 
     return (
@@ -67,9 +66,12 @@ export function RegisterPage(props: PaperProps) {
                 {authError !== null &&
                     <Alert color='yellow' icon={<IconAlertCircle size="1rem" />} radius={'lg'} p={'xs'}>
                         {authError === AuthenticationErrorReason.EMAIL_EXISTS &&
-                            <Anchor component="button" type="button" onClick={() => navigate("/login")} size="md">
-                                {"It seems you already have an account. Try to Login in instead."}
-                            </Anchor>
+                            <Text>
+                                {"It seems you already have an account. "}
+                                <Anchor component="button" type="button" onClick={() => navigate(AppPath.LOGIN, { state: state })} size="md">
+                                    {"Try to Login in instead."}
+                                </Anchor>
+                            </Text>
                         }
                         {authError !== AuthenticationErrorReason.EMAIL_EXISTS &&
                             "Something went wrong. Please try again later. "
@@ -97,14 +99,15 @@ export function RegisterPage(props: PaperProps) {
                         <PasswordInput
                             required
                             label="Password"
-                            placeholder="Your password"
+                            placeholder="Choose a password"
+                            description="Must be at least 8 characters with 1 capital letter, 1 number and 1 special character."
                             radius="md"
                             {...form.getInputProps('password')}
                         />
                     </Stack>
 
                     <Group position='apart' mt="xl">
-                        <Anchor component="button" type="button" c="dimmed" onClick={() => navigate("/login")} size="xs">
+                        <Anchor component="button" type="button" c="dimmed" onClick={() => navigate(AppPath.LOGIN, { state: state })} size="xs">
                             {"Already have an account? Login"}
                         </Anchor>
                         <Button type="submit" radius="xl">

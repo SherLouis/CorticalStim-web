@@ -10,14 +10,17 @@ import {
     Anchor,
     Stack,
     Box,
+    Alert,
 } from '@mantine/core';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthState } from '../../context/AuthContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { AppPath } from '../Routes';
+import AuthenticationError, { AuthenticationErrorReason } from '../../core/auth/authenticationError';
+import { IconAlertCircle } from '@tabler/icons-react';
 
 
 export function LoginPage(props: PaperProps) {
-    // TODO: error if invalid credentials for sigin
     // TODO: traductions
     const form = useForm({
         initialValues: {
@@ -30,6 +33,7 @@ export function LoginPage(props: PaperProps) {
 
     const navigate = useNavigate();
     const { state } = useLocation();
+    const [authError, setAuthError] = useState<AuthenticationErrorReason | null>(null);
 
     // Redirect to original location if user already authenticated
     useEffect(() => {
@@ -43,14 +47,46 @@ export function LoginPage(props: PaperProps) {
         authState.authProvider.signIn(form.values.email, form.values.password)
             .then((user) => {
                 console.log(user.displayName + ' signed in:');
-                console.log(user);
                 if (state != null) { navigate(state?.path); }
             })
-            .catch((error) => { console.error(error); })
+            .catch((error: AuthenticationError) => {
+                setAuthError(error.reason);
+            })
     }
 
     const handlerSignOut = () => {
         authState.authProvider.signOut().then();
+    }
+
+    const getAuthErrorAlert = () => {
+        if (authError === null) {
+            return <></>;
+        }
+        let alertBody: JSX.Element;
+        switch (authError) {
+            case AuthenticationErrorReason.INVALID_LOGIN_CREDENTIALS:
+                alertBody = (
+                    <Text>{"Invalid credentials."}</Text>
+                );
+                break;
+
+            case AuthenticationErrorReason.USER_DISABLED:
+                alertBody = (
+                    <Text>{"Your account is disabled."}</Text>
+                );
+                break;
+
+            default:
+                alertBody = (
+                    <Text>{"Something went wrong. Please try again later."}</Text>
+                );
+                break;
+        }
+
+        return (
+            <Alert color='yellow' icon={<IconAlertCircle size="1rem" />} radius={'lg'} p={'xs'}>
+                {alertBody}
+            </Alert>);
     }
 
     return (
@@ -68,6 +104,7 @@ export function LoginPage(props: PaperProps) {
                     <Text size="lg" fw={500}>
                         Welcome, please sign in to continue
                     </Text>
+                    {getAuthErrorAlert()}
                     <form onSubmit={form.onSubmit(handleSubmit)}>
                         <Stack>
                             <TextInput
@@ -88,7 +125,7 @@ export function LoginPage(props: PaperProps) {
                         </Stack>
 
                         <Group position='apart' mt="xl">
-                            <Anchor component="button" type="button" c="dimmed" onClick={() => navigate("/register", state)} size="xs">
+                            <Anchor component="button" type="button" c="dimmed" onClick={() => navigate(AppPath.REGISTER, { state: state })} size="xs">
                                 {"Don't have an account? Register"}
                             </Anchor>
                             <Button type="submit" radius="xl">

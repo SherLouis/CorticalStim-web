@@ -1,7 +1,8 @@
-import { Box, Button, Text, Paper, PaperProps, Anchor } from "@mantine/core";
+import { Box, Button, Text, Paper, PaperProps } from "@mantine/core";
 import { useAuthState } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { AppPath } from "../Routes";
 
 
 export function VerifyEmailPage(props: PaperProps) {
@@ -37,7 +38,7 @@ export function VerifyEmailPage(props: PaperProps) {
                     <Text size={"lg"} fw={500}>
                         {"Thanks for confirming your email."}
                     </Text>
-                    <Button onClick={() => navigate("/")} size="md">
+                    <Button onClick={() => navigate(AppPath.APP_ROOT)} size="md">
                         {"Go to main page"}
                     </Button>
                 </Box>
