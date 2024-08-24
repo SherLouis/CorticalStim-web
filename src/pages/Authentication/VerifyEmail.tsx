@@ -9,8 +9,7 @@ export function VerifyEmailPage(props: PaperProps) {
 
     const authState = useAuthState();
     const navigate = useNavigate();
-
-    // Redirect to login if not loged in ? Maybe not required
+    
     // TODO: traductions
     const [buttonClicked, setButtonClicked] = useState(false);
 
