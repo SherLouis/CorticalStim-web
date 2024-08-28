@@ -1,10 +1,13 @@
-import { ActionIcon, AppShell, Avatar, Container, Group, Header, Menu, Title, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, AppShell, Avatar, Button, Container, Group, Header, Menu, Title, useMantineColorScheme } from '@mantine/core';
 import { PropsWithChildren } from 'react'
-import { IconSun, IconMoonStars } from '@tabler/icons-react';
+import { IconSun, IconMoonStars, IconSettings, IconLogout } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
+import { useAuthState } from '../context/AuthContext';
+import { TFunction } from 'i18next';
 
 export default function BasePage(props: PropsWithChildren<BasePageProps>) {
     const { colorScheme } = useMantineColorScheme();
+    const { t } = useTranslation();
 
     return (
         <AppShell
@@ -19,8 +22,9 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
                         <Title size={'2vh'}>{props.title}</Title>
 
                         <Group position="right" h={"70%"} p={0} noWrap spacing={"xs"}>
+                            <ProfileMenu t={t} />
                             <LanguageSelectionMenu />
-                            <ThemeToggleIcon />
+                            <ThemeToggleIcon t={t} />
                         </Group>
                     </Group>
                 </Container>
@@ -53,7 +57,7 @@ const LanguageSelectionMenu = () => {
             <Menu.Target>
                 { }
                 <ActionIcon>
-                    <Avatar src={getSvgPathForLanguage(currentLanguage)}/>
+                    <Avatar src={getSvgPathForLanguage(currentLanguage)} />
                 </ActionIcon>
             </Menu.Target>
             <Menu.Dropdown>
@@ -78,7 +82,7 @@ const LanguageSelectionMenu = () => {
     );
 }
 
-const ThemeToggleIcon = () => {
+const ThemeToggleIcon = ({ t }: { t: TFunction }) => {
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const isDarkTheme = colorScheme === 'dark';
 
@@ -87,10 +91,38 @@ const ThemeToggleIcon = () => {
             variant="outline"
             color={isDarkTheme ? 'yellow' : 'blue'}
             onClick={() => toggleColorScheme()}
-            title="Toggle color scheme"
+            title={t('app.header.toggle_theme')}
         >
             {isDarkTheme ? <IconSun /> : <IconMoonStars />}
         </ActionIcon>
+    );
+}
+
+const ProfileMenu = ({ t }: { t: TFunction }) => {
+    const authState = useAuthState();
+
+    const initials = authState.user?.displayName.split(' ').map(word => word.charAt(0).toUpperCase()).join('');
+
+    const handleSignOut = () => {
+        authState.authProvider.signOut().then(() => {
+            console.log('User signed out');
+        })
+    }
+
+    if (!authState.isAuthenticated) {
+        return (<></>)
+    }
+    return (
+        <Menu shadow="md">
+            <Menu.Target>
+                <Avatar color='indigo' variant='filled' radius="xl" style={{ cursor: 'pointer' }}>{initials}</Avatar>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+                <Menu.Item icon={<IconSettings size={14} />} disabled>{t('app.header.menu.settings')}</Menu.Item>
+                <Menu.Item icon={<IconLogout size={14} />} onClick={handleSignOut}>{t('app.header.menu.logout')}</Menu.Item>
+            </Menu.Dropdown>
+        </Menu>
     );
 }
 

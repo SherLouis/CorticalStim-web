@@ -1,6 +1,13 @@
 {
     "app": {
-        "title": "Outil Stimulation Corticale"
+        "title": "Outil Stimulation Corticale",
+        "header": {
+            "toggle_theme": "Changer la palette de couleurs",
+            "menu": {
+                "settings": "Paramètres",
+                "logout": "Déconnexion"
+            }
+        }
     },
     "pages": {
         "stimulationTool": {
