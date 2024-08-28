@@ -18,10 +18,10 @@ import { useEffect, useState } from 'react';
 import { AppPath } from '../Routes';
 import AuthenticationError, { AuthenticationErrorReason } from '../../core/auth/authenticationError';
 import { IconAlertCircle } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 
 
 export function LoginPage(props: PaperProps) {
-    // TODO: traductions
     const form = useForm({
         initialValues: {
             email: '',
@@ -31,19 +31,20 @@ export function LoginPage(props: PaperProps) {
 
     const authState = useAuthState();
 
+    const { t } = useTranslation();
+
     const navigate = useNavigate();
     const { state } = useLocation();
     const [authError, setAuthError] = useState<AuthenticationErrorReason | null>(null);
 
-    // Redirect to original location if user already authenticated
+    // Redirect to original location or root page if user already authenticated
     useEffect(() => {
         if (authState.isAuthenticated) {
-            navigate(state?.path);
+            navigate(state != null ? state.path : AppPath.APP_ROOT);
         }
     }, [authState, state, navigate])
 
     const handleSubmit = () => {
-
         authState.authProvider.signIn(form.values.email, form.values.password)
             .then((user) => {
                 console.log(user.displayName + ' signed in:');
@@ -54,10 +55,6 @@ export function LoginPage(props: PaperProps) {
             })
     }
 
-    const handlerSignOut = () => {
-        authState.authProvider.signOut().then();
-    }
-
     const getAuthErrorAlert = () => {
         if (authError === null) {
             return <></>;
@@ -66,19 +63,19 @@ export function LoginPage(props: PaperProps) {
         switch (authError) {
             case AuthenticationErrorReason.INVALID_LOGIN_CREDENTIALS:
                 alertBody = (
-                    <Text>{"Invalid credentials."}</Text>
+                    <Text>{t('pages.login.auth_errors.invalid_credentials')}</Text>
                 );
                 break;
 
             case AuthenticationErrorReason.USER_DISABLED:
                 alertBody = (
-                    <Text>{"Your account is disabled."}</Text>
+                    <Text>{t('pages.login.auth_errors.account_disabled')}</Text>
                 );
                 break;
 
             default:
                 alertBody = (
-                    <Text>{"Something went wrong. Please try again later."}</Text>
+                    <Text>{t('pages.login.auth_errors.other_error')}</Text>
                 );
                 break;
         }
@@ -91,34 +88,26 @@ export function LoginPage(props: PaperProps) {
 
     return (
         <Paper radius="md" p="xl" withBorder {...props}>
-            {authState.user != null &&
-                <Box>
-                    <Text size="lg" fw={500}>
-                        Welcome {authState.user.displayName}!
-                    </Text>
-                    <Button onClick={() => handlerSignOut()}>Sign Out</Button>
-                </Box>
-            }
             {authState.user == null &&
                 <Box>
                     <Text size="lg" fw={500}>
-                        Welcome, please sign in to continue
+                        {t('pages.login.welcome_message')}
                     </Text>
                     {getAuthErrorAlert()}
                     <form onSubmit={form.onSubmit(handleSubmit)}>
                         <Stack>
                             <TextInput
                                 required
-                                label="Email"
-                                placeholder="you@email.com"
+                                label={t('pages.login.form_fields.email.label')}
+                                placeholder={t('pages.login.form_fields.email.placeholder')}
                                 radius="md"
                                 {...form.getInputProps('email')}
                             />
 
                             <PasswordInput
                                 required
-                                label="Password"
-                                placeholder="Your password"
+                                label={t('pages.login.form_fields.password.label')}
+                                placeholder={t('pages.login.form_fields.password.placeholder')}
                                 radius="md"
                                 {...form.getInputProps('password')}
                             />
@@ -126,10 +115,10 @@ export function LoginPage(props: PaperProps) {
 
                         <Group position='apart' mt="xl">
                             <Anchor component="button" type="button" c="dimmed" onClick={() => navigate(AppPath.REGISTER, { state: state })} size="xs">
-                                {"Don't have an account? Register"}
+                                {t('pages.login.go_to_register_msg')}
                             </Anchor>
                             <Button type="submit" radius="xl">
-                                {"Sign in"}
+                                {t('pages.login.signin')}
                             </Button>
                         </Group>
                     </form>

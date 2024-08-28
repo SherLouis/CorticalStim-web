@@ -18,10 +18,12 @@ import { useAuthState } from '../../context/AuthContext';
 import { useState } from 'react';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { AppPath } from '../Routes';
+import { useTranslation } from 'react-i18next';
 
 
 export function RegisterPage(props: PaperProps) {
-    // TODO: traductions
+    const { t } = useTranslation();
+
     const isPasswordSecure = (value: string) => {
         // Au moins 8 caractères avec au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial
         let regex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-])[A-Za-z\d!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]{8,}$/);
@@ -35,8 +37,8 @@ export function RegisterPage(props: PaperProps) {
         },
 
         validate: {
-            email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
-            password: (val) => (!isPasswordSecure(val) ? 'Password must include at least 8 characters and include at least one capital letter, one number and one special character' : null),
+            email: (val) => (/^\S+@\S+$/.test(val) ? null : t('pages.register.validations.invalid_email_format')),
+            password: (val) => (!isPasswordSecure(val) ? t('pages.register.validations.password_requirements') : null),
         },
     });
 
@@ -61,28 +63,28 @@ export function RegisterPage(props: PaperProps) {
         <Paper radius="md" p="xl" withBorder {...props}>
             <Box>
                 <Text size="lg" fw={500}>
-                    {"Welcome, please register to continue."}
+                    {t('pages.register.welcome_message')}
                 </Text>
                 {authError !== null &&
                     <Alert color='yellow' icon={<IconAlertCircle size="1rem" />} radius={'lg'} p={'xs'}>
                         {authError === AuthenticationErrorReason.EMAIL_EXISTS &&
                             <Text>
-                                {"It seems you already have an account. "}
+                                {t('pages.register.auth_errors.email_exists')}
                                 <Anchor component="button" type="button" onClick={() => navigate(AppPath.LOGIN, { state: state })} size="md">
-                                    {"Try to Login in instead."}
+                                    {t('pages.register.auth_errors.login_instead')}
                                 </Anchor>
                             </Text>
                         }
                         {authError !== AuthenticationErrorReason.EMAIL_EXISTS &&
-                            "Something went wrong. Please try again later. "
+                            t('pages.register.auth_errors.other_error')
                         }
                     </Alert>
                 }
                 <form onSubmit={form.onSubmit(handleSubmit)}>
                     <Stack>
                         <TextInput
-                            label="Name"
-                            placeholder="Your name"
+                            label={t('pages.register.form_fields.name.label')}
+                            placeholder={t('pages.register.form_fields.name.placeholder')}
                             value={form.values.name}
                             onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
                             radius="md"
@@ -90,17 +92,17 @@ export function RegisterPage(props: PaperProps) {
 
                         <TextInput
                             required
-                            label="Email"
-                            placeholder="you@email.com"
+                            label={t('pages.register.form_fields.email.label')}
+                            placeholder={t('pages.register.form_fields.email.placeholder')}
                             radius="md"
                             {...form.getInputProps('email')}
                         />
 
                         <PasswordInput
                             required
-                            label="Password"
-                            placeholder="Choose a password"
-                            description="Must be at least 8 characters with 1 capital letter, 1 number and 1 special character."
+                            label={t('pages.register.form_fields.password.label')}
+                            placeholder={t('pages.register.form_fields.password.placeholder')}
+                            description={t('pages.register.form_fields.password.description')}
                             radius="md"
                             {...form.getInputProps('password')}
                         />
@@ -108,10 +110,10 @@ export function RegisterPage(props: PaperProps) {
 
                     <Group position='apart' mt="xl">
                         <Anchor component="button" type="button" c="dimmed" onClick={() => navigate(AppPath.LOGIN, { state: state })} size="xs">
-                            {"Already have an account? Login"}
+                            {t('pages.register.go_to_login_msg')}
                         </Anchor>
                         <Button type="submit" radius="xl">
-                            {"Register"}
+                            {t('pages.register.register')}
                         </Button>
                     </Group>
                 </form>

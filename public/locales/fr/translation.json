@@ -143,6 +143,61 @@
                     "crisis_title": "Crise"
                 }
             }
+        },
+        "login": {
+            "welcome_message": "Bienvenue! Veuillez vous connecter pour continuer.",
+            "form_fields": {
+                "email": {
+                    "label": "Email",
+                    "placeholder": "vous@email.com"
+                },
+                "password": {
+                    "label": "Mot de passe",
+                    "placeholder": "Votre mot de passe"
+                }
+            },
+            "go_to_register_msg": "Pas de compte? S'inscrire",
+            "signin": "Se connecter",
+            "auth_errors": {
+                "invalid_credentials": "Identifiants invalides",
+                "account_disabled": "Votre compte est désactivé",
+                "other_error": "Une erreur s'est produite. Veuillez réessayer plus tard."
+            }
+        },
+        "register": {
+            "welcome_message": "Bienvenue ! Veuillez vous inscrire pour continuer.",
+            "validations": {
+                "invalid_email_format": "Email invalide",
+                "password_requirements": "Le mot de passe doit comporter au moins 8 caractères et contenir au moins une lettre majuscule, un chiffre et un caractère spécial."
+            },
+            "auth_errors": {
+                "email_exists": "Il semble que vous ayez déjà un compte. ",
+                "login_instead": "Essayez plutôt de vous connecter.",
+                "other_error": "Une erreur s'est produite. Veuillez réessayer ultérieurement."
+            },
+            "form_fields": {
+                "name": {
+                    "label": "Nom",
+                    "placeholder": "Votre Nom"
+                },
+                "email": {
+                    "label": "Email",
+                    "placeholder": "vous@email.com"
+                },
+                "password": {
+                    "label": "Mot de passe",
+                    "placeholder": "Votre mot de passe",
+                    "description": "Doit contenir au moins 8 caractères avec 1 lettre majuscule, 1 chiffre et 1 caractère spécial."
+                }
+            },
+            "go_to_login_msg": "Vous avez déjà un compte ? Se connecter",
+            "register": "S'inscrire"
+        },
+        "verify_email": {
+            "message": "Veuillez vérifier votre adresse e-mail pour continuer.",
+            "send_email_btn": "Envoyer un e-mail de vérification.",
+            "email_confirmed": "Merci d'avoir confirmé votre email.",
+            "go_to_root": "Aller à la page principale"
         }
     },
     "common": {

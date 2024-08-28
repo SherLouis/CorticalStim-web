@@ -3,14 +3,15 @@ import { useAuthState } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { AppPath } from "../Routes";
+import { useTranslation } from "react-i18next";
 
 
 export function VerifyEmailPage(props: PaperProps) {
 
     const authState = useAuthState();
     const navigate = useNavigate();
-    
-    // TODO: traductions
+    const { t } = useTranslation();
+
     const [buttonClicked, setButtonClicked] = useState(false);
 
     const handleButtonClick = () => {
@@ -23,22 +24,22 @@ export function VerifyEmailPage(props: PaperProps) {
             {!authState.user?.isVerifiedUser &&
                 <Box>
                     <Text size="lg" fw={500}>
-                        {"Please verify email address to continue."}
+                        {t('pages.verify_email.message')}
                     </Text>
                     <Button radius="xl"
                         disabled={buttonClicked}
                         onClick={handleButtonClick}>
-                        {"Send verification email"}
+                        {t('pages.verify_email.send_email_btn')}
                     </Button>
                 </Box>
             }
             {authState.user?.isVerifiedUser &&
                 <Box>
                     <Text size={"lg"} fw={500}>
-                        {"Thanks for confirming your email."}
+                        {t('pages.verify_email.email_confirmed')}
                     </Text>
                     <Button onClick={() => navigate(AppPath.APP_ROOT)} size="md">
-                        {"Go to main page"}
+                        {t('pages.verify_email.go_to_root')}
                     </Button>
                 </Box>
             }
