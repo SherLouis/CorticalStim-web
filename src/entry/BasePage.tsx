@@ -1,4 +1,4 @@
-import { ActionIcon, AppShell, Avatar, Button, Container, Group, Header, Menu, Title, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, AppShell, Avatar, Container, Group, Menu, Title, useMantineColorScheme } from '@mantine/core';
 import { PropsWithChildren } from 'react'
 import { IconSun, IconMoonStars, IconSettings, IconLogout } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
