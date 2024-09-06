@@ -1,6 +1,13 @@
 {
     "app": {
-        "title": "Cortical Stimulation Tool"
+        "title": "Cortical Stimulation Tool",
+        "header": {
+            "toggle_theme": "Toggle color scheme",
+            "menu": {
+                "settings": "Settings",
+                "logout": "Logout"
+            }
+        }
     },
     "pages": {
         "stimulationTool": {
@@ -143,6 +150,61 @@
                     "crisis_title": "Crisis"
                 }
             }
+        },
+        "login": {
+            "welcome_message": "Welcome! Please sign in to continue.",
+            "form_fields": {
+                "email": {
+                    "label": "Email",
+                    "placeholder": "you@email.com"
+                },
+                "password": {
+                    "label": "Password",
+                    "placeholder": "Your password"
+                }
+            },
+            "go_to_register_msg": "Don't have an account? Register",
+            "signin": "Sign in",
+            "auth_errors": {
+                "invalid_credentials": "Invalid credentials",
+                "account_disabled": "Your account is disabled",
+                "other_error": "Something went wrong. Please try again later."
+            }
+        },
+        "register": {
+            "welcome_message": "Welcome! Please register to continue.",
+            "validations": {
+                "invalid_email_format": "Invalid email",
+                "password_requirements": "Password must include at least 8 characters and contain at least one capital letter, one number and one special character."
+            },
+            "auth_errors": {
+                "email_exists": "It seems you already have an account. ",
+                "login_instead": "Try to Sign in instead.",
+                "other_error": "Something went wrong. Please try again later."
+            },
+            "form_fields": {
+                "name": {
+                    "label": "Name",
+                    "placeholder": "Your Name"
+                },
+                "email": {
+                    "label": "Email",
+                    "placeholder": "you@email.com"
+                },
+                "password": {
+                    "label": "Password",
+                    "placeholder": "Your password",
+                    "description": "Must be at least 8 characters with 1 capital letter, 1 number and 1 special character."
+                }
+            },
+            "go_to_login_msg": "Already have an account? Login",
+            "register": "Register"
+        },
+        "verify_email": {
+            "message": "Please verify your email address to continue.",
+            "send_email_btn": "Send verification email",
+            "email_confirmed": "Thanks for confirming your email.",
+            "go_to_root": "Go to main page"
         }
     },
     "common": {
