@@ -19,16 +19,12 @@ import { useState } from 'react';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { AppPath } from '../Routes';
 import { useTranslation } from 'react-i18next';
+import { isPasswordSecure } from './Password';
 
 
 export function RegisterPage(props: PaperProps) {
     const { t } = useTranslation();
-
-    const isPasswordSecure = (value: string) => {
-        // Au moins 8 caractères avec au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial
-        let regex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-])[A-Za-z\d!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]{8,}$/);
-        return regex.test(value);
-    }
+    
     const form = useForm({
         initialValues: {
             email: '',

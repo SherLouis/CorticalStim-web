@@ -4,6 +4,8 @@ import { IconSun, IconMoonStars, IconSettings, IconLogout } from '@tabler/icons-
 import { useTranslation } from 'react-i18next';
 import { useAuthState } from '../context/AuthContext';
 import { TFunction } from 'i18next';
+import { useNavigate } from 'react-router-dom';
+import { AppPath } from '../pages/Routes';
 
 export default function BasePage(props: PropsWithChildren<BasePageProps>) {
     const { colorScheme } = useMantineColorScheme();
@@ -100,6 +102,7 @@ const ThemeToggleIcon = ({ t }: { t: TFunction }) => {
 
 const ProfileMenu = ({ t }: { t: TFunction }) => {
     const authState = useAuthState();
+    const navigate = useNavigate();
 
     const initials = authState.user?.displayName.split(' ').map(word => word.charAt(0).toUpperCase()).join('');
 
@@ -119,7 +122,7 @@ const ProfileMenu = ({ t }: { t: TFunction }) => {
             </Menu.Target>
 
             <Menu.Dropdown>
-                <Menu.Item icon={<IconSettings size={14} />} disabled>{t('app.header.menu.settings')}</Menu.Item>
+                <Menu.Item icon={<IconSettings size={14} />} onClick={() => navigate(AppPath.ACCOUNT)}>{t('app.header.menu.profile')}</Menu.Item>
                 <Menu.Item icon={<IconLogout size={14} />} onClick={handleSignOut}>{t('app.header.menu.logout')}</Menu.Item>
             </Menu.Dropdown>
         </Menu>

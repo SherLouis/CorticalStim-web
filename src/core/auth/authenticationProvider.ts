@@ -11,4 +11,6 @@ export interface AuthenticationProvider {
     observeCurrentUser(observer: (user: User | null) => void) : () => void;
 
     sendVerification(): Promise<void>;
+
+    changePassword(currentPassword: string, newPassword: string) : Promise<void>
 }

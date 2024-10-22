@@ -1,4 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, sendEmailVerification, Auth, setPersistence, browserSessionPersistence, AuthErrorCodes } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, sendEmailVerification, updatePassword, Auth, setPersistence, browserSessionPersistence, AuthErrorCodes } from "firebase/auth";
 import { User as FirebaseUser } from "firebase/auth";
 import firebaseApp from './firebaseApp'
 import { AuthenticationProvider } from "../../core/auth/authenticationProvider";
@@ -6,7 +6,7 @@ import User from "../../core/auth/user";
 import AuthenticationError, { AuthenticationErrorReason } from "../../core/auth/authenticationError";
 import { FirebaseError } from "firebase/app";
 
-export default class firebaseAuthenticationProvider implements AuthenticationProvider {
+export default class FirebaseAuthenticationProvider implements AuthenticationProvider {
 
     private auth: Auth;
 
@@ -128,6 +128,19 @@ export default class firebaseAuthenticationProvider implements AuthenticationPro
         if (this.auth.currentUser != null) {
             await sendEmailVerification(this.auth.currentUser)
         }
+    }
+
+    public async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+        // Re-signin the user to confirm fresh authentication
+        return signInWithEmailAndPassword(this.auth, this.currentUser!.username, currentPassword)
+            .then((userCredential) => {
+                // User signed in successful
+                const firebaseUser = userCredential.user;
+                return updatePassword(firebaseUser, newPassword);
+            })
+            .catch((error: FirebaseError) => {
+                throw new AuthenticationError("Error signing in user", this.mapFirebaseErrorCodeToAuthenticationErrorReason(error.code));
+            });
     }
 
 }
