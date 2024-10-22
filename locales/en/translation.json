@@ -4,7 +4,7 @@
         "header": {
             "toggle_theme": "Toggle color scheme",
             "menu": {
-                "settings": "Settings",
+                "profile": "Profile",
                 "logout": "Logout"
             }
         }
@@ -205,6 +205,28 @@
             "send_email_btn": "Send verification email",
             "email_confirmed": "Thanks for confirming your email.",
             "go_to_root": "Go to main page"
+        },
+        "accountManagement": {
+            "manage_account": "Account Management",
+            "password_change": {
+                "title": "Password change",
+                "current_password": "Current password",
+                "new_password": "New password",
+                "confirm_new_password": "Confirm new password",
+                "notifications": {
+                    "success_title": "Success",
+                    "success_body": "Password changed",
+                    "failure_title": "Error",
+                    "auth_errors": {
+                        "invalid_credentials": "Value for current password is incorrect.",
+                        "other_error": "Something went wrong. Please try again later."
+                    }
+                },
+                "validations": {
+                    "password_requirements": "Password must include at least 8 characters and contain at least one capital letter, one number and one special character.",
+                    "passwords_do_not_match": "Passwords do not match."
+                }
+            }
         }
     },
     "common": {
