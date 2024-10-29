@@ -1,4 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, sendEmailVerification, updatePassword, Auth, setPersistence, browserSessionPersistence, AuthErrorCodes } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, sendEmailVerification, updatePassword, Auth, setPersistence, browserSessionPersistence, AuthErrorCodes, deleteUser } from "firebase/auth";
 import { User as FirebaseUser } from "firebase/auth";
 import firebaseApp from './firebaseApp'
 import { AuthenticationProvider } from "../../core/auth/authenticationProvider";
@@ -60,7 +60,7 @@ export default class FirebaseAuthenticationProvider implements AuthenticationPro
         }
     }
 
-    public async setDisplayName(displayName: string) : Promise<void> {
+    public async setDisplayName(displayName: string): Promise<void> {
         if (this.auth.currentUser == null) { return; }
         return updateProfile(this.auth.currentUser, { displayName: displayName })
             .then(() => {
@@ -141,6 +141,18 @@ export default class FirebaseAuthenticationProvider implements AuthenticationPro
             .catch((error: FirebaseError) => {
                 throw new AuthenticationError("Error signing in user", this.mapFirebaseErrorCodeToAuthenticationErrorReason(error.code));
             });
+    }
+
+    public async deleteAccount(password: string): Promise<void> {
+        // Re-sigin the user with password provided. 
+        return signInWithEmailAndPassword(this.auth, this.currentUser!.username, password)
+            .then((userCredentials) => {
+                const firebaseUser = userCredentials.user;
+                return deleteUser(firebaseUser);
+            })
+            .catch((error: FirebaseError) => {
+                throw new AuthenticationError("Error signing in user with provided password", this.mapFirebaseErrorCodeToAuthenticationErrorReason(error.code));
+            })
     }
 
 }

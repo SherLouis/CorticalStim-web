@@ -15,4 +15,6 @@ export interface AuthenticationProvider {
     changePassword(currentPassword: string, newPassword: string) : Promise<void>;
 
     setDisplayName(displayName: string): Promise<void>;
+
+    deleteAccount(password: string) : Promise<void>;
 }

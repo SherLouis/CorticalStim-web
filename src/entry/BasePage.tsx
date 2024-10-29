@@ -109,7 +109,7 @@ const ProfileMenu = ({ t }: { t: TFunction }) => {
     const authState = useAuthState();
     const navigate = useNavigate();
 
-    const initials = authState.user?.displayName.split(' ').map(word => word.charAt(0).toUpperCase()).join('');
+    const initials = authState.user ? authState.user?.displayName.split(' ').map(word => word.charAt(0).toUpperCase()).join('') : 'U';
 
     const handleSignOut = () => {
         authState.authProvider.signOut().then(() => {

@@ -7,6 +7,7 @@ import {
   Paper,
   Accordion,
   TextInput,
+  Checkbox,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +15,7 @@ import { isPasswordSecure } from './Password';
 import { useAuthState } from '../../context/AuthContext';
 import AuthenticationError, { AuthenticationErrorReason } from '../../core/auth/authenticationError';
 import { notifications } from '@mantine/notifications';
+import { IconTrash } from '@tabler/icons-react';
 
 const AccountManagementPage = (props: PaperProps) => {
   // TODO: ajouter option pour supprimer le compte
@@ -43,6 +45,16 @@ const AccountManagementPage = (props: PaperProps) => {
       displayName: (newDisplayName) => newDisplayName === user?.displayName ? t('pages.accountManagement.displayNameChange.validations.same_as_current') : null
     },
     validateInputOnChange: true
+  })
+
+  const deleteAccountForm = useForm({
+    initialValues: {
+      confirm: false,
+      password: ''
+    },
+    validate: {
+      confirm: (confirmed) => !confirmed ? t('pages.accountManagement.delete_account.validations.not_confirmed') : null
+    }
   })
 
   const getAuthErrorAlertMessage = (authError: AuthenticationError) => {
@@ -97,6 +109,29 @@ const AccountManagementPage = (props: PaperProps) => {
       })
   }
 
+  const handlerDeleteAccount = () => {
+    authProvider.deleteAccount(deleteAccountForm.values.password)
+    .then(() => {
+      console.log('Account deleted');
+      notifications.show({
+        id: 'delete_account',
+        title: t('pages.accountManagement.delete_account.notifications.success_title'),
+        message: t('pages.accountManagement.delete_account.notifications.success_body'),
+        color: "green"
+      });
+      deleteAccountForm.reset();
+    })
+    .catch((error: AuthenticationError) => {
+      console.error(error.reason);
+      notifications.show({
+        id: 'delete_account',
+        title: t('pages.accountManagement.delete_account.notifications.failure_title'),
+        message: getAuthErrorAlertMessage(error),
+        color: "red"
+      });
+    })
+  }
+
   return (
     <Paper radius="md" p="xl" withBorder {...props}>
       <Container>
@@ -137,6 +172,27 @@ const AccountManagementPage = (props: PaperProps) => {
                   {...setDisplayNameForm.getInputProps('displayName')}
                 />
                 <Button type='submit' disabled={!setDisplayNameForm.isValid()}>{t('common.okButtonLabel')}</Button>
+              </form>
+            </Accordion.Panel>
+          </Accordion.Item>
+
+          <Accordion.Item value='delete_account'>
+            <Accordion.Control>{t('pages.accountManagement.delete_account.title')}</Accordion.Control>
+            <Accordion.Panel>
+              <form onSubmit={deleteAccountForm.onSubmit(handlerDeleteAccount)}>
+                <Checkbox
+                  label={t('pages.accountManagement.delete_account.confirm_deletion')}
+                  required
+                  {...deleteAccountForm.getInputProps('confirm')}
+                />
+                <PasswordInput
+                  label={t('pages.accountManagement.delete_account.password')}
+                  required
+                  {...deleteAccountForm.getInputProps('password')}
+                />
+                <Button type='submit' disabled={!deleteAccountForm.isValid()} color='red' leftIcon={<IconTrash />}>
+                  {t('pages.accountManagement.delete_account.title')}
+                </Button>
               </form>
             </Accordion.Panel>
           </Accordion.Item>

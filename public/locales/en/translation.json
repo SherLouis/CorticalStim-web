@@ -239,6 +239,23 @@
                 "validations": {
                     "same_as_current": "This is already your display name."
                 }
+            },
+            "delete_account": {
+                "title": "Delete Account",
+                "confirm_deletion": "I confirm I want to delete my account.",
+                "password": "Your password",
+                "notifications": {
+                    "success_title": "Success",
+                    "success_body": "Account deleted",
+                    "failure_title": "Error",
+                    "auth_errors": {
+                        "invalid_credentials": "Value for current password is incorrect.",
+                        "other_error": "Something went wrong. Please try again later."
+                    }
+                },
+                "validations": {
+                    "not_confirmed": "Check the box to confirm account deletion."
+                }
             }
         }
     },

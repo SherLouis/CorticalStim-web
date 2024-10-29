@@ -239,6 +239,23 @@
                 "validations": {
                     "same_as_current": "Ceci est déjà votre nom d'affichage."
                 }
+            },
+            "delete_account": {
+                "title": "Supprimer le compte",
+                "confirm_deletion": "Je confirme que je veux supprimer mon compte.",
+                "password": "Mot de passe",
+                "notifications": {
+                    "success_title": "Succès",
+                    "success_body": "Compte supprimé",
+                    "failure_title": "Erreur",
+                    "auth_errors": {
+                        "invalid_credentials": "Identifiants invalides",
+                        "other_error": "Une erreur s'est produite. Veuillez réessayer plus tard."
+                    }
+                },
+                "validations": {
+                    "not_confirmed": "Cocher la case pour confirmer la suppression du compte."
+                }
             }
         }
     },
