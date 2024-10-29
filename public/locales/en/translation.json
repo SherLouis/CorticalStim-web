@@ -226,6 +226,19 @@
                     "password_requirements": "Password must include at least 8 characters and contain at least one capital letter, one number and one special character.",
                     "passwords_do_not_match": "Passwords do not match."
                 }
+            },
+            "displayNameChange": {
+                "title": "Display name change",
+                "new_display_name": "New display name",
+                "notifications": {
+                    "success_title": "Success",
+                    "success_body": "Display name changed",
+                    "failure_title": "Error",
+                    "failure_body": "Something went wrong. Please try again later."
+                },
+                "validations": {
+                    "same_as_current": "This is already your display name."
+                }
             }
         }
     },

@@ -10,7 +10,7 @@ const AuthContext = createContext<ContextState | undefined>(undefined);
 
 const AuthContextProvider = ({ authProvider, children }: AuthContextProps) => {
     const [user, setUser] = useState<User | null>(null);
-    const value = {user: user, isAuthenticated: user!=null, authProvider: authProvider} as ContextState
+    const value = { user: user, isAuthenticated: user != null, authProvider: authProvider } as ContextState
 
     useEffect(() => {
         const unsubscribe = authProvider.observeCurrentUser((user) => {
@@ -28,10 +28,10 @@ const AuthContextProvider = ({ authProvider, children }: AuthContextProps) => {
 
 const useAuthState = () => {
     const context = useContext(AuthContext)
-	if (context === undefined) {
-		throw new Error('useAuthState must be used within a AuthContextProvider')
-	}
-	return context
-  }
+    if (context === undefined) {
+        throw new Error('useAuthState must be used within a AuthContextProvider')
+    }
+    return context
+}
 
 export { AuthContextProvider, useAuthState };

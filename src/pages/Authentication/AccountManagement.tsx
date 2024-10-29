@@ -6,6 +6,7 @@ import {
   PaperProps,
   Paper,
   Accordion,
+  TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useTranslation } from 'react-i18next';
@@ -15,12 +16,11 @@ import AuthenticationError, { AuthenticationErrorReason } from '../../core/auth/
 import { notifications } from '@mantine/notifications';
 
 const AccountManagementPage = (props: PaperProps) => {
-  // TODO: ajouter changement de nom d'utilisateur
   // TODO: ajouter option pour supprimer le compte
 
   const { t } = useTranslation();
 
-  const { authProvider } = useAuthState();
+  const { authProvider, user } = useAuthState();
 
   const changePasswordForm = useForm({
     initialValues: {
@@ -35,14 +35,24 @@ const AccountManagementPage = (props: PaperProps) => {
     validateInputOnChange: true
   });
 
+  const setDisplayNameForm = useForm({
+    initialValues: {
+      displayName: user ? user.displayName : ''
+    },
+    validate: {
+      displayName: (newDisplayName) => newDisplayName === user?.displayName ? t('pages.accountManagement.displayNameChange.validations.same_as_current') : null
+    },
+    validateInputOnChange: true
+  })
+
   const getAuthErrorAlertMessage = (authError: AuthenticationError) => {
     switch (authError.reason) {
-        case AuthenticationErrorReason.INVALID_LOGIN_CREDENTIALS:
-            return t('pages.accountManagement.password_change.notifications.auth_errors.invalid_credentials');
-        default:
-          return t('pages.accountManagement.password_change.notifications.auth_errors.other_error');
+      case AuthenticationErrorReason.INVALID_LOGIN_CREDENTIALS:
+        return t('pages.accountManagement.password_change.notifications.auth_errors.invalid_credentials');
+      default:
+        return t('pages.accountManagement.password_change.notifications.auth_errors.other_error');
     }
-}
+  }
   const handleChangePassword = () => {
     authProvider.changePassword(changePasswordForm.values.existingPassword, changePasswordForm.values.newPassword)
       .then(() => {
@@ -61,6 +71,27 @@ const AccountManagementPage = (props: PaperProps) => {
           id: 'password_changed',
           title: t('pages.accountManagement.password_change.notifications.failure_title'),
           message: getAuthErrorAlertMessage(error),
+          color: "red"
+        });
+      })
+  }
+
+  const handleSetDisplayName = () => {
+    authProvider.setDisplayName(setDisplayNameForm.values.displayName)
+      .then(() => {
+        console.log('Display name changed');
+        notifications.show({
+          id: 'display_name_changed',
+          title: t('pages.accountManagement.displayNameChange.notifications.success_title'),
+          message: t('pages.accountManagement.displayNameChange.notifications.success_body'),
+          color: "green"
+        });
+      })
+      .catch(() => {
+        notifications.show({
+          id: 'display_name_changed',
+          title: t('pages.accountManagement.displayNameChange.notifications.failure_title'),
+          message: t('pages.accountManagement.displayNameChange.notifications.failure_body'),
           color: "red"
         });
       })
@@ -92,6 +123,20 @@ const AccountManagementPage = (props: PaperProps) => {
                   required
                 />
                 <Button type="submit" disabled={!changePasswordForm.isValid()}>{t('common.okButtonLabel')}</Button>
+              </form>
+            </Accordion.Panel>
+          </Accordion.Item>
+
+          <Accordion.Item value='display_name_change'>
+            <Accordion.Control>{t('pages.accountManagement.displayNameChange.title')}</Accordion.Control>
+            <Accordion.Panel>
+              <form onSubmit={setDisplayNameForm.onSubmit(handleSetDisplayName)}>
+                <TextInput
+                  label={t('pages.accountManagement.displayNameChange.new_display_name')}
+                  required
+                  {...setDisplayNameForm.getInputProps('displayName')}
+                />
+                <Button type='submit' disabled={!setDisplayNameForm.isValid()}>{t('common.okButtonLabel')}</Button>
               </form>
             </Accordion.Panel>
           </Accordion.Item>

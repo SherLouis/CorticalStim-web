@@ -221,11 +221,24 @@
                         "invalid_credentials": "Identifiants invalides",
                         "other_error": "Une erreur s'est produite. Veuillez réessayer plus tard."
                     }
+                },
+                "validations": {
+                    "password_requirements": "Le mot de passe doit comporter au moins 8 caractères et contenir au moins une lettre majuscule, un chiffre et un caractère spécial.",
+                    "passwords_do_not_match": "Les mots de passe entrés ne correspondent pas."
                 }
             },
-            "validations": {
-                "password_requirements": "Le mot de passe doit comporter au moins 8 caractères et contenir au moins une lettre majuscule, un chiffre et un caractère spécial.",
-                "passwords_do_not_match": "Les mots de passe entrés ne correspondent pas."
+            "displayNameChange": {
+                "title": "Changement du nom d'affichage",
+                "new_display_name": "Nouveau nom",
+                "notifications": {
+                    "success_title": "Succès",
+                    "success_body": "Nom d'affichage changé",
+                    "failure_title": "Erreur",
+                    "failure_body": "Une erreur s'est produite. Veuillez réessayer plus tard."
+                },
+                "validations": {
+                    "same_as_current": "Ceci est déjà votre nom d'affichage."
+                }
             }
         }
     },

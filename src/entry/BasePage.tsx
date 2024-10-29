@@ -9,6 +9,7 @@ import { AppPath } from '../pages/Routes';
 
 export default function BasePage(props: PropsWithChildren<BasePageProps>) {
     const { colorScheme } = useMantineColorScheme();
+    const navigate = useNavigate();
     const { t } = useTranslation();
 
     return (
@@ -21,7 +22,11 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
             header={
                 <Container h={"4vh"} fluid px={"sm"}>
                     <Group position="apart" align='center' h={"100%"} noWrap>
-                        <Title size={'2vh'}>{props.title}</Title>
+                        <Title size={'2vh'}
+                            onClick={() => navigate(AppPath.APP_ROOT)}
+                            style={{ cursor: 'pointer', userSelect: 'none' }}>
+                            {props.title}
+                        </Title>
 
                         <Group position="right" h={"70%"} p={0} noWrap spacing={"xs"}>
                             <ProfileMenu t={t} />

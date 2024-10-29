@@ -12,5 +12,7 @@ export interface AuthenticationProvider {
 
     sendVerification(): Promise<void>;
 
-    changePassword(currentPassword: string, newPassword: string) : Promise<void>
+    changePassword(currentPassword: string, newPassword: string) : Promise<void>;
+
+    setDisplayName(displayName: string): Promise<void>;
 }

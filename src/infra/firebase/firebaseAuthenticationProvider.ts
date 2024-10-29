@@ -60,7 +60,7 @@ export default class FirebaseAuthenticationProvider implements AuthenticationPro
         }
     }
 
-    private async setDisplayName(displayName: string) {
+    public async setDisplayName(displayName: string) : Promise<void> {
         if (this.auth.currentUser == null) { return; }
         return updateProfile(this.auth.currentUser, { displayName: displayName })
             .then(() => {
