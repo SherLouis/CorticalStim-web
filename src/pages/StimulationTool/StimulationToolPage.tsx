@@ -109,7 +109,7 @@ export default function StimulationToolPage() {
         return JSON.stringify(form.values) !== JSON.stringify(form_previous_values);
     }
 
-    useEffect(() => setHasUnsavedData(computeShouldDisplayUnsavedMessage()), [form.values, form_previous_values]);
+    useEffect(() => setHasUnsavedData(computeShouldDisplayUnsavedMessage()), [form.values, form_previous_values, computeShouldDisplayUnsavedMessage]);
 
     return (
         <Box mx={"sm"} h={"100%"} m={0} p={0}>

@@ -1,4 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, sendEmailVerification, updatePassword, Auth, setPersistence, browserSessionPersistence, AuthErrorCodes, deleteUser } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, sendEmailVerification, updatePassword, Auth, setPersistence, browserSessionPersistence, AuthErrorCodes, deleteUser, connectAuthEmulator } from "firebase/auth";
 import { User as FirebaseUser } from "firebase/auth";
 import firebaseApp from './firebaseApp'
 import { AuthenticationProvider } from "../../core/auth/authenticationProvider";
@@ -16,6 +16,9 @@ export default class FirebaseAuthenticationProvider implements AuthenticationPro
 
     constructor() {
         this.auth = getAuth(firebaseApp);
+        if(process.env.REACT_APP_ENVIRONMENT === "dev" && process.env.REACT_APP_FIREBASE_AUTH_USE_EMULATOR && process.env.REACT_APP_FIREBASE_AUTH_EMULATOR_URL){
+            connectAuthEmulator(this.auth, process.env.REACT_APP_FIREBASE_AUTH_EMULATOR_URL);
+        }
         setPersistence(this.auth, browserSessionPersistence);
         // Initialize auth state observer
         this.unsubscribe = this.initAuthStateObserver();

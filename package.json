@@ -27,7 +27,7 @@
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "dev:start_emulators": "firebase emulators:start",
-    "dev:start": "dotenvx run --env-file=config/.env.development -- react-scripts start",
+    "dev:start": "dotenvx run --env-file=config/.env.dev -- react-scripts start",
     "dev": "npm-run-all --parallel dev:start_emulators dev:start",
     "build": "react-scripts build",
     "test": "react-scripts test",

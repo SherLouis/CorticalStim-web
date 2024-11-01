@@ -1,6 +1,6 @@
-import { ActionIcon, Alert, Badge, Box, Button, Center, Chip, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Alert, Badge, Box, Button, Chip, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
-import { IconAlertCircle, IconCircleCheck, IconRestore, IconTrash } from "@tabler/icons-react";
+import { IconAlertCircle, IconCircleCheck, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { letters } from "../../../lib/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";

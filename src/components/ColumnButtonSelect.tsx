@@ -1,4 +1,4 @@
-import { Button, Group, ScrollArea, Stack } from "@mantine/core";
+import { Button, ScrollArea, Stack } from "@mantine/core";
 
 const ColumnButtonSelect = ({ data, onChange, currentValue }: ColumnButtonSelectProps) => {
 
