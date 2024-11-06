@@ -23,7 +23,7 @@
     "react-router-dom": "^6.19.0"
   },
   "scripts": {
-    "predeploy": "dotenvx run --env-file=config/.env.prod --react-scripts build",
+    "predeploy": "dotenvx run --env-file=config/.env.prod -- react-scripts build",
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "dev:start_emulators": "firebase emulators:start",
