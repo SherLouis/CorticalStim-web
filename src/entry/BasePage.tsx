@@ -1,6 +1,6 @@
 import { ActionIcon, AppShell, Avatar, Container, Group, Menu, Title, useMantineColorScheme } from '@mantine/core';
 import { PropsWithChildren } from 'react'
-import { IconSun, IconMoonStars, IconSettings, IconLogout } from '@tabler/icons-react';
+import { IconSun, IconMoonStars, IconSettings, IconLogout, IconLogin } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useAuthState } from '../context/AuthContext';
 import { TFunction } from 'i18next';
@@ -117,9 +117,6 @@ const ProfileMenu = ({ t }: { t: TFunction }) => {
         })
     }
 
-    if (!authState.isAuthenticated) {
-        return (<></>)
-    }
     return (
         <Menu shadow="md">
             <Menu.Target>
@@ -127,8 +124,9 @@ const ProfileMenu = ({ t }: { t: TFunction }) => {
             </Menu.Target>
 
             <Menu.Dropdown>
-                <Menu.Item icon={<IconSettings size={14} />} onClick={() => navigate(AppPath.ACCOUNT)}>{t('app.header.menu.profile')}</Menu.Item>
-                <Menu.Item icon={<IconLogout size={14} />} onClick={handleSignOut}>{t('app.header.menu.logout')}</Menu.Item>
+                {authState.isAuthenticated && <Menu.Item icon={<IconSettings size={14} />} onClick={() => navigate(AppPath.ACCOUNT)}>{t('app.header.menu.profile')}</Menu.Item>}
+                {authState.isAuthenticated && <Menu.Item icon={<IconLogout size={14} />} onClick={handleSignOut}>{t('app.header.menu.logout')}</Menu.Item>}
+                {!authState.isAuthenticated && <Menu.Item icon={<IconLogin size={14} />} onClick={() => navigate(AppPath.LOGIN)}>{t('app.header.menu.login')}</Menu.Item>}
             </Menu.Dropdown>
         </Menu>
     );

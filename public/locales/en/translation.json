@@ -5,7 +5,8 @@
             "toggle_theme": "Toggle color scheme",
             "menu": {
                 "profile": "Profile",
-                "logout": "Logout"
+                "logout": "Logout",
+                "login": "Login"
             }
         }
     },

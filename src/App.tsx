@@ -26,6 +26,25 @@ function App() {
     const { t } = useTranslation();
     const authProvider = new FirebaseAuthenticationProvider() as AuthenticationProvider;
 
+    const getRootElement = () => {
+        if (process.env.REACT_APP_REQUIRE_AUTH === "true") {
+            return (
+                <RequireAuth noAuthRedirect={AppPath.LOGIN}>
+                    <RequireVerifiedUser notVerifiedPage={AppPath.EMAIL_VERIFY}>
+                        <BasePage title={t('app.title')}>
+                            <StimulationToolPage />
+                        </BasePage>
+                    </RequireVerifiedUser>
+                </RequireAuth>);
+        }
+        else {
+            return (
+                <BasePage title={t('app.title')}>
+                    <StimulationToolPage />
+                </BasePage>);
+        }
+    }
+
     const router = createHashRouter([
         {
             path: AppPath.LOGIN,
@@ -61,14 +80,7 @@ function App() {
         },
         {
             path: "/*",
-            element:
-                <RequireAuth noAuthRedirect={AppPath.LOGIN}>
-                    <RequireVerifiedUser notVerifiedPage={AppPath.EMAIL_VERIFY}>
-                        <BasePage title={t('app.title')}>
-                            <StimulationToolPage />
-                        </BasePage>
-                    </RequireVerifiedUser>
-                </RequireAuth>
+            element: getRootElement()
         },
     ]);
 
