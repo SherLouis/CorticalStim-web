@@ -5,7 +5,8 @@
             "toggle_theme": "Changer la palette de couleurs",
             "menu": {
                 "profile": "Profile",
-                "logout": "Déconnexion"
+                "logout": "Déconnexion",
+                "login": "Connexion"
             }
         }
     },
