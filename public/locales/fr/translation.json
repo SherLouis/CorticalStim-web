@@ -46,6 +46,8 @@
                 "guide_select_contact_text": "Sélectionner un ou plusieurs contacts depuis la section ci-haut pour spécifier le positionnement anatomique.",
                 "guide_placement_title": "Spécifier le positionnement.",
                 "guide_placement_text": "Choisir un atlas anatomique et spécifier le positionnement du/des contact(s) sélectionné(s).",
+                "guide_goto_stimulations_title": "Tous les positionnements ont été configurés. Continuer à l'onglet Stimulations.",
+                "guide_goto_stimulations_text": "Le positionnement de tous les contacts a été configuré! Pour continuer, cliquer sur l'onglet \"Stimulations\" afin d'enregistrer les paramètres et résultats de stimulations.",
                 "selected_contacts": "Contact(s) sélectionné(s)",
                 "electrodeConfiguration": "Configuration des électrodes",
                 "contactDiameterLabel": "Diamètre des contacts (mm)",

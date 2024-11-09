@@ -46,6 +46,8 @@
                 "guide_select_contact_text": "Select one or more contacts from the above section to specify anatomical placement.",
                 "guide_placement_title": "Choose an anatomic atlas and specify selected contact(s) location.",
                 "guide_placement_text": "Choose an anatomic atlas from the bellow options and specify selected contact(s) location.",
+                "guide_goto_stimulations_title": "All contacts locations configured. Continue to Stimulations tab.",
+                "guide_goto_stimulations_text": "All contacts locations are configured! To continue, click on the \"Stimulations\" tab to record stimulation parameters and results.",
                 "selected_contacts": "Selected contact",
                 "electrodeConfiguration": "Electrodes Configuration",
                 "contactDiameterLabel": "Contact diameter (mm)",
