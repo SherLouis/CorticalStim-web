@@ -156,6 +156,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     }
 
     const updateDoneContacts = () => {
+        setDoneContacts([]);
         form.values.electrodes.forEach((electrode) => {
             electrode.stim_points.forEach((point, point_i) => {
                 if (point.location.done) {
@@ -196,6 +197,8 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         const electrode_parameters_selected = form.values.electrode_params.diameter > 0;
         const contacts_configured = form.values.electrodes.flatMap(e => e.stim_points).length > 0;
         const all_contacts_roi_configured = form.values.electrodes.flatMap(e => e.stim_points).every(sp => sp.location.done === true);
+        console.debug(all_contacts_roi_configured);
+        console.debug(form.values.electrodes);
         const contacts_selected = selectedContacts.length > 0;
         return (
             <Box h={"100%"} >
