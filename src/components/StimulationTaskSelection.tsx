@@ -1,4 +1,4 @@
-import { Box, Button, Group, Stack, Table, Title } from "@mantine/core";
+import { Box, Button, Group, Stack, Table, TextInput, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import ColumnButtonSelect from "./ColumnButtonSelect";
@@ -26,10 +26,20 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
         }
     }
 
+    const setOtherValue = (value: string) => {
+        form.setFieldValue("characteristic", "");
+        form.setFieldValue("subcategory", "");
+        form.setFieldValue("category", value);
+    }
+
     return (
         <Box w={"100%"} mah={"100%"}>
             <Stack h={"100%"} spacing={"xs"} w={"100%"}>
-                <Title order={3}>{t('pages.stimulationTool.stimulation.task_title')}</Title>
+                <Group w={"100%"} align="flex-end">
+                    <Title order={3}>{t('pages.stimulationTool.stimulation.task_title')}</Title>
+                    <Title order={6}>{t('pages.stimulationTool.stimulation.task_sub_title')}</Title>
+                </Group>
+
                 <TaskTable form={form} handleValueChange={handleValueChange} />
 
                 {last_values.length > 0 &&
@@ -44,6 +54,11 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
                             ))}
                         </Group>
                     </Box>}
+
+                <TextInput
+                    label={t('pages.stimulationTool.stimulation.task_other_value_label')}
+                    onChange={(v) => setOtherValue(v.currentTarget.value)}
+                    w={"100%"} />
             </Stack>
         </Box>
     );

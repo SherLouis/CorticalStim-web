@@ -8,9 +8,9 @@ const ColumnButtonSelect = ({ data, onChange, currentValue }: ColumnButtonSelect
 
     return (
         <ScrollArea w={"100%"} h={"100%"} py={"xs"} sx={{ padding: '0' }}>
-            <Stack spacing={"xs"} justify="flex-start">
+            <Stack spacing={0} justify="flex-start" align='stretch'>
                 {data.map((value, index) =>
-                    <Button w={"85%"} m={0} p={0}
+                    <Button w={"100%"} m={0} p={0}
                         key={value + index}
                         compact
                         variant={currentValue === value ? "filled" : "default"}

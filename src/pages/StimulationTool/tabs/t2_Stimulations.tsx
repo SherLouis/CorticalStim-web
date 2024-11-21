@@ -195,8 +195,9 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
                             <Group position="center" align="center" sx={{ flex: 2 }} h={"100%"}>
                                 {stimulationTime === '' &&
-                                    <Button size="md" onClick={() => setStimulationTime(new Date().toISOString())} leftIcon={<IconClockCheck />}>
-                                        <Text>{t('pages.stimulationTool.stimulation.set_time_label')}</Text>
+                                    <Button size="md"
+                                        onClick={() => setStimulationTime(new Date().toISOString())} leftIcon={<IconClockCheck />}>
+                                        <Text w={"9rem"} align='center' size={"sm"} sx={{whiteSpace: 'normal'}} >{t('pages.stimulationTool.stimulation.set_time_label')}</Text>
                                     </Button>
                                 }
                                 {stimulationTime !== '' &&
@@ -303,6 +304,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
             <Box h={"40%"} w={"100%"}>
                 <Group w={"100%"} h={"100%"} align='flex-start' >
                     <Box h={"100%"} sx={{ flex: 8 }}>
+                        <Title order={3}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
                         <ContactSelection
                             form_values={form.values}
                             selectedContact={selectedPoint}
@@ -353,7 +355,7 @@ const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onV
                         >
                             <Title order={4} w={"5%"} p={"md"}>{electrode.label}</Title>
 
-                            <Box h={"100%"} w={"95%"}>
+                            <Box h={"100%"} w={"95%"} my={0}>
                                 <SimpleGrid cols={10}>
                                     {electrode.stim_points.map((stim_point, stim_point_i) => {
                                         const pointId = getStimPointLabel(electrode.label, stim_point_i);
