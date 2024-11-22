@@ -34,7 +34,7 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
 
     return (
         <Box w={"100%"} mah={"100%"}>
-            <Stack h={"100%"} spacing={"xs"} w={"100%"}>
+            <Stack h={"100%"} spacing={0} w={"100%"}>
                 <Group w={"100%"} align="flex-end">
                     <Title order={3}>{t('pages.stimulationTool.stimulation.task_title')}</Title>
                     <Title order={6}>{t('pages.stimulationTool.stimulation.task_sub_title')}</Title>
@@ -56,6 +56,7 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
                     </Box>}
 
                 <TextInput
+                    size="xs"
                     label={t('pages.stimulationTool.stimulation.task_other_value_label')}
                     onChange={(v) => setOtherValue(v.currentTarget.value)}
                     w={"100%"} />

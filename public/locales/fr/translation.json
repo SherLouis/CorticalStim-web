@@ -102,6 +102,13 @@
                     "observed_effect_label": "Effet Observé",
                     "comments_label": "Commentaires",
                     "epi_manifestation": "Manif. epi.",
+                    "contact_in_epi_zone_label": "Contact situé dans la zone épileptogène ?",
+                    "contact_in_epi_zone_options": {
+                        "yes": "Oui",
+                        "no": "Non",
+                        "unknown": "Inconnu"
+                    },
+                    "contact_in_epi_zone_comments_label": "Commentaires",
                     "eeg": "EEG",
                     "last_used": "Derniers utilisés",
                     "epi_manifestation_options_labels": {

@@ -110,6 +110,13 @@
                         "atypical_crisis": "Atypical Crisis",
                         "other": "Other"
                     },
+                    "contact_in_epi_zone_label": "Contact in epileptogenic zone?",
+                    "contact_in_epi_zone_options": {
+                        "yes": "Yes",
+                        "no": "No",
+                        "unknown": "Unknown"
+                    },
+                    "contact_in_epi_zone_comments_label": "Comments",
                     "eeg_section": {
                         "post_discharge_label": "Post Discharge",
                         "duration_label": "Duration",

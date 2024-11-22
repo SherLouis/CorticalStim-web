@@ -47,6 +47,8 @@ export interface StimulationEffectsValues {
     observed_effect: StimulationObservedEffectFormValues;
     observed_effect_comments: string;
     epi_manifestation: string;
+    contact_in_epi_zone: string;
+    contact_in_epi_zone_comments: string;
     post_discharge: boolean;
     pd_duration: number;
     pd_local: string;

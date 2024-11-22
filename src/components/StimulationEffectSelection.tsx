@@ -35,6 +35,14 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
         ]
     }
 
+    const getContactInEpiZoneOptions = () => {
+        return [
+            { label: t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_options.yes'), value: 'yes' },
+            { label: t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_options.no'), value: 'no' },
+            { label: t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_options.unknown'), value: 'unknown' }
+        ]
+    }
+
     return (
         <Box w={"100%"} h={"100%"}>
             <Group w={"100%"} h={"100%"} align='flex-start'>
@@ -81,6 +89,23 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
                                         {...form.getInputProps('epi_manifestation')}
                                     />
                                 </Stack>
+                            </Box>
+                            <Box w={"100%"}>
+                                <Radio.Group
+                                    defaultValue="unknown" label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_label')} >
+                                    <Group>
+                                        {getContactInEpiZoneOptions().map((option, i) =>
+                                            <Radio
+                                                key={"in_epi_zone_" + i}
+                                                label={option.label}
+                                                {...form.getInputProps('contact_in_epi_zone')}
+                                            />)}
+                                    </Group>
+                                </Radio.Group>
+                                <TextInput
+                                    label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_comments_label')}
+                                    {...form.getInputProps('contact_in_epi_zone_comments')}
+                                />
                             </Box>
                         </Stack>
                         <Stack sx={{ flex: 6 }}>
@@ -202,7 +227,7 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: Cognitive
 
     return (
         <ScrollArea w={"100%"} h={"100%"} py={0} sx={{ padding: '0' }}>
-            <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0, overflow:"scroll" }}>
+            <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0, overflow: "scroll" }} verticalSpacing={0}>
                 <thead>
                     <tr>
                         <th>Class</th>
@@ -311,7 +336,7 @@ interface EEGSectionProps {
     t: TFunction;
 }
 
-export const formatEpiManifestation= (epiManif: string, t: TFunction): string => {
+export const formatEpiManifestation = (epiManif: string, t: TFunction): string => {
     return (epiManif) !== '' ? t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.' + epiManif) : '-'
 }
 
