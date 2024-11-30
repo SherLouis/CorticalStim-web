@@ -157,7 +157,10 @@
                     "task_title": "Tâche",
                     "effects_group_title": "Effets",
                     "observed_effect_title": "Effet cognitif",
+                    "observed_effect_comments_title": "Effet observé",
                     "epi_manifestation_title": "Manif. Epi.",
+                    "contact_in_epi_zone_title": "Dans zone Epi.",
+                    "contact_in_epi_zone_comments_title": "Dans zone Epi. commentaires",
                     "post_discharge_title": "Post Décharge",
                     "post_discharge_details_title": "Post Décharge - Details",
                     "crisis_title": "Crise"

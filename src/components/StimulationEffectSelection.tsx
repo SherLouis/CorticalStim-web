@@ -92,13 +92,15 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
                             </Box>
                             <Box w={"100%"}>
                                 <Radio.Group
-                                    defaultValue="unknown" label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_label')} >
+                                    defaultValue="unknown"
+                                    label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_label')}
+                                    {...form.getInputProps('contact_in_epi_zone')}>
                                     <Group>
                                         {getContactInEpiZoneOptions().map((option, i) =>
                                             <Radio
                                                 key={"in_epi_zone_" + i}
                                                 label={option.label}
-                                                {...form.getInputProps('contact_in_epi_zone')}
+                                                value={option.value}
                                             />)}
                                     </Group>
                                 </Radio.Group>

@@ -33,7 +33,10 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                             lenght_path: stim.parameters.lenght_path,
                             task: formatSelectedTask(stim.task),
                             cognitive_effect: formatSelectedObservedEffect(stim.effect.observed_effect),
+                            observed_effect_comments: stim.effect.observed_effect_comments,
                             epi_manifestation: formatEpiManifestation(stim.effect.epi_manifestation, t),
+                            contact_in_epi_zone: stim.effect.contact_in_epi_zone,
+                            contact_in_epi_zone_comments: stim.effect.contact_in_epi_zone_comments,
                             post_discharge: stim.effect.post_discharge,
                             post_discharge_details: stim.effect.post_discharge ? stim.effect.pd_duration + 's, ' + stim.effect.pd_local + ', ' + stim.effect.pd_type : '-',
                             crisis: stim.effect.crisis
@@ -134,7 +137,10 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         },
         { accessor: 'task', title: t('pages.stimulationTool.summary.results_table.task_title'), ...allColumnsProps },
         { accessor: 'cognitive_effect', title: t('pages.stimulationTool.summary.results_table.observed_effect_title'), ...allColumnsProps },
+        { accessor: 'observed_effect_comments', title: t('pages.stimulationTool.summary.results_table.observed_effect_comments_title'), defaultToggle: false, ...allColumnsProps },
         { accessor: 'epi_manifestation', title: t('pages.stimulationTool.summary.results_table.epi_manifestation_title'), ...allColumnsProps },
+        { accessor: 'contact_in_epi_zone', title: t('pages.stimulationTool.summary.results_table.contact_in_epi_zone_title'), ...allColumnsProps },
+        { accessor: 'contact_in_epi_zone_comments', title: t('pages.stimulationTool.summary.results_table.contact_in_epi_zone_comments_title'), defaultToggle: false, ...allColumnsProps },
         {
             accessor: 'post_discharge',
             title: t('pages.stimulationTool.summary.results_table.post_discharge_title'),
@@ -246,7 +252,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                         {
                             id: 'effects_group',
                             title: t('pages.stimulationTool.summary.results_table.effects_group_title'),
-                            columns: effectiveColumns.filter((c) => ['cognitive_effect', 'epi_manifestation', 'post_discharge', 'post_discharge_details', 'crisis'].includes(c.accessor))
+                            columns: effectiveColumns.filter((c) => ['cognitive_effect', 'observed_effect_comments', 'epi_manifestation', 'contact_in_epi_zone', 'contact_in_epi_zone_comments', 'post_discharge', 'post_discharge_details', 'crisis'].includes(c.accessor))
                         }
                     ]}
                 />
@@ -268,6 +274,8 @@ interface Result {
     task: string;
     cognitive_effect: string;
     epi_manifestation: string;
+    contact_in_epi_zone: string;
+    contact_in_epi_zone_comments: string;
     post_discharge: boolean;
     post_discharge_details: string;
     crisis: boolean;
