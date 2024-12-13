@@ -279,6 +279,7 @@
         "okButtonLabel": "OK",
         "resetButtonLabel": "Reset",
         "yes": "yes",
-        "no": "no"
+        "no": "no",
+        "unknown": "unknown"
     }
 }

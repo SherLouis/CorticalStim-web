@@ -67,6 +67,19 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         return t('common.no');
     }
 
+    const formatYesNoUnknown = (value: string) => {
+        switch (value.toLowerCase()) {
+            case "yes":
+                return t('common.yes');
+            case "no":
+                return t('common.no');
+            case "unknown":
+                return t('common.unknown');
+            default:
+                return value
+        }
+    }
+
     const [records, setRecords] = useState(getRecordsFromForm());
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'pointId', direction: 'desc' });
     const [pointIdList, setPointIdListHandlers] = useListState(filters ? filters.pointIds : []);
@@ -139,7 +152,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         { accessor: 'cognitive_effect', title: t('pages.stimulationTool.summary.results_table.observed_effect_title'), ...allColumnsProps },
         { accessor: 'observed_effect_comments', title: t('pages.stimulationTool.summary.results_table.observed_effect_comments_title'), defaultToggle: false, ...allColumnsProps },
         { accessor: 'epi_manifestation', title: t('pages.stimulationTool.summary.results_table.epi_manifestation_title'), ...allColumnsProps },
-        { accessor: 'contact_in_epi_zone', title: t('pages.stimulationTool.summary.results_table.contact_in_epi_zone_title'), ...allColumnsProps },
+        { accessor: 'contact_in_epi_zone', title: t('pages.stimulationTool.summary.results_table.contact_in_epi_zone_title'), render: (result) => formatYesNoUnknown(result.contact_in_epi_zone), ...allColumnsProps },
         { accessor: 'contact_in_epi_zone_comments', title: t('pages.stimulationTool.summary.results_table.contact_in_epi_zone_comments_title'), defaultToggle: false, ...allColumnsProps },
         {
             accessor: 'post_discharge',
