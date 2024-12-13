@@ -159,16 +159,19 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     }
 
     const CentralBar = () => {
+        const stimPointSelected = form.values.electrodes.length !== 0 && form.values.electrodes.flatMap(e => e.stim_points).length !== 0
         return (
             <Box h={"100%"}>
-                <Group align='center' position='center' h={"100%"} w={"100%"} display={form.values.electrodes.length === 0 || form.values.electrodes.flatMap(e => e.stim_points).length === 0 ? "block" : "none"}>
+                {/** No contact selected */}
+                <Group align='center' position='center' h={"100%"} w={"100%"} display={!stimPointSelected ? "block" : "none"}>
                     <Alert h={"100%"}
                         icon={<IconAlertCircle size="1rem" />}
                         title={t('pages.stimulationTool.stimulation.guide_alert_no_electrode_title')}>
                         {t('pages.stimulationTool.stimulation.guide_alert_no_electrode_text')}
                     </Alert>
                 </Group>
-                <Box h={"100%"} display={form.values.electrodes.length > 0 && form.values.electrodes.flatMap(e => e.stim_points).length > 0 ? 'block' : 'none'}>
+                {/** Contact selected */}
+                <Box h={"100%"} display={stimPointSelected ? 'block' : 'none'}>
                     <Group align='center' position='center' h={"100%"} w={"100%"} display={selectedPoint === "" ? "block" : "none"}>
                         <Alert h={"100%"}
                             icon={<IconAlertCircle size="1rem" />}
