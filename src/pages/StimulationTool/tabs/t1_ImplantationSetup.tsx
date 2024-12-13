@@ -201,7 +201,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         return (
             <Box h={"100%"} >
                 {/** Electrode parameters are not set */}
-                <Box h={"100%"} display={!electrode_parameters_selected ? "block" : "none"}>
+                <Box h={"100%"} display={!electrode_parameters_selected && !contacts_selected ? "block" : "none"}>
                     <Alert w={"100%"} h={"100%"}
                         icon={<IconAlertCircle size="1rem" />}
                         title={t('pages.stimulationTool.implantation.guide_params_title')}>
@@ -210,7 +210,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Box>
 
                 {/** No contact exists */}
-                <Box h={"100%"} display={electrode_parameters_selected && !contacts_configured ? "block" : "none"}>
+                <Box h={"100%"} display={electrode_parameters_selected && !contacts_configured && !contacts_selected ? "block" : "none"}>
                     <Alert w={"100%"} h={"100%"}
                         display={form.values.electrodes.flatMap(e => e.stim_points).length === 0 ? "flex" : "none"}
                         icon={<IconAlertCircle size="1rem" />}
@@ -220,7 +220,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Box >
 
                 {/** All contacts done */}
-                <Box h={"100%"} display={electrode_parameters_selected && contacts_configured && all_contacts_roi_configured ? "block" : "none"}>
+                <Box h={"100%"} display={electrode_parameters_selected && contacts_configured && all_contacts_roi_configured && !contacts_selected ? "block" : "none"}>
                     <Alert w={"100%"} h={"100%"}
                         icon={<IconAlertCircle size="1rem" />}
                         title={t("pages.stimulationTool.implantation.guide_goto_stimulations_title")}>
@@ -247,7 +247,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Box>
 
                 {/** Contact(s) selected */}
-                <Box h={"100%"} w={"100%"} display={electrode_parameters_selected && contacts_configured && !all_contacts_roi_configured && contacts_selected ? "block" : "none"}>
+                <Box h={"100%"} w={"100%"} display={electrode_parameters_selected && contacts_configured && contacts_selected ? "block" : "none"}>
                     <Group position='apart' align='flex-start' h={"100%"} w={"100%"}>
                         <Stack w={"80%"} h={"100%"} spacing={0}>
                             {/** Selected contacts */}
