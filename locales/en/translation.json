@@ -83,6 +83,8 @@
                 "guide_alert_text": "You will then be able to select the performed task, stimulation parameters and take note of the observed effects.",
                 "guide_alert_no_electrode_title": "No electrode configured",
                 "guide_alert_no_electrode_text": "Go to the implantation tab to configure electrode and contact placement.",
+                "guide_alert_fill_task_and_params_title": "Configure stimulation parameters and select task performed",
+                "guide_alert_fill_task_and_params_text": "Please configure stimulation parameters (amplitude, frequency, duration) for selected contact. If a task is performed for this stimulation, please select it (upper right portion of the screen). When ready, press the button to save the time of the stimulation.",
                 "contacts_title": "Contacts",
                 "parameters_title": "Parameters",
                 "amplitude_label": "Amplitude",
@@ -110,6 +112,13 @@
                         "atypical_crisis": "Atypical Crisis",
                         "other": "Other"
                     },
+                    "contact_in_epi_zone_label": "Contact in epileptogenic zone?",
+                    "contact_in_epi_zone_options": {
+                        "yes": "Yes",
+                        "no": "No",
+                        "unknown": "Unknown"
+                    },
+                    "contact_in_epi_zone_comments_label": "Comments",
                     "eeg_section": {
                         "post_discharge_label": "Post Discharge",
                         "duration_label": "Duration",
@@ -150,7 +159,10 @@
                     "task_title": "Task",
                     "effects_group_title": "Effects",
                     "observed_effect_title": "Cognitive Effect",
+                    "observed_effect_comments_title": "Observed Effect",
                     "epi_manifestation_title": "Epi. Manif.",
+                    "contact_in_epi_zone_title": "In Epi. Zone",
+                    "contact_in_epi_zone_comments_title": "In Epi. Zone Comments",
                     "post_discharge_title": "Post Discharge",
                     "post_discharge_details_title": "Post Discharge Details",
                     "crisis_title": "Crisis"
@@ -269,6 +281,7 @@
         "okButtonLabel": "OK",
         "resetButtonLabel": "Reset",
         "yes": "yes",
-        "no": "no"
+        "no": "no",
+        "unknown": "unknown"
     }
 }

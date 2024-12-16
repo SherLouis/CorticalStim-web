@@ -83,6 +83,8 @@
                 "guide_alert_text": "Vous pourrez ensuite préciser la tâche effectuée, les paramètres de stimulation et noter les effets observés.",
                 "guide_alert_no_electrode_title": "Aucune électrode configurée",
                 "guide_alert_no_electrode_text": "Allez à l'onglet Implantation afin de configurer la disposition des électrodes et le positionnement des contacts.",
+                "guide_alert_fill_task_and_params_title": "Configurez les paramètres de la stimulation et la tâche réalisée.",
+                "guide_alert_fill_task_and_params_text": "Configurez les paramètres de la stimulation (amplitude, fréquence, durée) pour le point sélectionné. Si une tâche est réalisée lors de cette stimulation, veuillez la sélectionner (portion supérieure droite de l'écran). Lorsque prêt, appuyez sur le bouton pour enregistrer l'heure de la stimulation.",
                 "contacts_title": "Contacts",
                 "parameters_title": "Paramètres",
                 "amplitude_label": "Amplitude",
@@ -102,6 +104,13 @@
                     "observed_effect_label": "Effet Observé",
                     "comments_label": "Commentaires",
                     "epi_manifestation": "Manif. epi.",
+                    "contact_in_epi_zone_label": "Contact situé dans la zone épileptogène ?",
+                    "contact_in_epi_zone_options": {
+                        "yes": "Oui",
+                        "no": "Non",
+                        "unknown": "Inconnu"
+                    },
+                    "contact_in_epi_zone_comments_label": "Commentaires",
                     "eeg": "EEG",
                     "last_used": "Derniers utilisés",
                     "epi_manifestation_options_labels": {
@@ -150,7 +159,10 @@
                     "task_title": "Tâche",
                     "effects_group_title": "Effets",
                     "observed_effect_title": "Effet cognitif",
+                    "observed_effect_comments_title": "Effet observé",
                     "epi_manifestation_title": "Manif. Epi.",
+                    "contact_in_epi_zone_title": "Dans zone Epi.",
+                    "contact_in_epi_zone_comments_title": "Dans zone Epi. commentaires",
                     "post_discharge_title": "Post Décharge",
                     "post_discharge_details_title": "Post Décharge - Details",
                     "crisis_title": "Crise"
@@ -269,6 +281,7 @@
         "okButtonLabel": "OK",
         "resetButtonLabel": "Réinitialiser",
         "yes": "oui",
-        "no": "non"
+        "no": "non",
+        "unknown": "inconnu"
     }
 }
