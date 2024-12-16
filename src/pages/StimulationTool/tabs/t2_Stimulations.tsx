@@ -159,10 +159,17 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     }
 
     const CentralBar = () => {
-        const stimPointSelected = form.values.electrodes.length !== 0 && form.values.electrodes.flatMap(e => e.stim_points).length !== 0
+        const formatParameters = (params: StimulationParametersFormValues): string => {
+            return t('pages.stimulationTool.stimulation.amplitude_label') + ': ' + params.amplitude + 'mA' + ', ' +
+                t('pages.stimulationTool.stimulation.frequency_label') + ': ' + params.frequency + 'Hz' + ', ' +
+                t('pages.stimulationTool.stimulation.duration_label') + ': ' + params.duration + 's' + ', ' +
+                t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + 'ms';
+        }
+        const stimPointSelected = form.values.electrodes.length !== 0 && form.values.electrodes.flatMap(e => e.stim_points).length !== 0;
+        const stimTimeSet = stimulationTime !== '';
         return (
             <Box h={"100%"}>
-                {/** No contact selected */}
+                {/** No Contact exists */}
                 <Group align='center' position='center' h={"100%"} w={"100%"} display={!stimPointSelected ? "block" : "none"}>
                     <Alert h={"100%"}
                         icon={<IconAlertCircle size="1rem" />}
@@ -170,8 +177,9 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         {t('pages.stimulationTool.stimulation.guide_alert_no_electrode_text')}
                     </Alert>
                 </Group>
-                {/** Contact selected */}
+                {/** Contact Exist */}
                 <Box h={"100%"} display={stimPointSelected ? 'block' : 'none'}>
+                    {/** No contact selected */}
                     <Group align='center' position='center' h={"100%"} w={"100%"} display={selectedPoint === "" ? "block" : "none"}>
                         <Alert h={"100%"}
                             icon={<IconAlertCircle size="1rem" />}
@@ -179,41 +187,42 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                             {t('pages.stimulationTool.stimulation.guide_alert_text')}
                         </Alert>
                     </Group>
+                    {/** Contact selected */}
                     <Box h={"100%"} display={selectedPoint !== "" ? "block" : "none"}>
                         <Group position="center" align="center" h={"100%"} w={"100%"}>
-                            <Stack sx={{ flex: 5 }} h={"100%"} spacing={"xs"}>
-                                <Group position="left" align="center" h={"50%"} w={"100%"}>
+                            <Stack sx={{ flex: 5 }} h={"100%"} w={"100%"} spacing={"0"}>
+                                <Group position="left" w={"100%"} align="center" spacing={"xs"} noWrap>
                                     <Text><strong>{t('pages.stimulationTool.stimulation.selectedStimPoint')}:</strong> </Text>
                                     <Badge size="lg" variant="filled">{selectedPoint}</Badge>
                                     <Text>({getSelectedPointLocation()})</Text>
                                 </Group>
-                                <Stack align="left" h={"50%"} w={"100%"} spacing={"0"}>
-                                    <Text><strong>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}: </strong>{getSelectedPointObservedEffect()}</Text>
-                                    <Group>
-                                        <Text><strong>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}:</strong> {getSelectedPointEpiManifEffect()}</Text>
-                                        <Text><strong>{t('pages.stimulationTool.stimulation.effect.eeg')} :</strong> {getSelectedPointEEGEffect()}</Text>
-                                    </Group>
-                                </Stack>
+                                <Text><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
+                                <Text><strong>{t('pages.stimulationTool.stimulation.parameters_title')} : </strong>{formatParameters(params_form.values)}</Text>
                             </Stack>
 
-                            <Group position="center" align="center" sx={{ flex: 2 }} h={"100%"}>
-                                {stimulationTime === '' &&
+                            {<Group position="center" align="center" sx={{ flex: 2 }} h={"100%"} spacing={"xs"}>
+                                {!stimTimeSet &&
                                     <Button size="md"
                                         onClick={() => setStimulationTime(new Date().toISOString())} leftIcon={<IconClockCheck />}>
                                         <Text w={"9rem"} align='center' size={"sm"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label')}</Text>
                                     </Button>
                                 }
-                                {stimulationTime !== '' &&
+                                {stimTimeSet &&
                                     <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
                                 }
                                 <Button variant="filled" size="md" color="green" leftIcon={<IconCircleCheck />}
-                                    display={stimulationTime !== '' ? 'block' : 'none'}
+                                    display={stimTimeSet ? 'block' : 'none'}
                                     onClick={handleSubmit} disabled={stimulationTime === ""}>
                                     {t('pages.stimulationTool.stimulation.saveButtonLabel')}
                                 </Button>
-                            </Group>
-                            <Stack sx={{ flex: 5 }} h={"100%"} align="center" spacing={"sm"}>
-                                <Text h={"10%"}><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
+                            </Group>}
+
+                            <Stack sx={{ flex: 5 }} h={"100%"} w={"100%"} align="center" spacing={"sm"} display={stimTimeSet ? 'block' : 'none'}>
+                                <Text><strong>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}: </strong>{getSelectedPointObservedEffect()}</Text>
+                                <Group>
+                                    <Text><strong>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}:</strong> {getSelectedPointEpiManifEffect()}</Text>
+                                    <Text><strong>{t('pages.stimulationTool.stimulation.effect.eeg')} :</strong> {getSelectedPointEEGEffect()}</Text>
+                                </Group>
                             </Stack>
                         </Group>
                     </Box >
@@ -339,7 +348,16 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
             </Box>
 
             <Box h={"40%"}>
-                {selectedPoint !== '' && stimulationTime !== '' &&
+                { /** Stimulation point selected, but stimulation time not set => Display instructions to specify task and stimulation parameters */
+                    selectedPoint !== '' && stimulationTime === '' &&
+                    <Alert h={"100%"}
+                        icon={<IconAlertCircle size="1rem" />}
+                        title={t('pages.stimulationTool.stimulation.guide_alert_fill_task_and_params_title')}>
+                        {t('pages.stimulationTool.stimulation.guide_alert_fill_task_and_params_text')}
+                    </Alert>
+                }
+                { /** Stimulation point selected, and stimulation time is set => Display Stimulation Effect form */
+                    selectedPoint !== '' && stimulationTime !== '' &&
                     <StimulationEffectSelection form={effect_form} observed_effect_last_values={lastCognitiveEffectValues} />
                 }
             </Box>
