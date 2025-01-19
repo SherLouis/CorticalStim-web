@@ -21,7 +21,7 @@
                 "loading_data_from_file_message": "Please wait while the data is being loaded",
                 "success_loaded_from_file_title": "Data loaded",
                 "success_loaded_from_file_message": "Data successfuly loaded from files",
-                "failed_loading_from_file_title": "Données not loaded",
+                "failed_loading_from_file_title": "Data not loaded",
                 "failed_loading_from_file_message": "An error occured while trying to load data from selected file"
             },
             "validation": {
