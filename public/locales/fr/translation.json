@@ -15,7 +15,7 @@
             "button_download_form": "Sauvegarder sur disque",
             "button_open_form": "Ouvrir une sauvegarde",
             "unsaved_alert_title": "Changements non sauvegardés",
-            "unsaved_alert_text": "Sauvegarder sur disquer pour éviter de perdre les changements effectués.",
+            "unsaved_alert_text": "Sauvegarder sur disque pour éviter de perdre les changements effectués.",
             "notifications": {
                 "loading_data_from_file_title": "Chargement des données depuis le fichier...",
                 "loading_data_from_file_message": "SVP patienter pendant que les données sont chargées",
@@ -41,8 +41,8 @@
                 "guide_params_title": "Sélectionnez la configuration des électrodes.",
                 "guide_params_text": "Choisir parmi les choix de configuration proposés ou entrer manuellement les paramètres d'implantation.",
                 "guide_configure_electrodes_title": "Configurer les électrodes.",
-                "guide_configure_electrodes_text": "Pour chaque électrode, spécifier l'étiquette, la latéralisation et le nombre de contacts. Pour ajouter une électrode, cliquer sur le boutton +.",
-                "guide_select_contact_title": "Sélectrionner un ou plusieurs contacts pour spécifier le positionnement.",
+                "guide_configure_electrodes_text": "Pour chaque électrode, spécifier l'étiquette, la latéralisation et le nombre de contacts. Pour ajouter une électrode, cliquer sur le bouton +.",
+                "guide_select_contact_title": "Sélectionner un ou plusieurs contacts pour spécifier le positionnement.",
                 "guide_select_contact_text": "Sélectionner un ou plusieurs contacts depuis la section ci-haut pour spécifier le positionnement anatomique.",
                 "guide_placement_title": "Spécifier le positionnement.",
                 "guide_placement_text": "Choisir un atlas anatomique et spécifier le positionnement du/des contact(s) sélectionné(s).",
@@ -64,8 +64,8 @@
                 "destrieuxRegionLabel": "Region Destrieux",
                 "whiteMatter": "Matière Blanche",
                 "thisIsWhiteMatter": "Ceci est de la matière blanche",
-                "selectAllContactsButtonLabel": "Selectionner tous",
-                "selectAllNotDoneContactsButtonLabel": "Selectionner tous non-assignés",
+                "selectAllContactsButtonLabel": "Sélectionner tous",
+                "selectAllNotDoneContactsButtonLabel": "Sélectionner tous non-assignés",
                 "selected_location": "Positionnement sélectionné",
                 "saveButtonLabel": "Enregistrer",
                 "validations": {
@@ -122,8 +122,8 @@
                     "eeg_section": {
                         "post_discharge_label": "Post Décharge",
                         "duration_label": "Durée",
-                        "localisation_label": "Localisation",
-                        "localisation_options": {
+                        "localization_label": "Localisation",
+                        "localization_options": {
                             "local": "Locale",
                             "regional": "Régionale",
                             "wide": "Vaste"

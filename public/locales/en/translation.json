@@ -20,9 +20,9 @@
                 "loading_data_from_file_title": "Loading data from selected file...",
                 "loading_data_from_file_message": "Please wait while the data is being loaded",
                 "success_loaded_from_file_title": "Data loaded",
-                "success_loaded_from_file_message": "Data successfuly loaded from files",
+                "success_loaded_from_file_message": "Data successfully loaded from files",
                 "failed_loading_from_file_title": "Data not loaded",
-                "failed_loading_from_file_message": "An error occured while trying to load data from selected file"
+                "failed_loading_from_file_message": "An error occurred while trying to load data from selected file"
             },
             "validation": {
                 "electrode_params": {
@@ -90,7 +90,7 @@
                 "amplitude_label": "Amplitude",
                 "frequency_label": "Frequency",
                 "duration_label": "Duration",
-                "length_path_label": "Lenght Path",
+                "length_path_label": "Length Path",
                 "task_title": "Task",
                 "task_sub_title": "Click to select",
                 "task_last_used_title": "Last used",
@@ -112,7 +112,7 @@
                         "atypical_crisis": "Atypical Crisis",
                         "other": "Other"
                     },
-                    "contact_in_epi_zone_label": "Contact in epileptogenic zone?",
+                    "contact_in_epi_zone_label": "Contact located in the epileptogenic zone?",
                     "contact_in_epi_zone_options": {
                         "yes": "Yes",
                         "no": "No",
@@ -122,8 +122,8 @@
                     "eeg_section": {
                         "post_discharge_label": "Post Discharge",
                         "duration_label": "Duration",
-                        "localisation_label": "Localisation",
-                        "localisation_options": {
+                        "localization_label": "Localization",
+                        "localization_options": {
                             "local": "Local",
                             "regional": "Regional",
                             "wide": "Wide"
