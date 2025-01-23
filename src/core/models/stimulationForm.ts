@@ -27,6 +27,7 @@ export interface StimulationLocationFormValues {
     vep: string;
     destrieux: string;
     mni: { x: number; y: number; z: number };
+    white_matter: string;
     done: boolean;
 }
 

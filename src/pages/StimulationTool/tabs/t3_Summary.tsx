@@ -48,7 +48,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
     const formatPointLocation = (point_location: StimulationLocationFormValues) => {
         switch (point_location.type) {
             case 'white':
-                return t('pages.stimulationTool.implantation.whiteMatter');
+                return point_location.white_matter;
             case 'vep':
                 return point_location.vep;
             case 'destrieux':

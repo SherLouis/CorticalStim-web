@@ -324,13 +324,15 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
             <Box h={"50%"} w={"100%"}>
                 <Group w={"100%"} h={"100%"} align='flex-start' >
                     <Box h={"100%"} sx={{ flex: 8 }}>
-                        <Title order={3}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
-                        <ContactSelection
-                            form_values={form.values}
-                            selectedContact={selectedPoint}
-                            onSelectedChanged={handleSelectedPointChanged}
-                            onViewResultsForPoint={handleViewResultsForPoint}
-                        />
+                        <Title order={3} h={"10%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
+                        <Box h={"90%"} w={"100%"} p={0} m={0}>
+                            <ContactSelection
+                                form_values={form.values}
+                                selectedContact={selectedPoint}
+                                onSelectedChanged={handleSelectedPointChanged}
+                                onViewResultsForPoint={handleViewResultsForPoint}
+                            />
+                        </Box>
                     </Box>
                     <Box h={"100%"} sx={{ flex: 4 }}>
                         {selectedPoint !== '' &&
@@ -373,12 +375,12 @@ interface StimulationTabProps extends TabProperties {
 
 const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onViewResultsForPoint }: ContactSelectionProps) => {
     return (
-        <ScrollArea w={"100%"} h={"100%"} sx={{ alignItems: "center", padding: '0' }}>
+        <ScrollArea w={"100%"} h={"100%"} sx={{ alignItems: "center", padding: '0', margin: '0' }}>
             {form_values.electrodes.map((electrode, electrode_i) => {
                 return (
                     <Stack key={'div_group_electrode_' + electrode_i}>
                         <Group noWrap
-                            spacing='md'
+                            spacing='sm'
                             position='left'
                             align='center'
                             mt={'sm'}
@@ -386,9 +388,15 @@ const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onV
                             w={"100%"}
                         >
                             <Title order={4} w={"5%"} p={"md"}>{electrode.label}</Title>
-
                             <Box h={"100%"} w={"95%"} my={0}>
-                                <SimpleGrid cols={10}>
+                                <SimpleGrid cols={10}
+                                    breakpoints={[
+                                        { maxWidth: '90rem', cols: 8, spacing: 'sm' },
+                                        { maxWidth: '70rem', cols: 6, spacing: 'sm' },
+                                        { maxWidth: '50rem', cols: 4, spacing: 'xs' },
+                                        { maxWidth: '40rem', cols: 3, spacing: 'xs' },
+                                        { maxWidth: '35rem', cols: 2, spacing: 'sm' },
+                                    ]}>
                                     {electrode.stim_points.map((stim_point, stim_point_i) => {
                                         const pointId = getStimPointLabel(electrode.label, stim_point_i);
                                         const nbStims = stim_point.stimulations.length;
@@ -396,11 +404,11 @@ const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onV
                                         return (
                                             <Popover position='bottom' opened={selectedContact === pointId} key={pointId}>
                                                 <Popover.Target>
-                                                    <Container>
-                                                        <Chip size='sm'
+                                                    <Container p={0}>
+                                                        <Chip size='xs'
                                                             value={pointId}
                                                             key={pointId}
-                                                            onChange={(checked) => onSelectedChanged(selectedContact !== pointId ? pointId : "")}
+                                                            onChange={(_checked) => onSelectedChanged(selectedContact !== pointId ? pointId : "")}
                                                             checked={selectedContact === pointId || nbStims > 0}
                                                             variant={selectedContact === pointId || nbStims > 0 ? 'filled' : 'light'}
                                                             color={color}>

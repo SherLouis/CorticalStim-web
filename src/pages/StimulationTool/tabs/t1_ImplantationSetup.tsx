@@ -55,6 +55,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.type`, values.type);
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.vep`, values.vep);
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.destrieux`, values.destrieux);
+                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.white_matter`, values.white_matter);
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.mni`, { x: values.mni_x, y: values.mni_y, z: values.mni_z });
                             form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.done`, true);
                         }
@@ -69,7 +70,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     }
 
     const getNewElectrodeLocationFromForm = () => {
-        if (locationForm.values.type === 'gray') { return t('pages.stimulationTool.implantation.grayMatter'); }
+        if (locationForm.values.type === 'white') { return t('pages.stimulationTool.implantation.whiteMatter') + ' (' + locationForm.values.white_matter + ')'; }
         if (locationForm.values.type === 'vep') { return "vep (" + locationForm.values.vep + ")"; }
         if (locationForm.values.type === 'destrieux') { return "Destrieux (" + locationForm.values.destrieux + ")"; }
         if (locationForm.values.type === 'mni') { return "MNI (" + locationForm.values.mni_x + ',' + locationForm.values.mni_y + ',' + locationForm.values.mni_z + ")"; }
@@ -100,10 +101,12 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         setSelectedContacts([]);
     }
 
+    // TODO : adjust for white matter
     const getSelectedContactsROIValue = (): ElectrodeLocationFormValues => {
         var roi_type = "";
         var roi_vep = "";
         var roi_destrieux = "";
+        var roi_wm = "";
         var roi_mni = { x: 0, y: 0, z: 0 };
         selectedContacts.forEach((selectedStimPoint, selectedStimPoint_i) => {
             const electrode_label = selectedStimPoint.split('/').slice(0, -1).join('/');
@@ -112,21 +115,24 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
             const vep = stimPoint?.location.vep;
             const destrieux = stimPoint?.location.destrieux;
             const mni = stimPoint?.location.mni;
+            const wm = stimPoint?.location.white_matter;
 
             if (selectedStimPoint_i === 0) {
                 roi_vep = vep !== undefined ? vep : roi_vep;
                 roi_destrieux = destrieux !== undefined ? destrieux : roi_destrieux;
                 roi_mni = mni !== undefined ? mni : roi_mni;
+                roi_wm = wm !== undefined ? wm : roi_wm;
                 roi_type = type !== undefined ? type : roi_type;
             }
             else {
                 if ((vep === undefined && roi_vep !== "") || (vep !== undefined && roi_vep !== vep)) { roi_vep = ""; }
+                if ((wm === undefined && roi_wm !== "") || (wm !== undefined && roi_wm !== wm)) { roi_wm = ""; }
                 if ((destrieux === undefined && roi_destrieux !== "") || (destrieux !== undefined && roi_destrieux !== destrieux)) { roi_destrieux = ""; }
                 if ((mni === undefined && roi_mni.x !== 0) || (mni !== undefined && roi_mni.x !== 0)) { roi_mni = { x: 0, y: 0, z: 0 }; }
                 if ((type === undefined && roi_type !== "") || (type !== undefined && roi_type !== type)) { roi_type = "vep"; }
             }
         });
-        const return_value = { vep: roi_vep, destrieux: roi_destrieux, mni_x: roi_mni.x, mni_y: roi_mni.y, mni_z: roi_mni.z, type: roi_type };
+        const return_value = { vep: roi_vep, destrieux: roi_destrieux, white_matter:roi_wm, mni_x: roi_mni.x, mni_y: roi_mni.y, mni_z: roi_mni.z, type: roi_type };
         return return_value;
     }
 

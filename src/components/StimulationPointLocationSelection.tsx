@@ -110,7 +110,7 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
                 </Input.Wrapper>
                 <ScrollArea h={"45vh"}>
                     {form.getInputProps('type').value === "white" &&
-                        <Title order={4}>{t('pages.stimulationTool.implantation.thisIsWhiteMatter')}</Title>
+                        <WhiteMatterSelection form={form} />
                     }
                     {form.getInputProps('type').value === "vep" &&
                         <VEPSelection form={form} />
@@ -154,7 +154,7 @@ interface StimulationPointLocationSelectionProps {
     form: UseFormReturnType<ElectrodeLocationFormValues>;
 }
 
-const VEPSelection = ({ form }: VEPSelectionProps) => {
+const VEPSelection = ({ form }: StimulationPointLocationSelectionProps) => {
     const getFrontalGyriVepOptions = (): { value: string; label: string; }[] => {
         return [
             { value: "Pole_F_G", label: "1 - Pole_F_G" },
@@ -413,14 +413,66 @@ const VEPSelection = ({ form }: VEPSelectionProps) => {
     );
 }
 
-interface VEPSelectionProps {
-    form: UseFormReturnType<ElectrodeLocationFormValues>;
+const WhiteMatterSelection = ({ form }: StimulationPointLocationSelectionProps) => {
+    // TODO: translations for labels
+    const getWhiteMatterOptions = (): { value: string; label: string }[] => {
+        return [
+            { value: "WM", label: "WM - Tract not stated" },
+            { value: "AC", label: "AC - Anterior commisure" },
+            { value: "AF", label: "AF - Arcuate fasciculus" },
+            { value: "CC_Fr_1", label: "CC_Fr_1 - Corpus callosum, Frontal lobe (most anterior part)" },
+            { value: "CC_Fr_2", label: "CC_Fr_2 - Corpus callosum, Frontal lobe (most posterior part)" },
+            { value: "CC_Oc", label: "CC_Oc - Corpus callosum, Occipital lobe " },
+            { value: "CC_Pa", label: "CC_Pa - Corpus callosum, Parietal lobe" },
+            { value: "CC_Pr_Po", label: "CC_Pr_Po - Corpus callosum, Pre/Post central gyri " },
+            { value: "CC_Te", label: "CC_Te - Corpus callosum, Temporal lobe" },
+            { value: "CG", label: "CG - Cingulum" },
+            { value: "FAT", label: "FAT - Frontal aslant tract" },
+            { value: "FPT", label: "FPT - Fronto-pontine tract" },
+            { value: "FX", label: "FX - Fornix" },
+            { value: "ICP", label: "ICP - Inferior cerebellar peduncle" },
+            { value: "IFOF", label: "IFOF - Inferior fronto-occipital fasciculus" },
+            { value: "ILF", label: "ILF - Inferior longitudinal fasciculus" },
+            { value: "MCP", label: "MCP - Middle cerebellar peduncle" },
+            { value: "MdLF", label: "MdLF - Middle longitudinal fascicle" },
+            { value: "OR_ML", label: "OR_ML - Optic radiation and Meyer's loop" },
+            { value: "PC", label: "PC - Posterior commisure" },
+            { value: "POPT", label: "POPT - parieto-occipito pontine tract" },
+            { value: "PYT", label: "PYT - Pyramidal tract" },
+            { value: "SCP", label: "SCP - Superior cerebellar peduncle" },
+            { value: "SLF", label: "SLF - Superior longitudinal fasciculus" },
+            { value: "UF", label: "UF - Uncinate fasciculus" }
+        ]
+    }
+    return (
+        <SimpleGrid
+            cols={4}
+            spacing="lg"
+            verticalSpacing="xs"
+            breakpoints={[
+                { maxWidth: '105rem', cols: 3, spacing: 'md' },
+                { maxWidth: '80rem', cols: 2, spacing: 'sm' },
+                { maxWidth: '50rem', cols: 1, spacing: 'sm' },
+            ]}
+        >
+            {getWhiteMatterOptions().map(option =>
+                <Button compact
+                    key={'wm_' + option.value}
+                    onClick={() => form.setFieldValue('white_matter', option.value)}
+                    variant={option.value === form.values.white_matter ? "filled" : "light"}>
+                    {option.label}
+                </Button>
+            )}
+        </SimpleGrid>
+    );
 }
+
 
 export interface ElectrodeLocationFormValues {
     type: string;
     vep: string;
     destrieux: string;
+    white_matter: string;
     mni_x: number;
     mni_y: number;
     mni_z: number;
