@@ -274,9 +274,9 @@ interface CognitiveEffectTableProps {
 
 const getEegPostDischargeLocalOptions = (t: TFunction) => {
     return [
-        { label: t('pages.stimulationTool.stimulation.effect.eeg_section.localisation_options.local'), value: 'local' },
-        { label: t('pages.stimulationTool.stimulation.effect.eeg_section.localisation_options.regional'), value: 'regional' },
-        { label: t('pages.stimulationTool.stimulation.effect.eeg_section.localisation_options.wide'), value: 'wide' }
+        { label: t('pages.stimulationTool.stimulation.effect.eeg_section.localization_options.local'), value: 'local' },
+        { label: t('pages.stimulationTool.stimulation.effect.eeg_section.localization_options.regional'), value: 'regional' },
+        { label: t('pages.stimulationTool.stimulation.effect.eeg_section.localization_options.wide'), value: 'wide' }
     ];
 }
 
@@ -308,7 +308,7 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
                         {...form.getInputProps('pd_duration')}
                     />
                     <Radio.Group
-                        label={t('pages.stimulationTool.stimulation.effect.eeg_section.localisation_label')}
+                        label={t('pages.stimulationTool.stimulation.effect.eeg_section.localization_label')}
                         {...form.getInputProps('pd_local')}
                     >
                         {post_discharge_local_options.map((v, i) =>
