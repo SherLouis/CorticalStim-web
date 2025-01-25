@@ -101,7 +101,6 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         setSelectedContacts([]);
     }
 
-    // TODO : adjust for white matter
     const getSelectedContactsROIValue = (): ElectrodeLocationFormValues => {
         var roi_type = "";
         var roi_vep = "";

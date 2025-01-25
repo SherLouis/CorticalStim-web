@@ -1,5 +1,5 @@
-import { ActionIcon, AppShell, Avatar, Container, Group, Menu, Title, useMantineColorScheme } from '@mantine/core';
-import { PropsWithChildren } from 'react'
+import { ActionIcon, AppShell, Aside, Avatar, Burger, Container, Group, MediaQuery, Menu, Navbar, Stack, Title, useMantineColorScheme, useMantineTheme } from '@mantine/core';
+import { PropsWithChildren, useState } from 'react'
 import { IconSun, IconMoonStars, IconSettings, IconLogout, IconLogin } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useAuthState } from '../context/AuthContext';
@@ -9,8 +9,11 @@ import { AppPath } from '../pages/Routes';
 
 export default function BasePage(props: PropsWithChildren<BasePageProps>) {
     const { colorScheme } = useMantineColorScheme();
+    const theme = useMantineTheme();
     const navigate = useNavigate();
     const { t } = useTranslation();
+
+    const [navOpened, setNavOpened] = useState(false);
 
     return (
         <AppShell
@@ -19,6 +22,12 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
             styles={(theme) => ({
                 main: { backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[2], minHeight: "96vh", height: "96vh" },
             })}
+            navbarOffsetBreakpoint="sm"
+            navbar={
+                <Navbar p="md" hiddenBreakpoint="sm" hidden={!navOpened} width={{ sm: 200, lg: 300 }} position={{ right: 0 }}>
+                    TODO
+                </Navbar>
+            }
             header={
                 <Container h={"4vh"} fluid px={"sm"}>
                     <Group position="apart" align='center' h={"100%"} noWrap>
@@ -28,11 +37,23 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
                             {props.title}
                         </Title>
 
-                        <Group position="right" h={"70%"} p={0} noWrap spacing={"xs"}>
-                            <ProfileMenu t={t} />
-                            <LanguageSelectionMenu />
-                            <ThemeToggleIcon t={t} />
-                        </Group>
+                        <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+                            <Burger
+                                opened={navOpened}
+                                onClick={() => setNavOpened((o) => !o)}
+                                size="sm"
+                                color={theme.colors.gray[6]}
+                                mr="xl"
+                            />
+                        </MediaQuery>
+
+                        <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
+                            <Group position="right" h={"70%"} p={0} noWrap spacing={"xs"}>
+                                <ProfileMenu t={t} />
+                                <LanguageSelectionMenu />
+                                <ThemeToggleIcon t={t} />
+                            </Group>
+                        </MediaQuery>
                     </Group>
                 </Container>
             }

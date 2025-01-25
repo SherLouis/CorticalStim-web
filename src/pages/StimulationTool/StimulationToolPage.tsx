@@ -1,4 +1,4 @@
-import { ActionIcon, Text, Box, Group, Tabs, Alert } from "@mantine/core";
+import { ActionIcon, Text, Box, Group, Tabs, Alert, MediaQuery } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import StimulationFormValues from "../../core/models/stimulationForm";
@@ -9,12 +9,14 @@ import SummaryTab, { SummaryFilters } from "./tabs/t3_Summary";
 import { IconFolderOpen, IconDownload, IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useCustomTabStyle } from "../../components/StyledComponents/StyledTabs";
+import { useViewportSize } from "@mantine/hooks";
 
 // TODO: make everything (text, sizes, layout) responsive
 
 // TODO: empêcher de quitter la page si pas enregistré depuis dernières modifs
 export default function StimulationToolPage() {
     const { t } = useTranslation();
+    const { width } = useViewportSize();
     const openInputFileRef = useRef<HTMLInputElement | null>(null);
 
     const [form_previous_values, set_form_previous_values] = useState<StimulationFormValues>({
@@ -111,6 +113,8 @@ export default function StimulationToolPage() {
 
     useEffect(() => setHasUnsavedData(computeShouldDisplayUnsavedMessage()), [form.values, form_previous_values, computeShouldDisplayUnsavedMessage]);
 
+    const customTabStyle = useCustomTabStyle();
+    // TODO : different layout for smaller screens
     return (
         <Box mx={"sm"} h={"100%"} m={0} p={0}>
             <Group h={"4%"}>
@@ -130,7 +134,7 @@ export default function StimulationToolPage() {
                     </Alert>
                 }
             </Group>
-            <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={useCustomTabStyle().classes} h={"96%"}>
+            <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={customTabStyle.classes} h={"96%"}>
                 <Tabs.List grow mah={"5%"}>
                     <Tabs.Tab value="implantation">{t("pages.stimulationTool.implantation.tab_title")}</Tabs.Tab>
                     <Tabs.Tab value="stimulation">{t("pages.stimulationTool.stimulation.tab_title")}</Tabs.Tab>
