@@ -1,4 +1,4 @@
-import { ActionIcon, AppShell, Aside, Avatar, Burger, Container, Group, MediaQuery, Menu, Navbar, Stack, Title, useMantineColorScheme, useMantineTheme } from '@mantine/core';
+import { ActionIcon, AppShell, Aside, Avatar, Burger, Container, Group, Header, MediaQuery, Menu, Navbar, Stack, Title, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { PropsWithChildren, useState } from 'react'
 import { IconSun, IconMoonStars, IconSettings, IconLogout, IconLogin } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
@@ -24,12 +24,14 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
             })}
             navbarOffsetBreakpoint="sm"
             navbar={
-                <Navbar p="md" hiddenBreakpoint="sm" hidden={!navOpened} width={{ sm: 200, lg: 300 }} position={{ right: 0 }}>
-                    TODO
-                </Navbar>
+                <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+                    <Navbar p="md" hiddenBreakpoint="sm" hidden={!navOpened} position={{ right: 0 }}>
+                        TODO
+                    </Navbar>
+                </MediaQuery>
             }
             header={
-                <Container h={"4vh"} fluid px={"sm"}>
+                <Header height={'4vh'}>
                     <Group position="apart" align='center' h={"100%"} noWrap>
                         <Title size={'2vh'}
                             onClick={() => navigate(AppPath.APP_ROOT)}
@@ -55,7 +57,7 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
                             </Group>
                         </MediaQuery>
                     </Group>
-                </Container>
+                </Header>
             }
         >
             {props.children}
