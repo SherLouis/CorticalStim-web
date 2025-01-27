@@ -7,7 +7,8 @@
                 "profile": "Profile",
                 "logout": "Logout",
                 "login": "Login"
-            }
+            },
+            "change_language": "Change language"
         }
     },
     "pages": {
