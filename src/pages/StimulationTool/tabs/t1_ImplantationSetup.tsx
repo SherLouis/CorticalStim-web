@@ -144,12 +144,12 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
     const getElectrodeOptions = (): Map<string, ElectrodeOption> => {
         const options = [
-            { implantationType: "SEEG", diameter: 0.9, separation: 3, lenght: 2.3 },
-            { implantationType: "SEEG", diameter: 0.9, separation: 4, lenght: 2.3 },
-            { implantationType: "SEEG", diameter: 0.8, separation: 3.5, lenght: 2 },
-            { implantationType: "SEEG", diameter: 0.8, separation: 3.5, lenght: 2 },
+            { implantationType: "SEEG", diameter: 0.9, separation: 3, length: 2.3 },
+            { implantationType: "SEEG", diameter: 0.9, separation: 4, length: 2.3 },
+            { implantationType: "SEEG", diameter: 0.8, separation: 3.5, length: 2 },
+            { implantationType: "SEEG", diameter: 0.8, separation: 3.5, length: 2 },
         ] as ElectrodeOption[];
-        return new Map(options.map(opt => [opt.implantationType + '|' + opt.diameter + '|' + opt.separation + '|' + opt.lenght, opt]));
+        return new Map(options.map(opt => [opt.implantationType + '|' + opt.diameter + '|' + opt.separation + '|' + opt.length, opt]));
     }
     const ElectrodeOptions = getElectrodeOptions();
 
@@ -312,7 +312,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                 form.setFieldValue('electrode_params.type', option.implantationType);
                                 form.setFieldValue('electrode_params.diameter', option.diameter);
                                 form.setFieldValue('electrode_params.separation', option.separation);
-                                form.setFieldValue('electrode_params.length', option.lenght);
+                                form.setFieldValue('electrode_params.length', option.length);
                             }
                         }}
                     />
@@ -425,4 +425,4 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     );
 }
 
-interface ElectrodeOption { implantationType: "SEEG" | "Grids", diameter: number, separation: number, lenght: number }
+interface ElectrodeOption { implantationType: "SEEG" | "Grids", diameter: number, separation: number, length: number }
