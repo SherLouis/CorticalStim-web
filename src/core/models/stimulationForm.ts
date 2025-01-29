@@ -1,4 +1,5 @@
 export default interface StimulationFormValues {
+    name: string;
     electrode_params: {
         type: string;
         separation: number;

@@ -1,4 +1,4 @@
-import { ActionIcon, Text, Box, Group, Tabs, Alert, MediaQuery } from "@mantine/core";
+import { ActionIcon, Text, Box, Group, Tabs, Alert, MediaQuery, TextInput, Input } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import StimulationFormValues from "../../core/models/stimulationForm";
@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import ElectrodeSetupStep from "./tabs/t1_ImplantationSetup";
 import StimulationsTab from "./tabs/t2_Stimulations";
 import SummaryTab, { SummaryFilters } from "./tabs/t3_Summary";
-import { IconFolderOpen, IconDownload, IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
+import { IconFolderOpen, IconDownload, IconAlertCircle, IconCheck, IconX, IconPencil } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useCustomTabStyle } from "../../components/StyledComponents/StyledTabs";
 import { useViewportSize } from "@mantine/hooks";
@@ -16,10 +16,10 @@ import { useViewportSize } from "@mantine/hooks";
 // TODO: empêcher de quitter la page si pas enregistré depuis dernières modifs
 export default function StimulationToolPage() {
     const { t } = useTranslation();
-    const { width } = useViewportSize();
     const openInputFileRef = useRef<HTMLInputElement | null>(null);
 
     const [form_previous_values, set_form_previous_values] = useState<StimulationFormValues>({
+        name: "untitled-" + new Date().toISOString().split('T')[0],
         electrode_params: {
             type: "",
             separation: 0,
@@ -53,7 +53,7 @@ export default function StimulationToolPage() {
         var dataURL = window.URL.createObjectURL(data);
         var tempLink = document.createElement('a');
         tempLink.href = dataURL;
-        tempLink.setAttribute('download', `stimulation_${new Date().toISOString().substring(0, 10)}.json`);
+        tempLink.setAttribute('download', `${form.values.name}.json`);
         tempLink.click();
         set_form_previous_values(form.values);
     }
@@ -125,6 +125,18 @@ export default function StimulationToolPage() {
                 <ActionIcon title={t('pages.stimulationTool.button_download_form')}>
                     <IconDownload onClick={downloadFormValues} />
                 </ActionIcon>
+                {/** Stimulation name / edit box */}
+                <Group spacing={0} position="left">
+                    <TextInput
+                        {...form.getInputProps('name')}
+                        variant="unstyled"
+                        style={{ fontWeight: 'bold', padding: 0, margin: 0, border: 'none', backgroundColor: 'transparent', height: 'auto', width: 'fit-content', boxSizing: 'border-box', display: 'inline-block' }}
+                    />
+                </Group>
+
+                {/** TODO: additional button to save in cloud. Disable button and display warning if not logged in */}
+
+                {/** Warning if not saved */}
                 {hasUnsavedData &&
                     <Alert color='yellow' icon={<IconAlertCircle size="1rem" />} radius={'lg'} p={'xs'}>
                         <Group>
@@ -145,6 +157,6 @@ export default function StimulationToolPage() {
                 <Tabs.Panel value="stimulation" h={"95%"}><StimulationsTab form={form} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
                 <Tabs.Panel value="summary" h={"95%"} ><SummaryTab form={form} filters={summaryFilters} /></Tabs.Panel>
             </Tabs>
-        </Box>
+        </Box >
     );
 }
