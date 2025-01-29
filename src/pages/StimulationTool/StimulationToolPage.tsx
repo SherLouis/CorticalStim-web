@@ -1,4 +1,4 @@
-import { ActionIcon, Text, Box, Group, Tabs, Alert, MediaQuery, TextInput, Input } from "@mantine/core";
+import { ActionIcon, Text, Box, Group, Tabs, Alert, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import StimulationFormValues from "../../core/models/stimulationForm";
@@ -6,10 +6,9 @@ import { useEffect, useRef, useState } from "react";
 import ElectrodeSetupStep from "./tabs/t1_ImplantationSetup";
 import StimulationsTab from "./tabs/t2_Stimulations";
 import SummaryTab, { SummaryFilters } from "./tabs/t3_Summary";
-import { IconFolderOpen, IconDownload, IconAlertCircle, IconCheck, IconX, IconPencil } from "@tabler/icons-react";
+import { IconFolderOpen, IconDownload, IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useCustomTabStyle } from "../../components/StyledComponents/StyledTabs";
-import { useViewportSize } from "@mantine/hooks";
 
 // TODO: make everything (text, sizes, layout) responsive
 
@@ -107,11 +106,10 @@ export default function StimulationToolPage() {
         setActiveTab('summary');
     }
 
-    const computeShouldDisplayUnsavedMessage = () => {
-        return JSON.stringify(form.values) !== JSON.stringify(form_previous_values);
-    }
-
-    useEffect(() => setHasUnsavedData(computeShouldDisplayUnsavedMessage()), [form.values, form_previous_values, computeShouldDisplayUnsavedMessage]);
+    useEffect(() => {
+        const shouldDisplayUnsavedMessage = JSON.stringify(form.values) !== JSON.stringify(form_previous_values);
+        setHasUnsavedData(shouldDisplayUnsavedMessage)
+    }, [form.values, form_previous_values]);
 
     const customTabStyle = useCustomTabStyle();
     // TODO : different layout for smaller screens

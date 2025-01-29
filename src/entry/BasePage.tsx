@@ -1,4 +1,4 @@
-import { ActionIcon, AppShell, Avatar, Burger, Button, Container, Divider, Group, Header, MediaQuery, Menu, Navbar, SegmentedControl, Stack, Switch, Text, Title, useMantineColorScheme, useMantineTheme } from '@mantine/core';
+import { ActionIcon, AppShell, Avatar, Burger, Button, Container, Divider, Group, Header, MediaQuery, Menu, Navbar, Stack, Switch, Text, Title, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { PropsWithChildren, useState } from 'react'
 import { IconSun, IconMoonStars, IconSettings, IconLogout, IconLogin } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
