@@ -106,8 +106,8 @@
                     "observed_effect_label": "Observed Effect",
                     "no_effect": "No effect",
                     "comments_label": "Comments",
-                    "epi_manifestation": "Epi. manifestation",
-                    "eeg": "EEG",
+                    "epi_manifestation": "Ictal Clinical Manif.",
+                    "eeg": "EEG post stim.",
                     "last_used": "Last used",
                     "epi_manifestation_options_labels": {
                         "typical_aura": "Typical Aura",

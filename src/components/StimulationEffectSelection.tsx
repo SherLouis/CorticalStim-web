@@ -1,7 +1,7 @@
-import { Box, Button, Checkbox, Group, NumberInput, Radio, ScrollArea, Stack, Switch, Table, TextInput, Title } from "@mantine/core";
+import { Box, Button, Checkbox, Group, Text, NumberInput, Radio, ScrollArea, Stack, Switch, Table, TextInput, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
-import { StimulationEffectsValues, StimulationObservedEffectFormValues } from "../core/models/stimulationForm";
+import { PostDischargeValueOptions, StimulationEffectsValues, StimulationObservedEffectFormValues } from "../core/models/stimulationForm";
 import ColumnButtonSelect from "./ColumnButtonSelect";
 import { TFunction } from "i18next";
 
@@ -444,27 +444,42 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
                 {...form.getInputProps('post_discharge')} />
             {form.values.post_discharge &&
                 <Box>
-                    <NumberInput
-                        label={t('pages.stimulationTool.stimulation.effect.eeg_section.duration_label')}
-                        formatter={(value) => `${value} sec`}
-                        {...form.getInputProps('pd_duration')}
-                    />
-                    <Radio.Group
-                        label={t('pages.stimulationTool.stimulation.effect.eeg_section.localization_label')}
-                        {...form.getInputProps('pd_local')}
-                    >
-                        {post_discharge_local_options.map((v, i) =>
-                            <Radio value={v.value} label={v.label} key={'pd_local_option_' + i} />
-                        )}
-                    </Radio.Group>
-                    <Radio.Group
-                        label={t('pages.stimulationTool.stimulation.effect.eeg_section.type_label')}
-                        {...form.getInputProps('pd_type')}
-                    >
-                        {post_discharge_type.map((v, i) =>
-                            <Radio value={v.value} label={v.label} key={'pd_type_option_' + i} />
-                        )}
-                    </Radio.Group>
+                    <Stack spacing={0}>
+                        <label>{t('pages.stimulationTool.stimulation.effect.eeg_section.duration_label')}</label>
+                        <Group spacing={0} grow w={"100%"}>
+                            {PostDischargeValueOptions.map((v, i) =>
+                                <Button compact key={"pd_duration_" + i}
+                                    onClick={() => form.setFieldValue('pd_duration', v)}
+                                    variant={form.values.pd_duration === v ? 'filled' : 'default'}>
+                                    {v}
+                                </Button>
+                            )}
+                        </Group>
+                    </Stack>
+                    <Stack spacing={0}>
+                        <label>{t('pages.stimulationTool.stimulation.effect.eeg_section.localization_label')}</label>
+                        <Group spacing={0} grow w={"100%"}>
+                            {post_discharge_local_options.map((v, i) =>
+                                <Button compact key={"pd_local_option_" + i}
+                                    onClick={() => form.setFieldValue('pd_local', v.value)}
+                                    variant={form.values.pd_local === v.value ? 'filled' : 'default'}>
+                                    {v.label}
+                                </Button>
+                            )}
+                        </Group>
+                    </Stack>
+                    <Stack spacing={0}>
+                        <label>{t('pages.stimulationTool.stimulation.effect.eeg_section.type_label')}</label>
+                        <Group spacing={0} grow w={"100%"}>
+                            {post_discharge_type.map((v, i) =>
+                                <Button compact key={"pd_type_option_" + i}
+                                    onClick={() => form.setFieldValue('type_label', v.value)}
+                                    variant={form.values.pd_type === v.value ? 'filled' : 'default'}>
+                                    {v.label}
+                                </Button>
+                            )}
+                        </Group>
+                    </Stack>
                 </Box>
             }
             <Switch

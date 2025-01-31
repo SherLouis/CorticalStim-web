@@ -52,11 +52,13 @@ export interface StimulationEffectsValues {
     contact_in_epi_zone: string;
     contact_in_epi_zone_comments: string;
     post_discharge: boolean;
-    pd_duration: number;
+    pd_duration: string | undefined;
     pd_local: string;
     pd_type: string;
     crisis: boolean;
 };
+
+export const PostDischargeValueOptions = ['<5s', '5s-10s', '>10s'];
 
 export interface StimulationObservedEffectFormValues {
     class: string;
