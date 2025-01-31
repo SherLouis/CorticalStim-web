@@ -25,6 +25,7 @@
                 "failed_loading_from_file_title": "Data not loaded",
                 "failed_loading_from_file_message": "An error occurred while trying to load data from selected file"
             },
+            "patient_id_label": "Patient ID",
             "validation": {
                 "electrode_params": {
                     "separation": "Cannot be 0.",
@@ -103,9 +104,10 @@
                 "selectedStimPoint": "Selected stimulation point",
                 "effect": {
                     "observed_effect_label": "Observed Effect",
+                    "no_effect": "No effect",
                     "comments_label": "Comments",
-                    "epi_manifestation": "Epi. manifestation",
-                    "eeg": "EEG",
+                    "epi_manifestation": "Ictal Clinical Manif.",
+                    "eeg": "EEG post stim.",
                     "last_used": "Last used",
                     "epi_manifestation_options_labels": {
                         "typical_aura": "Typical Aura",

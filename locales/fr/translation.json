@@ -37,6 +37,7 @@
                 },
                 "electrodeLabel": "Les noms d'électrodes doivent être différents"
             },
+            "patient_id_label": "ID Patient",
             "implantation": {
                 "tab_title": "Implantation",
                 "guide_params_title": "Sélectionnez la configuration des électrodes.",
@@ -103,8 +104,9 @@
                 "selectedStimPoint": "Point de stimulation sélectionné",
                 "effect": {
                     "observed_effect_label": "Effet Observé",
+                    "no_effect": "Aucun effet",
                     "comments_label": "Commentaires",
-                    "epi_manifestation": "Manif. epi.",
+                    "epi_manifestation": "Manif. Cliniques Ictales",
                     "contact_in_epi_zone_label": "Contact situé dans la zone épileptogène ?",
                     "contact_in_epi_zone_options": {
                         "yes": "Oui",
@@ -112,7 +114,7 @@
                         "unknown": "Inconnu"
                     },
                     "contact_in_epi_zone_comments_label": "Commentaires",
-                    "eeg": "EEG",
+                    "eeg": "EEG post stim.",
                     "last_used": "Derniers utilisés",
                     "epi_manifestation_options_labels": {
                         "typical_aura": "Aura Typique",
