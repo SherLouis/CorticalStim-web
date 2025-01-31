@@ -104,6 +104,7 @@
                 "selectedStimPoint": "Selected stimulation point",
                 "effect": {
                     "observed_effect_label": "Observed Effect",
+                    "no_effect": "No effect",
                     "comments_label": "Comments",
                     "epi_manifestation": "Epi. manifestation",
                     "eeg": "EEG",

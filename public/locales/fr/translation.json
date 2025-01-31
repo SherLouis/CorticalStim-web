@@ -104,6 +104,7 @@
                 "selectedStimPoint": "Point de stimulation sélectionné",
                 "effect": {
                     "observed_effect_label": "Effet Observé",
+                    "no_effect": "Aucun effet",
                     "comments_label": "Commentaires",
                     "epi_manifestation": "Manif. epi.",
                     "contact_in_epi_zone_label": "Contact situé dans la zone épileptogène ?",

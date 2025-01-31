@@ -51,6 +51,11 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
                     <Group w={"100%"} h={"90%"} align='flex-start'>
                         <Box sx={{ flex: 3 }} h={"100%"}>
                             <Stack h={"100%"}>
+                                <Button compact size="sm"
+                                    variant={form.values.observed_effect === NO_EFFECT ? "filled" : "light"}
+                                    onClick={() => { form.setFieldValue('observed_effect', NO_EFFECT); }}>
+                                    {t('pages.stimulationTool.stimulation.effect.no_effect')}
+                                </Button>
                                 <Title order={6}>{t('pages.stimulationTool.stimulation.effect.last_used')}</Title>
                                 <Button.Group orientation='vertical'>
                                     {observed_effect_last_values.map((v, i) => (
@@ -263,13 +268,13 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: Cognitive
         { level: "details", class: "Motor Complex", descriptor: "Affect related behav", details: "getting-up impulse" },
         { level: "details", class: "Motor Complex", descriptor: "Affect related behav", details: "running away" },
         { level: "details", class: "Motor Complex", descriptor: "Affect related behav", details: "other affect-R behav" },
-        
+
         { level: "descriptor", class: "Motor Complex", descriptor: "axial automatisms", details: "" },
         { level: "details", class: "Motor Complex", descriptor: "axial automatisms", details: "body rocking" },
         { level: "details", class: "Motor Complex", descriptor: "axial automatisms", details: "body rolling" },
         { level: "details", class: "Motor Complex", descriptor: "axial automatisms", details: "body turning" },
         { level: "details", class: "Motor Complex", descriptor: "axial automatisms", details: "other axial aut" },
-        
+
         { level: "descriptor", class: "Motor Complex", descriptor: "distal automatisms", details: "" },
         { level: "details", class: "Motor Complex", descriptor: "distal automatisms", details: "purposeful" },
         { level: "details", class: "Motor Complex", descriptor: "distal automatisms", details: "non purposeful" },
@@ -278,19 +283,19 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: Cognitive
         { level: "details", class: "Motor Complex", descriptor: "distal automatisms", details: "nose-wipping" },
         { level: "details", class: "Motor Complex", descriptor: "distal automatisms", details: "rinch" },
         { level: "details", class: "Motor Complex", descriptor: "distal automatisms", details: "other distal aut" },
-        
+
         { level: "descriptor", class: "Motor Complex", descriptor: "proximal automatisms", details: "" },
         { level: "details", class: "Motor Complex", descriptor: "proximal automatisms", details: "crawling" },
         { level: "details", class: "Motor Complex", descriptor: "proximal automatisms", details: "flying" },
         { level: "details", class: "Motor Complex", descriptor: "proximal automatisms", details: "pedaling" },
         { level: "details", class: "Motor Complex", descriptor: "proximal automatisms", details: "other prox. aut." },
-        
+
         { level: "descriptor", class: "Motor Complex", descriptor: "oral automatisms", details: "" },
         { level: "details", class: "Motor Complex", descriptor: "oral automatisms", details: "chewing" },
         { level: "details", class: "Motor Complex", descriptor: "oral automatisms", details: "lip smacking" },
         { level: "details", class: "Motor Complex", descriptor: "oral automatisms", details: "swallowing" },
         { level: "details", class: "Motor Complex", descriptor: "oral automatisms", details: "other oral aut." },
-        
+
         { level: "descriptor", class: "Motor Complex", descriptor: "verbal automatisms", details: "" },
         { level: "descriptor", class: "Motor Complex", descriptor: "vocal automatisms", details: "" },
         { level: "descriptor", class: "Motor Complex", descriptor: "wandering", details: "" },
@@ -323,7 +328,7 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: Cognitive
         { level: "details", class: "Autonomic", descriptor: "GastroIntestinal", details: "hypersalivation" },
         { level: "details", class: "Autonomic", descriptor: "GastroIntestinal", details: "spitting" },
         { level: "details", class: "Autonomic", descriptor: "GastroIntestinal", details: "other gastrointestinal" },
-        
+
         { level: "descriptor", class: "Autonomic", descriptor: "lacrimatory", details: "" },
 
         { level: "descriptor", class: "Autonomic", descriptor: "Pupillary", details: "" },
@@ -401,6 +406,8 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: Cognitive
         </ScrollArea>
     );
 }
+
+export const NO_EFFECT: StimulationObservedEffectFormValues = { class: "None", descriptor: "", details: "" };
 
 interface CognitiveEffectTableProps {
     cognitive_values: StimulationObservedEffectFormValues;

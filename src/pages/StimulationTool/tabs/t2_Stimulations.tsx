@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
 import StimulationTaskSelection, { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
-import StimulationEffectSelection, { formatEegPostDichargeLocale, formatEpiManifestation, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
+import StimulationEffectSelection, { formatEegPostDichargeLocale, formatEpiManifestation, formatSelectedObservedEffect, NO_EFFECT } from "../../../components/StimulationEffectSelection";
 import { IconAlertCircle, IconCircleCheck, IconCircleX, IconClockCheck, IconEye, IconTrash } from "@tabler/icons-react";
 import { t } from "i18next";
 import CustomNumberInput from "../../../components/CustomNumberInput";
@@ -95,7 +95,10 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         }
 
                         // Save last used effect
-                        if (lastCognitiveEffectValues.map(e => formatSelectedObservedEffect(e)).includes(formatSelectedObservedEffect(effect_values.observed_effect))) {
+                        if (effect_values.observed_effect === NO_EFFECT) {
+                            // NO-OP - do not save no effect in last values
+                        }
+                        else if (lastCognitiveEffectValues.map(e => formatSelectedObservedEffect(e)).includes(formatSelectedObservedEffect(effect_values.observed_effect))) {
                             lastCognitiveEffectValuesHandlers.reorder({ from: lastCognitiveEffectValues.findIndex(e => formatSelectedObservedEffect(e) === formatSelectedObservedEffect(effect_values.observed_effect)), to: 0 });
                         }
                         else {
