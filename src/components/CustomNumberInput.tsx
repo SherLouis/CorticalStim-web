@@ -4,19 +4,23 @@ import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 export default function CustomNumberInput(props: CustomNumberInputProps) {
     const digit_increment = () => {
         if (props.digit_step === undefined) { return }
-        props.onChange(typeof (props.value) === 'number' ? Math.min(props.value + props.digit_step, props.max !== undefined ? props.max : Infinity) : props.digit_step);
+        const new_value = typeof (props.value) === 'number' ? Math.min(props.value + props.digit_step, props.max !== undefined ? props.max : Infinity) : props.digit_step;
+        props.onChange(parseFloat(new_value.toFixed(props.precision)));
     }
     const decimal_increment = () => {
         if (props.decimal_step === undefined) { return }
-        props.onChange(typeof (props.value) === 'number' ? Math.min(props.value + props.decimal_step, props.max !== undefined ? props.max : Infinity) : props.decimal_step);
+        const new_value = typeof (props.value) === 'number' ? Math.min(props.value + props.decimal_step, props.max !== undefined ? props.max : Infinity) : props.decimal_step;
+        props.onChange(parseFloat(new_value.toFixed(props.precision)));
     }
     const digit_decrement = () => {
         if (props.digit_step === undefined) { return }
-        props.onChange(typeof (props.value) === 'number' ? Math.max(props.value - props.digit_step, props.min !== undefined ? props.min : -Infinity) : -props.digit_step);
+        const new_value = typeof (props.value) === 'number' ? Math.max(props.value - props.digit_step, props.min !== undefined ? props.min : -Infinity) : -props.digit_step;
+        props.onChange(parseFloat(new_value.toFixed(props.precision)));
     }
     const decimal_decrement = () => {
         if (props.decimal_step === undefined) { return }
-        props.onChange(typeof (props.value) === 'number' ? Math.max(props.value - props.decimal_step, props.min !== undefined ? props.min : -Infinity) : -props.decimal_step);
+        const new_value = typeof (props.value) === 'number' ? Math.max(props.value - props.decimal_step, props.min !== undefined ? props.min : -Infinity) : -props.decimal_step;
+        props.onChange(parseFloat(new_value.toFixed(props.precision)));
     }
     return (
         <Input.Wrapper label={props.label}>
@@ -24,10 +28,10 @@ export default function CustomNumberInput(props: CustomNumberInputProps) {
                 {props.useCustom &&
                     <Stack spacing={0}>
                         <ActionIcon variant={props.variant} onClick={digit_increment} h={"50%"} size={"xs"}>
-                            <IconChevronUp size={"xs"} />
+                            <IconChevronUp size={16}/>
                         </ActionIcon>
                         <ActionIcon variant={props.variant} onClick={digit_decrement} h={"50%"} size={"xs"}>
-                            <IconChevronDown size={"xs"} />
+                            <IconChevronDown size={16}/>
                         </ActionIcon>
                     </Stack>}
                 <NumberInput
@@ -44,10 +48,10 @@ export default function CustomNumberInput(props: CustomNumberInputProps) {
                 {props.useCustom &&
                     <Stack spacing={0}>
                         <ActionIcon variant={props.variant} onClick={decimal_increment} h={"50%"} size={"xs"}>
-                            <IconChevronUp size={"xs"} />
+                            <IconChevronUp size={16} />
                         </ActionIcon>
                         <ActionIcon variant={props.variant} onClick={decimal_decrement} h={"50%"} size={"xs"}>
-                            <IconChevronDown size={"xs"} />
+                            <IconChevronDown size={16} />
                         </ActionIcon>
                     </Stack>}
             </Group>
