@@ -163,10 +163,10 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
     const CentralBar = () => {
         const formatParameters = (params: StimulationParametersFormValues): string => {
-            return t('pages.stimulationTool.stimulation.amplitude_label') + ': ' + params.amplitude + 'mA' + ', ' +
-                t('pages.stimulationTool.stimulation.frequency_label') + ': ' + params.frequency + 'Hz' + ', ' +
-                t('pages.stimulationTool.stimulation.duration_label') + ': ' + params.duration + 's' + ', ' +
-                t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + 'ms';
+            return t('pages.stimulationTool.stimulation.amplitude_label') + ': ' + params.amplitude + ' (mA)' + ', ' +
+                t('pages.stimulationTool.stimulation.frequency_label') + ': ' + params.frequency + ' (Hz)' + ', ' +
+                t('pages.stimulationTool.stimulation.duration_label') + ': ' + params.duration + ' (s)' + ', ' +
+                t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + ' (µs)';
         }
         const stimPointSelected = form.values.electrodes.length !== 0 && form.values.electrodes.flatMap(e => e.stim_points).length !== 0;
         const stimTimeSet = stimulationTime !== '';
