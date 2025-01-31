@@ -37,6 +37,7 @@
                 },
                 "electrodeLabel": "Les noms d'électrodes doivent être différents"
             },
+            "patient_id_label": "ID Patient",
             "implantation": {
                 "tab_title": "Implantation",
                 "guide_params_title": "Sélectionnez la configuration des électrodes.",

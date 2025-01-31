@@ -206,7 +206,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                 <CSVLink
                     data={getCsvData()}
                     headers={getCsvHeaders()}
-                    filename='results.csv'
+                    filename={`${form.values.patient_id}_${new Date().toISOString().split('T')[0]}_summary.csv`}
                     hidden
                     ref={csvFileRef}
                     target='_blank'

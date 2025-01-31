@@ -40,7 +40,7 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
                 </MediaQuery>
             }
             header={
-                <Header height={'4vh'}>
+                <Header height={'4vh'} p={"xs"}>
                     <Group position="apart" align='center' h={"100%"} noWrap>
                         <Title size={'lg'}
                             onClick={() => navigate(AppPath.APP_ROOT)}

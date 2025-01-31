@@ -25,6 +25,7 @@
                 "failed_loading_from_file_title": "Data not loaded",
                 "failed_loading_from_file_message": "An error occurred while trying to load data from selected file"
             },
+            "patient_id_label": "Patient ID",
             "validation": {
                 "electrode_params": {
                     "separation": "Cannot be 0.",

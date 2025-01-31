@@ -1,5 +1,5 @@
 export default interface StimulationFormValues {
-    name: string;
+    patient_id: string;
     electrode_params: {
         type: string;
         separation: number;
