@@ -241,7 +241,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                 <Group position="center" align="top" noWrap>
                     <CustomNumberInput
                         h={"100%"}
-                        label={t('pages.stimulationTool.stimulation.amplitude_label')}
+                        label={t('pages.stimulationTool.stimulation.amplitude_label') + ' (mA)'}
                         precision={1}
                         digit_step={1}
                         decimal_step={0.1}
@@ -253,7 +253,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                     />
                     <Stack align="center" h={"100%"} spacing={0}>
                         <CustomNumberInput
-                            label={t('pages.stimulationTool.stimulation.frequency_label')}
+                            label={t('pages.stimulationTool.stimulation.frequency_label') + ' (Hz)'}
                             precision={0}
                             step={1}
                             min={0}
@@ -273,7 +273,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
                     <Stack align="center" h={"100%"} spacing={0}>
                         <CustomNumberInput
-                            label={t('pages.stimulationTool.stimulation.duration_label')}
+                            label={t('pages.stimulationTool.stimulation.duration_label') + ' (s)'}
                             precision={0}
                             step={1}
                             min={0}
@@ -293,7 +293,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
                     <Stack align="center" h={"100%"} spacing={0}>
                         <CustomNumberInput
-                            label={t('pages.stimulationTool.stimulation.length_path_label')}
+                            label={t('pages.stimulationTool.stimulation.length_path_label') + ' (µs)'}
                             precision={0}
                             step={1}
                             min={0}
