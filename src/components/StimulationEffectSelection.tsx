@@ -27,14 +27,6 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
         }
     }
 
-    const getEpiManifestationOptions = () => {
-        return [
-            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_aura'), value: 'typical_aura' },
-            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_crisis'), value: 'typical_crisis' },
-            { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.atypical_crisis'), value: 'atypical_crisis' }
-        ]
-    }
-
     const getContactInEpiZoneOptions = () => {
         return [
             { label: t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_options.yes'), value: 'yes' },
@@ -85,7 +77,7 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
                             <Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>
                             <Box>
                                 <Stack w={"100%"}>
-                                    {getEpiManifestationOptions().map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label}
+                                    {getEpiManifestationOptions(t).map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label}
                                         onChange={(e) => form.setFieldValue('epi_manifestation', e.target.checked ? e.target.value : "")}
                                         checked={option.value === form.values.epi_manifestation}
                                     />)}
@@ -132,6 +124,14 @@ interface StimulationEffectSelectionProps {
     form: UseFormReturnType<StimulationEffectsValues>;
     observed_effect_last_values: StimulationObservedEffectFormValues[];
 }
+
+const getEpiManifestationOptions = (t: TFunction) => {
+    return [
+        { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_aura'), value: 'typical_aura' },
+        { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_crisis'), value: 'typical_crisis' },
+        { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.atypical_crisis'), value: 'atypical_crisis' }
+    ];
+};
 
 const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: CognitiveEffectTableProps) => {
     const effects = [
@@ -496,11 +496,17 @@ interface EEGSectionProps {
 }
 
 export const formatEpiManifestation = (epiManif: string, t: TFunction): string => {
-    return (epiManif) !== '' ? t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.' + epiManif) : '-'
-}
+    if (epiManif === '') {
+        return '-';
+    };
+    if (getEpiManifestationOptions(t).map(option => option.value).includes(epiManif)) {
+        return t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.' + epiManif);
+    }
+    return epiManif;
+};
 
 export const formatSelectedObservedEffect = (values: StimulationObservedEffectFormValues): string => {
     return values.class !== "" ? (values.class +
         (values.descriptor !== "" ? ('/' + values.descriptor
-            + (values.details !== "" ? ('/' + values.details) : '')) : '')) : "-"
-}
+            + (values.details !== "" ? ('/' + values.details) : '')) : '')) : "-";
+};
