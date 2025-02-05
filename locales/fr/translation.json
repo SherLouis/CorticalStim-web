@@ -62,6 +62,7 @@
                 "electrodeLabel": "Nom",
                 "nbContactsLabel": "Contacts",
                 "setLocationButtonLabel": "Appliquer",
+                "deselectAllContactsButtonLabel": "Désélectionner tous",
                 "clearLocationButtonLabel": "Réinitialiser",
                 "destrieuxRegionLabel": "Region Destrieux",
                 "whiteMatter": "Matière Blanche",
@@ -94,7 +95,6 @@
                 "duration_label": "Durée",
                 "length_path_label": "Durée Phase",
                 "task_title": "Tâche",
-                "task_sub_title": "Cliquer pour Sélectionner",
                 "task_last_used_title": "Derniers utilisés",
                 "task_other_value_label": "Autre",
                 "set_time_label": "Enregistrer l'heure de stimulation",
@@ -104,8 +104,13 @@
                 "selectedStimPoint": "Point de stimulation sélectionné",
                 "effect": {
                     "observed_effect_label": "Effet Observé",
+                    "effect_table": {
+                        "class": "Classe",
+                        "descriptor": "Descripteur",
+                        "details": "Détails"
+                    },
                     "no_effect": "Aucun effet",
-                    "comments_label": "Commentaires",
+                    "comments_label": "Autre/Commentaires",
                     "epi_manifestation": "Manif. Cliniques Ictales",
                     "contact_in_epi_zone_label": "Contact situé dans la zone épileptogène ?",
                     "contact_in_epi_zone_options": {
@@ -132,7 +137,7 @@
                             "wide": "Vaste"
                         },
                         "type_label": "Type",
-                        "crisis_label": "Crise"
+                        "crisis_label": "Crise (Décharge rythmique)"
                     }
                 },
                 "alert_point_changed": {
