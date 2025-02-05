@@ -104,8 +104,13 @@
                 "selectedStimPoint": "Point de stimulation sélectionné",
                 "effect": {
                     "observed_effect_label": "Effet Observé",
+                    "effect_table": {
+                        "class": "Classe",
+                        "descriptor": "Descripteur",
+                        "details": "Détails"
+                    },
                     "no_effect": "Aucun effet",
-                    "comments_label": "Commentaires",
+                    "comments_label": "Autre/Commentaires",
                     "epi_manifestation": "Manif. Cliniques Ictales",
                     "contact_in_epi_zone_label": "Contact situé dans la zone épileptogène ?",
                     "contact_in_epi_zone_options": {

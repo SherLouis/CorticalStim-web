@@ -7,7 +7,7 @@ const ColumnButtonSelect = ({ data, onChange, currentValue }: ColumnButtonSelect
     }
 
     return (
-        <ScrollArea w={"100%"} h={"100%"} py={"xs"} sx={{ padding: '0' }}>
+        <ScrollArea w={"100%"} h={"100%"} py={"xs"} type="auto" sx={{ padding: '0' }}>
             <Stack spacing={0} justify="flex-start" align='stretch'>
                 {data.map((value, index) =>
                     <Button w={"100%"} m={0} p={0}

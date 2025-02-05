@@ -104,8 +104,13 @@
                 "selectedStimPoint": "Selected stimulation point",
                 "effect": {
                     "observed_effect_label": "Observed Effect",
+                    "effect_table": {
+                        "class": "Class",
+                        "descriptor": "Descriptor",
+                        "details": "Details"
+                    },
                     "no_effect": "No effect",
-                    "comments_label": "Comments",
+                    "comments_label": "Other/Comments",
                     "epi_manifestation": "Ictal Clinical Manif.",
                     "eeg": "EEG post stim.",
                     "last_used": "Last used",

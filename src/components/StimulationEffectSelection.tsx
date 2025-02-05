@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Group, Text, NumberInput, Radio, ScrollArea, Stack, Switch, Table, TextInput, Title } from "@mantine/core";
+import { Box, Button, Checkbox, Group, Text, NumberInput, Radio, ScrollArea, Stack, Switch, Table, TextInput, Title, Flex } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import { PostDischargeValueOptions, StimulationEffectsValues, StimulationObservedEffectFormValues } from "../core/models/stimulationForm";
@@ -58,16 +58,23 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
                                         </Button>
                                     ))}
                                 </Button.Group>
-                                <TextInput
-                                    label={t("pages.stimulationTool.stimulation.effect.comments_label")}
-                                    {...form.getInputProps('observed_effect_comments')}
-                                />
                             </Stack>
                         </Box>
 
-                        <Box sx={{ flex: 9 }} h={"100%"}>
-                            <CognitiveEffectTable cognitive_values={form.values.observed_effect} handleValueChange={handleCognitiveEffectValueChange} />
-                        </Box>
+                        <Stack sx={{ flex: 9 }} h={"100%"} spacing={0}>
+                            <Box h={"90%"}>
+                                <CognitiveEffectTable
+                                    cognitive_values={form.values.observed_effect}
+                                    handleValueChange={handleCognitiveEffectValueChange}
+                                    t={t}
+                                />
+                            </Box>
+                            <TextInput
+                                h={"10%"}
+                                placeholder={t("pages.stimulationTool.stimulation.effect.comments_label")}
+                                {...form.getInputProps('observed_effect_comments')}
+                            />
+                        </Stack>
                     </Group>
                 </Box>
 
@@ -133,7 +140,7 @@ const getEpiManifestationOptions = (t: TFunction) => {
     ];
 };
 
-const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: CognitiveEffectTableProps) => {
+const CognitiveEffectTable = ({ cognitive_values, handleValueChange, t }: CognitiveEffectTableProps) => {
     const effects = [
         // Consciousness
         { level: "class", class: "Consciousness", descriptor: "", details: "" },
@@ -368,42 +375,40 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange }: Cognitive
     }
 
     return (
-        <ScrollArea w={"100%"} h={"100%"} py={0} sx={{ padding: '0' }}>
-            <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0, overflow: "scroll" }} verticalSpacing={0}>
-                <thead>
-                    <tr>
-                        <th>Class</th>
-                        <th>Descriptor</th>
-                        <th>Details</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr key={"options"}>
-                        <td style={{ verticalAlign: 'top' }}>
-                            <ColumnButtonSelect
-                                data={getEffectOptions('class')}
-                                currentValue={cognitive_values.class}
-                                onChange={(v) => handleValueChange('class', v)}
-                            />
-                        </td>
-                        <td style={{ verticalAlign: 'top' }}>
-                            <ColumnButtonSelect
-                                data={getEffectOptions('descriptor')}
-                                currentValue={cognitive_values.descriptor}
-                                onChange={(v) => handleValueChange('descriptor', v)}
-                            />
-                        </td>
-                        <td style={{ verticalAlign: 'top' }}>
-                            <ColumnButtonSelect
-                                data={getEffectOptions('details')}
-                                currentValue={cognitive_values.details}
-                                onChange={(v) => handleValueChange('details', v)}
-                            />
-                        </td>
-                    </tr>
-                </tbody>
-            </Table>
-        </ScrollArea>
+        <Stack w={"100%"} h={"100%"} p={0} spacing={"xs"}>
+            <Flex direction={"row"} justify={"flex-start"} align={"flex-start"} wrap={"nowrap"} w={"100%"} h={"100%"}>
+                <Stack spacing={0} h={"100%"} sx={{ flex: 4 }}>
+                    <Text h={"5%"}>{t("pages.stimulationTool.stimulation.effect.effect_table.class")}</Text>
+                    <Box h={"95%"} sx={{ flex: 4 }}>
+                        <ColumnButtonSelect
+                            data={getEffectOptions('class')}
+                            currentValue={cognitive_values.class}
+                            onChange={(v) => handleValueChange('class', v)}
+                        />
+                    </Box>
+                </Stack>
+                <Stack spacing={0} h={"100%"} sx={{ flex: 4 }} px={"sm"}>
+                    <Text h={"5%"}>{t("pages.stimulationTool.stimulation.effect.effect_table.descriptor")}</Text>
+                    <Box h={"95%"} sx={{ flex: 4 }}>
+                        <ColumnButtonSelect
+                            data={getEffectOptions('descriptor')}
+                            currentValue={cognitive_values.descriptor}
+                            onChange={(v) => handleValueChange('descriptor', v)}
+                        />
+                    </Box>
+                </Stack>
+                <Stack spacing={0} h={"100%"} sx={{ flex: 4 }}>
+                    <Text h={"5%"}>{t("pages.stimulationTool.stimulation.effect.effect_table.details")}</Text>
+                    <Box h={"95%"} sx={{ flex: 4 }}>
+                        <ColumnButtonSelect
+                            data={getEffectOptions('details')}
+                            currentValue={cognitive_values.details}
+                            onChange={(v) => handleValueChange('details', v)}
+                        />
+                    </Box>
+                </Stack>
+            </Flex>
+        </Stack>
     );
 }
 
@@ -411,7 +416,8 @@ export const NO_EFFECT: StimulationObservedEffectFormValues = { class: "None", d
 
 interface CognitiveEffectTableProps {
     cognitive_values: StimulationObservedEffectFormValues;
-    handleValueChange: (level: 'class' | 'descriptor' | 'details', newValue: string) => void
+    handleValueChange: (level: 'class' | 'descriptor' | 'details', newValue: string) => void;
+    t: TFunction;
 }
 
 const getEegPostDischargeLocalOptions = (t: TFunction) => {
