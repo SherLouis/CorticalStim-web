@@ -1,6 +1,6 @@
 import { ActionIcon, Alert, Badge, Box, Button, Chip, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
-import { IconAlertCircle, IconCircleCheck, IconTrash } from "@tabler/icons-react";
+import { IconAlertCircle, IconCircleCheck, IconDeselect, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { letters } from "../../../lib/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";
@@ -131,7 +131,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 if ((type === undefined && roi_type !== "") || (type !== undefined && roi_type !== type)) { roi_type = "vep"; }
             }
         });
-        const return_value = { vep: roi_vep, destrieux: roi_destrieux, white_matter:roi_wm, mni_x: roi_mni.x, mni_y: roi_mni.y, mni_z: roi_mni.z, type: roi_type };
+        const return_value = { vep: roi_vep, destrieux: roi_destrieux, white_matter: roi_wm, mni_x: roi_mni.x, mni_y: roi_mni.y, mni_z: roi_mni.z, type: roi_type };
         return return_value;
     }
 
@@ -182,6 +182,10 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         setSelectedContacts(allPointsLabel.filter(point => !doneContacts.includes(point)));
     }
 
+    const unselectAllContacts = () => {
+        setSelectedContacts([]);
+    }
+
     const locationForm = useForm<ElectrodeLocationFormValues>({
         initialValues: getSelectedContactsROIValue(),
         validate: (values) => ({
@@ -197,7 +201,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     // Form change (from file open for example)
     useEffect(() => { locationForm.reset(); locationForm.setValues(getSelectedContactsROIValue()); }, [selectedContacts]);
     useEffect(() => { updateDoneContacts(); }, [form])
-    
+
     const CentralBar = () => {
         const electrode_parameters_selected = form.values.electrode_params.diameter > 0;
         const contacts_configured = form.values.electrodes.flatMap(e => e.stim_points).length > 0;
@@ -276,11 +280,19 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                             </Alert>
                         </Stack>
 
-                        <Stack w={"15%"} align="center">
+                        <Stack w={"15%"} h={"100%"} align="center" spacing={"xs"}>
                             {/** Display selected location */}
                             {t('pages.stimulationTool.implantation.selected_location')}: {getNewElectrodeLocationFromForm()}
-                            {/** Confirm buttons */}
+                            {/** Unselect all Buttons */}
+                            <Button w={"100%"}
+                                leftIcon={<IconDeselect />}
+                                onClick={unselectAllContacts}
+                                display={selectedContacts.length > 0 ? "block" : "none"}
+                            > {t('pages.stimulationTool.implantation.deselectAllContactsButtonLabel')}
+                            </Button>
+                            {/** Confirm button */}
                             <Button
+                                w={"100%"}
                                 variant='filled'
                                 color='green'
                                 size="lg"

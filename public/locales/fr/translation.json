@@ -62,6 +62,7 @@
                 "electrodeLabel": "Nom",
                 "nbContactsLabel": "Contacts",
                 "setLocationButtonLabel": "Appliquer",
+                "deselectAllContactsButtonLabel": "Désélectionner tous",
                 "clearLocationButtonLabel": "Réinitialiser",
                 "destrieuxRegionLabel": "Region Destrieux",
                 "whiteMatter": "Matière Blanche",
