@@ -37,7 +37,6 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
             <Stack h={"100%"} spacing={0} w={"100%"}>
                 <Group w={"100%"} align="flex-end">
                     <Title order={3}>{t('pages.stimulationTool.stimulation.task_title')}</Title>
-                    <Title order={6}>{t('pages.stimulationTool.stimulation.task_sub_title')}</Title>
                 </Group>
 
                 <TaskTable form={form} handleValueChange={handleValueChange} />
