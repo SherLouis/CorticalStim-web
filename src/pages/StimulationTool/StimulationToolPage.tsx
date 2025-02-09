@@ -1,4 +1,4 @@
-import { ActionIcon, Text, Box, Group, Tabs, Alert, TextInput, Flex } from "@mantine/core";
+import { ActionIcon, Text, Box, Group, Tabs, Alert, TextInput, Modal } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import StimulationFormValues from "../../core/models/stimulationForm";
@@ -9,12 +9,9 @@ import SummaryTab, { SummaryFilters } from "./tabs/t3_Summary";
 import { IconFolderOpen, IconDownload, IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useCustomTabStyle } from "../../components/StyledComponents/StyledTabs";
-import { InputLabel } from "@mantine/core/lib/Input/InputLabel/InputLabel";
-import { randomUUID } from "crypto";
 
 // TODO: make everything (text, sizes, layout) responsive
 
-// TODO: empêcher de quitter la page si pas enregistré depuis dernières modifs
 export default function StimulationToolPage() {
     const { t } = useTranslation();
     const openInputFileRef = useRef<HTMLInputElement | null>(null);
@@ -109,6 +106,13 @@ export default function StimulationToolPage() {
     }
 
     useEffect(() => {
+        window.onbeforeunload = confirmExit;
+        function confirmExit() {
+            return hasUnsavedData ? "Show confirm" : null;
+        }
+    }, [hasUnsavedData])
+
+    useEffect(() => {
         const shouldDisplayUnsavedMessage = JSON.stringify(form.values) !== JSON.stringify(form_previous_values);
         setHasUnsavedData(shouldDisplayUnsavedMessage)
     }, [form.values, form_previous_values]);
@@ -137,7 +141,7 @@ export default function StimulationToolPage() {
                         placeholder={"patient id"}
                         required
                         autoFocus={form.values.patient_id === ""}
-                        styles={{input: {fontWeight:'bold'}}}
+                        styles={{ input: { fontWeight: 'bold' } }}
                     />
                 </Group>
 
