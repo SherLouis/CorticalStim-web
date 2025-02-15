@@ -78,6 +78,11 @@
                         "destrieux": "Please choose an item from the list.",
                         "mni": "Please specify MNI coordinate"
                     }
+                },
+                "confirmDelete": {
+                    "title": "Delete Electrode",
+                    "confirm_label": "Delete",
+                    "cancel_label": "Cancel"
                 }
             },
             "stimulation": {
@@ -140,6 +145,7 @@
                         "crisis_label": "Crisis (Rhythmic discharge)"
                     }
                 },
+                "no_effect_selected": "Please select an effect before saving this stimulation.",
                 "alert_point_changed": {
                     "title": "Change point without saving?",
                     "confirm_label": "Do not save",

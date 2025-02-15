@@ -78,6 +78,11 @@
                         "destrieux": "SVP choisir un item depuis la liste.",
                         "mni": "SVP spécifier la coordonnée MNI."
                     }
+                },
+                "confirmDelete": {
+                    "title": "Supprimer l'électrode",
+                    "confirm_label": "Supprimer",
+                    "cancel_label": "Annuler"
                 }
             },
             "stimulation": {
@@ -140,6 +145,7 @@
                         "crisis_label": "Crise (Décharge rythmique)"
                     }
                 },
+                "no_effect_selected": "Veuillez sélectionner un effet avant d'enregistrer cette stimulation.",
                 "alert_point_changed": {
                     "title": "Changer de point sans enregistrer?",
                     "confirm_label": "Ne pas enregistrer",
