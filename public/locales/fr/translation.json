@@ -145,6 +145,7 @@
                         "crisis_label": "Crise (Décharge rythmique)"
                     }
                 },
+                "no_effect_selected": "Veuillez sélectionner un effet avant d'enregistrer cette stimulation.",
                 "alert_point_changed": {
                     "title": "Changer de point sans enregistrer?",
                     "confirm_label": "Ne pas enregistrer",

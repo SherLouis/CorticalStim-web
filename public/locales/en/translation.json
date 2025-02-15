@@ -145,6 +145,7 @@
                         "crisis_label": "Crisis (Rhythmic discharge)"
                     }
                 },
+                "no_effect_selected": "Please select an effect before saving this stimulation.",
                 "alert_point_changed": {
                     "title": "Change point without saving?",
                     "confirm_label": "Do not save",

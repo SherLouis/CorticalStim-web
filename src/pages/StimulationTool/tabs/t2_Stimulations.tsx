@@ -1,7 +1,7 @@
-import { Alert, Badge, Box, Button, Chip, Container, Divider, Group, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Box, Button, Chip, Container, Divider, Group, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../core/models/stimulationForm";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
 import StimulationTaskSelection, { formatSelectedTask } from "../../../components/StimulationTaskSelection";
@@ -21,10 +21,12 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
     const [stimulationTime, setStimulationTime] = useState<string>("");
 
+    // Forms
     const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 1.0, duration: 0, frequency: 0, lenght_path: 0 } });
     const task_form = useForm<StimulationTaskFormValues>({ initialValues: { category: "", subcategory: "", characteristic: "" } });
     const effect_form = useForm<StimulationEffectsValues>({ initialValues: { observed_effect: { class: "", descriptor: "", details: "" }, observed_effect_comments: "", epi_manifestation: "", contact_in_epi_zone: "unknown", contact_in_epi_zone_comments: "", post_discharge: false, pd_duration: undefined, pd_local: "local", pd_type: "", crisis: false } });
 
+    // Last used values
     const [lastTaskValues, lastTaskValuesHandlers] = useListState<{ category: string; subcategory: string; characteristic: string }>();
     const [lastCognitiveEffectValues, lastCognitiveEffectValuesHandlers] = useListState<StimulationObservedEffectFormValues>();
 
@@ -151,6 +153,13 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         return formatSelectedObservedEffect(effect_form.values.observed_effect);
     }
 
+    const isSelectedPointObservedEffectSelected = useMemo<boolean>(
+        () => {
+            const effect = effect_form.values.observed_effect;
+            return (effect.class !== "" || effect.descriptor !== "" || effect.details !== "");
+        },
+        [effect_form.values.observed_effect]);
+
     const getSelectedPointEpiManifEffect = () => {
         return formatEpiManifestation(effect_form.values.epi_manifestation, t);
     }
@@ -213,11 +222,22 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                                 {stimTimeSet &&
                                     <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
                                 }
-                                <Button variant="filled" size="md" color="green" leftIcon={<IconCircleCheck />}
-                                    display={stimTimeSet ? 'block' : 'none'}
-                                    onClick={handleSubmit} disabled={stimulationTime === ""}>
-                                    {t('pages.stimulationTool.stimulation.saveButtonLabel')}
-                                </Button>
+                                {/** Save button */}
+                                <HoverCard disabled={isSelectedPointObservedEffectSelected}>
+                                    <HoverCard.Target>
+                                        <Box>
+                                            <Button variant="filled" size="md" color="green" leftIcon={<IconCircleCheck />}
+                                                display={stimTimeSet ? 'block' : 'none'}
+                                                onClick={handleSubmit}
+                                                disabled={stimulationTime === "" || !isSelectedPointObservedEffectSelected}>
+                                                {t('pages.stimulationTool.stimulation.saveButtonLabel')}
+                                            </Button>
+                                        </Box>
+                                    </HoverCard.Target>
+                                    <HoverCard.Dropdown>
+                                        <Text>{t('pages.stimulationTool.stimulation.no_effect_selected')}</Text>
+                                    </HoverCard.Dropdown>
+                                </HoverCard>
                             </Group>}
 
                             <Stack sx={{ flex: 5 }} h={"100%"} w={"100%"} align="center" spacing={"sm"} display={stimTimeSet ? 'block' : 'none'}>
@@ -317,6 +337,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
     return (
         <Box pt={"md"} h={"100%"}>
+            {/** Confirm change contact without saving */}
             <Modal opened={showConfirmNoSave} onClose={() => setShowConfirmNoSave(false)} title={t('pages.stimulationTool.stimulation.alert_point_changed.title')}>
                 <Group position="apart">
                     <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmNoSave(false)}>{t('pages.stimulationTool.stimulation.alert_point_changed.cancel_label')}</Button>
