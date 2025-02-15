@@ -78,6 +78,11 @@
                         "destrieux": "SVP choisir un item depuis la liste.",
                         "mni": "SVP spécifier la coordonnée MNI."
                     }
+                },
+                "confirmDelete": {
+                    "title": "Supprimer l'électrode",
+                    "confirm_label": "Supprimer",
+                    "cancel_label": "Annuler"
                 }
             },
             "stimulation": {

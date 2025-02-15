@@ -1,6 +1,6 @@
-import { ActionIcon, Alert, Badge, Box, Button, Chip, Group, Input, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Alert, Badge, Box, Button, Chip, Group, Input, Modal, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
-import { IconAlertCircle, IconCircleCheck, IconDeselect, IconTrash } from "@tabler/icons-react";
+import { IconAlertCircle, IconCircleCheck, IconCircleX, IconDeselect, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { letters } from "../../../lib/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";
@@ -13,6 +13,10 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     const [nextElectrodeDefaultLabel, setNextElectrodeDefaultLabel] = useState('A');
     const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
     const [doneContacts, setDoneContacts] = useState<string[]>([]);
+
+    // Electrode delete
+    const [showConfirmDeleteElectrode, setShowConfirmDeleteElectrode] = useState<boolean>(false);
+    const [electrodeLabelToDelete, setElectrodeLabelToDelete] = useState<string | undefined>(undefined);
 
     const addElectrode = () => {
         form.insertListItem('electrodes', { label: nextElectrodeDefaultLabel, side: "", n_contacts: 0, stim_points: [] });
@@ -135,11 +139,19 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         return return_value;
     }
 
-    const handleDeleteElectrode = (electrode_label: string) => {
-        const electrode = form.values.electrodes.find((e) => e.label === electrode_label);
+    const handleDeleteElectrodeButtonClicked = (electrode_label: string) => {
+        setElectrodeLabelToDelete(electrode_label);
+        setShowConfirmDeleteElectrode(true);
+    }
+
+    const handleDeleteElectrode = () => {
+        setShowConfirmDeleteElectrode(false);
+        if (electrodeLabelToDelete === undefined) { return; }
+        const electrode = form.values.electrodes.find((e) => e.label === electrodeLabelToDelete);
         setSelectedContacts(selectedContacts.filter((c) => !c.startsWith(electrode!.label)));
         setDoneContacts(doneContacts.filter((c) => !c.startsWith(electrode!.label)));
-        form.removeListItem('electrodes', form.values.electrodes.findIndex((e) => e.label === electrode_label));
+        form.removeListItem('electrodes', form.values.electrodes.findIndex((e) => e.label === electrodeLabelToDelete));
+        setElectrodeLabelToDelete(undefined);
     }
 
     const getElectrodeOptions = (): Map<string, ElectrodeOption> => {
@@ -312,6 +324,16 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     // TODO: Cacher / afficher sections selon sélection ? (cacher positionnement si pas de contact sélectionné ?)
     return (
         <Box pt={"md"} h={"100%"}>
+            {/** Confirm delete electrode Modal */}
+            <Modal opened={showConfirmDeleteElectrode}
+                onClose={() => setShowConfirmDeleteElectrode(false)}
+                title={t('pages.stimulationTool.implantation.confirmDelete.title') + ' "' + electrodeLabelToDelete + '" ?'}>
+                <Group position="apart">
+                    <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmDeleteElectrode(false)}>{t('pages.stimulationTool.implantation.confirmDelete.cancel_label')}</Button>
+                    <Button leftIcon={<IconTrash color="white" />} variant="filled" color="red" onClick={handleDeleteElectrode}>{t('pages.stimulationTool.implantation.confirmDelete.confirm_label')}</Button>
+                </Group>
+            </Modal>
+
             <Box h={"10%"}>
                 <Group>
                     <Title order={3}>{t('pages.stimulationTool.implantation.electrodeConfiguration')}</Title>
@@ -365,7 +387,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                 w={"100%"}
                             >
                                 <Group w={"25%"} position="left" align="center">
-                                    <ActionIcon color="red" sx={{ flex: 1 }} onClick={() => handleDeleteElectrode(electrode.label)}>
+                                    <ActionIcon color="red" sx={{ flex: 1 }} onClick={() => handleDeleteElectrodeButtonClicked(electrode.label)}>
                                         <IconTrash size="1.5rem" />
                                     </ActionIcon>
                                     <TextInput

@@ -78,6 +78,11 @@
                         "destrieux": "Please choose an item from the list.",
                         "mni": "Please specify MNI coordinate"
                     }
+                },
+                "confirmDelete": {
+                    "title": "Delete Electrode",
+                    "confirm_label": "Delete",
+                    "cancel_label": "Cancel"
                 }
             },
             "stimulation": {
