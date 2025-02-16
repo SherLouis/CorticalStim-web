@@ -1,6 +1,6 @@
-import { Alert, Badge, Box, Button, Chip, Container, Divider, Group, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Box, Button, Chip, Container, DefaultMantineColor, Divider, Group, HoverCard, MantineColor, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
-import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../core/models/stimulationForm";
+import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, Stimulation } from "../../../core/models/stimulationForm";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
@@ -398,6 +398,35 @@ interface StimulationTabProps extends TabProperties {
 }
 
 const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onViewResultsForPoint }: ContactSelectionProps) => {
+    const theme = useMantineTheme();
+
+    const getContactColor = (pointId: string, stimulations: Stimulation[]): MantineColor => {
+        if (pointId === selectedContact) {
+            return 'blue';
+        }
+        const nbStims = stimulations.length;
+        const eegCrisis = stimulations.some((stim) => stim.effect.crisis);
+        const postDischarge = stimulations.some((stim) => stim.effect.post_discharge);
+        if (postDischarge) {
+            return 'orange';
+        }
+        if (eegCrisis) {
+            return 'red';
+        }
+        if (nbStims == 1) {
+            return theme.colors.green[2];
+        }
+        if (nbStims > 1) {
+            return theme.colors.green[9];
+        }
+        return 'gray';
+    };
+
+    const getContactBorderColor = (stimulations: Stimulation[]) => {
+        const hasEffect = stimulations.some((stim) => stim.effect.observed_effect !== NO_EFFECT);
+        return hasEffect ? 'red' : undefined;
+    }
+
     return (
         <ScrollArea w={"100%"} h={"100%"} sx={{ alignItems: "center", padding: '0', margin: '0' }}>
             {form_values.electrodes.map((electrode, electrode_i) => {
@@ -424,7 +453,8 @@ const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onV
                                     {electrode.stim_points.map((stim_point, stim_point_i) => {
                                         const pointId = getStimPointLabel(electrode.label, stim_point_i);
                                         const nbStims = stim_point.stimulations.length;
-                                        const color = selectedContact === pointId ? 'blue' : (nbStims > 0 ? (nbStims === 1 ? 'green' : 'orange') : 'gray');
+                                        const color = getContactColor(pointId, stim_point.stimulations);
+                                        const borderColor = getContactBorderColor(stim_point.stimulations);
                                         return (
                                             <Popover position='bottom' opened={selectedContact === pointId} key={pointId}>
                                                 <Popover.Target>
@@ -435,7 +465,9 @@ const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onV
                                                             onChange={(_checked) => onSelectedChanged(selectedContact !== pointId ? pointId : "")}
                                                             checked={selectedContact === pointId || nbStims > 0}
                                                             variant={selectedContact === pointId || nbStims > 0 ? 'filled' : 'light'}
-                                                            color={color}>
+                                                            color={color}
+                                                            sx={{ borderColor: borderColor, border: 'sm' }}
+                                                        >
                                                             {pointId}
                                                         </Chip>
                                                     </Container>

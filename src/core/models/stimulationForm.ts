@@ -13,15 +13,17 @@ export default interface StimulationFormValues {
         stim_points: {
             index: number;
             location: StimulationLocationFormValues;
-            stimulations: {
-                time: string,
-                parameters: StimulationParametersFormValues;
-                task: StimulationTaskFormValues;
-                effect: StimulationEffectsValues;
-            }[]
+            stimulations: Stimulation[]
         }[]
     }[]
 };
+
+export interface Stimulation {
+    time: string,
+    parameters: StimulationParametersFormValues;
+    task: StimulationTaskFormValues;
+    effect: StimulationEffectsValues;
+}
 
 export interface StimulationLocationFormValues {
     type: 'white' | 'vep' | 'destrieux' | 'mni';
