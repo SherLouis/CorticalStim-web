@@ -407,17 +407,17 @@ const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onV
         const nbStims = stimulations.length;
         const eegCrisis = stimulations.some((stim) => stim.effect.crisis);
         const postDischarge = stimulations.some((stim) => stim.effect.post_discharge);
-        if (postDischarge) {
-            return 'orange';
-        }
         if (eegCrisis) {
             return 'red';
         }
-        if (nbStims == 1) {
-            return theme.colors.green[2];
+        if (postDischarge) {
+            return 'orange';
+        }
+        if (nbStims === 1) {
+            return "green.4";
         }
         if (nbStims > 1) {
-            return theme.colors.green[9];
+            return "green.9";
         }
         return 'gray';
     };
