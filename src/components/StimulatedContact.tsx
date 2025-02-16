@@ -21,7 +21,7 @@ const StimulatedContact = ({ selected, stimulations, onChange, forcedVariant, fo
                 case 'selected':
                     return SELECTED_COLOR;
                 case 'crisis':
-                    return '';
+                    return CRISIS_COLOR;
                 case 'postDischarge':
                     return POST_DISCHARGE_COLOR;
                 case 'singleStim':
@@ -67,8 +67,8 @@ const StimulatedContact = ({ selected, stimulations, onChange, forcedVariant, fo
 
     return (
         <Chip
-            checked={selected || nbStims > 0}
-            variant={selected || nbStims > 0 ? 'filled' : 'light'}
+            checked={selected || nbStims > 0 || forcedVariant !== undefined}
+            variant={selected || nbStims > 0 || forcedVariant !== undefined ? 'filled' : 'light'}
             onChange={onChange}
             color={color}
             sx={sx}

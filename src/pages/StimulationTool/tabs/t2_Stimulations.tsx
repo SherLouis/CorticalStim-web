@@ -1,4 +1,4 @@
-import { Alert, Badge, Box, Button, Container, Divider, Group, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Box, Button, Container, Divider, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../core/models/stimulationForm";
 import { useMemo, useState } from "react";
@@ -336,6 +336,33 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         );
     }
 
+    const ContactColorLegend = (props: GroupProps) => {
+        const variants = [{ variant: "selected", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.selected') },
+        { variant: "singleStim", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.stimulated') },
+        { variant: "multipleStim", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.multi_stim') },
+        { variant: "postDischarge", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.post_discharge') },
+        { variant: "crisis", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.crisis') },
+        { variant: "singleStim", effect: true, label: t('pages.stimulationTool.stimulation.contact_color_legend.effect') }
+        ] as {
+            variant: 'default' | 'selected' | 'crisis' | 'postDischarge' | 'singleStim' | 'multipleStim',
+            effect: boolean,
+            label: string
+        }[];
+
+        return (
+            <Group {...props}>
+                {variants.map((v) =>
+                    <Stack align="center" justify="center" spacing={0}>
+                        <StimulatedContact selected={false} forcedVariant={v.variant} forcedEffect={v.effect} onChange={() => { }} stimulations={[]}>
+                            {"A-1/2"}
+                        </StimulatedContact>
+                        <Text>{v.label}</Text>
+                    </Stack>
+                )}
+            </Group>
+        );
+    }
+
     return (
         <Box pt={"md"} h={"100%"}>
             {/** Confirm change contact without saving */}
@@ -349,9 +376,12 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
             <Box h={"50%"} w={"100%"}>
                 <Group w={"100%"} h={"100%"} align='flex-start' >
                     <Box h={"100%"} sx={{ flex: 8 }}>
-                        <Title order={3} h={"10%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
+                        {/** TODO: legend for contact colors */}
+                        <Group h={"10%"} w={"100%"} position="apart">
+                            <Title order={3} h={"100%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
+                            <ContactColorLegend h={"100%"} w={"70%"} noWrap position="apart" />
+                        </Group>
                         <Box h={"90%"} w={"100%"} p={0} m={0}>
-                            {/** TODO: legend for contact colors */}
                             <ContactSelection
                                 form_values={form.values}
                                 selectedContact={selectedPoint}

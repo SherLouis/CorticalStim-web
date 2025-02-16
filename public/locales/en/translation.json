@@ -87,6 +87,14 @@
             },
             "stimulation": {
                 "tab_title": "Stimulations",
+                "contact_color_legend": {
+                    "selected": "Selected",
+                    "stimulated": "Stimulated once",
+                    "multi_stim": "Multiple stimulations",
+                    "post_discharge": "Post-discharge",
+                    "crisis": "EEG Crisis",
+                    "effect": "Observed effect"
+                },
                 "guide_alert_title": "Select a stimulation point to get started.",
                 "guide_alert_text": "You will then be able to select the performed task, stimulation parameters and take note of the observed effects.",
                 "guide_alert_no_electrode_title": "No electrode configured",

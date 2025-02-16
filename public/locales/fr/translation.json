@@ -87,6 +87,14 @@
             },
             "stimulation": {
                 "tab_title": "Stimulations",
+                "contact_color_legend": {
+                    "selected": "Sélectionné",
+                    "stimulated": "Stimulé",
+                    "multi_stim": "Multiple stimulations",
+                    "post_discharge": "Post-décharge",
+                    "crisis": "Crise électrique",
+                    "effect": "Effet observé"
+                },
                 "guide_alert_title": "Sélectionner un point de stimulation pour commencer.",
                 "guide_alert_text": "Vous pourrez ensuite préciser la tâche effectuée, les paramètres de stimulation et noter les effets observés.",
                 "guide_alert_no_electrode_title": "Aucune électrode configurée",
