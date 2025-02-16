@@ -1,6 +1,6 @@
-import { Alert, Badge, Box, Button, Chip, Container, DefaultMantineColor, Divider, Group, HoverCard, MantineColor, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
+import { Alert, Badge, Box, Button, Container, Divider, Group, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
-import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, Stimulation } from "../../../core/models/stimulationForm";
+import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../core/models/stimulationForm";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
@@ -10,6 +10,7 @@ import StimulationEffectSelection, { formatEegPostDichargeLocale, formatEpiManif
 import { IconAlertCircle, IconCircleCheck, IconCircleX, IconClockCheck, IconEye, IconTrash } from "@tabler/icons-react";
 import { t } from "i18next";
 import CustomNumberInput from "../../../components/CustomNumberInput";
+import StimulatedContact from "../../../components/StimulatedContact";
 
 export default function StimulationsTab({ form, viewPointSummary }: StimulationTabProps) {
     // TODO: ajouter validations (ex: post discharge time cannot be 0 or negative if set to true)
@@ -350,6 +351,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                     <Box h={"100%"} sx={{ flex: 8 }}>
                         <Title order={3} h={"10%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
                         <Box h={"90%"} w={"100%"} p={0} m={0}>
+                            {/** TODO: legend for contact colors */}
                             <ContactSelection
                                 form_values={form.values}
                                 selectedContact={selectedPoint}
@@ -398,35 +400,6 @@ interface StimulationTabProps extends TabProperties {
 }
 
 const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onViewResultsForPoint }: ContactSelectionProps) => {
-    const theme = useMantineTheme();
-
-    const getContactColor = (pointId: string, stimulations: Stimulation[]): MantineColor => {
-        if (pointId === selectedContact) {
-            return 'blue';
-        }
-        const nbStims = stimulations.length;
-        const eegCrisis = stimulations.some((stim) => stim.effect.crisis);
-        const postDischarge = stimulations.some((stim) => stim.effect.post_discharge);
-        if (eegCrisis) {
-            return 'red';
-        }
-        if (postDischarge) {
-            return 'orange';
-        }
-        if (nbStims === 1) {
-            return "green.4";
-        }
-        if (nbStims > 1) {
-            return "green.9";
-        }
-        return 'gray';
-    };
-
-    const getContactBorderColor = (stimulations: Stimulation[]) => {
-        const hasEffect = stimulations.some((stim) => stim.effect.observed_effect !== NO_EFFECT);
-        return hasEffect ? 'red' : undefined;
-    }
-
     return (
         <ScrollArea w={"100%"} h={"100%"} sx={{ alignItems: "center", padding: '0', margin: '0' }}>
             {form_values.electrodes.map((electrode, electrode_i) => {
@@ -453,23 +426,20 @@ const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onV
                                     {electrode.stim_points.map((stim_point, stim_point_i) => {
                                         const pointId = getStimPointLabel(electrode.label, stim_point_i);
                                         const nbStims = stim_point.stimulations.length;
-                                        const color = getContactColor(pointId, stim_point.stimulations);
-                                        const borderColor = getContactBorderColor(stim_point.stimulations);
                                         return (
                                             <Popover position='bottom' opened={selectedContact === pointId} key={pointId}>
                                                 <Popover.Target>
                                                     <Container p={0}>
-                                                        <Chip size='xs'
+                                                        <StimulatedContact
+                                                            selected={selectedContact === pointId}
+                                                            stimulations={stim_point.stimulations}
+                                                            size='xs'
                                                             value={pointId}
                                                             key={pointId}
                                                             onChange={(_checked) => onSelectedChanged(selectedContact !== pointId ? pointId : "")}
-                                                            checked={selectedContact === pointId || nbStims > 0}
-                                                            variant={selectedContact === pointId || nbStims > 0 ? 'filled' : 'light'}
-                                                            color={color}
-                                                            sx={{ borderColor: borderColor, border: 'sm' }}
                                                         >
                                                             {pointId}
-                                                        </Chip>
+                                                        </StimulatedContact>
                                                     </Container>
                                                 </Popover.Target>
                                                 <Popover.Dropdown>
