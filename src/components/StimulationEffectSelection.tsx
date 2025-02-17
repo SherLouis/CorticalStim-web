@@ -496,6 +496,13 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
                 label={t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_label')}
                 checked={form.values.crisis}
                 {...form.getInputProps('crisis')} />
+            {form.values.crisis &&
+                <TextInput
+                    placeholder={t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_comments_label')}
+                    label={t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_comments_label')}
+                    {...form.getInputProps('crisis_comments')}
+                />
+            }
         </Stack>
     );
 }

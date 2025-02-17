@@ -58,6 +58,7 @@ export interface StimulationEffectsValues {
     pd_local: string;
     pd_type: string;
     crisis: boolean;
+    crisis_comments: string;
 };
 
 export const PostDischargeValueOptions = ['<5s', '5s-10s', '>10s'];

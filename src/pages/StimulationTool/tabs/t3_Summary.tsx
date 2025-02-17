@@ -39,7 +39,8 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                             contact_in_epi_zone_comments: stim.effect.contact_in_epi_zone_comments,
                             post_discharge: stim.effect.post_discharge,
                             post_discharge_details: stim.effect.post_discharge ? stim.effect.pd_duration + 's, ' + stim.effect.pd_local + ', ' + stim.effect.pd_type : '-',
-                            crisis: stim.effect.crisis
+                            crisis: stim.effect.crisis,
+                            crisis_comments: stim.effect.crisis_comments
                         } as Result
                     })
                 )
@@ -172,6 +173,12 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
             render: (result) => formatBool(result.crisis),
             defaultToggle: false,
             ...allColumnsProps
+        },
+        {
+            accessor: 'crisis_comments',
+            title: t('pages.stimulationTool.summary.results_table.crisis_comments_title'),
+            defaultToggle: false,
+            ...allColumnsProps
         }
     ] as DataTableColumn<Result>[];
     const { effectiveColumns, columnsToggle, setColumnsToggle } = useDataTableColumns<Result>({
@@ -265,7 +272,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                         {
                             id: 'effects_group',
                             title: t('pages.stimulationTool.summary.results_table.effects_group_title'),
-                            columns: effectiveColumns.filter((c) => ['cognitive_effect', 'observed_effect_comments', 'epi_manifestation', 'contact_in_epi_zone', 'contact_in_epi_zone_comments', 'post_discharge', 'post_discharge_details', 'crisis'].includes(c.accessor))
+                            columns: effectiveColumns.filter((c) => ['cognitive_effect', 'observed_effect_comments', 'epi_manifestation', 'contact_in_epi_zone', 'contact_in_epi_zone_comments', 'post_discharge', 'post_discharge_details', 'crisis', 'crisis_comments'].includes(c.accessor))
                         }
                     ]}
                 />
@@ -292,6 +299,7 @@ interface Result {
     post_discharge: boolean;
     post_discharge_details: string;
     crisis: boolean;
+    crisis_comments: string;
 }
 
 interface SummaryTabProps extends TabProperties {
