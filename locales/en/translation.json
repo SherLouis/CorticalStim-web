@@ -150,7 +150,8 @@
                             "wide": "Wide"
                         },
                         "type_label": "Type",
-                        "crisis_label": "Crisis (Rhythmic discharge)"
+                        "crisis_label": "Crisis (Rhythmic discharge)",
+                        "crisis_comments_label": "Comments"
                     }
                 },
                 "no_effect_selected": "Please select an effect before saving this stimulation.",
@@ -181,13 +182,14 @@
                     "task_title": "Task",
                     "effects_group_title": "Effects",
                     "observed_effect_title": "Cognitive Effect",
-                    "observed_effect_comments_title": "Observed Effect",
+                    "observed_effect_comments_title": "Observed Effect (Comments)",
                     "epi_manifestation_title": "Epi. Manif.",
                     "contact_in_epi_zone_title": "In Epi. Zone",
                     "contact_in_epi_zone_comments_title": "In Epi. Zone Comments",
                     "post_discharge_title": "Post Discharge",
                     "post_discharge_details_title": "Post Discharge Details",
-                    "crisis_title": "Crisis"
+                    "crisis_title": "Crisis",
+                    "crisis_comments_title": "Crisis (comments)"
                 }
             }
         },
