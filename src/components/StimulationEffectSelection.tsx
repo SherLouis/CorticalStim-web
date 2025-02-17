@@ -451,7 +451,11 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
             {form.values.post_discharge &&
                 <Box>
                     <Stack spacing={0}>
-                        <label>{t('pages.stimulationTool.stimulation.effect.eeg_section.duration_label')}</label>
+                        <TextInput
+                            label={t('pages.stimulationTool.stimulation.effect.eeg_section.duration_label') + ' (s)'}
+                            styles={{ input: { textAlign: 'center' } }}
+                            {...form.getInputProps('pd_duration')}
+                        />
                         <Group spacing={0} grow w={"100%"}>
                             {PostDischargeValueOptions.map((v, i) =>
                                 <Button compact key={"pd_duration_" + i}
