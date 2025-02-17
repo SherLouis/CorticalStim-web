@@ -353,8 +353,8 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
             <Group {...props}>
                 {variants.map((v) =>
                     <Stack align="center" justify="center" spacing={0}>
-                        <StimulatedContact selected={false} forcedVariant={v.variant} forcedEffect={v.effect} onChange={() => { }} stimulations={[]}>
-                            {"A-1/2"}
+                        <StimulatedContact size="xs" selected={false} forcedVariant={v.variant} forcedEffect={v.effect} onChange={() => { }} stimulations={[]}>
+                            {"A1/2"}
                         </StimulatedContact>
                         <Text>{v.label}</Text>
                     </Stack>
@@ -463,7 +463,7 @@ const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onV
                                                         <StimulatedContact
                                                             selected={selectedContact === pointId}
                                                             stimulations={stim_point.stimulations}
-                                                            size='xs'
+                                                            size='sm'
                                                             value={pointId}
                                                             key={pointId}
                                                             onChange={(_checked) => onSelectedChanged(selectedContact !== pointId ? pointId : "")}

@@ -80,8 +80,6 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         }
     }
 
-    // TODO: format post-discharge duration
-    
     const [records, setRecords] = useState(getRecordsFromForm());
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'pointId', direction: 'desc' });
     const [pointIdList, setPointIdListHandlers] = useListState(filters ? filters.pointIds : []);
