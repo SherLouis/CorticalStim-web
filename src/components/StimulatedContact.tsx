@@ -57,7 +57,7 @@ const StimulatedContact = ({ selected, stimulations, onChange, forcedVariant, fo
         if (forcedEffect !== undefined) {
             return forcedEffect ? EFFECT_BORDER_SX : NO_EFFECT_BORDER_SX
         }
-        const hasEffect = stimulations.some((stim) => stim.effect.observed_effect !== NO_EFFECT);
+        const hasEffect = stimulations.some((stim) => JSON.stringify(stim.effect.observed_effect) !== JSON.stringify(NO_EFFECT));
         return hasEffect ? EFFECT_BORDER_SX : NO_EFFECT_BORDER_SX;
     }
 
