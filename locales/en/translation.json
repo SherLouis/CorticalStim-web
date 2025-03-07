@@ -110,6 +110,7 @@
                 "task_title": "Task",
                 "task_last_used_title": "Last used",
                 "task_other_value_label": "Other",
+                "task_no_task_used": "No task used",
                 "set_time_label": "Set Time of stimulation",
                 "saveButtonLabel": "Save",
                 "numberOfStimulationsLabel": "Stimulations: ",

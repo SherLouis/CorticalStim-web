@@ -110,6 +110,7 @@
                 "task_title": "Tâche",
                 "task_last_used_title": "Derniers utilisés",
                 "task_other_value_label": "Autre",
+                "task_no_task_used": "Aucune tâche utilisée",
                 "set_time_label": "Enregistrer l'heure de stimulation",
                 "saveButtonLabel": "Enregistrer",
                 "numberOfStimulationsLabel": "Stimulations: ",
