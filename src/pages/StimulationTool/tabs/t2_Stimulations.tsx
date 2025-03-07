@@ -4,7 +4,7 @@ import StimulationFormValues, { StimulationObservedEffectFormValues, Stimulation
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
-import StimulationTaskSelection, { formatSelectedTask } from "../../../components/StimulationTaskSelection";
+import StimulationTaskSelection, { formatSelectedTask, NO_TASK } from "../../../components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
 import StimulationEffectSelection, { formatEegPostDichargeLocale, formatEpiManifestation, formatSelectedObservedEffect, NO_EFFECT } from "../../../components/StimulationEffectSelection";
 import { IconAlertCircle, IconCircleCheck, IconCircleX, IconClockCheck, IconEye, IconTrash } from "@tabler/icons-react";
@@ -30,6 +30,8 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     // Last used values
     const [lastTaskValues, lastTaskValuesHandlers] = useListState<{ category: string; subcategory: string; characteristic: string }>();
     const [lastCognitiveEffectValues, lastCognitiveEffectValuesHandlers] = useListState<StimulationObservedEffectFormValues>();
+    const MAX_LAST_TASK = 5;
+    const MAX_LAST_EFFECT = 5;
 
     const handleSelectedPointChanged = (newPointId: string) => {
         if (stimulationTime === '') {
@@ -89,12 +91,17 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                                 effect: effect_values
                             });
                         // Save last used task
-                        if (lastTaskValues.map(t => formatSelectedTask(t)).includes(formatSelectedTask(task_values))) {
+                        if (JSON.stringify(task_values) === JSON.stringify(NO_TASK)) {
+                            // NO-OP - do not save no effect in last values
+                        }
+                        else if (lastTaskValues.map(t => formatSelectedTask(t)).includes(formatSelectedTask(task_values))) {
                             lastTaskValuesHandlers.reorder({ from: lastTaskValues.findIndex(t => formatSelectedTask(t) === formatSelectedTask(task_values)), to: 0 });
                         }
                         else {
                             lastTaskValuesHandlers.prepend(task_values);
-                            if (lastTaskValues.length >= 3) { lastTaskValues.pop(); }
+                            if (lastTaskValues.length >= MAX_LAST_TASK) {
+                                lastTaskValues.pop();
+                            }
                         }
 
                         // Save last used effect
@@ -110,7 +117,9 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                                 descriptor: effect_values.observed_effect.descriptor,
                                 details: effect_values.observed_effect.details
                             });
-                            if (lastCognitiveEffectValues.length >= 3) { lastCognitiveEffectValuesHandlers.pop(); }
+                            if (lastCognitiveEffectValues.length >= MAX_LAST_EFFECT) {
+                                lastCognitiveEffectValuesHandlers.pop();
+                            }
                         }
 
                         // unselect point and reset inner forms to prepare for next stimulation
@@ -375,7 +384,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
             <Box h={"50%"} w={"100%"}>
                 <Group w={"100%"} h={"100%"} align='flex-start' >
-                    <Box h={"100%"} sx={{ flex: 8 }}>
+                    <Box h={"100%"} sx={{ flex: 7 }}>
                         {/** TODO: legend for contact colors */}
                         <Group h={"10%"} w={"100%"} position="apart">
                             <Title order={3} h={"100%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
@@ -390,7 +399,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                             />
                         </Box>
                     </Box>
-                    <Box h={"100%"} sx={{ flex: 4 }}>
+                    <Box h={"100%"} sx={{ flex: 5 }}>
                         {selectedPoint !== '' &&
                             <Stack h={"100%"}>
                                 <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />

@@ -1,4 +1,4 @@
-import { Box, Button, Group, Stack, Table, TextInput, Title } from "@mantine/core";
+import { Box, Button, Flex, Group, Stack, Table, TextInput, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import ColumnButtonSelect from "./ColumnButtonSelect";
@@ -27,38 +27,50 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
     }
 
     const setOtherValue = (value: string) => {
-        form.setFieldValue("characteristic", "");
-        form.setFieldValue("subcategory", "");
         form.setFieldValue("category", value);
+        form.setFieldValue("subcategory", "");
+        form.setFieldValue("characteristic", "");
     }
 
     return (
-        <Box w={"100%"} mah={"100%"}>
+        <Box w={"100%"} h={"100%"}>
             <Stack h={"100%"} spacing={0} w={"100%"}>
-                <Group w={"100%"} align="flex-end">
-                    <Title order={3}>{t('pages.stimulationTool.stimulation.task_title')}</Title>
+                <Title order={5}>{t('pages.stimulationTool.stimulation.task_title')}</Title>
+
+                <Group w={"100%"} h={"90%"} align="flex-start">
+                    <Box sx={{ flex: 3 }} h={"100%"}>
+                        <Stack h={"100%"}>
+                            <Button compact size="sm"
+                                variant={JSON.stringify(form.values) === JSON.stringify(NO_TASK) ? "filled" : "light"}
+                                onClick={() => { form.setValues(NO_TASK); }}>
+                                {t('pages.stimulationTool.stimulation.task_no_task_used')}
+                            </Button>
+                            <Box p={0} m={0} display={last_values.length > 0 ? 'block' : 'none'}>
+                                <Title order={6}>{t('pages.stimulationTool.stimulation.task_last_used_title')}</Title>
+                                <Button.Group orientation="vertical">
+                                    {last_values.map((v, i) => (
+                                        <Button compact size="sm" key={"btn_last_task_" + i}
+                                            variant={formatSelectedTask(form.values) === formatSelectedTask(v) ? "filled" : "light"}
+                                            onClick={() => { form.setValues(v); }}>
+                                            {formatSelectedTask(v)}
+                                        </Button>
+                                    ))}
+                                </Button.Group>
+                            </Box>
+                        </Stack>
+                    </Box>
+
+                    <Stack sx={{ flex: 9 }} h={"100%"} spacing={0}>
+                        <Box h={"90%"}>
+                            <TaskTable form={form} handleValueChange={handleValueChange} />
+                        </Box>
+                        <TextInput
+                            h={"10%"}
+                            placeholder={t('pages.stimulationTool.stimulation.task_other_value_label')}
+                            onChange={(v) => setOtherValue(v.currentTarget.value)} />
+                    </Stack>
+
                 </Group>
-
-                <TaskTable form={form} handleValueChange={handleValueChange} />
-
-                {last_values.length > 0 &&
-                    <Box px={"sm"}>
-                        <Group position='left'>
-                            {last_values.map((v, i) => (
-                                <Button compact size="sm" key={"btn_last_task_" + i}
-                                    variant={formatSelectedTask(form.values) === formatSelectedTask(v) ? "filled" : "light"}
-                                    onClick={() => { form.setValues(v); }}>
-                                    {formatSelectedTask(v)}
-                                </Button>
-                            ))}
-                        </Group>
-                    </Box>}
-
-                <TextInput
-                    size="xs"
-                    label={t('pages.stimulationTool.stimulation.task_other_value_label')}
-                    onChange={(v) => setOtherValue(v.currentTarget.value)}
-                    w={"100%"} />
             </Stack>
         </Box>
     );
@@ -121,31 +133,37 @@ const TaskTable = ({ form, handleValueChange }: TaskTableProps) => {
     }
 
     return (
-        <Table sx={{ tableLayout: 'fixed', width: "100%", border: 0 }}>
-            <tr key={"options"}>
-                <td valign="top">
-                    <ColumnButtonSelect
-                        data={getTaskOptions('category')}
-                        currentValue={form.values.category}
-                        onChange={(v) => handleValueChange('category', v)}
-                    />
-                </td>
-                <td valign="top">
-                    <ColumnButtonSelect
-                        data={getTaskOptions('subcategory')}
-                        currentValue={form.values.subcategory}
-                        onChange={(v) => handleValueChange('subcategory', v)}
-                    />
-                </td>
-                <td valign="top">
-                    <ColumnButtonSelect
-                        data={getTaskOptions('characteristic')}
-                        currentValue={form.values.characteristic}
-                        onChange={(v) => handleValueChange('characteristic', v)}
-                    />
-                </td>
-            </tr>
-        </Table>
+        <Stack w={"100%"} h={"100%"} p={0} spacing={"xs"}>
+            <Flex direction={"row"} justify={"flex-start"} align={"flex-start"} wrap={"nowrap"} w={"100%"} h={"100%"}>
+                <Stack spacing={0} h={"100%"} sx={{ flex: 4 }}>
+                    <Box h={"100%"} sx={{ flex: 4 }}>
+                        <ColumnButtonSelect
+                            data={getTaskOptions('category')}
+                            currentValue={form.values.category}
+                            onChange={(v) => handleValueChange('category', v)}
+                        />
+                    </Box>
+                </Stack>
+                <Stack spacing={0} h={"100%"} sx={{ flex: 4 }} px={"sm"}>
+                    <Box h={"100%"} sx={{ flex: 4 }}>
+                        <ColumnButtonSelect
+                            data={getTaskOptions('subcategory')}
+                            currentValue={form.values.subcategory}
+                            onChange={(v) => handleValueChange('subcategory', v)}
+                        />
+                    </Box>
+                </Stack>
+                <Stack spacing={0} h={"100%"} sx={{ flex: 4 }}>
+                    <Box h={"100%"} sx={{ flex: 4 }}>
+                        <ColumnButtonSelect
+                            data={getTaskOptions('characteristic')}
+                            currentValue={form.values.characteristic}
+                            onChange={(v) => handleValueChange('characteristic', v)}
+                        />
+                    </Box>
+                </Stack>
+            </Flex>
+        </Stack>
     );
 }
 
@@ -165,3 +183,7 @@ interface StimulationTaskSelectionProps {
     form: UseFormReturnType<StimulationTaskFormValues>;
     last_values: { category: string; subcategory: string; characteristic: string }[];
 }
+
+
+export const NO_TASK: StimulationTaskFormValues = { category: "None", subcategory: "", characteristic: "" };
+
