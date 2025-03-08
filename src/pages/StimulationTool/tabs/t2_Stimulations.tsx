@@ -166,9 +166,18 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     const isSelectedPointObservedEffectSelected = useMemo<boolean>(
         () => {
             const effect = effect_form.values.observed_effect;
-            return (effect.class !== "" || effect.descriptor !== "" || effect.details !== "");
+            return !(effect.class === "" && effect.descriptor === "" && effect.details === "");
         },
-        [effect_form.values.observed_effect]);
+        [effect_form.values.observed_effect]
+    );
+
+    const isTaskSelected = useMemo<boolean>(
+        () => {
+            const task = task_form.values;
+            return !(task.category === "" && task.subcategory === "" && task.characteristic === "");
+        },
+        [task_form.values]
+    );
 
     const getSelectedPointEpiManifEffect = () => {
         return formatEpiManifestation(effect_form.values.epi_manifestation, t);
@@ -224,10 +233,21 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
                             {<Group position="center" align="center" sx={{ flex: 2 }} h={"100%"} spacing={"xs"}>
                                 {!stimTimeSet &&
-                                    <Button size="md"
-                                        onClick={() => setStimulationTime(new Date().toISOString())} leftIcon={<IconClockCheck />}>
-                                        <Text w={"9rem"} align='center' size={"sm"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label')}</Text>
-                                    </Button>
+                                    <HoverCard disabled={isTaskSelected}>
+                                        <HoverCard.Target>
+                                            <Box>
+                                                <Button size="md"
+                                                    onClick={() => setStimulationTime(new Date().toISOString())} 
+                                                    leftIcon={<IconClockCheck />}
+                                                    disabled={!isTaskSelected}>
+                                                    <Text w={"9rem"} align='center' size={"sm"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label')}</Text>
+                                                </Button>
+                                            </Box>
+                                        </HoverCard.Target>
+                                        <HoverCard.Dropdown>
+                                            <Text>{t('pages.stimulationTool.stimulation.no_task_selected')}</Text>
+                                        </HoverCard.Dropdown>
+                                    </HoverCard>
                                 }
                                 {stimTimeSet &&
                                     <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
