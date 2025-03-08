@@ -1,4 +1,4 @@
-import { Alert, Badge, Box, Button, Container, Divider, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Box, Button, Center, Container, Divider, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../core/models/stimulationForm";
 import { useMemo, useState } from "react";
@@ -198,8 +198,15 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         }
         const stimPointSelected = form.values.electrodes.length !== 0 && form.values.electrodes.flatMap(e => e.stim_points).length !== 0;
         const stimTimeSet = stimulationTime !== '';
+        // TODO new design : Position of data display
+        // TODO new design : Diff display if time saved or not
         return (
-            <Box h={"100%"}>
+            <Box h={"100%"} sx={(theme) => (
+                {
+                    borderRadius: theme.radius.xl,
+                    overflow: "hidden",
+                    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[6]
+                })}>
                 {/** No Contact exists */}
                 <Group align='center' position='center' h={"100%"} w={"100%"} display={!stimPointSelected ? "block" : "none"}>
                     <Alert h={"100%"}
@@ -220,6 +227,18 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                     </Group>
                     {/** Contact selected */}
                     <Box h={"100%"} display={selectedPoint !== "" ? "block" : "none"}>
+                        {/** Selected contact */}
+                        <Center
+                            sx={(theme) => ({
+                                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.blue[9] : theme.colors.blue[4],
+                                height: '100%',
+                                padding: theme.spacing.md,
+                                borderTopLeftRadius: theme.radius.lg,
+                                borderBottomLeftRadius: theme.radius.lg,
+                                width: '5%',
+                            })}>
+                            <Text fz={"xl"} fw={"bold"}>{selectedPoint}</Text>
+                        </Center>
                         <Group position="center" align="center" h={"100%"} w={"100%"}>
                             <Stack sx={{ flex: 5 }} h={"100%"} w={"100%"} spacing={"0"}>
                                 <Group position="left" w={"100%"} align="center" spacing={"xs"} noWrap>
@@ -237,7 +256,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                                         <HoverCard.Target>
                                             <Box>
                                                 <Button size="md"
-                                                    onClick={() => setStimulationTime(new Date().toISOString())} 
+                                                    onClick={() => setStimulationTime(new Date().toISOString())}
                                                     leftIcon={<IconClockCheck />}
                                                     disabled={!isTaskSelected}>
                                                     <Text w={"9rem"} align='center' size={"sm"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label')}</Text>
@@ -430,7 +449,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                 </Group>
             </Box>
 
-            <Box h={"10%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
+            <Box h={"10%"} w={"100%"}>
                 <CentralBar />
             </Box>
 
