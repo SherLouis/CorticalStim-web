@@ -80,43 +80,45 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
 
                 <Box sx={{ flex: 5 }} h={"100%"}>
                     <Group w={"100%"} h={"100%"} align='flex-start'>
-                        <Stack sx={{ flex: 6 }} >
+                        <Stack sx={{ flex: 6 }} h={"100%"} >
                             <Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>
-                            <Box>
-                                <Stack w={"100%"}>
-                                    {getEpiManifestationOptions(t).map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label}
-                                        onChange={(e) => form.setFieldValue('epi_manifestation', e.target.checked ? e.target.value : "")}
-                                        checked={option.value === form.values.epi_manifestation}
-                                    />)}
+                            <Stack h={"90%"} w={"100%"} spacing={'xs'}>
+                                <Box w={"100%"} sx={{ flex: 6 }}>
+                                    <Stack w={"100%"} spacing={"xs"}>
+                                        {getEpiManifestationOptions(t).map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label}
+                                            onChange={(e) => form.setFieldValue('epi_manifestation', e.target.checked ? e.target.value : "")}
+                                            checked={option.value === form.values.epi_manifestation}
+                                        />)}
+                                        <TextInput
+                                            placeholder={t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.other')}
+                                            {...form.getInputProps('epi_manifestation')}
+                                        />
+                                    </Stack>
+                                </Box>
+                                <Box w={"100%"} sx={{ flex: 6 }}>
+                                    <Radio.Group
+                                        defaultValue="unknown"
+                                        label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_label')}
+                                        {...form.getInputProps('contact_in_epi_zone')}>
+                                        <Group>
+                                            {getContactInEpiZoneOptions().map((option, i) =>
+                                                <Radio
+                                                    key={"in_epi_zone_" + i}
+                                                    label={option.label}
+                                                    value={option.value}
+                                                />)}
+                                        </Group>
+                                    </Radio.Group>
                                     <TextInput
-                                        placeholder={t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.other')}
-                                        {...form.getInputProps('epi_manifestation')}
+                                        label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_comments_label')}
+                                        {...form.getInputProps('contact_in_epi_zone_comments')}
                                     />
-                                </Stack>
-                            </Box>
-                            <Box w={"100%"}>
-                                <Radio.Group
-                                    defaultValue="unknown"
-                                    label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_label')}
-                                    {...form.getInputProps('contact_in_epi_zone')}>
-                                    <Group>
-                                        {getContactInEpiZoneOptions().map((option, i) =>
-                                            <Radio
-                                                key={"in_epi_zone_" + i}
-                                                label={option.label}
-                                                value={option.value}
-                                            />)}
-                                    </Group>
-                                </Radio.Group>
-                                <TextInput
-                                    label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_comments_label')}
-                                    {...form.getInputProps('contact_in_epi_zone_comments')}
-                                />
-                            </Box>
+                                </Box>
+                            </Stack>
                         </Stack>
-                        <Stack sx={{ flex: 6 }}>
+                        <Stack sx={{ flex: 6 }} h={"100%"}>
                             <Title order={5}>{t('pages.stimulationTool.stimulation.effect.eeg')}</Title>
-                            <Box>
+                            <Box h={"90%"}>
                                 <EEGSection form={form} t={t} />
                             </Box>
                         </Stack>
@@ -443,13 +445,13 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
     ]
 
     return (
-        <Stack>
-            <Switch
-                label={t('pages.stimulationTool.stimulation.effect.eeg_section.post_discharge_label')}
-                checked={form.values.post_discharge}
-                {...form.getInputProps('post_discharge')} />
-            {form.values.post_discharge &&
-                <Box>
+        <ScrollArea w={"100%"} h={"100%"} py={"xs"} type="auto" sx={{ padding: '0' }}>
+            <Stack align="stretch" justify="flex-start">
+                <Switch
+                    label={t('pages.stimulationTool.stimulation.effect.eeg_section.post_discharge_label')}
+                    checked={form.values.post_discharge}
+                    {...form.getInputProps('post_discharge')} />
+                <Box display={form.values.post_discharge === true ? 'block' : 'none'}>
                     <Stack spacing={0}>
                         <TextInput
                             label={t('pages.stimulationTool.stimulation.effect.eeg_section.duration_label') + ' (s)'}
@@ -483,7 +485,7 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
                         <Group spacing={0} grow w={"100%"}>
                             {post_discharge_type.map((v, i) =>
                                 <Button compact key={"pd_type_option_" + i}
-                                    onClick={() => form.setFieldValue('type_label', v.value)}
+                                    onClick={() => form.setFieldValue('pd_type', v.value)}
                                     variant={form.values.pd_type === v.value ? 'filled' : 'default'}>
                                     {v.label}
                                 </Button>
@@ -491,19 +493,20 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
                         </Group>
                     </Stack>
                 </Box>
-            }
-            <Switch
-                label={t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_label')}
-                checked={form.values.crisis}
-                {...form.getInputProps('crisis')} />
-            {form.values.crisis &&
-                <TextInput
-                    placeholder={t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_comments_label')}
-                    label={t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_comments_label')}
-                    {...form.getInputProps('crisis_comments')}
-                />
-            }
-        </Stack>
+
+                <Switch
+                    label={t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_label')}
+                    checked={form.values.crisis}
+                    {...form.getInputProps('crisis')} />
+                {form.values.crisis &&
+                    <TextInput
+                        placeholder={t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_comments_label')}
+                        label={t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_comments_label')}
+                        {...form.getInputProps('crisis_comments')}
+                    />
+                }
+            </Stack>
+        </ScrollArea>
     );
 }
 

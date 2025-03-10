@@ -270,7 +270,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 {/** Contact(s) selected */}
                 <Box h={"100%"} w={"100%"} display={electrode_parameters_selected && contacts_configured && contacts_selected ? "block" : "none"}>
                     <Group position='apart' align='flex-start' h={"100%"} w={"100%"}>
-                        <Stack w={"80%"} h={"100%"} spacing={0}>
+                        <Stack sx={{flex: 9}} h={"100%"} spacing={0}>
                             {/** Selected contacts */}
                             <Group h={"35%"} w={"100%"} noWrap>
                                 {t('pages.stimulationTool.implantation.selected_contacts') + ':'}
@@ -292,7 +292,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                             </Alert>
                         </Stack>
 
-                        <Stack w={"15%"} h={"100%"} align="center" spacing={"xs"}>
+                        <Stack sx={{flex:3}} h={"100%"} align="center" spacing={"xs"}>
                             {/** Display selected location */}
                             {t('pages.stimulationTool.implantation.selected_location')}: {getNewElectrodeLocationFromForm()}
                             {/** Unselect all Buttons */}

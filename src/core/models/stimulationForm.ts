@@ -61,7 +61,7 @@ export interface StimulationEffectsValues {
     crisis_comments: string;
 };
 
-export const PostDischargeValueOptions = ['<5s', '5s-10s', '>10s'];
+export const PostDischargeValueOptions = ['<5', '5-10', '>10'];
 
 export interface StimulationObservedEffectFormValues {
     class: string;
