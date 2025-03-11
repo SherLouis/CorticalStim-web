@@ -61,20 +61,22 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
                             </Stack>
                         </Box>
 
-                        <Stack sx={{ flex: 9 }} h={"100%"} spacing={0}>
-                            <Box h={"90%"}>
-                                <CognitiveEffectTable
-                                    cognitive_values={form.values.observed_effect}
-                                    handleValueChange={handleCognitiveEffectValueChange}
-                                    t={t}
+                        <Box sx={{ flex: 9 }} h={"100%"}>
+                            <Stack w={"100%"} h={"100%"} spacing={0}>
+                                <Box h={"90%"}>
+                                    <CognitiveEffectTable
+                                        cognitive_values={form.values.observed_effect}
+                                        handleValueChange={handleCognitiveEffectValueChange}
+                                        t={t}
+                                    />
+                                </Box>
+                                <TextInput
+                                    h={"10%"}
+                                    placeholder={t("pages.stimulationTool.stimulation.effect.comments_label")}
+                                    {...form.getInputProps('observed_effect_comments')}
                                 />
-                            </Box>
-                            <TextInput
-                                h={"10%"}
-                                placeholder={t("pages.stimulationTool.stimulation.effect.comments_label")}
-                                {...form.getInputProps('observed_effect_comments')}
-                            />
-                        </Stack>
+                            </Stack>
+                        </Box>
                     </Group>
                 </Box>
 
