@@ -204,7 +204,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         const selectedPointStims = form.values.electrodes.find(e => e.label === selectedPointElectrodeLabel)?.stim_points.find(p => getStimPointLabel(selectedPointElectrodeLabel, p.index) === selectedPoint)?.stimulations;
         const stims = selectedPointStims !== undefined ? selectedPointStims : [];
         const selectedContactBorderSx = getStimulatedStyledContactBorderStyle(stims, theme);
-        const selectedContactBackgroundColorSx = getStimulatedStyledContactColor(stims, false, theme, true);
+        const selectedContactBackgroundColorSx = getStimulatedStyledContactColor(stims, stims.length === 0, theme, true);
 
         // TODO: Time selection / Save button
         return (
