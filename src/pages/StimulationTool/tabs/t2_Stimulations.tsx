@@ -1,4 +1,4 @@
-import { Alert, Badge, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../core/models/stimulationForm";
 import { useMemo, useState } from "react";
@@ -10,7 +10,7 @@ import StimulationEffectSelection, { formatEegPostDichargeLocale, formatEpiManif
 import { IconAlertCircle, IconCircleCheck, IconCircleX, IconClockCheck, IconEye, IconTrash } from "@tabler/icons-react";
 import { t } from "i18next";
 import CustomNumberInput from "../../../components/CustomNumberInput";
-import StimulatedContact from "../../../components/StimulatedContact";
+import StimulatedContact, { getStimulatedStyledContactBorderStyle, getStimulatedStyledContactColor } from "../../../components/StimulatedContact";
 
 export default function StimulationsTab({ form, viewPointSummary }: StimulationTabProps) {
     // TODO: ajouter validations (ex: post discharge time cannot be 0 or negative if set to true)
@@ -105,7 +105,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         }
 
                         // Save last used effect
-                        if (effect_values.observed_effect === NO_EFFECT) {
+                        if (JSON.stringify(effect_values.observed_effect) === JSON.stringify(NO_EFFECT)) {
                             // NO-OP - do not save no effect in last values
                         }
                         else if (lastCognitiveEffectValues.map(e => formatSelectedObservedEffect(e)).includes(formatSelectedObservedEffect(effect_values.observed_effect))) {
@@ -190,6 +190,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     }
 
     const CentralBar = () => {
+        const theme = useMantineTheme();
         const formatParameters = (params: StimulationParametersFormValues): string => {
             return t('pages.stimulationTool.stimulation.amplitude_label') + ': ' + params.amplitude + ' (mA)' + ', ' +
                 t('pages.stimulationTool.stimulation.frequency_label') + ': ' + params.frequency + ' (Hz)' + ', ' +
@@ -198,8 +199,13 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         }
         const stimPointSelected = form.values.electrodes.length !== 0 && form.values.electrodes.flatMap(e => e.stim_points).length !== 0;
         const stimTimeSet = stimulationTime !== '';
-        
-        // TODO: color / border depending on selected contact stimulations!
+
+        const selectedPointElectrodeLabel = selectedPoint.split('/').slice(0, -1).join('/');
+        const selectedPointStims = form.values.electrodes.find(e => e.label === selectedPointElectrodeLabel)?.stim_points.find(p => getStimPointLabel(selectedPointElectrodeLabel, p.index) === selectedPoint)?.stimulations;
+        const stims = selectedPointStims !== undefined ? selectedPointStims : [];
+        const selectedContactBorderSx = getStimulatedStyledContactBorderStyle(stims, theme);
+        const selectedContactBackgroundColorSx = getStimulatedStyledContactColor(stims, false, theme, true);
+
         // TODO: Time selection / Save button
         return (
             <Box h={"100%"} my={"sm"} sx={(theme) => (
@@ -231,12 +237,13 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         {/** Selected contact */}
                         <Center
                             sx={(theme) => ({
-                                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.blue[9] : theme.colors.blue[4],
+                                flex: 1,
+                                backgroundColor: selectedContactBackgroundColorSx,
                                 height: '100%',
                                 padding: theme.spacing.md,
-                                borderTopLeftRadius: theme.radius.lg,
-                                borderBottomLeftRadius: theme.radius.lg,
-                                flex: 1,
+                                ...selectedContactBorderSx,
+                                borderTopLeftRadius: theme.radius.xl,
+                                borderBottomLeftRadius: theme.radius.xl,
                             })}>
                             <Text fz={"xl"} fw={"bolder"}>{selectedPoint}</Text>
                         </Center>
@@ -446,12 +453,11 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         </Box>
                     </Box>
                     <Box h={"100%"} sx={{ flex: 5 }}>
-                        {selectedPoint !== '' &&
-                            <Stack h={"100%"}>
-                                <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
-                                <StimulationParametersSelection />
-                            </Stack>
-                        }
+                        <Stack h={"100%"} w={"100%"} display={selectedPoint !== '' ? 'flex' : 'none'}>
+                            <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
+                            <StimulationParametersSelection />
+                        </Stack>
+
                     </Box>
                 </Group>
             </Box>

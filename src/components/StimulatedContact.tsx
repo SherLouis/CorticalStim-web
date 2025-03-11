@@ -1,4 +1,4 @@
-import { Chip, ChipProps, MantineColor, Sx, useMantineTheme } from "@mantine/core";
+import { Chip, ChipProps, MantineColor, MantineTheme, Sx, useMantineTheme } from "@mantine/core";
 import { Stimulation } from "../core/models/stimulationForm";
 import { NO_EFFECT } from "./StimulationEffectSelection";
 
@@ -6,53 +6,8 @@ import { NO_EFFECT } from "./StimulationEffectSelection";
 const StimulatedContact = ({ selected, stimulations, onChange, forcedVariant, forcedEffect, ...props }: StimulatedContactProps) => {
     const theme = useMantineTheme();
 
-    const SELECTED_COLOR = 'blue';
-    const DEFAULT_COLOR = 'gray';
-    const CRISIS_COLOR = 'red.6'
-    const POST_DISCHARGE_COLOR = 'orange';
-    const SINGLE_STIM_COLOR = 'green.4';
-    const MULTI_STIM_COLOR = 'green.9';
-
-    const getContactColor = (): MantineColor => {
-        if (forcedVariant !== undefined) {
-            switch (forcedVariant) {
-                case 'default':
-                    return DEFAULT_COLOR;
-                case 'selected':
-                    return SELECTED_COLOR;
-                case 'crisis':
-                    return CRISIS_COLOR;
-                case 'postDischarge':
-                    return POST_DISCHARGE_COLOR;
-                case 'singleStim':
-                    return SINGLE_STIM_COLOR;
-                case 'multipleStim':
-                    return MULTI_STIM_COLOR;
-            }
-        }
-        if (selected) {
-            return SELECTED_COLOR;
-        }
-        const nbStims = stimulations.length;
-        const eegCrisis = stimulations.some((stim) => stim.effect.crisis);
-        const postDischarge = stimulations.some((stim) => stim.effect.post_discharge);
-        if (eegCrisis) {
-            return CRISIS_COLOR;
-        }
-        if (postDischarge) {
-            return POST_DISCHARGE_COLOR;
-        }
-        if (nbStims === 1) {
-            return SINGLE_STIM_COLOR;
-        }
-        if (nbStims > 1) {
-            return MULTI_STIM_COLOR;
-        }
-        return DEFAULT_COLOR;
-    };
-
     const getContactBorderStyle = (): Sx => {
-        const EFFECT_BORDER_SX = { '& .mantine-Chip-label': { borderColor: theme.colors.red[9], borderWidth: 3, borderStyle: 'solid', borderRadius: 'xl' } };
+        const EFFECT_BORDER_SX = { '& .mantine-Chip-label': getEffectBorderStyle(theme) };
         const NO_EFFECT_BORDER_SX = {};
         if (forcedEffect !== undefined) {
             return forcedEffect ? EFFECT_BORDER_SX : NO_EFFECT_BORDER_SX
@@ -62,7 +17,7 @@ const StimulatedContact = ({ selected, stimulations, onChange, forcedVariant, fo
     }
 
     const nbStims = stimulations.length;
-    const color = getContactColor();
+    const color = getStimulatedStyledContactColor(stimulations, selected, theme, false, forcedVariant);
     const sx = getContactBorderStyle();
 
     return (
@@ -83,8 +38,68 @@ interface StimulatedContactProps extends ChipProps {
     selected: boolean;
     stimulations: Stimulation[];
     onChange: (_checked: boolean) => void;
-    forcedVariant?: 'default' | 'selected' | 'crisis' | 'postDischarge' | 'singleStim' | 'multipleStim' | undefined;
+    forcedVariant?: ForcedVariantOptions;
     forcedEffect?: boolean | undefined;
 }
 
+type ForcedVariantOptions = 'default' | 'selected' | 'crisis' | 'postDischarge' | 'singleStim' | 'multipleStim' | undefined;
+
 export default StimulatedContact;
+
+const getEffectBorderStyle = (theme: MantineTheme) => {
+    return { borderColor: theme.colors.red[9], borderWidth: 3, borderStyle: 'solid', borderRadius: 'xl' };
+}
+
+export const getStimulatedStyledContactBorderStyle = (stimulations: Stimulation[], theme: MantineTheme) => {
+    const hasEffect = stimulations.some((stim) => JSON.stringify(stim.effect.observed_effect) !== JSON.stringify(NO_EFFECT));
+    return hasEffect ? getEffectBorderStyle(theme) : {};
+}
+
+export const getStimulatedStyledContactColor = (stimulations: Stimulation[], selected: boolean, theme: MantineTheme, useThemeColor: boolean, forcedVariant?: ForcedVariantOptions): string => {
+    const COLORS = {
+        DEFAULT: { color: 'gray', themeHex: theme.colors.gray[5] },
+        SELECTED: { color: 'blue', themeHex: theme.colors.blue[5] },
+        CRISIS: {
+            color: 'red.6', themeHex: theme.colors.red[6]
+        },
+        POST_DISCHARGE: { color: 'orange', themeHex: theme.colors.orange[6] },
+        SINGLE_STIM: { color: 'green.4', themeHex: theme.colors.green[4] },
+        MULTI_STIM: { color: 'green.9', themeHex: theme.colors.green[9] },
+    };
+
+    if (forcedVariant !== undefined) {
+        switch (forcedVariant) {
+            case 'default':
+                return useThemeColor ? COLORS.DEFAULT.themeHex : COLORS.DEFAULT.color;
+            case 'selected':
+                return useThemeColor ? COLORS.SELECTED.themeHex : COLORS.SELECTED.color;
+            case 'crisis':
+                return useThemeColor ? COLORS.CRISIS.themeHex : COLORS.CRISIS.color;
+            case 'postDischarge':
+                return useThemeColor ? COLORS.POST_DISCHARGE.themeHex : COLORS.POST_DISCHARGE.color;
+            case 'singleStim':
+                return useThemeColor ? COLORS.SINGLE_STIM.themeHex : COLORS.SINGLE_STIM.color;
+            case 'multipleStim':
+                return useThemeColor ? COLORS.MULTI_STIM.themeHex : COLORS.MULTI_STIM.color;
+        }
+    }
+    if (selected) {
+        return useThemeColor ? COLORS.SELECTED.themeHex : COLORS.SELECTED.color;
+    }
+    const nbStims = stimulations.length;
+    const eegCrisis = stimulations.some((stim) => stim.effect.crisis);
+    const postDischarge = stimulations.some((stim) => stim.effect.post_discharge);
+    if (eegCrisis) {
+        return useThemeColor ? COLORS.CRISIS.themeHex : COLORS.CRISIS.color;
+    }
+    if (postDischarge) {
+        return useThemeColor ? COLORS.POST_DISCHARGE.themeHex : COLORS.POST_DISCHARGE.color;
+    }
+    if (nbStims === 1) {
+        return useThemeColor ? COLORS.SINGLE_STIM.themeHex : COLORS.SINGLE_STIM.color;
+    }
+    if (nbStims > 1) {
+        return useThemeColor ? COLORS.MULTI_STIM.themeHex : COLORS.MULTI_STIM.color;
+    }
+    return useThemeColor ? COLORS.DEFAULT.themeHex : COLORS.DEFAULT.color;
+};
