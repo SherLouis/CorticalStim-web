@@ -116,7 +116,6 @@
                 "saveButtonLabel": "Save",
                 "numberOfStimulationsLabel": "Stimulations: ",
                 "viewResultsForPointIdLabel": "View results",
-                "selectedStimPoint": "Selected stimulation point",
                 "effect": {
                     "observed_effect_label": "Observed Effect",
                     "effect_table": {
