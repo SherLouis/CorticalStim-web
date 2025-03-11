@@ -37,7 +37,7 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
             <Stack h={"100%"} spacing={0} w={"100%"}>
                 <Title order={5}>{t('pages.stimulationTool.stimulation.task_title')}</Title>
 
-                <Group w={"100%"} h={"90%"} align="flex-start">
+                <Group position={"left"} align={"flex-start"} w={"100%"} h={"90%"}>
                     <Box sx={{ flex: 3 }} h={"100%"}>
                         <Stack h={"100%"}>
                             <Button compact size="sm"
@@ -60,16 +60,17 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
                         </Stack>
                     </Box>
 
-                    <Stack sx={{ flex: 9 }} h={"100%"} spacing={0}>
-                        <Box h={"90%"}>
-                            <TaskTable form={form} handleValueChange={handleValueChange} />
-                        </Box>
-                        <TextInput
-                            h={"10%"}
-                            placeholder={t('pages.stimulationTool.stimulation.task_other_value_label')}
-                            onChange={(v) => setOtherValue(v.currentTarget.value)} />
-                    </Stack>
-
+                    <Box sx={{ flex: 9 }} h={"100%"}>
+                        <Stack h={"100%"} spacing={0}>
+                            <Box h={"90%"} w={"100%"}>
+                                <TaskTable form={form} handleValueChange={handleValueChange} />
+                            </Box>
+                            <TextInput
+                                h={"10%"}
+                                placeholder={t('pages.stimulationTool.stimulation.task_other_value_label')}
+                                onChange={(v) => setOtherValue(v.currentTarget.value)} />
+                        </Stack>
+                    </Box>
                 </Group>
             </Stack>
         </Box>
