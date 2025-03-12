@@ -442,20 +442,25 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
             <Box h={"50%"} w={"100%"}>
                 <Group w={"100%"} h={"100%"} align='flex-start' >
-                    <Box h={"100%"} sx={{ flex: 7 }}>
-                        <Group h={"10%"} w={"100%"} position="apart">
-                            <Title order={3} h={"100%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
-                            <ContactColorLegend h={"100%"} w={"70%"} noWrap position="apart" />
-                        </Group>
-                        <Box h={"90%"} w={"100%"} p={0} m={0}>
-                            <ContactSelection
-                                form_values={form.values}
-                                selectedContact={selectedPoint}
-                                onSelectedChanged={handleSelectedPointChanged}
-                                onViewResultsForPoint={handleViewResultsForPoint}
-                            />
-                        </Box>
-                    </Box>
+                    <Section
+                        sx={{ flex: 7 }}
+                        header={
+                            <Group position="apart" align="center" noWrap>
+                                <Title order={3} h={"100%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
+                                <ContactColorLegend h={"100%"} w={"80%"} position="apart" noWrap />
+                            </Group>
+                        }
+                        children={
+                            <Box h={"90%"} w={"100%"} p={0} m={0}>
+                                <ContactSelection
+                                    form_values={form.values}
+                                    selectedContact={selectedPoint}
+                                    onSelectedChanged={handleSelectedPointChanged}
+                                    onViewResultsForPoint={handleViewResultsForPoint}
+                                />
+                            </Box>
+                        }
+                    />
                     <Box h={"100%"} sx={{ flex: 5 }}>
                         <Stack h={"100%"} w={"100%"} spacing={"sm"} display={selectedPoint !== '' ? 'flex' : 'none'}>
                             <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
