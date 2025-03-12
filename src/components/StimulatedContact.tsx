@@ -58,7 +58,7 @@ export const getStimulatedStyledContactBorderStyle = (stimulations: Stimulation[
 export const getStimulatedStyledContactColor = (stimulations: Stimulation[], selected: boolean, theme: MantineTheme, useThemeColor: boolean, forcedVariant?: ForcedVariantOptions): string => {
     const COLORS = {
         DEFAULT: { color: 'gray', themeHex: theme.colors.gray[5] },
-        SELECTED: { color: 'blue', themeHex: theme.colors.blue[5] },
+        SELECTED: { color: 'blue', themeHex: theme.colors.blue[7] },
         CRISIS: {
             color: 'red.6', themeHex: theme.colors.red[6]
         },

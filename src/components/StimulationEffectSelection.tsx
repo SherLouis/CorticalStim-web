@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { PostDischargeValueOptions, StimulationEffectsValues, StimulationObservedEffectFormValues } from "../core/models/stimulationForm";
 import ColumnButtonSelect from "./ColumnButtonSelect";
 import { TFunction } from "i18next";
+import Section from "./Section";
 
 export default function StimulationEffectSelection({ form, observed_effect_last_values }: StimulationEffectSelectionProps) {
     const { t } = useTranslation();
@@ -35,95 +36,106 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
         ]
     }
 
+    const observedEffect = (
+        <Group w={"100%"} h={"90%"} align='flex-start'>
+            <Box sx={{ flex: 3 }} h={"100%"}>
+                <Stack h={"100%"}>
+                    <Button compact size="sm"
+                        variant={form.values.observed_effect === NO_EFFECT ? "filled" : "light"}
+                        onClick={() => { form.setFieldValue('observed_effect', NO_EFFECT); }}>
+                        {t('pages.stimulationTool.stimulation.effect.no_effect')}
+                    </Button>
+                    <Title order={6}>{t('pages.stimulationTool.stimulation.effect.last_used')}</Title>
+                    <Button.Group orientation='vertical'>
+                        {observed_effect_last_values.map((v, i) => (
+                            <Button compact size="sm" key={"btn_last_effect_" + i}
+                                variant={formatSelectedObservedEffect(form.values.observed_effect) === formatSelectedObservedEffect(v) ? "filled" : "light"}
+                                onClick={() => { form.setFieldValue('observed_effect', v); }}>
+                                {formatSelectedObservedEffect(v)}
+                            </Button>
+                        ))}
+                    </Button.Group>
+                </Stack>
+            </Box>
+
+            <Box sx={{ flex: 9 }} h={"100%"}>
+                <Stack w={"100%"} h={"100%"} spacing={0}>
+                    <Box h={"90%"}>
+                        <CognitiveEffectTable
+                            cognitive_values={form.values.observed_effect}
+                            handleValueChange={handleCognitiveEffectValueChange}
+                            t={t}
+                        />
+                    </Box>
+                    <TextInput
+                        h={"10%"}
+                        placeholder={t("pages.stimulationTool.stimulation.effect.comments_label")}
+                        {...form.getInputProps('observed_effect_comments')}
+                    />
+                </Stack>
+            </Box>
+        </Group>
+    );
+
+    const clinicalManif = (
+        <Stack h={"100%"} w={"100%"} spacing={'xs'}>
+            <Box w={"100%"} sx={{ flex: 6 }}>
+                <Stack w={"100%"} spacing={"xs"}>
+                    {getEpiManifestationOptions(t).map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label}
+                        onChange={(e) => form.setFieldValue('epi_manifestation', e.target.checked ? e.target.value : "")}
+                        checked={option.value === form.values.epi_manifestation}
+                    />)}
+                    <TextInput
+                        placeholder={t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.other')}
+                        {...form.getInputProps('epi_manifestation')}
+                    />
+                </Stack>
+            </Box>
+            <Box w={"100%"} sx={{ flex: 6 }}>
+                <Radio.Group
+                    defaultValue="unknown"
+                    label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_label')}
+                    {...form.getInputProps('contact_in_epi_zone')}>
+                    <Group>
+                        {getContactInEpiZoneOptions().map((option, i) =>
+                            <Radio
+                                key={"in_epi_zone_" + i}
+                                label={option.label}
+                                value={option.value}
+                            />)}
+                    </Group>
+                </Radio.Group>
+                <TextInput
+                    label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_comments_label')}
+                    {...form.getInputProps('contact_in_epi_zone_comments')}
+                />
+            </Box>
+        </Stack>
+    );
+
     return (
         <Box w={"100%"} h={"100%"}>
             <Group w={"100%"} h={"100%"} align='flex-start'>
-                <Box sx={{ flex: 7 }} h={"100%"}>
-                    <Title order={5}>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}</Title>
-                    <Group w={"100%"} h={"90%"} align='flex-start'>
-                        <Box sx={{ flex: 3 }} h={"100%"}>
-                            <Stack h={"100%"}>
-                                <Button compact size="sm"
-                                    variant={form.values.observed_effect === NO_EFFECT ? "filled" : "light"}
-                                    onClick={() => { form.setFieldValue('observed_effect', NO_EFFECT); }}>
-                                    {t('pages.stimulationTool.stimulation.effect.no_effect')}
-                                </Button>
-                                <Title order={6}>{t('pages.stimulationTool.stimulation.effect.last_used')}</Title>
-                                <Button.Group orientation='vertical'>
-                                    {observed_effect_last_values.map((v, i) => (
-                                        <Button compact size="sm" key={"btn_last_effect_" + i}
-                                            variant={formatSelectedObservedEffect(form.values.observed_effect) === formatSelectedObservedEffect(v) ? "filled" : "light"}
-                                            onClick={() => { form.setFieldValue('observed_effect', v); }}>
-                                            {formatSelectedObservedEffect(v)}
-                                        </Button>
-                                    ))}
-                                </Button.Group>
-                            </Stack>
-                        </Box>
-
-                        <Box sx={{ flex: 9 }} h={"100%"}>
-                            <Stack w={"100%"} h={"100%"} spacing={0}>
-                                <Box h={"90%"}>
-                                    <CognitiveEffectTable
-                                        cognitive_values={form.values.observed_effect}
-                                        handleValueChange={handleCognitiveEffectValueChange}
-                                        t={t}
-                                    />
-                                </Box>
-                                <TextInput
-                                    h={"10%"}
-                                    placeholder={t("pages.stimulationTool.stimulation.effect.comments_label")}
-                                    {...form.getInputProps('observed_effect_comments')}
-                                />
-                            </Stack>
-                        </Box>
-                    </Group>
-                </Box>
+                <Section
+                    sx={{ flex: 7 }}
+                    header={<Title order={5}>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}</Title>}
+                    children={observedEffect}
+                />
 
                 <Box sx={{ flex: 5 }} h={"100%"}>
                     <Group w={"100%"} h={"100%"} align='flex-start'>
-                        <Stack sx={{ flex: 6 }} h={"100%"} >
-                            <Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>
-                            <Stack h={"90%"} w={"100%"} spacing={'xs'}>
-                                <Box w={"100%"} sx={{ flex: 6 }}>
-                                    <Stack w={"100%"} spacing={"xs"}>
-                                        {getEpiManifestationOptions(t).map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label}
-                                            onChange={(e) => form.setFieldValue('epi_manifestation', e.target.checked ? e.target.value : "")}
-                                            checked={option.value === form.values.epi_manifestation}
-                                        />)}
-                                        <TextInput
-                                            placeholder={t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.other')}
-                                            {...form.getInputProps('epi_manifestation')}
-                                        />
-                                    </Stack>
-                                </Box>
-                                <Box w={"100%"} sx={{ flex: 6 }}>
-                                    <Radio.Group
-                                        defaultValue="unknown"
-                                        label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_label')}
-                                        {...form.getInputProps('contact_in_epi_zone')}>
-                                        <Group>
-                                            {getContactInEpiZoneOptions().map((option, i) =>
-                                                <Radio
-                                                    key={"in_epi_zone_" + i}
-                                                    label={option.label}
-                                                    value={option.value}
-                                                />)}
-                                        </Group>
-                                    </Radio.Group>
-                                    <TextInput
-                                        label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_comments_label')}
-                                        {...form.getInputProps('contact_in_epi_zone_comments')}
-                                    />
-                                </Box>
-                            </Stack>
-                        </Stack>
-                        <Stack sx={{ flex: 6 }} h={"100%"}>
-                            <Title order={5}>{t('pages.stimulationTool.stimulation.effect.eeg')}</Title>
-                            <Box h={"90%"}>
-                                <EEGSection form={form} t={t} />
-                            </Box>
-                        </Stack>
+                        <Section
+                            sx={{ flex: 6 }}
+                            header={<Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>}
+                            children={clinicalManif}
+                        />
+
+                        <Section
+                            sx={{ flex: 6 }}
+                            header={<Title order={5}>{t('pages.stimulationTool.stimulation.effect.eeg')}</Title>}
+                            children={<EEGSection form={form} t={t} />}
+                            bodyOpts={{ h: "90%" }}
+                        />
                     </Group>
                 </Box>
             </Group>
