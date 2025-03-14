@@ -268,14 +268,14 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Box>
 
                 {/** Contact(s) selected */}
-                <Box h={"100%"} w={"100%"} display={electrode_parameters_selected && contacts_configured && contacts_selected ? "block" : "none"}>
-                    <Group position='apart' align='flex-start' h={"100%"} w={"100%"}>
-                        <Stack sx={{flex: 9}} h={"100%"} spacing={0}>
+                <Box h={"100%"} w={"100%"} display={electrode_parameters_selected && contacts_configured && contacts_selected ? "flex" : "none"}>
+                    <Group position='apart' align='flex-start' h={"100%"} w={"100%"} noWrap>
+                        <Stack h={"100%"} w={"80%"} spacing={0}>
                             {/** Selected contacts */}
                             <Group h={"35%"} w={"100%"} noWrap>
                                 {t('pages.stimulationTool.implantation.selected_contacts') + ':'}
-                                <ScrollArea type='always' h={"100%"} w={"80%"} sx={{ alignItems: "center", padding: '0' }}>
-                                    <Group align="center" position='left' noWrap h={"100%"} w={"100%"}>
+                                <ScrollArea type='always' h={"100%"} w={"100%"} sx={{ alignItems: "center", padding: '0' }}>
+                                    <Group align="center" position='left' noWrap spacing={"xs"}>
                                         {selectedContacts.map((point) => {
                                             return (
                                                 <Badge key={point} size="lg" variant="filled">{point}</Badge>
@@ -292,7 +292,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                             </Alert>
                         </Stack>
 
-                        <Stack sx={{flex:3}} h={"100%"} align="center" spacing={"xs"}>
+                        <Stack w={"20%"} h={"100%"} align="center" spacing={"xs"}>
                             {/** Display selected location */}
                             {t('pages.stimulationTool.implantation.selected_location')}: {getNewElectrodeLocationFromForm()}
                             {/** Unselect all Buttons */}
