@@ -1,4 +1,4 @@
-import { Alert, Badge, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../core/models/stimulationForm";
 import { useMemo, useState } from "react";
@@ -7,11 +7,12 @@ import { useForm } from "@mantine/form";
 import StimulationTaskSelection, { formatSelectedTask, NO_TASK } from "../../../components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
 import StimulationEffectSelection, { formatEegPostDichargeLocale, formatEpiManifestation, formatSelectedObservedEffect, NO_EFFECT } from "../../../components/StimulationEffectSelection";
-import { IconAlertCircle, IconCircleCheck, IconCircleX, IconClockCheck, IconEye, IconTrash } from "@tabler/icons-react";
+import { IconAlertCircle, IconCheck, IconCircleCheck, IconCircleX, IconClockCheck, IconClockEdit, IconEye, IconTrash } from "@tabler/icons-react";
 import { t } from "i18next";
 import CustomNumberInput from "../../../components/CustomNumberInput";
 import StimulatedContact, { getStimulatedStyledContactBorderStyle, getStimulatedStyledContactColor } from "../../../components/StimulatedContact";
 import Section from "../../../components/Section";
+import { DateTimePicker, DateValue } from "@mantine/dates";
 
 export default function StimulationsTab({ form, viewPointSummary }: StimulationTabProps) {
     // TODO: ajouter validations (ex: post discharge time cannot be 0 or negative if set to true)
@@ -200,6 +201,8 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         }
         const stimPointSelected = form.values.electrodes.length !== 0 && form.values.electrodes.flatMap(e => e.stim_points).length !== 0;
         const stimTimeSet = stimulationTime !== '';
+        const [useDateTimePicker, setUseDateTimePicker] = useState<boolean>(false);
+        const [customSelectedDateTime, setCustomSelectedDateTime] = useState<DateValue>(null);
 
         const selectedPointElectrodeLabel = selectedPoint.split('/').slice(0, -1).join('/');
         const selectedPointStims = form.values.electrodes.find(e => e.label === selectedPointElectrodeLabel)?.stim_points.find(p => getStimPointLabel(selectedPointElectrodeLabel, p.index) === selectedPoint)?.stimulations;
@@ -265,12 +268,37 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                                     <HoverCard disabled={isTaskSelected}>
                                         <HoverCard.Target>
                                             <Box>
-                                                <Button size="lg"
-                                                    onClick={() => setStimulationTime(new Date().toISOString())}
-                                                    leftIcon={<IconClockCheck />}
-                                                    disabled={!isTaskSelected}>
-                                                    <Text w={"9rem"} align='center' size={"md"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label')}</Text>
-                                                </Button>
+                                                <Button.Group orientation="horizontal">
+                                                    <Button size="lg"
+                                                        display={useDateTimePicker ? 'none' : 'flex'}
+                                                        onClick={() => setStimulationTime(new Date().toISOString())}
+                                                        leftIcon={<IconClockCheck />}
+                                                        disabled={!isTaskSelected}>
+                                                        <Text w={"9rem"} align='center' size={"md"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_now')}</Text>
+                                                    </Button>
+                                                    <Button size="lg"
+                                                        display={useDateTimePicker ? 'none' : 'flex'}
+                                                        onClick={() => setUseDateTimePicker(true)}
+                                                        leftIcon={<IconClockEdit />}
+                                                        disabled={!isTaskSelected}>
+                                                        <Text w={"9rem"} align='center' size={"md"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_custom')}</Text>
+                                                    </Button>
+                                                </Button.Group>
+                                                <Group position="center" display={useDateTimePicker ? 'flex' : 'none'}>
+                                                    <DateTimePicker
+                                                        withSeconds
+                                                        size="lg"
+                                                        placeholder={t('pages.stimulationTool.stimulation.set_time_label_custom')}
+                                                        onChange={(date) => setCustomSelectedDateTime(date)}
+                                                    />
+                                                    <ActionIcon variant="filled"
+                                                        disabled={customSelectedDateTime === null}
+                                                        color={"green"}
+                                                        size={"xl"}
+                                                        onClick={() => setStimulationTime(customSelectedDateTime!.toISOString())}>
+                                                        <IconCheck size={20} />
+                                                    </ActionIcon>
+                                                </Group>
                                             </Box>
                                         </HoverCard.Target>
                                         <HoverCard.Dropdown>

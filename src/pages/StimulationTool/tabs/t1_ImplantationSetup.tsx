@@ -292,7 +292,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                             </Alert>
                         </Stack>
 
-                        <Stack w={"20%"} h={"100%"} align="center" spacing={"xs"}>
+                        <Stack w={"20%"} h={"100%"} align="center" spacing={0}>
                             {/** Display selected location */}
                             {t('pages.stimulationTool.implantation.selected_location')}: {getNewElectrodeLocationFromForm()}
                             {/** Unselect all Buttons */}
