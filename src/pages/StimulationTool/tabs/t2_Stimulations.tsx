@@ -209,8 +209,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         const stims = selectedPointStims !== undefined ? selectedPointStims : [];
         const selectedContactBorderSx = getStimulatedStyledContactBorderStyle(stims, theme);
         const selectedContactBackgroundColorSx = getStimulatedStyledContactColor(stims, stims.length === 0, theme, true);
-
-        // TODO: Time selection / Save button
+        
         return (
             <Box h={"100%"} sx={(theme) => (
                 {
