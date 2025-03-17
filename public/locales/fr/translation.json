@@ -83,6 +83,13 @@
                     "title": "Supprimer l'électrode",
                     "confirm_label": "Supprimer",
                     "cancel_label": "Annuler"
+                },
+                "confirmElectrode": {
+                    "title": "Confirmer l'électrode",
+                    "description": "Êtes-vous certain de vouloir confirmer cette électrode? Aucun changement au nombre de contacts ne pourra être fait par la suite.",
+                    "do_not_show_again_label": "Ne plus demander",
+                    "confirm_label": "Confirmer",
+                    "cancel_label": "Annuler"
                 }
             },
             "stimulation": {

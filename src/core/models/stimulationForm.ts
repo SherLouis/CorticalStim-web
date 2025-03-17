@@ -6,17 +6,20 @@ export default interface StimulationFormValues {
         diameter: number;
         length: number;
     },
-    electrodes: {
-        label: string;
-        side: string;
-        n_contacts: number;
-        stim_points: {
-            index: number;
-            location: StimulationLocationFormValues;
-            stimulations: Stimulation[]
-        }[]
-    }[]
+    electrodes: ElectrodeFormValues[]
 };
+
+export interface ElectrodeFormValues {
+    label: string;
+    side: string;
+    n_contacts: number;
+    confirmed: boolean;
+    stim_points: {
+        index: number;
+        location: StimulationLocationFormValues;
+        stimulations: Stimulation[]
+    }[];
+}
 
 export interface Stimulation {
     time: string,
