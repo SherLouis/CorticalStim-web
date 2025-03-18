@@ -1,4 +1,4 @@
-import { ActionIcon, Alert, Badge, Box, Button, Checkbox, Chip, Group, Input, Modal, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Alert, Badge, Box, Button, Checkbox, Chip, Flex, Group, Input, Modal, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Space, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { IconAlertCircle, IconCircleCheck, IconCircleX, IconDeselect, IconLockCheck, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
@@ -454,18 +454,16 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 <ScrollArea w={"100%"} h={"95%"} py={"xs"} type="always" sx={{ alignItems: "center", padding: '0' }}>
                     {form.values.electrodes.map((electrode, electrode_i) => {
                         return (
-                            <Group noWrap
-                                spacing='md'
-                                position='center'
-                                align='center'
+                            <Flex direction={"row"} justify={"space-between"} align={"center"} wrap={"nowrap"}
+                                gap={"md"}
                                 mt={'sm'}
                                 key={'div_electrode_' + electrode_i}
                                 w={"100%"}
                             >
-                                <Group w={"25%"} position="left" align="center">
+                                <Group sx={{ flex: 4 }} position="left" align="center" grow>
                                     {/** Delete button */}
                                     <ActionIcon color="red" sx={{ flex: 1 }} onClick={() => handleDeleteElectrodeButtonClicked(electrode.label)}>
-                                        <IconTrash size="1.5rem" />
+                                        <IconTrash size="2rem" />
                                     </ActionIcon>
                                     {/** Electrode Label */}
                                     <TextInput
@@ -502,17 +500,27 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                         color="green.9"
                                         disabled={electrode.confirmed}
                                         onClick={() => handleConfirmElectrodeButtonClicked(electrode.label)}>
-                                        <IconLockCheck size="2.5rem" />
+                                        <IconLockCheck size="2rem" />
                                     </ActionIcon>
                                 </Group>
 
-                                <Box mih={"100%"} w={"75%"}>
+                                <Space sx={{flex: 1}}/>
+
+                                <Box h={"100%"} sx={{ flex: 10 }} display={"flex"}>
                                     <Chip.Group multiple value={selectedContacts} onChange={setSelectedContacts}>
-                                        <SimpleGrid cols={10}>
+                                        <SimpleGrid cols={10} w={"100%"} h={"100%"}
+                                            breakpoints={[
+                                                { maxWidth: '90rem', cols: 8, spacing: 'sm' },
+                                                { maxWidth: '70rem', cols: 6, spacing: 'sm' },
+                                                { maxWidth: '50rem', cols: 4, spacing: 'xs' },
+                                                { maxWidth: '40rem', cols: 3, spacing: 'xs' },
+                                                { maxWidth: '35rem', cols: 2, spacing: 'sm' },
+                                            ]}>
                                             {electrode.stim_points.map((stim_point, stim_point_i) => {
                                                 const pointId = getStimPointLabel(electrode.label, stim_point_i);
                                                 return (
                                                     <Chip size='sm'
+                                                        h={"100%"}
                                                         value={pointId}
                                                         key={pointId}
                                                         variant={doneContacts.includes(pointId) ? 'filled' : 'light'}
@@ -524,7 +532,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                         </SimpleGrid>
                                     </Chip.Group>
                                 </Box>
-                            </Group>)
+                            </Flex>)
                     })}
                 </ScrollArea>
             </Box>
