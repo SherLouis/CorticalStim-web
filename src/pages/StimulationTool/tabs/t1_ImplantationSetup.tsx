@@ -29,7 +29,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     const [doNotShowAgainElectrodeConfirmModal, setDoNotShowAgainElectrodeConfirmModal] = useState<boolean>(false);
 
     const addElectrode = () => {
-        form.insertListItem('electrodes', { label: nextElectrodeDefaultLabel, side: "", n_contacts: 0, confirmed: false, stim_points: [] } as ElectrodeFormValues);
+        form.insertListItem('electrodes', { label: nextElectrodeDefaultLabel, side: undefined, n_contacts: 0, confirmed: false, stim_points: [] } as ElectrodeFormValues);
         setNextElectrodeDefaultLabel(letters.increment(nextElectrodeDefaultLabel));
         form.validate();
     }

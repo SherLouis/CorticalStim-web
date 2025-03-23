@@ -11,7 +11,7 @@ export default interface StimulationFormValues {
 
 export interface ElectrodeFormValues {
     label: string;
-    side: string;
+    side: SideOptions | undefined;
     n_contacts: number;
     confirmed: boolean;
     stim_points: {
@@ -20,6 +20,8 @@ export interface ElectrodeFormValues {
         stimulations: Stimulation[]
     }[];
 }
+
+export type SideOptions = 'left' | 'right';
 
 export interface Stimulation {
     time: string,
