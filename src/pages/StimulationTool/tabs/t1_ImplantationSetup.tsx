@@ -19,7 +19,6 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     const [electrodeLabelToDelete, setElectrodeLabelToDelete] = useState<string | undefined>(undefined);
 
     // Confirm / Lock electrode - lock number of contacts
-    // QUESTION: Create appContext to save decision in localStorage if checked never show again
     const electrodeConfirmForm = useForm({
         initialValues: {
             electrode_label: "",
@@ -455,27 +454,26 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                     {form.values.electrodes.map((electrode, electrode_i) => {
                         return (
                             <Flex direction={"row"} justify={"space-between"} align={"center"} wrap={"nowrap"}
-                                gap={"md"}
+                                gap={"lg"}
                                 mt={'sm'}
                                 key={'div_electrode_' + electrode_i}
                                 w={"100%"}
                             >
-                                <Group sx={{ flex: 4 }} position="left" align="center" grow>
+                                <Group sx={{ flex: 4 }} position="left" align="center">
                                     {/** Delete button */}
                                     <ActionIcon color="red" sx={{ flex: 1 }} onClick={() => handleDeleteElectrodeButtonClicked(electrode.label)}>
                                         <IconTrash size="2rem" />
                                     </ActionIcon>
                                     {/** Electrode Label */}
                                     <TextInput
-                                        sx={{ flex: 4 }}
-                                        size="sm"
+                                        sx={{ flex: 3, flexGrow: 1 }}
                                         label={t("pages.stimulationTool.implantation.electrodeLabel")}
                                         placeholder="A"
                                         required
                                         {...form.getInputProps(`electrodes.${electrode_i}.label`)}
                                     />
                                     {/** Side */}
-                                    <Input.Wrapper sx={{ flex: 3 }}
+                                    <Input.Wrapper sx={{ flex: 2 }}
                                         size="sm"
                                         label={t("pages.stimulationTool.implantation.sideLabel")}
                                         required
@@ -488,23 +486,22 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                     </Input.Wrapper>
                                     {/** Number of contacts */}
                                     <NumberInput
-                                        sx={{ flex: 4 }}
+                                        sx={{ flex: 3, flexGrow: 1 }}
                                         disabled={electrode.confirmed}
-                                        size="sm"
                                         label={t("pages.stimulationTool.implantation.nbContactsLabel")}
                                         min={0}
                                         defaultValue={electrode.n_contacts}
                                         onChange={(v) => setContactsToElectrode(electrode_i, v === "" ? 0 : v)}
                                     />
-                                    <ActionIcon sx={{ flex: 1 }}
+                                    <Button sx={{ flex: 2, flexGrow: 1 }}
+                                        size="sm"
                                         color="green.9"
                                         disabled={electrode.confirmed}
-                                        onClick={() => handleConfirmElectrodeButtonClicked(electrode.label)}>
-                                        <IconLockCheck size="2rem" />
-                                    </ActionIcon>
+                                        onClick={() => handleConfirmElectrodeButtonClicked(electrode.label)}
+                                        leftIcon={<IconLockCheck size="2rem" />}>
+                                        {t('pages.stimulationTool.implantation.confirmElectrode.confirm_label')}
+                                    </Button>
                                 </Group>
-
-                                <Space sx={{flex: 1}}/>
 
                                 <Box h={"100%"} sx={{ flex: 10 }} display={"flex"}>
                                     <Chip.Group multiple value={selectedContacts} onChange={setSelectedContacts}>

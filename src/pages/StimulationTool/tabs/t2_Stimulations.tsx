@@ -1,6 +1,6 @@
 import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
-import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel } from "../../../core/models/stimulationForm";
+import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, ElectrodeFormValues } from "../../../core/models/stimulationForm";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
@@ -199,8 +199,12 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                 t('pages.stimulationTool.stimulation.duration_label') + ': ' + params.duration + ' (s)' + ', ' +
                 t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + ' (µs)';
         }
-        const stimPointSelected = form.values.electrodes.length !== 0 && form.values.electrodes.flatMap(e => e.stim_points).length !== 0;
-        const stimTimeSet = stimulationTime !== '';
+
+        const stimPointConfirmedExist = useMemo<boolean>(() => {
+            return form.values.electrodes.filter(e => e.confirmed && e.n_contacts > 0).length !== 0;
+        }, [form.values.electrodes]);
+        const stimTimeSet = useMemo<boolean>(() => stimulationTime !== '', [stimulationTime]);
+
         const [useDateTimePicker, setUseDateTimePicker] = useState<boolean>(false);
         const [customSelectedDateTime, setCustomSelectedDateTime] = useState<DateValue>(null);
 
@@ -209,7 +213,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         const stims = selectedPointStims !== undefined ? selectedPointStims : [];
         const selectedContactBorderSx = getStimulatedStyledContactBorderStyle(stims, theme);
         const selectedContactBackgroundColorSx = getStimulatedStyledContactColor(stims, stims.length === 0, theme, true);
-        
+
         return (
             <Box h={"100%"} sx={(theme) => (
                 {
@@ -218,7 +222,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[6]
                 })}>
                 {/** No Contact exists */}
-                <Group align='center' position='center' h={"100%"} w={"100%"} display={!stimPointSelected ? "block" : "none"}>
+                <Group align='center' position='center' h={"100%"} w={"100%"} display={!stimPointConfirmedExist ? "block" : "none"}>
                     <Alert h={"100%"}
                         icon={<IconAlertCircle size="1rem" />}
                         title={t('pages.stimulationTool.stimulation.guide_alert_no_electrode_title')}>
@@ -226,7 +230,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                     </Alert>
                 </Group>
                 {/** Contact Exist */}
-                <Box h={"100%"} display={stimPointSelected ? 'block' : 'none'}>
+                <Box h={"100%"} display={stimPointConfirmedExist ? 'block' : 'none'}>
                     {/** No contact selected */}
                     <Group align='center' position='center' h={"100%"} w={"100%"} display={selectedPoint === "" ? "block" : "none"}>
                         <Alert h={"100%"}
@@ -480,7 +484,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         children={
                             <Box h={"90%"} w={"100%"} p={0} m={0}>
                                 <ContactSelection
-                                    form_values={form.values}
+                                    electrodes={form.values.electrodes.filter(e => e.confirmed)}
                                     selectedContact={selectedPoint}
                                     onSelectedChanged={handleSelectedPointChanged}
                                     onViewResultsForPoint={handleViewResultsForPoint}
@@ -526,10 +530,10 @@ interface StimulationTabProps extends TabProperties {
     viewPointSummary: (pointId: string) => void
 }
 
-const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onViewResultsForPoint }: ContactSelectionProps) => {
+const ContactSelection = ({ electrodes, selectedContact, onSelectedChanged, onViewResultsForPoint }: ContactSelectionProps) => {
     return (
         <ScrollArea w={"100%"} h={"100%"} sx={{ alignItems: "center", padding: '0', margin: '0' }}>
-            {form_values.electrodes.map((electrode, electrode_i) => {
+            {electrodes.map((electrode, electrode_i) => {
                 return (
                     <Stack key={'div_group_electrode_' + electrode_i}>
                         <Group noWrap
@@ -588,7 +592,7 @@ const ContactSelection = ({ form_values, selectedContact, onSelectedChanged, onV
 }
 
 interface ContactSelectionProps {
-    form_values: StimulationFormValues,
+    electrodes: ElectrodeFormValues[],
     selectedContact: string,
     onSelectedChanged: (newValue: string) => void
     onViewResultsForPoint: (pointId: string) => void
