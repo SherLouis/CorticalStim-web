@@ -1,6 +1,6 @@
+import naturalCompare from 'natural-compare'
 import { ElectrodeFormValues, SideOptions, StimulationLocationFormValues } from "../../core/models/stimulationForm";
 
-// TODO: add tests !!!
 const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => {
     const getSideFromMni = (x: number, y: number, z: number): SideOptions => {
         return x > 0 ? 'right' : 'left';
@@ -23,7 +23,11 @@ const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => 
                 mniZ: parseFloat(rowData[3])
             } as TsvRowData;
         })
-        .sort((a, b) => a.contactLabel.localeCompare(b.contactLabel));
+        .sort((a, b) => naturalCompare(a.contactLabel, b.contactLabel));
+
+    if (contactsData.length === 0) {
+        return [];
+    }
 
     let results = [] as ElectrodeFormValues[];
 
@@ -59,7 +63,7 @@ const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => 
         }
         else {
             // Moved to new electrode
-            results.push(currentElectrode as ElectrodeFormValues);
+            results.push(currentElectrode);
 
             currentElectrode = {
                 label: contactData.contactLabel.slice(0, -1),
@@ -79,6 +83,8 @@ const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => 
             };
         }
     }
+    // Add last electrode to results
+    results.push(currentElectrode)
 
     return results as ElectrodeFormValues[];
 }

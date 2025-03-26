@@ -6,9 +6,9 @@
   "dependencies": {
     "@dotenvx/dotenvx": "^1.21.1",
     "@mantine/core": "^6.0.22",
+    "@mantine/dates": "^6.0.22",
     "@mantine/form": "^6.0.22",
     "@mantine/hooks": "^6.0.22",
-    "@mantine/dates": "^6.0.22",
     "@mantine/notifications": "^6.0.22",
     "@tabler/icons-react": "^2.42.0",
     "firebase": "^10.14.1",
@@ -17,6 +17,7 @@
     "i18next-http-backend": "^2.4.2",
     "lodash.sortby": "^4.7.0",
     "mantine-datatable": "^6.0.8",
+    "natural-compare": "^1.4.0",
     "react": "^18.2.0",
     "react-csv": "^2.2.2",
     "react-dom": "^18.2.0",
@@ -58,6 +59,7 @@
     "@testing-library/user-event": "^13.2.1",
     "@types/jest": "^29.5.9",
     "@types/lodash.sortby": "^4.7.9",
+    "@types/natural-compare": "^1.4.3",
     "@types/node": "^20.9.3",
     "@types/react": "^18.2.38",
     "@types/react-csv": "^1.1.10",
@@ -66,6 +68,7 @@
     "gh-pages": "^6.1.0",
     "npm-run-all": "^4.1.5",
     "react-scripts": "5.0.1",
+    "ts-jest": "^29.3.0",
     "typescript": "^4.5.4"
   }
 }
