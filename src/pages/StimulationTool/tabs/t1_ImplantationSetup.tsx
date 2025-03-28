@@ -1,12 +1,13 @@
 import { ActionIcon, Alert, Badge, Box, Button, Checkbox, Chip, Flex, Group, Input, Modal, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Space, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
-import { IconAlertCircle, IconCircleCheck, IconCircleX, IconDeselect, IconLockCheck, IconTrash } from "@tabler/icons-react";
-import { useEffect, useMemo, useState } from "react";
+import { IconAlertCircle, IconCircleCheck, IconCircleX, IconDeselect, IconFileImport, IconFolderOpen, IconLockCheck, IconTrash } from "@tabler/icons-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { letters } from "../../../lib/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";
 import { TabProperties } from "./tab_properties";
 import { useForm } from "@mantine/form";
 import { ElectrodeFormValues, getStimPointLabel } from "../../../core/models/stimulationForm";
+import parseMniImplantationFromTsv from "../../../ui/tsvMniImplantationParser/tsvMniImplantationParser";
 
 export default function ElectrodeSetupStep({ form }: TabProperties) {
     const { t } = useTranslation();
@@ -27,6 +28,30 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     });
     const [showElectrodeConfirmModal, setShowElectrodeConfirmModal] = useState<boolean>(false);
     const [doNotShowAgainElectrodeConfirmModal, setDoNotShowAgainElectrodeConfirmModal] = useState<boolean>(false);
+
+    // Implantation from tsv file
+    const openInputFileRef = useRef<HTMLInputElement | null>(null);
+
+    const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files === null) {
+            return;
+        }
+
+        const uploadedFile = e.target.files[0];
+
+        const fileReader = new FileReader();
+        if (uploadedFile !== undefined)
+            fileReader.readAsText(uploadedFile, "UTF-8");
+        fileReader.onload = () => {
+            try {
+                const electrodes = parseMniImplantationFromTsv(fileReader.result as string);
+                form.setFieldValue('electrodes', electrodes);
+            }
+            catch (e) {
+                console.error(`Error loading from file: ${e}`)
+            }
+        }
+    }, []);
 
     const addElectrode = () => {
         form.insertListItem('electrodes', { label: nextElectrodeDefaultLabel, side: undefined, n_contacts: 0, confirmed: false, stim_points: [] } as ElectrodeFormValues);
@@ -256,10 +281,12 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     })
 
     // Form change (from file open for example)
-    useEffect(() => { locationForm.reset(); locationForm.setValues(getSelectedContactsROIValue()); }, [selectedContacts]);
     useEffect(() => { updateDoneContacts(); }, [form])
+    // Selected contact changed => reset location form values
+    useEffect(() => { locationForm.reset(); locationForm.setValues(getSelectedContactsROIValue()); }, [selectedContacts]);
 
     const CentralBar = () => {
+        // TODO: Add instruction when at least 1 electrode configured and all contacts done, but not all electrodes confirmed
         const electrode_parameters_selected = form.values.electrode_params.diameter > 0;
         const contacts_configured = form.values.electrodes.flatMap(e => e.stim_points).length > 0;
         const all_contacts_roi_configured = form.values.electrodes.flatMap(e => e.stim_points).every(sp => sp.location.done === true);
@@ -449,7 +476,13 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
             </Box>
 
             <Box py={"md"} h={"30%"} p={'0'}>
-                <Button onClick={addElectrode} size="xs">{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
+                <Group>
+                    <Button onClick={addElectrode} size="xs">{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
+                    <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} accept=".tsv,.txt" style={{ display: 'none' }} />
+                    <Button onClick={() => openInputFileRef.current?.click()} size="xs" leftIcon={<IconFileImport />}>
+                        {t("pages.stimulationTool.implantation.buttonTsvOpen")}
+                    </Button>
+                </Group>
                 <ScrollArea w={"100%"} h={"95%"} py={"xs"} type="always" sx={{ alignItems: "center", padding: '0' }}>
                     {form.values.electrodes.map((electrode, electrode_i) => {
                         return (

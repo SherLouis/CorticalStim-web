@@ -40,6 +40,7 @@
             "patient_id_label": "ID Patient",
             "implantation": {
                 "tab_title": "Implantation",
+                "buttonTsvOpen": "Importer depuis TSV",
                 "guide_params_title": "Sélectionnez la configuration des électrodes.",
                 "guide_params_text": "Choisir parmi les choix de configuration proposés ou entrer manuellement les paramètres d'implantation.",
                 "guide_configure_electrodes_title": "Configurer les électrodes.",

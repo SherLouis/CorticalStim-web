@@ -36,7 +36,7 @@ export default function StimulationToolPage() {
             },
             electrodes: {
                 label: (value, values) => values.electrodes.map((e) => e.label).filter((v) => v === value).length > 1 ? t("pages.stimulationTool.validation.electrodes.label") : null,
-                side: (value) => value === "" ? t("pages.stimulationTool.validation.electrodes.side") : null
+                side: (value) => value !== undefined ? t("pages.stimulationTool.validation.electrodes.side") : null
             }
         },
         validateInputOnBlur: true
@@ -122,7 +122,7 @@ export default function StimulationToolPage() {
     return (
         <Box mx={"sm"} h={"100%"} m={0} p={0} >
             <Group h={"4%"}>
-                <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} style={{ display: 'none' }} />
+                <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} accept=".json" style={{ display: 'none' }} />
                 <ActionIcon title={t('pages.stimulationTool.button_open_form')}>
                     <IconFolderOpen onClick={() => openInputFileRef.current?.click()} />
                 </ActionIcon>
