@@ -36,7 +36,7 @@ export default function StimulationToolPage() {
             },
             electrodes: {
                 label: (value, values) => values.electrodes.map((e) => e.label).filter((v) => v === value).length > 1 ? t("pages.stimulationTool.validation.electrodes.label") : null,
-                side: (value) => value !== undefined ? t("pages.stimulationTool.validation.electrodes.side") : null
+                side: (value) => value === undefined ? t("pages.stimulationTool.validation.electrodes.side") : null
             }
         },
         validateInputOnBlur: true
