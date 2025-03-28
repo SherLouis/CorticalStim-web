@@ -40,6 +40,7 @@
             },
             "implantation": {
                 "tab_title": "Implantation",
+                "buttonTsvOpen": "Import from TSV",
                 "guide_params_title": "Select electrodes configuration.",
                 "guide_params_text": "Choose from the configuration dropdown or manually input electrode configuration parameters.",
                 "guide_configure_electrodes_title": "Configure electrodes.",
@@ -82,6 +83,13 @@
                 "confirmDelete": {
                     "title": "Delete Electrode",
                     "confirm_label": "Delete",
+                    "cancel_label": "Cancel"
+                },
+                "confirmElectrode": {
+                    "title": "Confirm electrode",
+                    "description": "Are you sure you want to confirm this electrode? No modification will be possible to this electrode contacts once confirmed.",
+                    "do_not_show_again_label": "Do not ask again",
+                    "confirm_label": "Confirm",
                     "cancel_label": "Cancel"
                 }
             },
