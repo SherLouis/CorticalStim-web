@@ -1,6 +1,6 @@
 import { ActionIcon, Alert, Badge, Box, Button, Checkbox, Chip, Flex, Group, Input, Modal, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Space, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
-import { IconAlertCircle, IconCircleCheck, IconCircleX, IconDeselect, IconFileImport, IconFolderOpen, IconLockCheck, IconTrash } from "@tabler/icons-react";
+import { IconAlertCircle, IconCircleCheck, IconCirclePlus, IconCircleX, IconDeselect, IconFileImport, IconFolderOpen, IconLockCheck, IconTrash } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { letters } from "../../../lib/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";
@@ -477,7 +477,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
             <Box py={"md"} h={"30%"} p={'0'}>
                 <Group>
-                    <Button onClick={addElectrode} size="xs">{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
+                    <Button onClick={addElectrode} size="xs" leftIcon={<IconCirclePlus />}>{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
                     <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} accept=".tsv,.txt" style={{ display: 'none' }} />
                     <Button onClick={() => openInputFileRef.current?.click()} size="xs" leftIcon={<IconFileImport />}>
                         {t("pages.stimulationTool.implantation.buttonTsvOpen")}
