@@ -1,6 +1,6 @@
 import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
-import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, ElectrodeFormValues } from "../../../core/models/stimulationForm";
+import { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, ElectrodeFormValues } from "../../../core/models/stimulationForm";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
@@ -202,8 +202,8 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
         const stimPointConfirmedExist = useMemo<boolean>(() => {
             return form.values.electrodes.filter(e => e.confirmed && e.n_contacts > 0).length !== 0;
-        }, [form.values.electrodes]);
-        const stimTimeSet = useMemo<boolean>(() => stimulationTime !== '', [stimulationTime]);
+        }, []);
+        const stimTimeSet = useMemo<boolean>(() => stimulationTime !== '', []);
 
         const [useDateTimePicker, setUseDateTimePicker] = useState<boolean>(false);
         const [customSelectedDateTime, setCustomSelectedDateTime] = useState<DateValue>(null);
@@ -473,25 +473,26 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
             <Box h={"50%"} w={"100%"}>
                 <Group w={"100%"} h={"100%"} align='flex-start' >
-                    <Section
-                        sx={{ flex: 7 }}
-                        header={
-                            <Group position="apart" align="center" noWrap>
-                                <Title order={3} h={"100%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
-                                <ContactColorLegend h={"100%"} w={"80%"} position="apart" noWrap />
-                            </Group>
-                        }
-                        children={
-                            <Box h={"90%"} w={"100%"} p={0} m={0}>
-                                <ContactSelection
-                                    electrodes={form.values.electrodes.filter(e => e.confirmed)}
-                                    selectedContact={selectedPoint}
-                                    onSelectedChanged={handleSelectedPointChanged}
-                                    onViewResultsForPoint={handleViewResultsForPoint}
-                                />
-                            </Box>
-                        }
-                    />
+                    <Box h={"100%"} sx={{ flex: 7 }}>
+                        <Section
+                            header={
+                                <Group position="apart" align="center" noWrap>
+                                    <Title order={3} h={"100%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
+                                    <ContactColorLegend h={"100%"} w={"80%"} position="apart" noWrap />
+                                </Group>
+                            }
+                            children={
+                                <Box h={"100%"} w={"100%"} p={0} m={0}>
+                                    <ContactSelection
+                                        electrodes={form.values.electrodes.filter(e => e.confirmed)}
+                                        selectedContact={selectedPoint}
+                                        onSelectedChanged={handleSelectedPointChanged}
+                                        onViewResultsForPoint={handleViewResultsForPoint}
+                                    />
+                                </Box>
+                            }
+                        />
+                    </Box>
                     <Box h={"100%"} sx={{ flex: 5 }}>
                         <Stack h={"100%"} w={"100%"} spacing={"sm"} display={selectedPoint !== '' ? 'flex' : 'none'}>
                             <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />

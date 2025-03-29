@@ -1,5 +1,5 @@
 import naturalCompare from 'natural-compare'
-import { ElectrodeFormValues, SideOptions, StimulationLocationFormValues } from "../../core/models/stimulationForm";
+import { ElectrodeFormValues, SideOptions } from "../../core/models/stimulationForm";
 
 const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => {
     const getSideFromMni = (x: number, y: number, z: number): SideOptions => {
@@ -31,6 +31,7 @@ const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => 
 
     let results = [] as ElectrodeFormValues[];
 
+    // TODO: remove right _ character if any in electrode label
     // sorted data based on contact label. Assuming first contact of every electrode ends with 1 (contact number)
     let currentElectrode = {
         label: contactsData[0].contactLabel.slice(0, -1),

@@ -7,9 +7,8 @@ const Section = ({ header, children, bodyOpts, ...props }: SectionProps) => {
     const bodyBgColor = theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[4];
     return (
         <Stack {...props} h={"100%"} w={"100%"} spacing={0}>
-            <Box w={"100%"} px={theme.spacing.md}
+            <Box w={"100%"} px={theme.spacing.md} h={"20%"}
                 sx={{
-                    flex: 1,
                     backgroundColor: headerBgColor,
                     borderTopLeftRadius: theme.radius.lg,
                     borderTopRightRadius: theme.radius.lg,
@@ -18,8 +17,8 @@ const Section = ({ header, children, bodyOpts, ...props }: SectionProps) => {
                 {header}
             </Box>
             <Box w={"100%"}
-                p={theme.spacing.sm}
-                sx={{ flex: 9, backgroundColor: bodyBgColor }}
+                p={theme.spacing.sm} h={"80%"}
+                sx={{ backgroundColor: bodyBgColor }}
                 {...bodyOpts}
             >
                 {children}

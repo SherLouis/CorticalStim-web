@@ -1,6 +1,6 @@
-import { ActionIcon, Alert, Badge, Box, Button, Checkbox, Chip, Flex, Group, Input, Modal, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Space, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Alert, Badge, Box, Button, Checkbox, Chip, Flex, Group, Input, Modal, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
-import { IconAlertCircle, IconCircleCheck, IconCirclePlus, IconCircleX, IconDeselect, IconFileImport, IconFolderOpen, IconLockCheck, IconTrash } from "@tabler/icons-react";
+import { IconAlertCircle, IconCircleCheck, IconCirclePlus, IconCircleX, IconDeselect, IconFileImport, IconLockCheck, IconTrash } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { letters } from "../../../lib/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";
@@ -51,7 +51,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 console.error(`Error loading from file: ${e}`)
             }
         }
-    }, []);
+    }, [form]);
 
     const addElectrode = () => {
         form.insertListItem('electrodes', { label: nextElectrodeDefaultLabel, side: undefined, n_contacts: 0, confirmed: false, stim_points: [] } as ElectrodeFormValues);
@@ -140,7 +140,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         setSelectedContacts([]);
     }
 
-    const getSelectedContactsROIValue = (): ElectrodeLocationFormValues => {
+    const getSelectedContactsROIValue = useCallback((): ElectrodeLocationFormValues => {
         var roi_type = "";
         var roi_vep = "";
         var roi_destrieux = "";
@@ -172,7 +172,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         });
         const return_value = { vep: roi_vep, destrieux: roi_destrieux, white_matter: roi_wm, mni_x: roi_mni.x, mni_y: roi_mni.y, mni_z: roi_mni.z, type: roi_type };
         return return_value;
-    }
+    }, [form.values.electrodes, selectedContacts]);
 
     const handleDeleteElectrodeButtonClicked = (electrode_label: string) => {
         setElectrodeLabelToDelete(electrode_label);
@@ -242,7 +242,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         ];
     }
 
-    const updateDoneContacts = () => {
+    const updateDoneContacts = useCallback(() => {
         setDoneContacts([]);
         form.values.electrodes.forEach((electrode) => {
             electrode.stim_points.forEach((point, point_i) => {
@@ -252,7 +252,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 }
             })
         })
-    }
+    }, [form.values.electrodes]);
 
     const selectAllContacts = () => {
         var allPointsLabel = form.values.electrodes.flatMap((electrode) => electrode.stim_points.map(point => getStimPointLabel(electrode.label, point.index)));
@@ -281,7 +281,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     })
 
     // Form change (from file open for example)
-    useEffect(() => { updateDoneContacts(); }, [form])
+    useEffect(() => { updateDoneContacts(); }, [form, updateDoneContacts])
     // Selected contact changed => reset location form values
     useEffect(() => { locationForm.reset(); locationForm.setValues(getSelectedContactsROIValue()); }, [selectedContacts]);
 
