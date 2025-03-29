@@ -109,13 +109,13 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
                     />
                 </Input.Wrapper>
                 <ScrollArea h={"45vh"}>
-                    {form.getInputProps('type').value === "white" &&
+                    <Box display={form.getInputProps('type').value === "white" ? 'block' : 'none'}>
                         <WhiteMatterSelection form={form} />
-                    }
-                    {form.getInputProps('type').value === "vep" &&
+                    </Box>
+                    <Box display={form.getInputProps('type').value === "vep" ? 'block' : 'none'}>
                         <VEPSelection form={form} />
-                    }
-                    {form.getInputProps('type').value === "destrieux" &&
+                    </Box>
+                    <Box display={form.getInputProps('type').value === "destrieux" ? 'block' : 'none'}>
                         <Select
                             label="Destrieux"
                             data={getRoiDestrieuxOptions()}
@@ -124,9 +124,9 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
                             searchable
                             dropdownPosition="bottom"
                         />
-                    }
-                    {form.getInputProps('type').value === "mni" &&
-                        <Group position="apart">
+                    </Box>
+                    <Box display={form.getInputProps('type').value === "mni" ? 'block' : 'none'}>
+                        <Stack justify="center" align="flex-end" >
                             <NumberInput
                                 label="X"
                                 precision={2}
@@ -142,8 +142,8 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
                                 precision={2}
                                 {...form.getInputProps('mni_z')}
                             />
-                        </Group>
-                    }
+                        </Stack>
+                    </Box>
                 </ScrollArea>
             </Stack>
         </Box>
