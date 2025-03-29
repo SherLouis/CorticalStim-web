@@ -6,6 +6,10 @@ const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => 
         return x > 0 ? 'right' : 'left';
     };
 
+    const getElectrodeLabelFromContactLabel = (contactLabel: string) => {
+        return contactLabel.slice(0, -1).replace(/_$/, '');
+    }
+
     const contactsData = tsvData.split('\n')
         .map(row => row.trim().split('\t'))
         .filter(rowData => {
@@ -30,11 +34,10 @@ const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => 
     }
 
     let results = [] as ElectrodeFormValues[];
-
-    // TODO: remove right _ character if any in electrode label
+    
     // sorted data based on contact label. Assuming first contact of every electrode ends with 1 (contact number)
     let currentElectrode = {
-        label: contactsData[0].contactLabel.slice(0, -1),
+        label: getElectrodeLabelFromContactLabel(contactsData[0].contactLabel),
         side: undefined,
         n_contacts: 0,
         confirmed: false,
@@ -67,7 +70,7 @@ const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => 
             results.push(currentElectrode);
 
             currentElectrode = {
-                label: contactData.contactLabel.slice(0, -1),
+                label: getElectrodeLabelFromContactLabel(contactData.contactLabel),
                 side: getSideFromMni(contactData.mniX, contactData.mniY, contactData.mniZ),
                 n_contacts: 1,
                 confirmed: false,

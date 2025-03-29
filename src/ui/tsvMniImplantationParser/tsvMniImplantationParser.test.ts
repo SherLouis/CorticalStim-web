@@ -19,6 +19,17 @@ describe('parseMniImplantationFromTsv', () => {
         expect(result[1].stim_points.length).toBe(5);
     });
 
+    it('should remove trailing _ from electrode label', () => {
+        // given
+        const tsvData = `L_1\t-4\t1\t2\nL_2\t-5\t3\t6`;
+
+        // when
+        const result = parseMniImplantationFromTsv(tsvData);
+
+        // then
+        expect(result[0].label).toBe('L'); 
+    });
+
     it('should compute side based on MNI coordinates', () => {
         // given
         const tsvData = `L1\t-4\t1\t2\nL2\t-5\t3\t6\nR1\t4\t1\t2\nR2\t5\t3\t6`;
