@@ -51,6 +51,8 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 console.error(`Error loading from file: ${e}`)
             }
         }
+        // Reset the file input to nothing to allow selecting the same file again to replace the data
+        if (openInputFileRef.current) { openInputFileRef.current.value = ''; }
     }, [form]);
 
     const addElectrode = () => {
