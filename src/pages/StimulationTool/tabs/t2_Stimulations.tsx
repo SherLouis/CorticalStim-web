@@ -471,7 +471,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                 </Group>
             </Modal>
 
-            <Box h={"50%"} w={"100%"}>
+            <Box h={"45%"} w={"100%"}>
                 <Group w={"100%"} h={"100%"} align='flex-start' >
                     <Box h={"100%"} sx={{ flex: 7 }}>
                         <Section
@@ -494,7 +494,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         />
                     </Box>
                     <Box h={"100%"} sx={{ flex: 5 }}>
-                        <Stack h={"100%"} w={"100%"} spacing={"sm"} display={selectedPoint !== '' ? 'flex' : 'none'}>
+                        <Stack h={"100%"} w={"100%"} spacing={0} display={selectedPoint !== '' ? 'flex' : 'none'}>
                             <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
                             <StimulationParametersSelection />
                         </Stack>
@@ -503,7 +503,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                 </Group>
             </Box>
 
-            <Box h={"10%"} w={"100%"} my={"sm"}>
+            <Box h={"15%"} w={"100%"} py={"sm"}>
                 <CentralBar />
             </Box>
 

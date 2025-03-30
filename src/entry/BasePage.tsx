@@ -20,7 +20,7 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
             h={"100vh"}
             padding={0}
             styles={(theme) => ({
-                main: { backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[2], minHeight: "96vh", height: "96vh" },
+                main: { backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[2], height: "96vh" },
             })}
             navbarOffsetBreakpoint="sm"
             navbar={
