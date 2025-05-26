@@ -15,6 +15,7 @@ import { VerifyEmailPage } from './pages/Authentication/VerifyEmail';
 import { RequireVerifiedUser } from './components/routing/RequireVerifiedUser';
 import { AppPath } from './pages/Routes';
 import AccountManagementPage from './pages/Authentication/AccountManagement';
+import BluetoothClient from './pages/BluetoothClient';
 
 // TODO: upgrade to mantine v7
 
@@ -77,6 +78,13 @@ function App() {
                         <AccountManagementPage />
                     </BasePage>
                 </RequireAuth>
+        },
+        {
+            path: "/test",
+            element:
+                <BasePage title={t('app.title')}>
+                    <BluetoothClient />
+                </BasePage>
         },
         {
             path: "/*",
