@@ -13,10 +13,10 @@ describe('parseMniImplantationFromTsv', () => {
         expect(result).toHaveLength(2); // Two electrodes: C' and K'
         expect(result[0].label).toBe(`C'`);
         expect(result[0].n_contacts).toBe(10);
-        expect(result[0].stim_points.length).toBe(10);
+        expect(result[0].stim_points.length).toBe(9);
         expect(result[1].label).toBe(`K'`);
         expect(result[1].n_contacts).toBe(5);
-        expect(result[1].stim_points.length).toBe(5);
+        expect(result[1].stim_points.length).toBe(4);
     });
 
     it('should remove trailing _ from electrode label', () => {
@@ -53,7 +53,7 @@ describe('parseMniImplantationFromTsv', () => {
         // then
         expect(result).toHaveLength(1);
         expect(result[0].n_contacts).toBe(3); // C1, C3 and C4 are valid
-        expect(result[0].stim_points.length).toBe(3);
+        expect(result[0].stim_points.length).toBe(2);
         expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
         consoleWarnSpy.mockRestore();
     });
