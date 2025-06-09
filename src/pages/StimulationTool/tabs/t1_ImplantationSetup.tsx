@@ -558,7 +558,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                                         variant={doneContacts.includes(pointId) ? 'filled' : 'light'}
                                                         color={selectedContacts?.includes(pointId) ? 'blue' : doneContacts?.includes(pointId) ? 'green' : 'gray'}
                                                         checked={doneContacts.includes(pointId)}>
-                                                        {pointId}
+                                                        {getStimPointLabel(electrode.label, stim_point_i, false)}
                                                     </Chip>);
                                             })}
                                         </SimpleGrid>

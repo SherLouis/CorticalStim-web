@@ -74,6 +74,6 @@ export interface StimulationObservedEffectFormValues {
     details: string;
 }
 
-export const getStimPointLabel = (electrodeLabel: string, stim_point_index: number) => {
-    return `${electrodeLabel}/${stim_point_index + 1}`;
+export const getStimPointLabel = (electrodeLabel: string, stim_point_index: number, showDerivation: boolean = true) => {
+    return `${electrodeLabel}/${stim_point_index + 1}${showDerivation ? '-' + (stim_point_index + 2) : ''}`;
 }
