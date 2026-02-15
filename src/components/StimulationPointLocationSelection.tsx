@@ -429,17 +429,12 @@ const WhiteMatterSelection = ({ form }: StimulationPointLocationSelectionProps) 
             { value: "CG", label: "CG - Cingulum" },
             { value: "FAT", label: "FAT - Frontal aslant tract" },
             { value: "FPT", label: "FPT - Fronto-pontine tract" },
-            { value: "FX", label: "FX - Fornix" },
-            { value: "ICP", label: "ICP - Inferior cerebellar peduncle" },
             { value: "IFOF", label: "IFOF - Inferior fronto-occipital fasciculus" },
             { value: "ILF", label: "ILF - Inferior longitudinal fasciculus" },
-            //{ value: "MCP", label: "MCP - Middle cerebellar peduncle" },
             { value: "MdLF", label: "MdLF - Middle longitudinal fascicle" },
             { value: "OR_ML", label: "OR_ML - Optic radiation and Meyer's loop" },
-            //{ value: "PC", label: "PC - Posterior commisure" },
             { value: "POPT", label: "POPT - parieto-occipito pontine tract" },
             { value: "PYT", label: "PYT - Pyramidal tract" },
-            { value: "SCP", label: "SCP - Superior cerebellar peduncle" },
             { value: "SLF", label: "SLF - Superior longitudinal fasciculus" },
             { value: "UF", label: "UF - Uncinate fasciculus" }
         ]
