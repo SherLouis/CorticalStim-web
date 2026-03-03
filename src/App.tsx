@@ -1,4 +1,8 @@
-import { ColorScheme, ColorSchemeProvider, MantineProvider, Skeleton } from '@mantine/core';
+import { MantineProvider, Skeleton } from '@mantine/core';
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
+import '@mantine/dates/styles.css';
+import 'mantine-datatable/styles.css';
 import { Notifications } from '@mantine/notifications';
 import { Suspense, useState } from 'react';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
@@ -16,12 +20,8 @@ import { RequireVerifiedUser } from './components/routing/RequireVerifiedUser';
 import { AppPath } from './pages/Routes';
 import AccountManagementPage from './pages/Authentication/AccountManagement';
 
-// TODO: upgrade to mantine v7
 
 function App() {
-    const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
-    const toggleColorScheme = (value?: ColorScheme) =>
-        setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
     const { t } = useTranslation();
     const authProvider = new FirebaseAuthenticationProvider() as AuthenticationProvider;
@@ -85,14 +85,10 @@ function App() {
     ]);
 
     return (
-        <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-            <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-                <AuthContextProvider authProvider={authProvider}>
-                    <Notifications position="top-right" />
-                    <RouterProvider router={router} />
-                </AuthContextProvider>
-            </MantineProvider>
-        </ColorSchemeProvider>
+        <AuthContextProvider authProvider={authProvider}>
+            <Notifications position="top-right" />
+            <RouterProvider router={router} />
+        </AuthContextProvider>
     );
 }
 
@@ -103,8 +99,10 @@ export default function WrappedApp() {
         <Skeleton height={8} mt={6} width="70%" radius="xl" />
     </div>);
     return (
-        <Suspense fallback={fallback}>
-            < App />
-        </Suspense >
+        <MantineProvider defaultColorScheme="auto">
+            <Suspense fallback={fallback}>
+                < App />
+            </Suspense >
+        </MantineProvider>
     );
 }

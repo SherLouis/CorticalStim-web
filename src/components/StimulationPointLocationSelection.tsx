@@ -122,24 +122,24 @@ export default function StimulationPointLocationSelection({ form }: StimulationP
                             {...form.getInputProps('destrieux')}
                             clearable
                             searchable
-                            dropdownPosition="bottom"
+                            comboboxProps={{ position: 'bottom' }}
                         />
                     </Box>
                     <Box display={form.getInputProps('type').value === "mni" ? 'block' : 'none'}>
                         <Stack justify="center" align="flex-end" >
                             <NumberInput
                                 label="X"
-                                precision={2}
+                                decimalScale={2}
                                 {...form.getInputProps('mni_x')}
                             />
                             <NumberInput
                                 label="Y"
-                                precision={2}
+                                decimalScale={2}
                                 {...form.getInputProps('mni_y')}
                             />
                             <NumberInput
                                 label="Z"
-                                precision={2}
+                                decimalScale={2}
                                 {...form.getInputProps('mni_z')}
                             />
                         </Stack>
@@ -284,129 +284,129 @@ const VEPSelection = ({ form }: StimulationPointLocationSelectionProps) => {
             <Stack>
                 <Box>
                     <Title order={5}>{"Frontal Gyri"}</Title>
-                    <Button.Group orientation='vertical'>
+                    <Stack gap="xs">
                         {getFrontalGyriVepOptions().map(option =>
-                            <Button compact
+                            <Button size="compact-sm"
                                 key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
                             </Button>)}
-                    </Button.Group>
+                    </Stack>
                 </Box>
             </Stack>
             <Stack>
                 <Box>
                     <Title order={5}>{"Frontal Sulci"}</Title>
-                    <Button.Group orientation='vertical'>
+                    <Stack gap="xs">
                         {getFrontalSulciVepOptions().map(option =>
-                            <Button compact
+                            <Button size="compact-sm"
                                 key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
                             </Button>)}
-                    </Button.Group>
+                    </Stack>
                 </Box>
                 <Box>
                     <Title order={5}>{"Occipital Gyri"}</Title>
-                    <Button.Group orientation='vertical'>
+                    <Stack gap="xs">
                         {getOccipitalGyriVepOptions().map(option =>
-                            <Button compact
+                            <Button size="compact-sm"
                                 key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
                             </Button>)}
-                    </Button.Group>
+                    </Stack>
                 </Box>
                 <Box>
                     <Title order={5}>{"Occipital Sulci"}</Title>
-                    <Button.Group orientation='vertical'>
+                    <Stack gap="xs">
                         {getOccipitalSulciVepOptions().map(option =>
-                            <Button compact
+                            <Button size="compact-sm"
                                 key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
                             </Button>)}
-                    </Button.Group>
+                    </Stack>
                 </Box>
             </Stack>
             <Stack>
                 <Box>
                     <Title order={5}>{"Temporal Gyri"}</Title>
-                    <Button.Group orientation='vertical'>
+                    <Stack gap="xs">
                         {getTemporalGyriVepOptions().map(option =>
-                            <Button compact
+                            <Button size="compact-sm"
                                 key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
                             </Button>)}
-                    </Button.Group>
+                    </Stack>
                 </Box>
                 <Box>
                     <Title order={5}>{"Temporal Sulci"}</Title>
-                    <Button.Group orientation='vertical'>
+                    <Stack gap="xs">
                         {getTemporalSulciVepOptions().map(option =>
-                            <Button compact
+                            <Button size="compact-sm"
                                 key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
                             </Button>)}
-                    </Button.Group>
+                    </Stack>
                 </Box>
             </Stack>
             <Stack>
                 <Box>
                     <Title order={5}>{"Parietal Gyri"}</Title>
-                    <Button.Group orientation='vertical'>
+                    <Stack gap="xs">
                         {getParietalGyriVepOptions().map(option =>
-                            <Button compact
+                            <Button size="compact-sm"
                                 key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
                             </Button>)}
-                    </Button.Group>
+                    </Stack>
                 </Box>
                 <Box>
                     <Title order={5}>{"Parietal Sulci"}</Title>
-                    <Button.Group orientation='vertical'>
+                    <Stack gap="xs">
                         {getParietalSulciVepOptions().map(option =>
-                            <Button compact
+                            <Button size="compact-sm"
                                 key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
                             </Button>)}
-                    </Button.Group>
+                    </Stack>
                 </Box>
                 <Box>
                     <Title order={5}>{"Insula"}</Title>
-                    <Button.Group orientation='vertical'>
+                    <Stack gap="xs">
                         {getInsulaVepOptions().map(option =>
-                            <Button compact
+                            <Button size="compact-sm"
                                 key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
                             </Button>)}
-                    </Button.Group>
+                    </Stack>
                 </Box>
                 <Box>
                     <Title order={5}>{"Subcortical structures"}</Title>
-                    <Button.Group orientation='vertical'>
+                    <Stack gap="xs">
                         {getSubcorticalStructuresOptions().map(option =>
-                            <Button compact
+                            <Button size="compact-sm"
                                 key={'vep_' + option.value}
                                 onClick={() => form.setFieldValue('vep', option.value)}
                                 variant={option.value === form.values.vep ? 'filled' : 'light'}>
                                 {option.label}
                             </Button>)}
-                    </Button.Group>
+                    </Stack>
                 </Box>
             </Stack>
         </SimpleGrid>
@@ -441,17 +441,12 @@ const WhiteMatterSelection = ({ form }: StimulationPointLocationSelectionProps) 
     }
     return (
         <SimpleGrid
-            cols={4}
-            spacing="lg"
+            cols={{ base: 1, xs: 2, lg: 3, xl: 4 }}
+            spacing={{ base: 'sm', xl: 'lg' }}
             verticalSpacing="xs"
-            breakpoints={[
-                { maxWidth: '105rem', cols: 3, spacing: 'md' },
-                { maxWidth: '80rem', cols: 2, spacing: 'sm' },
-                { maxWidth: '50rem', cols: 1, spacing: 'sm' },
-            ]}
         >
             {getWhiteMatterOptions().map(option =>
-                <Button compact
+                <Button size="compact-sm"
                     key={'wm_' + option.value}
                     onClick={() => form.setFieldValue('white_matter', option.value)}
                     variant={option.value === form.values.white_matter ? "filled" : "light"}>

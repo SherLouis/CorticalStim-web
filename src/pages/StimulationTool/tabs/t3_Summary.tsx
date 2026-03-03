@@ -10,7 +10,6 @@ import { useListState } from "@mantine/hooks";
 import { ActionIcon, Alert, Box, Checkbox, Group, MultiSelect, Popover } from "@mantine/core";
 import { IconFilterOff, IconFileTypeCsv, IconTableOptions, IconAlertTriangle } from "@tabler/icons-react";
 import { CSVLink } from "react-csv";
-import { DataTableColumnToggle } from "mantine-datatable/dist/hooks";
 
 export default function SummaryTab({ form, filters }: SummaryTabProps) {
     const { t } = useTranslation();
@@ -82,7 +81,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
     }
 
     const [records, setRecords] = useState(getRecordsFromForm());
-    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'pointId', direction: 'desc' });
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Result>>({ columnAccessor: 'pointId', direction: 'desc' });
     const [pointIdList, setPointIdListHandlers] = useListState(filters ? filters.pointIds : []);
     const csvFileRef = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
 
@@ -218,7 +217,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                     ref={csvFileRef}
                     target='_blank'
                 />
-                <Group position='right' h={"4%"}>
+                <Group justify='right' h={"4%"}>
                     <ActionIcon title={t('pages.stimulationTool.summary.button_filter_off')}>
                         <IconFilterOff onClick={clearAllFilters} />
                     </ActionIcon>
@@ -230,8 +229,8 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                         </Popover.Target>
                         <Popover.Dropdown>
                             <Checkbox.Group
-                                value={columnsToggle.filter((col) => col.toggled).map(col => col.accessor)}
-                                onChange={(checkedValues) => { setColumnsToggle((prevToggleState) => prevToggleState.map(toggle => { return { ...toggle, toggled: checkedValues.includes(toggle.accessor) } as DataTableColumnToggle })) }}
+                                value={columnsToggle.filter((col) => col.toggled).map(col => col.accessor as string)}
+                                onChange={(checkedValues) => { setColumnsToggle((prevToggleState: any) => prevToggleState.map((toggle: any) => { return { ...toggle, toggled: checkedValues.includes(toggle.accessor as string) } as any })) }}
                                 label={t('pages.stimulationTool.summary.button_select_columns')}
                             >
                                 {columnsToggle.map(c =>

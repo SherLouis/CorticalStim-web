@@ -38,28 +38,28 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
 
     const observedEffect = (
         <Group w={"100%"} h={"90%"} align='flex-start'>
-            <Box sx={{ flex: 3 }} h={"100%"}>
+            <Box style={{ flex: 3 }} h={"100%"}>
                 <Stack h={"100%"}>
-                    <Button compact size="sm"
+                    <Button size="compact-sm"
                         variant={form.values.observed_effect === NO_EFFECT ? "filled" : "light"}
                         onClick={() => { form.setFieldValue('observed_effect', NO_EFFECT); }}>
                         {t('pages.stimulationTool.stimulation.effect.no_effect')}
                     </Button>
                     <Title order={6}>{t('pages.stimulationTool.stimulation.effect.last_used')}</Title>
-                    <Button.Group orientation='vertical'>
+                    <Stack gap={"xs"}>
                         {observed_effect_last_values.map((v, i) => (
-                            <Button compact size="sm" key={"btn_last_effect_" + i}
+                            <Button size="compact-sm" key={"btn_last_effect_" + i}
                                 variant={formatSelectedObservedEffect(form.values.observed_effect) === formatSelectedObservedEffect(v) ? "filled" : "light"}
                                 onClick={() => { form.setFieldValue('observed_effect', v); }}>
                                 {formatSelectedObservedEffect(v)}
                             </Button>
                         ))}
-                    </Button.Group>
+                    </Stack>
                 </Stack>
             </Box>
 
-            <Box sx={{ flex: 9 }} h={"100%"}>
-                <Stack w={"100%"} h={"100%"} spacing={0}>
+            <Box style={{ flex: 9 }} h={"100%"}>
+                <Stack w={"100%"} h={"100%"} gap={0}>
                     <Box h={"90%"}>
                         <CognitiveEffectTable
                             cognitive_values={form.values.observed_effect}
@@ -78,9 +78,9 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
     );
 
     const clinicalManif = (
-        <Stack h={"100%"} w={"100%"} spacing={'xs'}>
-            <Box w={"100%"} sx={{ flex: 6 }}>
-                <Stack w={"100%"} spacing={"xs"}>
+        <Stack h={"100%"} w={"100%"} gap={'xs'}>
+            <Box w={"100%"} style={{ flex: 6 }}>
+                <Stack w={"100%"} gap={"xs"}>
                     {getEpiManifestationOptions(t).map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label}
                         onChange={(e) => form.setFieldValue('epi_manifestation', e.target.checked ? e.target.value : "")}
                         checked={option.value === form.values.epi_manifestation}
@@ -91,7 +91,7 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
                     />
                 </Stack>
             </Box>
-            <Box w={"100%"} sx={{ flex: 6 }}>
+            <Box w={"100%"} style={{ flex: 6 }}>
                 <Radio.Group
                     defaultValue="unknown"
                     label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_label')}
@@ -117,21 +117,21 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
         <Box w={"100%"} h={"100%"}>
             <Group w={"100%"} h={"100%"} align='flex-start'>
                 <Section
-                    sx={{ flex: 7 }}
+                    style={{ flex: 7 }}
                     header={<Title order={5}>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}</Title>}
                     children={observedEffect}
                 />
 
-                <Box sx={{ flex: 5 }} h={"100%"}>
+                <Box style={{ flex: 5 }} h={"100%"}>
                     <Group w={"100%"} h={"100%"} align='flex-start'>
                         <Section
-                            sx={{ flex: 6 }}
+                            style={{ flex: 6 }}
                             header={<Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>}
                             children={clinicalManif}
                         />
 
                         <Section
-                            sx={{ flex: 6 }}
+                            style={{ flex: 6 }}
                             header={<Title order={5}>{t('pages.stimulationTool.stimulation.effect.eeg')}</Title>}
                             children={<EEGSection form={form} t={t} />}
                             bodyOpts={{ h: "90%" }}
@@ -391,11 +391,11 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange, t }: Cognit
     }
 
     return (
-        <Stack w={"100%"} h={"100%"} p={0} spacing={"xs"}>
+        <Stack w={"100%"} h={"100%"} p={0} gap={"xs"}>
             <Flex direction={"row"} justify={"flex-start"} align={"flex-start"} wrap={"nowrap"} w={"100%"} h={"100%"}>
-                <Stack spacing={0} h={"100%"} sx={{ flex: 4 }}>
+                <Stack gap={0} h={"100%"} style={{ flex: 4 }}>
                     <Text h={"5%"}>{t("pages.stimulationTool.stimulation.effect.effect_table.class")}</Text>
-                    <Box h={"95%"} sx={{ flex: 4 }}>
+                    <Box h={"95%"} style={{ flex: 4 }}>
                         <ColumnButtonSelect
                             data={getEffectOptions('class')}
                             currentValue={cognitive_values.class}
@@ -403,9 +403,9 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange, t }: Cognit
                         />
                     </Box>
                 </Stack>
-                <Stack spacing={0} h={"100%"} sx={{ flex: 4 }} px={"sm"}>
+                <Stack gap={0} h={"100%"} style={{ flex: 4 }} px={"sm"}>
                     <Text h={"5%"}>{t("pages.stimulationTool.stimulation.effect.effect_table.descriptor")}</Text>
-                    <Box h={"95%"} sx={{ flex: 4 }}>
+                    <Box h={"95%"} style={{ flex: 4 }}>
                         <ColumnButtonSelect
                             data={getEffectOptions('descriptor')}
                             currentValue={cognitive_values.descriptor}
@@ -413,9 +413,9 @@ const CognitiveEffectTable = ({ cognitive_values, handleValueChange, t }: Cognit
                         />
                     </Box>
                 </Stack>
-                <Stack spacing={0} h={"100%"} sx={{ flex: 4 }}>
+                <Stack gap={0} h={"100%"} style={{ flex: 4 }}>
                     <Text h={"5%"}>{t("pages.stimulationTool.stimulation.effect.effect_table.details")}</Text>
-                    <Box h={"95%"} sx={{ flex: 4 }}>
+                    <Box h={"95%"} style={{ flex: 4 }}>
                         <ColumnButtonSelect
                             data={getEffectOptions('details')}
                             currentValue={cognitive_values.details}
@@ -459,22 +459,22 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
     ]
 
     return (
-        <ScrollArea w={"100%"} h={"100%"} py={"xs"} type="auto" sx={{ padding: '0' }}>
+        <ScrollArea w={"100%"} h={"100%"} py={"xs"} type="auto" style={{ padding: '0' }}>
             <Stack align="stretch" justify="flex-start">
                 <Switch
                     label={t('pages.stimulationTool.stimulation.effect.eeg_section.post_discharge_label')}
                     checked={form.values.post_discharge}
                     {...form.getInputProps('post_discharge')} />
                 <Box display={form.values.post_discharge === true ? 'block' : 'none'}>
-                    <Stack spacing={0}>
+                    <Stack gap={0}>
                         <TextInput
                             label={t('pages.stimulationTool.stimulation.effect.eeg_section.duration_label') + ' (s)'}
                             styles={{ input: { textAlign: 'center' } }}
                             {...form.getInputProps('pd_duration')}
                         />
-                        <Group spacing={0} grow w={"100%"}>
+                        <Group gap={0} grow w={"100%"}>
                             {PostDischargeValueOptions.map((v, i) =>
-                                <Button compact key={"pd_duration_" + i}
+                                <Button size="compact-sm" key={"pd_duration_" + i}
                                     onClick={() => form.setFieldValue('pd_duration', v)}
                                     variant={form.values.pd_duration === v ? 'filled' : 'default'}>
                                     {v}
@@ -482,11 +482,11 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
                             )}
                         </Group>
                     </Stack>
-                    <Stack spacing={0}>
+                    <Stack gap={0}>
                         <label>{t('pages.stimulationTool.stimulation.effect.eeg_section.localization_label')}</label>
-                        <Group spacing={0} grow w={"100%"}>
+                        <Group gap={0} grow w={"100%"}>
                             {post_discharge_local_options.map((v, i) =>
-                                <Button compact key={"pd_local_option_" + i}
+                                <Button size="compact-sm" key={"pd_local_option_" + i}
                                     onClick={() => form.setFieldValue('pd_local', v.value)}
                                     variant={form.values.pd_local === v.value ? 'filled' : 'default'}>
                                     {v.label}
@@ -494,11 +494,11 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
                             )}
                         </Group>
                     </Stack>
-                    <Stack spacing={0}>
+                    <Stack gap={0}>
                         <label>{t('pages.stimulationTool.stimulation.effect.eeg_section.type_label')}</label>
-                        <Group spacing={0} grow w={"100%"}>
+                        <Group gap={0} grow w={"100%"}>
                             {post_discharge_type.map((v, i) =>
-                                <Button compact key={"pd_type_option_" + i}
+                                <Button size="compact-sm" key={"pd_type_option_" + i}
                                     onClick={() => form.setFieldValue('pd_type', v.value)}
                                     variant={form.values.pd_type === v.value ? 'filled' : 'default'}>
                                     {v.label}

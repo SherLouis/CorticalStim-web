@@ -328,13 +328,13 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                     <Group h={"100%"} display={"flex"} w={"100%"}>
                         <Alert
                             h={"100%"}
-                            sx={{ flex: 9 }}
+                            style={{ flex: 9 }}
                             icon={<IconAlertCircle size="1rem" />}
                             title={t("pages.stimulationTool.implantation.guide_select_contact_title")}>
                             {t("pages.stimulationTool.implantation.guide_select_contact_text")}
                         </Alert>
                         {/** Select all and selct all not done buttons */}
-                        <Stack sx={{ flex: 3 }}>
+                        <Stack style={{ flex: 3 }}>
                             <Button onClick={selectAllContacts}>{t("pages.stimulationTool.implantation.selectAllContactsButtonLabel")}</Button>
                             <Button onClick={selectAllNotDoneContacts}>{t("pages.stimulationTool.implantation.selectAllNotDoneContactsButtonLabel")}</Button>
                         </Stack>
@@ -343,13 +343,13 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
                 {/** Contact(s) selected */}
                 <Box h={"100%"} w={"100%"} display={electrode_parameters_selected && contacts_configured && contacts_selected ? "flex" : "none"}>
-                    <Group position='apart' align='flex-start' h={"100%"} w={"100%"} noWrap>
-                        <Stack h={"100%"} w={"80%"} spacing={0}>
+                    <Group justify='space-between' align='flex-start' h={"100%"} w={"100%"} wrap="nowrap">
+                        <Stack h={"100%"} w={"80%"} gap={0}>
                             {/** Selected contacts */}
-                            <Group h={"35%"} w={"100%"} noWrap>
+                            <Group h={"35%"} w={"100%"} wrap="nowrap">
                                 {t('pages.stimulationTool.implantation.selected_contacts') + ':'}
-                                <ScrollArea type='always' h={"100%"} w={"100%"} sx={{ alignItems: "center", padding: '0' }}>
-                                    <Group align="center" position='left' noWrap spacing={"xs"}>
+                                <ScrollArea type='always' h={"100%"} w={"100%"} style={{ alignItems: "center", padding: '0' }}>
+                                    <Group align="center" justify='left' wrap="nowrap" gap={"xs"}>
                                         {selectedContacts.map((point) => {
                                             return (
                                                 <Badge key={point} size="lg" variant="filled">{point}</Badge>
@@ -366,12 +366,12 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                             </Alert>
                         </Stack>
 
-                        <Stack w={"20%"} h={"100%"} align="center" spacing={0}>
+                        <Stack w={"20%"} h={"100%"} align="center" gap={0}>
                             {/** Display selected location */}
                             {t('pages.stimulationTool.implantation.selected_location')}: {getNewElectrodeLocationFromForm()}
                             {/** Unselect all Buttons */}
                             <Button w={"100%"}
-                                leftIcon={<IconDeselect />}
+                                leftSection={<IconDeselect />}
                                 onClick={unselectAllContacts}
                                 display={selectedContacts.length > 0 ? "block" : "none"}
                             > {t('pages.stimulationTool.implantation.deselectAllContactsButtonLabel')}
@@ -382,7 +382,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                 variant='filled'
                                 color='green'
                                 size="lg"
-                                leftIcon={<IconCircleCheck />}
+                                leftSection={<IconCircleCheck />}
                                 onClick={handleElectrodeLocationFormSubmit}
                                 display={selectedContacts.length > 0 ? "block" : "none"}
                             > {t('pages.stimulationTool.implantation.saveButtonLabel')}
@@ -400,9 +400,9 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
             <Modal opened={showConfirmDeleteElectrode}
                 onClose={() => setShowConfirmDeleteElectrode(false)}
                 title={<Title order={5}>{t('pages.stimulationTool.implantation.confirmDelete.title') + ' "' + electrodeLabelToDelete + '" ?'}</Title>}>
-                <Group position="apart">
-                    <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmDeleteElectrode(false)}>{t('pages.stimulationTool.implantation.confirmDelete.cancel_label')}</Button>
-                    <Button leftIcon={<IconTrash color="white" />} variant="filled" color="red" onClick={handleDeleteElectrode}>{t('pages.stimulationTool.implantation.confirmDelete.confirm_label')}</Button>
+                <Group justify="space-between">
+                    <Button leftSection={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmDeleteElectrode(false)}>{t('pages.stimulationTool.implantation.confirmDelete.cancel_label')}</Button>
+                    <Button leftSection={<IconTrash color="white" />} variant="filled" color="red" onClick={handleDeleteElectrode}>{t('pages.stimulationTool.implantation.confirmDelete.confirm_label')}</Button>
                 </Group>
             </Modal>
 
@@ -419,17 +419,17 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                         title={t('pages.stimulationTool.implantation.confirmElectrode.title') + ' "' + electrodeConfirmForm.values.electrode_label + '" ?'}>
                         {t('pages.stimulationTool.implantation.confirmElectrode.description')}
                     </Alert>
-                    <Group position="apart">
+                    <Group justify="space-between">
                         <Checkbox
                             label={t('pages.stimulationTool.implantation.confirmElectrode.do_not_show_again_label')}
                             {...electrodeConfirmForm.getInputProps('do_not_show_again')} />
 
-                        <Group position="right">
-                            <Button leftIcon={<IconCircleX color="white" />} variant="filled" color="gray"
+                        <Group justify="right">
+                            <Button leftSection={<IconCircleX color="white" />} variant="filled" color="gray"
                                 onClick={handleCancelConfirmElectrode}>
                                 {t('pages.stimulationTool.implantation.confirmElectrode.cancel_label')}
                             </Button>
-                            <Button leftIcon={<IconCircleCheck color="white" />} variant="filled" color="green.9"
+                            <Button leftSection={<IconCircleCheck color="white" />} variant="filled" color="green.9"
                                 onClick={handleConfirmElectrode}>
                                 {t('pages.stimulationTool.implantation.confirmElectrode.confirm_label')}
                             </Button>
@@ -454,22 +454,22 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                             }
                         }}
                     />
-                    <Group position="apart" spacing={"sm"}>
+                    <Group justify="space-between" gap={"sm"}>
                         <NumberInput
                             label={t('pages.stimulationTool.implantation.contactDiameterLabel')}
-                            precision={1}
+                            decimalScale={1}
                             required
                             {...form.getInputProps('electrode_params.diameter')}
                         />
                         <NumberInput
                             label={t('pages.stimulationTool.implantation.contactSeparationLabel')}
-                            precision={1}
+                            decimalScale={1}
                             required
                             {...form.getInputProps('electrode_params.separation')}
                         />
                         <NumberInput
                             label={t('pages.stimulationTool.implantation.contactLengthLabel')}
-                            precision={1}
+                            decimalScale={1}
                             required
                             {...form.getInputProps('electrode_params.length')}
                         />
@@ -479,13 +479,13 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
             <Box py={"md"} h={"30%"} p={'0'}>
                 <Group>
-                    <Button onClick={addElectrode} size="xs" leftIcon={<IconCirclePlus />}>{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
+                    <Button onClick={addElectrode} size="xs" leftSection={<IconCirclePlus />}>{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
                     <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} accept=".tsv,.txt" style={{ display: 'none' }} />
-                    <Button onClick={() => openInputFileRef.current?.click()} size="xs" leftIcon={<IconFileImport />}>
+                    <Button onClick={() => openInputFileRef.current?.click()} size="xs" leftSection={<IconFileImport />}>
                         {t("pages.stimulationTool.implantation.buttonTsvOpen")}
                     </Button>
                 </Group>
-                <ScrollArea w={"100%"} h={"95%"} py={"xs"} type="always" sx={{ alignItems: "center", padding: '0' }}>
+                <ScrollArea w={"100%"} h={"95%"} py={"xs"} type="always" style={{ alignItems: "center", padding: '0' }}>
                     {form.values.electrodes.map((electrode, electrode_i) => {
                         return (
                             <Flex direction={"row"} justify={"space-between"} align={"center"} wrap={"nowrap"}
@@ -494,21 +494,21 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                 key={'div_electrode_' + electrode_i}
                                 w={"100%"}
                             >
-                                <Group sx={{ flex: 4 }} position="left" align="center">
+                                <Group style={{ flex: 4 }} justify="left" align="center">
                                     {/** Delete button */}
-                                    <ActionIcon color="red" sx={{ flex: 1 }} onClick={() => handleDeleteElectrodeButtonClicked(electrode.label)}>
+                                    <ActionIcon color="red" style={{ flex: 1 }} onClick={() => handleDeleteElectrodeButtonClicked(electrode.label)}>
                                         <IconTrash size="2rem" />
                                     </ActionIcon>
                                     {/** Electrode Label */}
                                     <TextInput
-                                        sx={{ flex: 3, flexGrow: 1 }}
+                                        style={{ flex: 3, flexGrow: 1 }}
                                         label={t("pages.stimulationTool.implantation.electrodeLabel")}
                                         placeholder="A"
                                         required
                                         {...form.getInputProps(`electrodes.${electrode_i}.label`)}
                                     />
                                     {/** Side */}
-                                    <Input.Wrapper sx={{ flex: 2 }}
+                                    <Input.Wrapper style={{ flex: 2 }}
                                         size="sm"
                                         label={t("pages.stimulationTool.implantation.sideLabel")}
                                         required
@@ -521,33 +521,27 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                     </Input.Wrapper>
                                     {/** Number of contacts */}
                                     <NumberInput
-                                        sx={{ flex: 3, flexGrow: 1 }}
+                                        style={{ flex: 3, flexGrow: 1 }}
                                         disabled={electrode.confirmed}
                                         label={t("pages.stimulationTool.implantation.nbContactsLabel")}
                                         min={0}
                                         defaultValue={electrode.n_contacts}
-                                        onChange={(v) => setContactsToElectrode(electrode_i, v === "" ? 0 : v)}
+                                        onChange={(v) => setContactsToElectrode(electrode_i, v === "" || typeof v === 'string' ? 0 : v)}
                                     />
-                                    <Button sx={{ flex: 2, flexGrow: 1 }}
+                                    <Button style={{ flex: 2, flexGrow: 1 }}
                                         size="sm"
                                         color="green.9"
                                         disabled={electrode.confirmed}
                                         onClick={() => handleConfirmElectrodeButtonClicked(electrode.label)}
-                                        leftIcon={<IconLockCheck size="2rem" />}>
+                                        leftSection={<IconLockCheck size="2rem" />}>
                                         {t('pages.stimulationTool.implantation.confirmElectrode.confirm_label')}
                                     </Button>
                                 </Group>
 
-                                <Box h={"100%"} sx={{ flex: 10 }} display={"flex"}>
+                                <Box h={"100%"} style={{ flex: 10 }} display={"flex"}>
                                     <Chip.Group multiple value={selectedContacts} onChange={setSelectedContacts}>
-                                        <SimpleGrid cols={10} w={"100%"} h={"100%"}
-                                            breakpoints={[
-                                                { maxWidth: '90rem', cols: 8, spacing: 'sm' },
-                                                { maxWidth: '70rem', cols: 6, spacing: 'sm' },
-                                                { maxWidth: '50rem', cols: 4, spacing: 'xs' },
-                                                { maxWidth: '40rem', cols: 3, spacing: 'xs' },
-                                                { maxWidth: '35rem', cols: 2, spacing: 'sm' },
-                                            ]}>
+                                        <SimpleGrid cols={{ base: 2, xs: 3, sm: 4, md: 6, lg: 8, xl: 10 }} w={"100%"} h={"100%"}
+                                            spacing={{ base: 'xs', sm: 'sm' }}>
                                             {electrode.stim_points.map((stim_point, stim_point_i) => {
                                                 const pointId = getStimPointLabel(electrode.label, stim_point_i);
                                                 return (
@@ -570,7 +564,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
             </Box>
 
             {/* Central bar */}
-            <Box h={"15%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
+            <Box h={"15%"} w={"100%"} style={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
                 <CentralBar />
             </Box>
 

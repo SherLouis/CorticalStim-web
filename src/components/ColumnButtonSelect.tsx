@@ -7,12 +7,12 @@ const ColumnButtonSelect = ({ data, onChange, currentValue }: ColumnButtonSelect
     }
 
     return (
-        <ScrollArea w={"100%"} h={"100%"} py={"xs"} type="auto" sx={{ padding: '0' }}>
-            <Stack spacing={0} justify="flex-start" align='stretch'>
+        <ScrollArea w={"100%"} h={"100%"} py={"xs"} type="auto" style={{ padding: '0' }}>
+            <Stack gap={0} justify="flex-start" align='stretch'>
                 {data.map((value, index) =>
                     <Button w={"100%"} m={0} p={0}
                         key={value + index}
-                        compact
+                        size="compact-sm"
                         variant={currentValue === value ? "filled" : "default"}
                         onClick={() => handleClick(value)}>{value}</Button>
                 )}

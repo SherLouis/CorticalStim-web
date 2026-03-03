@@ -34,31 +34,31 @@ export default function StimulationTaskSelection({ form, last_values }: Stimulat
     }
 
     const taskSelection = (
-        <Group position={"left"} align={"flex-start"} w={"100%"} h={"90%"}>
-            <Box sx={{ flex: 3 }} h={"100%"}>
+        <Group justify={"left"} align={"flex-start"} w={"100%"} h={"90%"}>
+            <Box style={{ flex: 3 }} h={"100%"}>
                 <Stack h={"100%"}>
-                    <Button compact size="sm"
+                    <Button size="compact-sm"
                         variant={JSON.stringify(form.values) === JSON.stringify(NO_TASK) ? "filled" : "light"}
                         onClick={() => { form.setValues(NO_TASK); }}>
                         {t('pages.stimulationTool.stimulation.task_no_task_used')}
                     </Button>
                     <Box p={0} m={0} display={last_values.length > 0 ? 'block' : 'none'}>
                         <Title order={6}>{t('pages.stimulationTool.stimulation.task_last_used_title')}</Title>
-                        <Button.Group orientation="vertical">
+                        <Stack gap={"xs"}>
                             {last_values.map((v, i) => (
-                                <Button compact size="sm" key={"btn_last_task_" + i}
+                                <Button size="compact-sm" key={"btn_last_task_" + i}
                                     variant={formatSelectedTask(form.values) === formatSelectedTask(v) ? "filled" : "light"}
                                     onClick={() => { form.setValues(v); }}>
                                     {formatSelectedTask(v)}
                                 </Button>
                             ))}
-                        </Button.Group>
+                        </Stack>
                     </Box>
                 </Stack>
             </Box>
 
-            <Box sx={{ flex: 9 }} h={"100%"}>
-                <Stack h={"100%"} spacing={0}>
+            <Box style={{ flex: 9 }} h={"100%"}>
+                <Stack h={"100%"} gap={0}>
                     <Box h={"90%"} w={"100%"}>
                         <TaskTable form={form} handleValueChange={handleValueChange} />
                     </Box>
@@ -136,10 +136,10 @@ const TaskTable = ({ form, handleValueChange }: TaskTableProps) => {
     }
 
     return (
-        <Stack w={"100%"} h={"100%"} p={0} spacing={"xs"}>
+        <Stack w={"100%"} h={"100%"} p={0} gap={"xs"}>
             <Flex direction={"row"} justify={"flex-start"} align={"flex-start"} wrap={"nowrap"} w={"100%"} h={"100%"}>
-                <Stack spacing={0} h={"100%"} sx={{ flex: 4 }}>
-                    <Box h={"100%"} sx={{ flex: 4 }}>
+                <Stack gap={0} h={"100%"} style={{ flex: 4 }}>
+                    <Box h={"100%"} style={{ flex: 4 }}>
                         <ColumnButtonSelect
                             data={getTaskOptions('category')}
                             currentValue={form.values.category}
@@ -147,8 +147,8 @@ const TaskTable = ({ form, handleValueChange }: TaskTableProps) => {
                         />
                     </Box>
                 </Stack>
-                <Stack spacing={0} h={"100%"} sx={{ flex: 4 }} px={"sm"}>
-                    <Box h={"100%"} sx={{ flex: 4 }}>
+                <Stack gap={0} h={"100%"} style={{ flex: 4 }} px={"sm"}>
+                    <Box h={"100%"} style={{ flex: 4 }}>
                         <ColumnButtonSelect
                             data={getTaskOptions('subcategory')}
                             currentValue={form.values.subcategory}
@@ -156,8 +156,8 @@ const TaskTable = ({ form, handleValueChange }: TaskTableProps) => {
                         />
                     </Box>
                 </Stack>
-                <Stack spacing={0} h={"100%"} sx={{ flex: 4 }}>
-                    <Box h={"100%"} sx={{ flex: 4 }}>
+                <Stack gap={0} h={"100%"} style={{ flex: 4 }}>
+                    <Box h={"100%"} style={{ flex: 4 }}>
                         <ColumnButtonSelect
                             data={getTaskOptions('characteristic')}
                             currentValue={form.values.characteristic}

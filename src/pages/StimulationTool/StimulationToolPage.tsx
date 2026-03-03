@@ -130,7 +130,7 @@ export default function StimulationToolPage() {
                     <IconDownload onClick={downloadFormValues} />
                 </ActionIcon>
                 {/** Stimulation name / edit box */}
-                <Group spacing={0} position="left" align="center">
+                <Group gap={0} justify="left" align="center">
                     <label
                         htmlFor="patient_id"
                         style={{ marginRight: 10, fontWeight: 'bold' }}
@@ -157,7 +157,7 @@ export default function StimulationToolPage() {
                     </Alert>
                 }
             </Group>
-            <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={customTabStyle.classes} h={"96%"}>
+            <Tabs value={activeTab} onChange={setActiveTab} variant="outline" radius={"xl"} classNames={{ tab: customTabStyle.tab }} h={"96%"}>
                 <Tabs.List grow mah={"5%"}>
                     <Tabs.Tab value="implantation">{t("pages.stimulationTool.implantation.tab_title")}</Tabs.Tab>
                     <Tabs.Tab value="stimulation">{t("pages.stimulationTool.stimulation.tab_title")}</Tabs.Tab>

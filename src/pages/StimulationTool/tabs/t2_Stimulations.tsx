@@ -215,14 +215,13 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         const selectedContactBackgroundColorSx = getStimulatedStyledContactColor(stims, stims.length === 0, theme, true);
 
         return (
-            <Box h={"100%"} sx={(theme) => (
-                {
-                    borderRadius: theme.radius.xl,
-                    overflow: "hidden",
-                    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[6]
-                })}>
+            <Box h={"100%"} style={{
+                borderRadius: theme.radius.xl,
+                overflow: "hidden",
+                backgroundColor: 'light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-4))'
+            }}>
                 {/** No Contact exists */}
-                <Group align='center' position='center' h={"100%"} w={"100%"} display={!stimPointConfirmedExist ? "block" : "none"}>
+                <Group align='center' justify='center' h={"100%"} w={"100%"} display={!stimPointConfirmedExist ? "block" : "none"}>
                     <Alert h={"100%"}
                         icon={<IconAlertCircle size="1rem" />}
                         title={t('pages.stimulationTool.stimulation.guide_alert_no_electrode_title')}>
@@ -232,7 +231,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                 {/** Contact Exist */}
                 <Box h={"100%"} display={stimPointConfirmedExist ? 'block' : 'none'}>
                     {/** No contact selected */}
-                    <Group align='center' position='center' h={"100%"} w={"100%"} display={selectedPoint === "" ? "block" : "none"}>
+                    <Group align='center' justify='center' h={"100%"} w={"100%"} display={selectedPoint === "" ? "block" : "none"}>
                         <Alert h={"100%"}
                             icon={<IconAlertCircle size="1rem" />}
                             title={t('pages.stimulationTool.stimulation.guide_alert_title')}>
@@ -243,20 +242,20 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                     <Flex direction={"row"} justify={"flex-start"} align={"flex-start"} wrap={"nowrap"} w={"100%"} h={"100%"} display={selectedPoint !== "" ? "flex" : "none"}>
                         {/** Selected contact */}
                         <Center
-                            sx={(theme) => ({
+                            style={{
                                 flex: 1,
                                 backgroundColor: selectedContactBackgroundColorSx,
                                 height: '100%',
                                 padding: theme.spacing.md,
-                                ...selectedContactBorderSx,
+                                ...(selectedContactBorderSx as any),
                                 borderTopLeftRadius: theme.radius.xl,
                                 borderBottomLeftRadius: theme.radius.xl,
-                            })}>
+                            }}>
                             <Text fz={"xl"} fw={"bolder"}>{selectedPoint}</Text>
                         </Center>
 
                         {/** Implantation ROI or selected Effect */}
-                        <Stack sx={{ flex: 3 }} h={"100%"} align="center" justify="center">
+                        <Stack style={{ flex: 3 }} h={"100%"} align="center" justify="center">
                             <Text fz={"lg"} fw={"bold"} display={stimTimeSet ? 'none' : 'block'}>{getSelectedPointLocation()}</Text>
                             <Stack display={stimTimeSet ? 'block' : 'none'} align="flex-start" justify="center">
                                 <Text fz={"lg"} fw={"bold"}>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}:</Text>
@@ -265,29 +264,29 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         </Stack>
 
                         {/** Time selection / Save button */}
-                        <Group position="center" align="center" h={"100%"} noWrap sx={{ flex: 3 }} >
-                            <Group position="center" align="center" h={"100%"} w={"100%"} spacing={"xs"}>
+                        <Group justify="center" align="center" h={"100%"} wrap="nowrap" style={{ flex: 3 }} >
+                            <Group justify="center" align="center" h={"100%"} w={"100%"} gap={"xs"}>
                                 {!stimTimeSet &&
                                     <HoverCard disabled={isTaskSelected}>
                                         <HoverCard.Target>
                                             <Box>
-                                                <Button.Group orientation="horizontal">
+                                                <Group wrap="nowrap" gap={0}>
                                                     <Button size="lg"
                                                         display={useDateTimePicker ? 'none' : 'flex'}
                                                         onClick={() => setStimulationTime(new Date().toISOString())}
-                                                        leftIcon={<IconClockCheck />}
+                                                        leftSection={<IconClockCheck />}
                                                         disabled={!isTaskSelected}>
-                                                        <Text w={"9rem"} align='center' size={"md"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_now')}</Text>
+                                                        <Text w={"9rem"} ta='center' size={"md"} style={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_now')}</Text>
                                                     </Button>
                                                     <Button size="lg"
                                                         display={useDateTimePicker ? 'none' : 'flex'}
                                                         onClick={() => setUseDateTimePicker(true)}
-                                                        leftIcon={<IconClockEdit />}
+                                                        leftSection={<IconClockEdit />}
                                                         disabled={!isTaskSelected}>
-                                                        <Text w={"9rem"} align='center' size={"md"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_custom')}</Text>
+                                                        <Text w={"9rem"} ta='center' size={"md"} style={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_custom')}</Text>
                                                     </Button>
-                                                </Button.Group>
-                                                <Group position="center" display={useDateTimePicker ? 'flex' : 'none'}>
+                                                </Group>
+                                                <Group justify="center" display={useDateTimePicker ? 'flex' : 'none'}>
                                                     <DateTimePicker
                                                         withSeconds
                                                         size="lg"
@@ -316,7 +315,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                                 <HoverCard disabled={isSelectedPointObservedEffectSelected}>
                                     <HoverCard.Target>
                                         <Box>
-                                            <Button variant="filled" size="md" color="green" leftIcon={<IconCircleCheck />}
+                                            <Button variant="filled" size="md" color="green" leftSection={<IconCircleCheck />}
                                                 display={stimTimeSet ? 'block' : 'none'}
                                                 onClick={handleSubmit}
                                                 disabled={stimulationTime === "" || !isSelectedPointObservedEffectSelected}>
@@ -332,14 +331,14 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         </Group>
 
                         {/** Parameters & Task or Manif & EEG */}
-                        <Box sx={{ flex: 5 }} h={"100%"} p={0} m={0}>
+                        <Box style={{ flex: 5 }} h={"100%"} p={0} m={0}>
                             {/** Task & Parameters when stim time is not set */}
-                            <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" spacing={"sm"} display={stimTimeSet ? 'none' : 'flex'}>
+                            <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" gap={"sm"} display={stimTimeSet ? 'none' : 'flex'}>
                                 <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
                                 <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.parameters_title')} : </strong>{formatParameters(params_form.values)}</Text>
                             </Stack>
                             {/** Epi manif & EEG when stim time is set */}
-                            <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" spacing={"sm"} display={stimTimeSet ? 'flex' : 'none'}>
+                            <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" gap={"sm"} display={stimTimeSet ? 'flex' : 'none'}>
                                 <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}:</strong> {getSelectedPointEpiManifEffect()}</Text>
                                 <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.effect.eeg')} :</strong> {getSelectedPointEEGEffect()}</Text>
                             </Stack>
@@ -352,11 +351,11 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
     const StimulationParametersSelection = () => {
         const parameterSelection = (
-            <Group position="center" align="top" noWrap>
+            <Group justify="center" align="top" wrap="nowrap">
                 <CustomNumberInput
                     h={"100%"}
                     label={t('pages.stimulationTool.stimulation.amplitude_label') + ' (mA)'}
-                    precision={1}
+                    decimalScale={1}
                     digit_step={1}
                     decimal_step={0.1}
                     min={0}
@@ -365,18 +364,18 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                     useCustom={true}
                     {...params_form.getInputProps('amplitude')}
                 />
-                <Stack align="center" h={"100%"} spacing={0}>
+                <Stack align="center" h={"100%"} gap={0}>
                     <CustomNumberInput
                         label={t('pages.stimulationTool.stimulation.frequency_label') + ' (Hz)'}
-                        precision={0}
+                        decimalScale={0}
                         step={1}
                         min={0}
                         styles={{ input: { textAlign: "center" } }}
                         {...params_form.getInputProps('frequency')}
                     />
-                    <Group spacing={0} grow w={"100%"}>
+                    <Group gap={0} grow w={"100%"}>
                         {[1, 5, 50, 55].map((v) =>
-                            <Button compact key={"freq_" + v}
+                            <Button size="compact-sm" key={"freq_" + v}
                                 onClick={() => params_form.setFieldValue('frequency', v)}
                                 variant={params_form.values.frequency === v ? 'filled' : 'default'}>
                                 {v}
@@ -385,18 +384,18 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                     </Group>
                 </Stack>
 
-                <Stack align="center" h={"100%"} spacing={0}>
+                <Stack align="center" h={"100%"} gap={0}>
                     <CustomNumberInput
                         label={t('pages.stimulationTool.stimulation.duration_label') + ' (s)'}
-                        precision={0}
+                        decimalScale={0}
                         step={1}
                         min={0}
                         styles={{ input: { textAlign: "center" } }}
                         {...params_form.getInputProps('duration')}
                     />
-                    <Group spacing={0} grow w={"100%"}>
+                    <Group gap={0} grow w={"100%"}>
                         {[5, 10, 30, 60].map((v) =>
-                            <Button compact key={"duration_" + v}
+                            <Button size="compact-sm" key={"duration_" + v}
                                 onClick={() => params_form.setFieldValue('duration', v)}
                                 variant={params_form.values.duration === v ? 'filled' : 'default'}>
                                 {v}
@@ -405,18 +404,18 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                     </Group>
                 </Stack>
 
-                <Stack align="center" h={"100%"} spacing={0}>
+                <Stack align="center" h={"100%"} gap={0}>
                     <CustomNumberInput
                         label={t('pages.stimulationTool.stimulation.length_path_label') + ' (µs)'}
-                        precision={0}
+                        decimalScale={0}
                         step={1}
                         min={0}
                         styles={{ input: { textAlign: "center" } }}
                         {...params_form.getInputProps('lenght_path')}
                     />
-                    <Group spacing={0} grow w={"100%"}>
+                    <Group gap={0} grow w={"100%"}>
                         {[300, 500].map((v) =>
-                            <Button compact key={"lp_" + v}
+                            <Button size="compact-sm" key={"lp_" + v}
                                 onClick={() => params_form.setFieldValue('lenght_path', v)}
                                 variant={params_form.values.lenght_path === v ? 'filled' : 'default'}>
                                 {v}
@@ -449,8 +448,8 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
         return (
             <Group {...props}>
-                {variants.map((v) =>
-                    <Stack align="center" justify="center" spacing={0}>
+                {variants.map((v, i) =>
+                    <Stack align="center" justify="center" gap={0} key={"legend" + i}>
                         <StimulatedContact size="xs" selected={false} forcedVariant={v.variant} forcedEffect={v.effect} onChange={() => { }} stimulations={[]}>
                             {"A1/2"}
                         </StimulatedContact>
@@ -465,20 +464,20 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         <Box pt={"md"} h={"100%"}>
             {/** Confirm change contact without saving */}
             <Modal opened={showConfirmNoSave} onClose={() => setShowConfirmNoSave(false)} title={t('pages.stimulationTool.stimulation.alert_point_changed.title')}>
-                <Group position="apart">
-                    <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmNoSave(false)}>{t('pages.stimulationTool.stimulation.alert_point_changed.cancel_label')}</Button>
-                    <Button leftIcon={<IconTrash color="white" />} variant="filled" color="red" onClick={() => { setShowConfirmNoSave(false); resetForNewPoint('') }}>{t('pages.stimulationTool.stimulation.alert_point_changed.confirm_label')}</Button>
+                <Group justify="space-between">
+                    <Button leftSection={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmNoSave(false)}>{t('pages.stimulationTool.stimulation.alert_point_changed.cancel_label')}</Button>
+                    <Button leftSection={<IconTrash color="white" />} variant="filled" color="red" onClick={() => { setShowConfirmNoSave(false); resetForNewPoint('') }}>{t('pages.stimulationTool.stimulation.alert_point_changed.confirm_label')}</Button>
                 </Group>
             </Modal>
 
             <Box h={"45%"} w={"100%"}>
                 <Group w={"100%"} h={"100%"} align='flex-start' >
-                    <Box h={"100%"} sx={{ flex: 7 }}>
+                    <Box h={"100%"} style={{ flex: 7 }}>
                         <Section
                             header={
-                                <Group position="apart" align="center" noWrap>
+                                <Group justify="space-between" align="center" wrap="nowrap">
                                     <Title order={3} h={"100%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
-                                    <ContactColorLegend h={"100%"} w={"80%"} position="apart" noWrap />
+                                    <ContactColorLegend h={"100%"} w={"80%"} justify="space-between" wrap="nowrap" />
                                 </Group>
                             }
                             children={
@@ -493,8 +492,8 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                             }
                         />
                     </Box>
-                    <Box h={"100%"} sx={{ flex: 5 }}>
-                        <Stack h={"100%"} w={"100%"} spacing={0} display={selectedPoint !== '' ? 'flex' : 'none'}>
+                    <Box h={"100%"} style={{ flex: 5 }}>
+                        <Stack h={"100%"} w={"100%"} gap={0} display={selectedPoint !== '' ? 'flex' : 'none'}>
                             <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
                             <StimulationParametersSelection />
                         </Stack>
@@ -533,13 +532,13 @@ interface StimulationTabProps extends TabProperties {
 
 const ContactSelection = ({ electrodes, selectedContact, onSelectedChanged, onViewResultsForPoint }: ContactSelectionProps) => {
     return (
-        <ScrollArea w={"100%"} h={"100%"} sx={{ alignItems: "center", padding: '0', margin: '0' }}>
+        <ScrollArea w={"100%"} h={"100%"} style={{ alignItems: "center", padding: '0', margin: '0' }}>
             {electrodes.map((electrode, electrode_i) => {
                 return (
                     <Stack key={'div_group_electrode_' + electrode_i}>
-                        <Group noWrap
-                            spacing='sm'
-                            position='left'
+                        <Group wrap="nowrap"
+                            gap='sm'
+                            justify='left'
                             align='center'
                             mt={'sm'}
                             key={'div_group_electrode_' + electrode_i}
@@ -547,14 +546,8 @@ const ContactSelection = ({ electrodes, selectedContact, onSelectedChanged, onVi
                         >
                             <Title order={4} w={"5%"} p={"md"}>{electrode.label}</Title>
                             <Box h={"100%"} w={"95%"} my={0}>
-                                <SimpleGrid cols={10}
-                                    breakpoints={[
-                                        { maxWidth: '90rem', cols: 8, spacing: 'sm' },
-                                        { maxWidth: '70rem', cols: 6, spacing: 'sm' },
-                                        { maxWidth: '50rem', cols: 4, spacing: 'xs' },
-                                        { maxWidth: '40rem', cols: 3, spacing: 'xs' },
-                                        { maxWidth: '35rem', cols: 2, spacing: 'sm' },
-                                    ]}>
+                                <SimpleGrid cols={{ base: 2, xs: 3, sm: 4, md: 6, lg: 8, xl: 10 }}
+                                    spacing={{ base: 'xs', sm: 'sm' }}>
                                     {electrode.stim_points.map((stim_point, stim_point_i) => {
                                         const pointId = getStimPointLabel(electrode.label, stim_point_i);
                                         const nbStims = stim_point.stimulations.length;
@@ -576,7 +569,7 @@ const ContactSelection = ({ electrodes, selectedContact, onSelectedChanged, onVi
                                                 </Popover.Target>
                                                 <Popover.Dropdown>
                                                     <Text>{t('pages.stimulationTool.stimulation.numberOfStimulationsLabel') + stim_point.stimulations.length}</Text>
-                                                    {nbStims > 0 && <Button compact leftIcon={<IconEye />} onClick={() => onViewResultsForPoint(pointId)}>{t('pages.stimulationTool.stimulation.viewResultsForPointIdLabel')}</Button>}
+                                                    {nbStims > 0 && <Button size="compact-sm" leftSection={<IconEye />} onClick={() => onViewResultsForPoint(pointId)}>{t('pages.stimulationTool.stimulation.viewResultsForPointIdLabel')}</Button>}
                                                 </Popover.Dropdown>
                                             </Popover>
                                         );
