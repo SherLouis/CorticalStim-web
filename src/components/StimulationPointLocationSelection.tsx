@@ -280,7 +280,7 @@ const VEPSelection = ({ form }: StimulationPointLocationSelectionProps) => {
 
     // TODO: translations for block titles
     return (
-        <SimpleGrid cols={4}>
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 3, xl: 4 }} spacing="md">
             <Stack>
                 <Box>
                     <Title order={5}>{"Frontal Gyri"}</Title>

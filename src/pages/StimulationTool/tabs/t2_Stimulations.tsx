@@ -1,4 +1,4 @@
-import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Grid, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, ElectrodeFormValues } from "../../../core/models/stimulationForm";
 import { useMemo, useState } from "react";
@@ -461,7 +461,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     }
 
     return (
-        <Box pt={"md"} h={"100%"}>
+        <Stack pt="md" h={{ base: "auto", lg: "100%" }} gap="md">
             {/** Confirm change contact without saving */}
             <Modal opened={showConfirmNoSave} onClose={() => setShowConfirmNoSave(false)} title={t('pages.stimulationTool.stimulation.alert_point_changed.title')}>
                 <Group justify="space-between">
@@ -470,43 +470,40 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                 </Group>
             </Modal>
 
-            <Box h={"45%"} w={"100%"}>
-                <Group w={"100%"} h={"100%"} align='flex-start' >
-                    <Box h={"100%"} style={{ flex: 7 }}>
-                        <Section
-                            header={
-                                <Group justify="space-between" align="center" wrap="nowrap">
-                                    <Title order={3} h={"100%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
-                                    <ContactColorLegend h={"100%"} w={"80%"} justify="space-between" wrap="nowrap" />
-                                </Group>
-                            }
-                            children={
-                                <Box h={"100%"} w={"100%"} p={0} m={0}>
-                                    <ContactSelection
-                                        electrodes={form.values.electrodes.filter(e => e.confirmed)}
-                                        selectedContact={selectedPoint}
-                                        onSelectedChanged={handleSelectedPointChanged}
-                                        onViewResultsForPoint={handleViewResultsForPoint}
-                                    />
-                                </Box>
-                            }
-                        />
-                    </Box>
-                    <Box h={"100%"} style={{ flex: 5 }}>
-                        <Stack h={"100%"} w={"100%"} gap={0} display={selectedPoint !== '' ? 'flex' : 'none'}>
-                            <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
-                            <StimulationParametersSelection />
-                        </Stack>
+            <Grid gutter="xl">
+                <Grid.Col span={{ base: 12, lg: 7 }} h={{ base: "500px", lg: "auto" }} style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Section
+                        header={
+                            <Group justify="space-between" align="center" wrap="nowrap">
+                                <Title order={3} h={"100%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
+                                <ContactColorLegend h={"100%"} w={"80%"} justify="space-between" wrap="nowrap" />
+                            </Group>
+                        }
+                        children={
+                            <Box h={"100%"} w={"100%"} p={0} m={0}>
+                                <ContactSelection
+                                    electrodes={form.values.electrodes.filter(e => e.confirmed)}
+                                    selectedContact={selectedPoint}
+                                    onSelectedChanged={handleSelectedPointChanged}
+                                    onViewResultsForPoint={handleViewResultsForPoint}
+                                />
+                            </Box>
+                        }
+                    />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, lg: 5 }}>
+                    <Stack gap="md" display={selectedPoint !== '' ? 'flex' : 'none'}>
+                        <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
+                        <StimulationParametersSelection />
+                    </Stack>
+                </Grid.Col>
+            </Grid>
 
-                    </Box>
-                </Group>
-            </Box>
-
-            <Box h={"15%"} w={"100%"} py={"sm"}>
+            <Box w={"100%"} pb="sm" style={{ flexShrink: 0 }}>
                 <CentralBar />
             </Box>
 
-            <Box h={"40%"} w={"100%"}>
+            <Box w={"100%"} style={{ flexGrow: 1 }}>
                 { /** Stimulation point selected, but stimulation time not set => Display instructions to specify task and stimulation parameters */
                     selectedPoint !== '' && stimulationTime === '' &&
                     <Alert h={"100%"}
@@ -520,7 +517,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                     <StimulationEffectSelection form={effect_form} observed_effect_last_values={lastCognitiveEffectValues} />
                 }
             </Box>
-        </Box>
+        </Stack>
     );
 
 

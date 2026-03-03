@@ -395,7 +395,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     }
 
     return (
-        <Box pt={"md"} h={"100%"}>
+        <Stack pt="md" h={{ base: "auto", lg: "100%" }} gap="md">
             {/** Confirm delete electrode Modal */}
             <Modal opened={showConfirmDeleteElectrode}
                 onClose={() => setShowConfirmDeleteElectrode(false)}
@@ -438,7 +438,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Stack>
             </Modal>
 
-            <Box h={"10%"}>
+            <Box>
                 <Group>
                     <Title order={3}>{t('pages.stimulationTool.implantation.electrodeConfiguration')}</Title>
                     <NativeSelect
@@ -477,7 +477,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                 </Group>
             </Box>
 
-            <Box py={"md"} h={"30%"} p={'0'}>
+            <Box style={{ flexGrow: 1, minHeight: 0, flexDirection: "column" }} display="flex">
                 <Group>
                     <Button onClick={addElectrode} size="xs" leftSection={<IconCirclePlus />}>{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
                     <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} accept=".tsv,.txt" style={{ display: 'none' }} />
@@ -564,12 +564,12 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
             </Box>
 
             {/* Central bar */}
-            <Box h={"15%"} w={"100%"} style={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
+            <Box w={"100%"} style={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid', flexShrink: 0 }}>
                 <CentralBar />
             </Box>
 
             {/** Location */}
-            <ScrollArea w={"100%"} h={"45%"} >
+            <Box w={"100%"} pb="md">
                 <Title order={3}>{t('pages.stimulationTool.implantation.placement')}</Title>
                 <Box display={(selectedContacts.length > 0) ? 'block' : 'none'}>
                     <Stack align='flex-start' justify='flex-start'>
@@ -577,8 +577,8 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                             form={locationForm} />
                     </Stack>
                 </Box>
-            </ScrollArea>
-        </Box >
+            </Box>
+        </Stack >
     );
 }
 

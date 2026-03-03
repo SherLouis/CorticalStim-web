@@ -7,7 +7,7 @@ import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } 
 import { useEffect, useRef, useState } from "react";
 import sortBy from 'lodash.sortby';
 import { useListState } from "@mantine/hooks";
-import { ActionIcon, Alert, Box, Checkbox, Group, MultiSelect, Popover } from "@mantine/core";
+import { ActionIcon, Alert, Box, Checkbox, Group, MultiSelect, Popover, Stack } from "@mantine/core";
 import { IconFilterOff, IconFileTypeCsv, IconTableOptions, IconAlertTriangle } from "@tabler/icons-react";
 import { CSVLink } from "react-csv";
 
@@ -202,13 +202,13 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
     }
 
     return (
-        <Box h={"100%"}>
+        <Stack h={{ base: "auto", lg: "100%" }} pt="md" style={{ overflow: 'hidden' }}>
             <Alert w={"100%"} display={records.length === 0 ? 'block' : 'none'}
                 icon={<IconAlertTriangle size="2rem" color="red" />}
                 title={t('pages.stimulationTool.summary.alert_no_data_title')}>
                 {t('pages.stimulationTool.summary.alert_no_data_text')}
             </Alert>
-            <Box h={"100%"} display={records.length > 0 ? 'block' : 'none'}>
+            <Box display={records.length > 0 ? 'flex' : 'none'} style={{ flexDirection: 'column', flexGrow: 1, minHeight: 0 }}>
                 <CSVLink
                     data={getCsvData()}
                     headers={getCsvHeaders()}
@@ -217,7 +217,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                     ref={csvFileRef}
                     target='_blank'
                 />
-                <Group justify='right' h={"4%"}>
+                <Group justify='right' mb="sm" style={{ flexShrink: 0 }}>
                     <ActionIcon title={t('pages.stimulationTool.summary.button_filter_off')}>
                         <IconFilterOff onClick={clearAllFilters} />
                     </ActionIcon>
@@ -248,7 +248,6 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                     </ActionIcon>
                 </Group>
                 <DataTable
-                    height={"96%"}
                     withColumnBorders
                     striped
                     highlightOnHover
@@ -276,7 +275,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                     ]}
                 />
             </Box>
-        </Box>
+        </Stack>
     );
 }
 
