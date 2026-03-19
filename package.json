@@ -16,6 +16,7 @@
     "i18next": "^23.7.6",
     "i18next-browser-languagedetector": "^7.2.0",
     "i18next-http-backend": "^2.4.2",
+    "immer": "^11.1.4",
     "lodash.sortby": "^4.7.0",
     "mantine-datatable": "^7.17.1",
     "natural-compare": "^1.4.0",
@@ -23,7 +24,8 @@
     "react-csv": "^2.2.2",
     "react-dom": "^18.2.0",
     "react-i18next": "^13.5.0",
-    "react-router-dom": "^6.19.0"
+    "react-router-dom": "^6.19.0",
+    "zustand": "^5.0.12"
   },
   "scripts": {
     "predeploy": "dotenvx run --env-file=config/.env.prod -- react-scripts build",
@@ -59,7 +61,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
-    "@types/jest": "^29.5.9",
+    "@types/jest": "^29.5.14",
     "@types/lodash.sortby": "^4.7.9",
     "@types/natural-compare": "^1.4.3",
     "@types/node": "^20.9.3",
@@ -68,9 +70,10 @@
     "@types/react-dom": "^18.3.7",
     "dotenv": "^16.4.5",
     "gh-pages": "^6.1.0",
+    "jest": "^30.3.0",
     "npm-run-all": "^4.1.5",
     "react-scripts": "5.0.1",
-    "ts-jest": "^29.3.0",
+    "ts-jest": "^29.4.6",
     "typescript": "^5.9.3"
   }
 }

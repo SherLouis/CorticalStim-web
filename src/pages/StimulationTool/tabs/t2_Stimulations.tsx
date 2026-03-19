@@ -13,16 +13,22 @@ import CustomNumberInput from "../../../components/CustomNumberInput";
 import StimulatedContact, { getStimulatedStyledContactBorderStyle, getStimulatedStyledContactColor } from "../../../components/StimulatedContact";
 import Section from "../../../components/Section";
 import { DateTimePicker, DateValue } from "@mantine/dates";
+import { useStimulationRepository } from "../../../infra/ZustandStimulationRepository";
+import { Stimulation } from "../../../core/domain/Stimulation";
 
-export default function StimulationsTab({ form, viewPointSummary }: StimulationTabProps) {
+export default function StimulationsTab({ viewPointSummary }: StimulationTabProps) {
     // TODO: ajouter validations (ex: post discharge time cannot be 0 or negative if set to true)
 
     const { t } = useTranslation();
+    const repository = useStimulationRepository();
+    const session = repository.getSession();
 
     const [selectedPoint, setSelectedPoint] = useState<string>("");
     const [showConfirmNoSave, setShowConfirmNoSave] = useState<boolean>(false);
 
     const [stimulationTime, setStimulationTime] = useState<string>("");
+    const [useDateTimePicker, setUseDateTimePicker] = useState<boolean>(false);
+    const [customSelectedDateTime, setCustomSelectedDateTime] = useState<DateValue>(null);
 
     // Forms
     const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 1.0, duration: 0, frequency: 0, lenght_path: 0 } });
@@ -52,6 +58,8 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         effect_form.reset();
         setSelectedPoint(newPointId);
         setStimulationTime('');
+        setUseDateTimePicker(false);
+        setCustomSelectedDateTime(null);
     }
 
     const handleSubmit = () => {
@@ -70,28 +78,27 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
 
         const electrode_label = selectedPoint.split('/').slice(0, -1).join('/');
 
-        form.values.electrodes.forEach((electrode, electrode_i) => {
+        session.electrodes.forEach((electrode, electrode_i) => {
             if (electrode.label === electrode_label) {
                 electrode.stim_points.forEach((stim_point, stim_point_i) => {
                     const stimId = getStimPointLabel(electrode.label, stim_point_i)
                     if (stimId === selectedPoint) {
                         // Insert new stimulatinon for this stimulation point
-                        form.insertListItem(`electrodes.${electrode_i}.stim_points.${stim_point.index}.stimulations`,
-                            {
-                                time: stimulationTime,
-                                parameters: {
+                        repository.addStimulation(electrode.label, stim_point.index, new Stimulation(
+                                stimulationTime,
+                                {
                                     amplitude: params_values.amplitude,
                                     duration: params_values.duration,
                                     frequency: params_values.frequency,
                                     lenght_path: params_values.lenght_path
                                 },
-                                task: {
+                                {
                                     category: task_values.category,
                                     subcategory: task_values.subcategory,
                                     characteristic: task_values.characteristic
                                 },
-                                effect: effect_values
-                            });
+                                effect_values
+                            ));
                         // Save last used task
                         if (JSON.stringify(task_values) === JSON.stringify(NO_TASK)) {
                             // NO-OP - do not save no effect in last values
@@ -134,7 +141,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     }
 
     const getSelectedPointLocationFormInfo = () => {
-        for (const electrode of form.values.electrodes) {
+        for (const electrode of session.electrodes) {
             let foundStimPoint = electrode.stim_points.find(point =>
                 selectedPoint === getStimPointLabel(electrode.label, point.index)
             );
@@ -194,22 +201,20 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     const CentralBar = () => {
         const theme = useMantineTheme();
         const formatParameters = (params: StimulationParametersFormValues): string => {
-            return t('pages.stimulationTool.stimulation.amplitude_label') + ': ' + params.amplitude + ' (mA)' + ', ' +
-                t('pages.stimulationTool.stimulation.frequency_label') + ': ' + params.frequency + ' (Hz)' + ', ' +
-                t('pages.stimulationTool.stimulation.duration_label') + ': ' + params.duration + ' (s)' + ', ' +
-                t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + ' (µs)';
+            return `${t('pages.stimulationTool.stimulation.amplitude_label')}: ${params.amplitude} (mA), ` +
+                `${t('pages.stimulationTool.stimulation.frequency_label')}: ${params.frequency} (Hz), ` +
+                `${t('pages.stimulationTool.stimulation.duration_label')}: ${params.duration} (s), ` +
+                `${t('pages.stimulationTool.stimulation.length_path_label')}: ${params.lenght_path} (µs)`;
         }
 
         const stimPointConfirmedExist = useMemo<boolean>(() => {
-            return form.values.electrodes.filter(e => e.confirmed && e.n_contacts > 0).length !== 0;
-        }, []);
-        const stimTimeSet = useMemo<boolean>(() => stimulationTime !== '', []);
-
-        const [useDateTimePicker, setUseDateTimePicker] = useState<boolean>(false);
-        const [customSelectedDateTime, setCustomSelectedDateTime] = useState<DateValue>(null);
+            return session.electrodes.filter(e => e.confirmed && e.n_contacts > 0).length !== 0;
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [session]);
+        const stimTimeSet = useMemo<boolean>(() => stimulationTime !== '', [stimulationTime]);
 
         const selectedPointElectrodeLabel = selectedPoint.split('/').slice(0, -1).join('/');
-        const selectedPointStims = form.values.electrodes.find(e => e.label === selectedPointElectrodeLabel)?.stim_points.find(p => getStimPointLabel(selectedPointElectrodeLabel, p.index) === selectedPoint)?.stimulations;
+        const selectedPointStims = session.electrodes.find(e => e.label === selectedPointElectrodeLabel)?.stim_points.find(p => getStimPointLabel(selectedPointElectrodeLabel, p.index) === selectedPoint)?.stimulations;
         const stims = selectedPointStims !== undefined ? selectedPointStims : [];
         const selectedContactBorderSx = getStimulatedStyledContactBorderStyle(stims, theme);
         const selectedContactBackgroundColorSx = getStimulatedStyledContactColor(stims, stims.length === 0, theme, true);
@@ -476,13 +481,13 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                         header={
                             <Group justify="space-between" align="center" wrap="nowrap">
                                 <Title order={3} h={"100%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
-                                <ContactColorLegend h={"100%"} w={"80%"} justify="space-between" wrap="nowrap" />
+                                {ContactColorLegend({ h: "100%", w: "80%", justify: "space-between", wrap: "nowrap" })}
                             </Group>
                         }
                         children={
                             <Box h={"100%"} w={"100%"} p={0} m={0}>
                                 <ContactSelection
-                                    electrodes={form.values.electrodes.filter(e => e.confirmed)}
+                                    electrodes={session.electrodes.filter(e => e.confirmed) as any[]}
                                     selectedContact={selectedPoint}
                                     onSelectedChanged={handleSelectedPointChanged}
                                     onViewResultsForPoint={handleViewResultsForPoint}
@@ -494,13 +499,13 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                 <Grid.Col span={{ base: 12, lg: 5 }}>
                     <Stack gap="md" display={selectedPoint !== '' ? 'flex' : 'none'}>
                         <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
-                        <StimulationParametersSelection />
+                        {StimulationParametersSelection()}
                     </Stack>
                 </Grid.Col>
             </Grid>
 
             <Box w={"100%"} pb="sm" style={{ flexShrink: 0 }}>
-                <CentralBar />
+                {CentralBar()}
             </Box>
 
             <Box w={"100%"} style={{ flexGrow: 1 }}>

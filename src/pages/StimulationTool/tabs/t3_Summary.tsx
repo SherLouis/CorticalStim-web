@@ -4,20 +4,23 @@ import { useTranslation } from "react-i18next";
 import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { formatEpiManifestation, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
 import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import sortBy from 'lodash.sortby';
 import { useListState } from "@mantine/hooks";
 import { ActionIcon, Alert, Box, Checkbox, Group, MultiSelect, Popover, Stack } from "@mantine/core";
 import { IconFilterOff, IconFileTypeCsv, IconTableOptions, IconAlertTriangle } from "@tabler/icons-react";
 import { CSVLink } from "react-csv";
+import { useStimulationRepository } from "../../../infra/ZustandStimulationRepository";
 
-export default function SummaryTab({ form, filters }: SummaryTabProps) {
+export default function SummaryTab({ filters }: SummaryTabProps) {
     const { t } = useTranslation();
+    const repository = useStimulationRepository();
+    const session = repository.getSession();
 
-    const getRecordsFromForm = () => {
+    const getRecordsFromForm = useCallback(() => {
         // Electrode, PointId, ROI, stimulation time, stimulation parameters ..., Task, Cognitive effect, Epi effect, EEG effect
         return (
-            form.values.electrodes.flatMap((elec) =>
+            session.electrodes.flatMap((elec) =>
                 elec.stim_points.flatMap((point) =>
                     point.stimulations.flatMap((stim, i) => {
                         return {
@@ -44,7 +47,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                     })
                 )
             ));
-    }
+    }, [session.electrodes]);
     const formatPointLocation = (point_location: StimulationLocationFormValues) => {
         switch (point_location.type) {
             case 'white':
@@ -92,11 +95,11 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
             return true;
         });
         setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
-    }, [form, sortStatus, pointIdList])
+    }, [session, sortStatus, pointIdList, getRecordsFromForm])
 
     useEffect(() => {
         setPointIdListHandlers.setState(filters ? (filters.pointIds ? filters.pointIds : []) : [])
-    }, [filters])
+    }, [filters, setPointIdListHandlers])
 
     const clearAllFilters = () => {
         setPointIdListHandlers.setState([]);
@@ -212,7 +215,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                 <CSVLink
                     data={getCsvData()}
                     headers={getCsvHeaders()}
-                    filename={`${form.values.patient_id}_${new Date().toISOString().split('T')[0]}_summary.csv`}
+                    filename={`${session.patient_id}_${new Date().toISOString().split('T')[0]}_summary.csv`}
                     hidden
                     ref={csvFileRef}
                     target='_blank'
