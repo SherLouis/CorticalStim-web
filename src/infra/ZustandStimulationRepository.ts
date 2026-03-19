@@ -3,13 +3,15 @@ import { immer } from 'zustand/middleware/immer';
 import { StimulationRepository } from '../core/domain/repositories/StimulationRepository';
 import { Session } from '../core/domain/Session';
 import { Electrode } from '../core/domain/Electrode';
-import { LocationData } from '../core/domain/StimulationPoint';
+import { StimulationPoint, LocationData } from '../core/domain/StimulationPoint';
 import { Stimulation } from '../core/domain/Stimulation';
 import { immerable } from 'immer';
 
 // Inform immer that our Domain classes can be drafted
 (Session.prototype as any)[immerable] = true;
 (Electrode.prototype as any)[immerable] = true;
+(StimulationPoint.prototype as any)[immerable] = true;
+(Stimulation.prototype as any)[immerable] = true;
 
 interface StimulationStoreState {
     session: Session;
