@@ -1,16 +1,13 @@
-import { ActionIcon, Text, Box, Group, Tabs, Alert, TextInput, Modal } from "@mantine/core";
+import { Text, Group, Alert, TextInput } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import ElectrodeSetupStep from "./tabs/t1_ImplantationSetup";
 import StimulationsTab from "./tabs/t2_Stimulations";
 import SummaryTab, { SummaryFilters } from "./tabs/t3_Summary";
-import { IconFolderOpen, IconDownload, IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
+import { IconFolderOpen, IconDownload, IconAlertCircle, IconCheck, IconX, IconChevronLeft, IconChevronRight, IconMicroscope, IconBolt, IconChartBar, IconHelp, IconArchive, IconUser } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
-import { useCustomTabStyle } from "../../components/StyledComponents/StyledTabs";
 import { useStimulationRepository } from "../../infra/ZustandStimulationRepository";
 import { Session } from "../../core/domain/Session";
-
-// TODO: make everything (text, sizes, layout) responsive
 
 export default function StimulationToolPage() {
     const { t } = useTranslation();
@@ -24,6 +21,7 @@ export default function StimulationToolPage() {
     const [activeTab, setActiveTab] = useState<string | null>('implantation');
     const [summaryFilters, setSummaryFilters] = useState<SummaryFilters>({});
     const [hasUnsavedData, setHasUnsavedData] = useState(false);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
     const downloadFormValues = () => {
         var data = new Blob([JSON.stringify(session)], { type: 'application/json' });
@@ -98,58 +96,126 @@ export default function StimulationToolPage() {
         setHasUnsavedData(shouldDisplayUnsavedMessage)
     }, [session, form_previous_values]);
 
-    const customTabStyle = useCustomTabStyle();
-    // TODO : different layout for smaller screens
     return (
-        <Box mx={"sm"} h={"100%"} m={0} p={0} >
-            <Group h={"4%"}>
-                <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} accept=".json" style={{ display: 'none' }} />
-                <ActionIcon title={t('pages.stimulationTool.button_open_form')}>
-                    <IconFolderOpen onClick={() => openInputFileRef.current?.click()} />
-                </ActionIcon>
-                <ActionIcon title={t('pages.stimulationTool.button_download_form')}>
-                    <IconDownload onClick={downloadFormValues} />
-                </ActionIcon>
-                {/** Stimulation name / edit box */}
-                <Group gap={0} justify="left" align="center">
-                    <label
-                        htmlFor="patient_id"
-                        style={{ marginRight: 10, fontWeight: 'bold' }}
-                    >{t('pages.stimulationTool.patient_id_label')}</label>
-                    <TextInput
-                        value={session.patient_id}
-                        onChange={(event) => repository.setPatientId(event.currentTarget.value)}
-                        id="patient_id"
-                        placeholder={"patient id"}
-                        required
-                        autoFocus={session.patient_id === ""}
-                        styles={{ input: { fontWeight: 'bold' } }}
+        <div className="flex h-full w-full bg-surface">
+            {/* Sidebar */}
+            <aside className={`transition-all duration-300 ${sidebarCollapsed ? 'w-16' : 'w-64'} bg-slate-50 dark:bg-slate-950 flex flex-col p-4 border-r border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-none z-40 shrink-0`}>
+                <div className="mb-6 flex items-center gap-3 overflow-hidden">
+                    <div className="w-10 h-10 min-w-[40px] rounded-lg bg-primary-container flex items-center justify-center shrink-0">
+                        <IconUser className="text-on-primary-container" />
+                    </div>
+                    {!sidebarCollapsed && (
+                        <div className="flex flex-col min-w-0">
+                            <TextInput
+                                variant="unstyled"
+                                value={session.patient_id}
+                                onChange={(event) => repository.setPatientId(event.currentTarget.value)}
+                                placeholder="Patient ID"
+                                classNames={{ input: "font-headline font-extrabold text-blue-900 dark:text-blue-100 p-0 h-6 leading-tight text-sm bg-transparent" }}
+                            />
+                            <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold truncate">Pre-op Phase</p>
+                        </div>
+                    )}
+                </div>
+
+                <nav className="flex-1 flex flex-col gap-1 overflow-x-hidden">
+                    <button 
+                        onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                        className={`flex items-center gap-3 px-3 py-2.5 text-slate-500 dark:text-slate-400 hover:bg-slate-200/30 dark:hover:bg-slate-800/30 rounded-lg text-sm font-medium transition-transform duration-200 active:scale-98 mb-4 ${sidebarCollapsed ? 'justify-center' : ''}`}
+                    >
+                        {sidebarCollapsed ? <IconChevronRight size="1.2rem" /> : <IconChevronLeft size="1.2rem" />}
+                        {!sidebarCollapsed && <span>Collapse Menu</span>}
+                    </button>
+
+                    <TabLink 
+                        icon={<IconMicroscope size="1.2rem" />} 
+                        label={t("pages.stimulationTool.implantation.tab_title")} 
+                        active={activeTab === 'implantation'} 
+                        collapsed={sidebarCollapsed}
+                        onClick={() => setActiveTab('implantation')} 
                     />
-                </Group>
+                    <TabLink 
+                        icon={<IconBolt size="1.2rem" />} 
+                        label={t("pages.stimulationTool.stimulation.tab_title")} 
+                        active={activeTab === 'stimulation'} 
+                        collapsed={sidebarCollapsed}
+                        onClick={() => setActiveTab('stimulation')} 
+                    />
+                    <TabLink 
+                        icon={<IconChartBar size="1.2rem" />} 
+                        label={t("pages.stimulationTool.summary.tab_title")} 
+                        active={activeTab === 'summary'} 
+                        collapsed={sidebarCollapsed}
+                        onClick={() => setActiveTab('summary')} 
+                    />
+                </nav>
 
-                {/** TODO: additional button to save in cloud. Disable button and display warning if not logged in */}
+                <div className="mt-auto flex flex-col gap-1 pt-4 border-t border-slate-200 dark:border-slate-800 overflow-hidden">
+                    <TabLink 
+                        icon={<IconHelp size="1.2rem" />} 
+                        label="Support" 
+                        collapsed={sidebarCollapsed}
+                    />
+                    <TabLink 
+                        icon={<IconArchive size="1.2rem" />} 
+                        label="Archive" 
+                        collapsed={sidebarCollapsed}
+                    />
+                    <button 
+                        onClick={downloadFormValues}
+                        className={`mt-4 w-full bg-primary-container text-on-primary-container py-2.5 rounded-lg font-bold text-sm shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center justify-center ${sidebarCollapsed ? 'px-0' : 'px-4'}`}
+                        title={t('pages.stimulationTool.button_download_form')}
+                    >
+                        <IconDownload size="1.2rem" className="shrink-0" />
+                        {!sidebarCollapsed && <span className="ml-2 truncate">Export JSON</span>}
+                    </button>
+                    
+                    <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} accept=".json" style={{ display: 'none' }} />
+                    <button 
+                        onClick={() => openInputFileRef.current?.click()}
+                        className={`mt-2 w-full bg-surface-variant text-on-surface-variant py-2.5 rounded-lg font-bold text-sm shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center justify-center ${sidebarCollapsed ? 'px-0' : 'px-4'}`}
+                        title={t('pages.stimulationTool.button_open_form')}
+                    >
+                        <IconFolderOpen size="1.2rem" className="shrink-0" />
+                        {!sidebarCollapsed && <span className="ml-2 truncate">Import JSON</span>}
+                    </button>
+                </div>
+            </aside>
 
-                {/** Warning if not saved */}
-                {hasUnsavedData &&
-                    <Alert color='yellow' icon={<IconAlertCircle size="1rem" />} radius={'lg'} py={0} m={0}>
+            {/* Main Content Area */}
+            <main className="flex-1 flex flex-col min-w-0 bg-surface-container-low overflow-hidden relative">
+                {hasUnsavedData && (
+                    <Alert color='yellow' icon={<IconAlertCircle size="1rem" />} radius={0} py="xs" className="shrink-0">
                         <Group p={0} m={0}>
                             <Text fw={700} >{t('pages.stimulationTool.unsaved_alert_title')}</Text>
                             <Text >{t('pages.stimulationTool.unsaved_alert_text')}</Text>
                         </Group>
                     </Alert>
-                }
-            </Group>
-            <Tabs value={activeTab} onChange={setActiveTab} variant="outline" radius={"xl"} classNames={{ tab: customTabStyle.tab }} h={"96%"}>
-                <Tabs.List grow mah={"5%"}>
-                    <Tabs.Tab value="implantation">{t("pages.stimulationTool.implantation.tab_title")}</Tabs.Tab>
-                    <Tabs.Tab value="stimulation">{t("pages.stimulationTool.stimulation.tab_title")}</Tabs.Tab>
-                    <Tabs.Tab value="summary">{t("pages.stimulationTool.summary.tab_title")}</Tabs.Tab>
-                </Tabs.List>
+                )}
+                
+                <div className="flex-1 overflow-auto relative">
+                    {activeTab === 'implantation' && <ElectrodeSetupStep />}
+                    {activeTab === 'stimulation' && <StimulationsTab viewPointSummary={handleViewPointSummary} />}
+                    {activeTab === 'summary' && <SummaryTab filters={summaryFilters} />}
+                </div>
+            </main>
+        </div>
+    );
+}
 
-                <Tabs.Panel value="implantation" h={"95%"}><ElectrodeSetupStep /></Tabs.Panel>
-                <Tabs.Panel value="stimulation" h={"95%"}><StimulationsTab viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
-                <Tabs.Panel value="summary" h={"95%"} ><SummaryTab filters={summaryFilters} /></Tabs.Panel>
-            </Tabs>
-        </Box >
+function TabLink({ icon, label, active, collapsed, onClick }: { icon: React.ReactNode, label: string, active?: boolean, collapsed: boolean, onClick?: () => void }) {
+    const activeClass = active 
+        ? "bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-400 shadow-sm" 
+        : "text-slate-500 dark:text-slate-400 hover:bg-slate-200/30 dark:hover:bg-slate-800/30";
+    
+    return (
+        <button 
+            onClick={onClick}
+            className={`flex items-center gap-3 py-2.5 rounded-lg font-inter text-sm font-medium transition-transform duration-200 active:scale-98 shrink-0 ${collapsed ? 'justify-center px-0' : 'px-3 hover:translate-x-1 w-full'} ${activeClass}`}
+            title={collapsed ? label : undefined}
+        >
+            <div className="shrink-0">{icon}</div>
+            {!collapsed && <span className="truncate">{label}</span>}
+        </button>
     );
 }

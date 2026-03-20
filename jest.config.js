@@ -2,7 +2,7 @@
 module.exports = {
   testEnvironment: "jsdom",
   transform: {
-    "^.+\\.tsx?$": ["ts-jest",{}],
+    "^.+\\.[tj]sx?$": ["ts-jest",{}],
   },
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1"

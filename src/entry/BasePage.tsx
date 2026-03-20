@@ -1,73 +1,57 @@
-import { ActionIcon, AppShell, Avatar, Burger, Button, Container, Divider, Group, Menu, Stack, Switch, Text, Title, useMantineColorScheme, useMantineTheme } from '@mantine/core';
-import { PropsWithChildren, useState } from 'react'
+import { PropsWithChildren, useEffect, useState } from 'react'
+import { ActionIcon, Avatar, Menu } from '@mantine/core';
 import { IconSun, IconMoonStars, IconSettings, IconLogout, IconLogin } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useAuthState } from '../context/AuthContext';
-import { TFunction } from 'i18next';
 import { useNavigate } from 'react-router-dom';
 import { AppPath } from '../pages/Routes';
+import { useMantineColorScheme } from '@mantine/core';
+import { TFunction } from 'i18next';
 
 export default function BasePage(props: PropsWithChildren<BasePageProps>) {
     const { colorScheme } = useMantineColorScheme();
-    const theme = useMantineTheme();
-    const navigate = useNavigate();
-    const { t } = useTranslation();
 
-    const [navOpened, setNavOpened] = useState(false);
+    // Sync Tailwind's dark mode with Mantine's color scheme
+    useEffect(() => {
+        if (colorScheme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [colorScheme]);
 
     return (
-        <AppShell
-            padding={0}
-            header={{ height: '4vh' }}
-            navbar={{ width: 250, breakpoint: 'sm', collapsed: { desktop: true, mobile: !navOpened } }}
-            styles={(theme) => ({
-                main: { backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[2], minHeight: "100vh" },
-            })}
-        >
-            <AppShell.Header p="xs">
-                <Group justify="space-between" align='center' h={"100%"} wrap="nowrap">
-                    <Title size={'lg'}
-                        onClick={() => navigate(AppPath.APP_ROOT)}
-                        style={{ cursor: 'pointer', userSelect: 'none' }}>
-                        {props.title}
-                    </Title>
-
-                    <Burger
-                        opened={navOpened}
-                        onClick={() => setNavOpened((o) => !o)}
-                        size="sm"
-                        color={theme.colors.gray[6]}
-                        mr="xl"
-                        hiddenFrom="sm"
-                    />
-
-                    <Group justify="right" h={"70%"} p={0} wrap="nowrap" gap={"sm"} visibleFrom="sm">
-                        <ProfileMenu t={t} />
-                        <LanguageSelectionMenu />
-                        <ThemeToggleIcon t={t} />
-                    </Group>
-                </Group>
-            </AppShell.Header>
-
-            <AppShell.Navbar p="md" style={{ position: 'fixed', right: 0 }}>
-                <Stack>
-                    {/** Theme Toggle */}
-                    <ThemeToggleSwitch t={t} />
-                    <Divider orientation='horizontal' size={'sm'} color={'gray'} />
-                    {/** Language switch */}
-                    <LanguageSelectionGroup t={t} />
-                    <Divider orientation='horizontal' size={'sm'} color={'gray'} />
-                    {/** Profile and settings */}
-                    <ProfileNavSection t={t} />
-                </Stack>
-            </AppShell.Navbar>
-
-            <AppShell.Main>
+        <div className="bg-surface dark:bg-slate-900 font-body text-on-surface dark:text-gray-100 antialiased overflow-hidden flex flex-col h-screen w-full">
+            <TopHeader title={props.title} />
+            <div className="flex-1 flex overflow-hidden relative">
                 {props.children}
-            </AppShell.Main>
-        </AppShell>
+            </div>
+        </div>
     );
+}
 
+function TopHeader({ title }: { title: string }) {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+
+    return (
+        <header className="flex-none z-50 w-full bg-slate-50 dark:bg-slate-950 flex justify-between items-center px-6 py-3 border-b border-surface-container-high dark:border-slate-800 shrink-0">
+            <div className="flex items-center gap-8">
+                <span 
+                    className="text-xl font-bold text-blue-800 dark:text-blue-300 font-headline cursor-pointer" 
+                    onClick={() => navigate(AppPath.APP_ROOT)}
+                >
+                    {title}
+                </span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+                <LanguageSelectionMenu />
+                <ThemeToggleIcon t={t} />
+                <ProfileMenu t={t} />
+            </div>
+        </header>
+    );
 }
 
 const getSvgPathForLanguage = (language?: string) => {
@@ -89,47 +73,21 @@ const LanguageSelectionMenu = () => {
     return (
         <Menu withArrow position="bottom">
             <Menu.Target>
-                { }
-                <ActionIcon>
-                    <Avatar src={getSvgPathForLanguage(currentLanguage)} />
+                <ActionIcon variant="subtle" className="hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-full active:scale-95 duration-150 ease-in-out">
+                    <Avatar size="sm" src={getSvgPathForLanguage(currentLanguage)} />
                 </ActionIcon>
             </Menu.Target>
             <Menu.Dropdown>
                 {languages.map(lang =>
-                    <Menu.Item disabled={currentLanguage === lang} key={lang}>
-                        <ActionIcon
-                            variant={currentLanguage === lang ? "outline" : "default"}
-                            onClick={() => i18n.changeLanguage(lang)}
-                        >
-                            <Avatar src={getSvgPathForLanguage(lang)} />
-                        </ActionIcon>
+                    <Menu.Item disabled={currentLanguage === lang} key={lang} onClick={() => i18n.changeLanguage(lang)}>
+                        <div className="flex items-center gap-2">
+                            <Avatar size="sm" src={getSvgPathForLanguage(lang)} />
+                            <span className="uppercase text-xs font-bold">{lang}</span>
+                        </div>
                     </Menu.Item>
                 )}
             </Menu.Dropdown>
         </Menu>
-    );
-}
-
-const LanguageSelectionGroup = ({ t }: { t: TFunction }) => {
-    const { i18n } = useTranslation();
-    const currentLanguage = i18n.resolvedLanguage;
-    const languages = ['en', 'fr'];
-    return (
-        <Container>
-            <Text>{t('app.header.change_language')}</Text>
-            <Group justify="center">
-                {languages.map((lang) =>
-                    <ActionIcon
-                        variant={currentLanguage === lang ? "outline" : "default"}
-                        onClick={() => i18n.changeLanguage(lang)}
-                        disabled={currentLanguage === lang}
-                        key={'lang_' + lang}
-                    >
-                        <Avatar src={getSvgPathForLanguage(lang)} />
-                    </ActionIcon>
-                )}
-            </Group>
-        </Container>
     );
 }
 
@@ -138,32 +96,13 @@ const ThemeToggleIcon = ({ t }: { t: TFunction }) => {
     const isDarkTheme = colorScheme === 'dark';
 
     return (
-        <ActionIcon
-            variant="outline"
-            color={isDarkTheme ? 'yellow' : 'blue'}
+        <button
+            className="p-2 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-full flex items-center justify-center active:scale-95 duration-150 ease-in-out text-slate-600 dark:text-slate-300"
             onClick={() => toggleColorScheme()}
             title={t('app.header.toggle_theme')}
         >
-            {isDarkTheme ? <IconSun /> : <IconMoonStars />}
-        </ActionIcon>
-    );
-}
-
-const ThemeToggleSwitch = ({ t }: { t: TFunction }) => {
-    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-    const { colors } = useMantineTheme();
-    const isDarkTheme = colorScheme === 'dark';
-
-    return (
-        <Switch
-            variant="outline"
-            color={isDarkTheme ? 'gray' : 'dark'}
-            onClick={() => toggleColorScheme()}
-            label={t('app.header.toggle_theme')}
-            labelPosition="left"
-            offLabel={<IconSun size="1rem" stroke={2.5} color={colors.yellow[4]} />}
-            onLabel={<IconMoonStars size="1rem" stroke={2.5} color={colors.blue[6]} />}
-        />
+            {isDarkTheme ? <IconSun size="1.2rem" /> : <IconMoonStars size="1.2rem" />}
+        </button>
     );
 }
 
@@ -171,7 +110,7 @@ const ProfileMenu = ({ t }: { t: TFunction }) => {
     const authState = useAuthState();
     const navigate = useNavigate();
 
-    const initials = authState.user ? authState.user?.displayName.split(' ').map(word => word.charAt(0).toUpperCase()).join('') : 'U';
+    const initials = authState.user ? (authState.user?.displayName || 'U').split(' ').map(word => word.charAt(0).toUpperCase()).join('') : 'U';
 
     const handleSignOut = () => {
         authState.authProvider.signOut().then(() => {
@@ -180,9 +119,11 @@ const ProfileMenu = ({ t }: { t: TFunction }) => {
     }
 
     return (
-        <Menu shadow="md">
+        <Menu shadow="md" position="bottom-end">
             <Menu.Target>
-                <Avatar color='indigo' variant='filled' radius="md" style={{ cursor: 'pointer' }} size={"md"}>{initials}</Avatar>
+                <div className="h-8 w-8 rounded-full overflow-hidden bg-primary text-white border border-outline-variant/20 flex items-center justify-center font-bold text-sm cursor-pointer ml-2 hover:opacity-90 active:scale-95 transition-all">
+                    {initials}
+                </div>
             </Menu.Target>
 
             <Menu.Dropdown>
@@ -191,36 +132,6 @@ const ProfileMenu = ({ t }: { t: TFunction }) => {
                 {!authState.isAuthenticated && <Menu.Item leftSection={<IconLogin size={14} />} onClick={() => navigate(AppPath.LOGIN)}>{t('app.header.menu.login')}</Menu.Item>}
             </Menu.Dropdown>
         </Menu>
-    );
-}
-
-const ProfileNavSection = ({ t }: { t: TFunction }) => {
-    const authState = useAuthState();
-    const navigate = useNavigate();
-
-    const initials = authState.user ? authState.user?.displayName.split(' ').map(word => word.charAt(0).toUpperCase()).join('') : 'U';
-
-    const handleSignOut = () => {
-        authState.authProvider.signOut().then(() => {
-            console.log('User signed out');
-        })
-    }
-
-    return (
-        <Stack>
-            {!authState.isAuthenticated && <Button variant='subtle' leftSection={<IconLogin size={14} />} onClick={() => navigate(AppPath.LOGIN)}>{t('app.header.menu.login')}</Button>}
-
-            {authState.isAuthenticated &&
-                <>
-                    <Group>
-                        <Avatar color='indigo' variant='filled' radius="md" style={{ cursor: 'pointer' }} size={"md"}>{initials}</Avatar>
-                        <Title order={4}>{authState.user?.displayName}</Title>
-                    </Group>
-                    <Button variant='subtle' leftSection={<IconSettings size={14} />} onClick={() => navigate(AppPath.ACCOUNT)}>{t('app.header.menu.profile')}</Button>
-                    <Button variant='subtle' leftSection={<IconLogout size={14} />} onClick={handleSignOut}>{t('app.header.menu.logout')}</Button>
-                </>
-            }
-        </Stack>
     );
 }
 

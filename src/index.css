@@ -1,0 +1,59 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: #004e9f;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #0066cc;
+  --color-on-primary-container: #dfe8ff;
+  
+  --color-secondary: #495f87;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #b9cffd;
+  --color-on-secondary-container: #425880;
+  
+  --color-tertiary: #883700;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #af4900;
+  --color-on-tertiary-container: #ffe3d6;
+  
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  
+  --color-background: #f8f9fa;
+  --color-on-background: #191c1d;
+  
+  --color-surface: #f8f9fa;
+  --color-on-surface: #191c1d;
+  --color-surface-variant: #e1e3e4;
+  --color-on-surface-variant: #414753;
+  
+  --color-surface-container-highest: #e1e3e4;
+  --color-surface-container-high: #e7e8e9;
+  --color-surface-container: #edeeef;
+  --color-surface-container-low: #f3f4f5;
+  --color-surface-container-lowest: #ffffff;
+  
+  --color-outline: #727784;
+  --color-outline-variant: #c1c6d5;
+  
+  --font-headline: "Manrope", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+@layer base {
+  .dark {
+    --color-surface: #191c1d;
+    --color-on-surface: #e1e3e4;
+    --color-surface-variant: #414753;
+    --color-on-surface-variant: #c1c6d5;
+    --color-surface-container-highest: #333638;
+    --color-surface-container-high: #2b2e30;
+    --color-surface-container: #212426;
+    --color-surface-container-low: #1c1f20;
+    --color-surface-container-lowest: #0f1213;
+    --color-outline-variant: #414753;
+  }
+}
