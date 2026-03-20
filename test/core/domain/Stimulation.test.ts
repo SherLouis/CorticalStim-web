@@ -1,4 +1,4 @@
-import { Stimulation } from '../../../src/core/domain/Stimulation';
+import { Stimulation } from '@/core/domain/Stimulation';
 
 describe('Stimulation Domain Object', () => {
     it('should initialize correctly with valid parameters', () => {

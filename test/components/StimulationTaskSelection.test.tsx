@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import StimulationTaskSelection from './StimulationTaskSelection';
+import StimulationTaskSelection from '@/components/StimulationTaskSelection';
 import { useForm } from '@mantine/form';
 import { MantineProvider } from '@mantine/core';
 

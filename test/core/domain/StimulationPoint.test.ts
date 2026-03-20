@@ -1,5 +1,5 @@
-import { StimulationPoint } from '../../../src/core/domain/StimulationPoint';
-import { Stimulation } from '../../../src/core/domain/Stimulation';
+import { StimulationPoint } from '@/core/domain/StimulationPoint';
+import { Stimulation } from '@/core/domain/Stimulation';
 
 describe('StimulationPoint Domain Object', () => {
     it('should initialize correctly with valid parameters', () => {

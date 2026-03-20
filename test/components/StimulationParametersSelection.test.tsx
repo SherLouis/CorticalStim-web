@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, within } from '@testing-library/react';
-import StimulationParametersSelection from './StimulationParametersSelection';
+import StimulationParametersSelection from '@/components/StimulationParametersSelection';
 import { useForm } from '@mantine/form';
 import { MantineProvider } from '@mantine/core';
 

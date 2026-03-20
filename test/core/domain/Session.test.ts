@@ -1,5 +1,5 @@
-import { Session } from '../../../src/core/domain/Session';
-import { Electrode } from '../../../src/core/domain/Electrode';
+import { Session } from '@/core/domain/Session';
+import { Electrode } from '@/core/domain/Electrode';
 
 describe('Session Domain Object', () => {
     it('initializes with default values', () => {

@@ -1,4 +1,4 @@
-import { Electrode } from '../../../src/core/domain/Electrode';
+import { Electrode } from '@/core/domain/Electrode';
 
 describe('Electrode Domain Object', () => {
     it('initializes with default values when only label is provided', () => {
