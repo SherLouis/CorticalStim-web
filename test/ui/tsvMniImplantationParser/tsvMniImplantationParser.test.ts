@@ -1,5 +1,5 @@
-import parseMniImplantationFromTsv from './tsvMniImplantationParser';
-import { ElectrodeFormValues, SideOptions } from '../../core/models/stimulationForm';
+import parseMniImplantationFromTsv from '@/ui/tsvMniImplantationParser/tsvMniImplantationParser';
+import { ElectrodeFormValues, SideOptions } from '@/core/models/stimulationForm';
 
 describe('parseMniImplantationFromTsv', () => {
     it('should return correct electrodes from valid TSV data', () => {

@@ -1,4 +1,4 @@
-import { ActionIcon, AppShell, Avatar, Burger, Button, Container, Divider, Group, Header, MediaQuery, Menu, Navbar, Stack, Switch, Text, Title, useMantineColorScheme, useMantineTheme } from '@mantine/core';
+import { ActionIcon, AppShell, Avatar, Burger, Button, Container, Divider, Group, Menu, Stack, Switch, Text, Title, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { PropsWithChildren, useState } from 'react'
 import { IconSun, IconMoonStars, IconSettings, IconLogout, IconLogin } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
@@ -17,59 +17,54 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
 
     return (
         <AppShell
-            h={"100vh"}
             padding={0}
+            header={{ height: '4vh' }}
+            navbar={{ width: 250, breakpoint: 'sm', collapsed: { desktop: true, mobile: !navOpened } }}
             styles={(theme) => ({
-                main: { backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[2], height: "96vh" },
+                main: { backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[2], minHeight: "100vh" },
             })}
-            navbarOffsetBreakpoint="sm"
-            navbar={
-                <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-                    <Navbar p="md" w={250} hiddenBreakpoint="sm" hidden={!navOpened} position={{ right: 0 }}>
-                        <Stack>
-                            {/** Theme Toggle */}
-                            <ThemeToggleSwitch t={t} />
-                            <Divider orientation='horizontal' size={'sm'} color={'gray'} />
-                            {/** Language switch */}
-                            <LanguageSelectionGroup t={t} />
-                            <Divider orientation='horizontal' size={'sm'} color={'gray'} />
-                            {/** Profile and settings */}
-                            <ProfileNavSection t={t} />
-                        </Stack>
-                    </Navbar>
-                </MediaQuery>
-            }
-            header={
-                <Header height={'4vh'} p={"xs"}>
-                    <Group position="apart" align='center' h={"100%"} noWrap>
-                        <Title size={'lg'}
-                            onClick={() => navigate(AppPath.APP_ROOT)}
-                            style={{ cursor: 'pointer', userSelect: 'none' }}>
-                            {props.title}
-                        </Title>
-
-                        <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-                            <Burger
-                                opened={navOpened}
-                                onClick={() => setNavOpened((o) => !o)}
-                                size="sm"
-                                color={theme.colors.gray[6]}
-                                mr="xl"
-                            />
-                        </MediaQuery>
-
-                        <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
-                            <Group position="right" h={"70%"} p={0} noWrap spacing={"sm"}>
-                                <ProfileMenu t={t} />
-                                <LanguageSelectionMenu />
-                                <ThemeToggleIcon t={t} />
-                            </Group>
-                        </MediaQuery>
-                    </Group>
-                </Header>
-            }
         >
-            {props.children}
+            <AppShell.Header p="xs">
+                <Group justify="space-between" align='center' h={"100%"} wrap="nowrap">
+                    <Title size={'lg'}
+                        onClick={() => navigate(AppPath.APP_ROOT)}
+                        style={{ cursor: 'pointer', userSelect: 'none' }}>
+                        {props.title}
+                    </Title>
+
+                    <Burger
+                        opened={navOpened}
+                        onClick={() => setNavOpened((o) => !o)}
+                        size="sm"
+                        color={theme.colors.gray[6]}
+                        mr="xl"
+                        hiddenFrom="sm"
+                    />
+
+                    <Group justify="right" h={"70%"} p={0} wrap="nowrap" gap={"sm"} visibleFrom="sm">
+                        <ProfileMenu t={t} />
+                        <LanguageSelectionMenu />
+                        <ThemeToggleIcon t={t} />
+                    </Group>
+                </Group>
+            </AppShell.Header>
+
+            <AppShell.Navbar p="md" style={{ position: 'fixed', right: 0 }}>
+                <Stack>
+                    {/** Theme Toggle */}
+                    <ThemeToggleSwitch t={t} />
+                    <Divider orientation='horizontal' size={'sm'} color={'gray'} />
+                    {/** Language switch */}
+                    <LanguageSelectionGroup t={t} />
+                    <Divider orientation='horizontal' size={'sm'} color={'gray'} />
+                    {/** Profile and settings */}
+                    <ProfileNavSection t={t} />
+                </Stack>
+            </AppShell.Navbar>
+
+            <AppShell.Main>
+                {props.children}
+            </AppShell.Main>
         </AppShell>
     );
 
@@ -101,7 +96,7 @@ const LanguageSelectionMenu = () => {
             </Menu.Target>
             <Menu.Dropdown>
                 {languages.map(lang =>
-                    <Menu.Item disabled={currentLanguage === lang}>
+                    <Menu.Item disabled={currentLanguage === lang} key={lang}>
                         <ActionIcon
                             variant={currentLanguage === lang ? "outline" : "default"}
                             onClick={() => i18n.changeLanguage(lang)}
@@ -122,7 +117,7 @@ const LanguageSelectionGroup = ({ t }: { t: TFunction }) => {
     return (
         <Container>
             <Text>{t('app.header.change_language')}</Text>
-            <Group position="center">
+            <Group justify="center">
                 {languages.map((lang) =>
                     <ActionIcon
                         variant={currentLanguage === lang ? "outline" : "default"}
@@ -191,9 +186,9 @@ const ProfileMenu = ({ t }: { t: TFunction }) => {
             </Menu.Target>
 
             <Menu.Dropdown>
-                {authState.isAuthenticated && <Menu.Item icon={<IconSettings size={14} />} onClick={() => navigate(AppPath.ACCOUNT)}>{t('app.header.menu.profile')}</Menu.Item>}
-                {authState.isAuthenticated && <Menu.Item icon={<IconLogout size={14} />} onClick={handleSignOut}>{t('app.header.menu.logout')}</Menu.Item>}
-                {!authState.isAuthenticated && <Menu.Item icon={<IconLogin size={14} />} onClick={() => navigate(AppPath.LOGIN)}>{t('app.header.menu.login')}</Menu.Item>}
+                {authState.isAuthenticated && <Menu.Item leftSection={<IconSettings size={14} />} onClick={() => navigate(AppPath.ACCOUNT)}>{t('app.header.menu.profile')}</Menu.Item>}
+                {authState.isAuthenticated && <Menu.Item leftSection={<IconLogout size={14} />} onClick={handleSignOut}>{t('app.header.menu.logout')}</Menu.Item>}
+                {!authState.isAuthenticated && <Menu.Item leftSection={<IconLogin size={14} />} onClick={() => navigate(AppPath.LOGIN)}>{t('app.header.menu.login')}</Menu.Item>}
             </Menu.Dropdown>
         </Menu>
     );
@@ -213,7 +208,7 @@ const ProfileNavSection = ({ t }: { t: TFunction }) => {
 
     return (
         <Stack>
-            {!authState.isAuthenticated && <Button variant='subtle' leftIcon={<IconLogin size={14} />} onClick={() => navigate(AppPath.LOGIN)}>{t('app.header.menu.login')}</Button>}
+            {!authState.isAuthenticated && <Button variant='subtle' leftSection={<IconLogin size={14} />} onClick={() => navigate(AppPath.LOGIN)}>{t('app.header.menu.login')}</Button>}
 
             {authState.isAuthenticated &&
                 <>
@@ -221,8 +216,8 @@ const ProfileNavSection = ({ t }: { t: TFunction }) => {
                         <Avatar color='indigo' variant='filled' radius="md" style={{ cursor: 'pointer' }} size={"md"}>{initials}</Avatar>
                         <Title order={4}>{authState.user?.displayName}</Title>
                     </Group>
-                    <Button variant='subtle' leftIcon={<IconSettings size={14} />} onClick={() => navigate(AppPath.ACCOUNT)}>{t('app.header.menu.profile')}</Button>
-                    <Button variant='subtle' leftIcon={<IconLogout size={14} />} onClick={handleSignOut}>{t('app.header.menu.logout')}</Button>
+                    <Button variant='subtle' leftSection={<IconSettings size={14} />} onClick={() => navigate(AppPath.ACCOUNT)}>{t('app.header.menu.profile')}</Button>
+                    <Button variant='subtle' leftSection={<IconLogout size={14} />} onClick={handleSignOut}>{t('app.header.menu.logout')}</Button>
                 </>
             }
         </Stack>

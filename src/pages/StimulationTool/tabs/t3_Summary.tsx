@@ -4,21 +4,23 @@ import { useTranslation } from "react-i18next";
 import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { formatEpiManifestation, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
 import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import sortBy from 'lodash.sortby';
 import { useListState } from "@mantine/hooks";
-import { ActionIcon, Alert, Box, Checkbox, Group, MultiSelect, Popover } from "@mantine/core";
+import { ActionIcon, Alert, Box, Checkbox, Group, MultiSelect, Popover, Stack } from "@mantine/core";
 import { IconFilterOff, IconFileTypeCsv, IconTableOptions, IconAlertTriangle } from "@tabler/icons-react";
 import { CSVLink } from "react-csv";
-import { DataTableColumnToggle } from "mantine-datatable/dist/hooks";
+import { useStimulationRepository } from "../../../infra/ZustandStimulationRepository";
 
-export default function SummaryTab({ form, filters }: SummaryTabProps) {
+export default function SummaryTab({ filters }: SummaryTabProps) {
     const { t } = useTranslation();
+    const repository = useStimulationRepository();
+    const session = repository.getSession();
 
-    const getRecordsFromForm = () => {
+    const getRecordsFromForm = useCallback(() => {
         // Electrode, PointId, ROI, stimulation time, stimulation parameters ..., Task, Cognitive effect, Epi effect, EEG effect
         return (
-            form.values.electrodes.flatMap((elec) =>
+            session.electrodes.flatMap((elec) =>
                 elec.stim_points.flatMap((point) =>
                     point.stimulations.flatMap((stim, i) => {
                         return {
@@ -45,7 +47,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                     })
                 )
             ));
-    }
+    }, [session.electrodes]);
     const formatPointLocation = (point_location: StimulationLocationFormValues) => {
         switch (point_location.type) {
             case 'white':
@@ -82,7 +84,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
     }
 
     const [records, setRecords] = useState(getRecordsFromForm());
-    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'pointId', direction: 'desc' });
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Result>>({ columnAccessor: 'pointId', direction: 'desc' });
     const [pointIdList, setPointIdListHandlers] = useListState(filters ? filters.pointIds : []);
     const csvFileRef = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
 
@@ -93,11 +95,11 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
             return true;
         });
         setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
-    }, [form, sortStatus, pointIdList])
+    }, [session, sortStatus, pointIdList, getRecordsFromForm])
 
     useEffect(() => {
         setPointIdListHandlers.setState(filters ? (filters.pointIds ? filters.pointIds : []) : [])
-    }, [filters])
+    }, [filters, setPointIdListHandlers])
 
     const clearAllFilters = () => {
         setPointIdListHandlers.setState([]);
@@ -203,22 +205,22 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
     }
 
     return (
-        <Box h={"100%"}>
+        <Stack h={{ base: "auto", lg: "100%" }} pt="md" style={{ overflow: 'hidden' }}>
             <Alert w={"100%"} display={records.length === 0 ? 'block' : 'none'}
                 icon={<IconAlertTriangle size="2rem" color="red" />}
                 title={t('pages.stimulationTool.summary.alert_no_data_title')}>
                 {t('pages.stimulationTool.summary.alert_no_data_text')}
             </Alert>
-            <Box h={"100%"} display={records.length > 0 ? 'block' : 'none'}>
+            <Box display={records.length > 0 ? 'flex' : 'none'} style={{ flexDirection: 'column', flexGrow: 1, minHeight: 0 }}>
                 <CSVLink
                     data={getCsvData()}
                     headers={getCsvHeaders()}
-                    filename={`${form.values.patient_id}_${new Date().toISOString().split('T')[0]}_summary.csv`}
+                    filename={`${session.patient_id}_${new Date().toISOString().split('T')[0]}_summary.csv`}
                     hidden
                     ref={csvFileRef}
                     target='_blank'
                 />
-                <Group position='right' h={"4%"}>
+                <Group justify='right' mb="sm" style={{ flexShrink: 0 }}>
                     <ActionIcon title={t('pages.stimulationTool.summary.button_filter_off')}>
                         <IconFilterOff onClick={clearAllFilters} />
                     </ActionIcon>
@@ -230,8 +232,8 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                         </Popover.Target>
                         <Popover.Dropdown>
                             <Checkbox.Group
-                                value={columnsToggle.filter((col) => col.toggled).map(col => col.accessor)}
-                                onChange={(checkedValues) => { setColumnsToggle((prevToggleState) => prevToggleState.map(toggle => { return { ...toggle, toggled: checkedValues.includes(toggle.accessor) } as DataTableColumnToggle })) }}
+                                value={columnsToggle.filter((col) => col.toggled).map(col => col.accessor as string)}
+                                onChange={(checkedValues) => { setColumnsToggle((prevToggleState: any) => prevToggleState.map((toggle: any) => { return { ...toggle, toggled: checkedValues.includes(toggle.accessor as string) } as any })) }}
                                 label={t('pages.stimulationTool.summary.button_select_columns')}
                             >
                                 {columnsToggle.map(c =>
@@ -249,7 +251,6 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                     </ActionIcon>
                 </Group>
                 <DataTable
-                    height={"96%"}
                     withColumnBorders
                     striped
                     highlightOnHover
@@ -277,7 +278,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                     ]}
                 />
             </Box>
-        </Box>
+        </Stack>
     );
 }
 

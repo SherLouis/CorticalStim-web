@@ -1,0 +1,17 @@
+.tab {
+    background-color: var(--mantine-color-default);
+    color: var(--mantine-color-text);
+    font-size: var(--mantine-font-size-md);
+    padding: var(--mantine-spacing-xs);
+}
+
+.tab:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tab[data-active] {
+    background-color: var(--mantine-color-blue-7);
+    border-color: var(--mantine-color-blue-7);
+    color: var(--mantine-color-white);
+}

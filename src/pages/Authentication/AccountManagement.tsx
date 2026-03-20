@@ -111,25 +111,25 @@ const AccountManagementPage = (props: PaperProps) => {
 
   const handlerDeleteAccount = () => {
     authProvider.deleteAccount(deleteAccountForm.values.password)
-    .then(() => {
-      console.log('Account deleted');
-      notifications.show({
-        id: 'delete_account',
-        title: t('pages.accountManagement.delete_account.notifications.success_title'),
-        message: t('pages.accountManagement.delete_account.notifications.success_body'),
-        color: "green"
-      });
-      deleteAccountForm.reset();
-    })
-    .catch((error: AuthenticationError) => {
-      console.error(error.reason);
-      notifications.show({
-        id: 'delete_account',
-        title: t('pages.accountManagement.delete_account.notifications.failure_title'),
-        message: getAuthErrorAlertMessage(error),
-        color: "red"
-      });
-    })
+      .then(() => {
+        console.log('Account deleted');
+        notifications.show({
+          id: 'delete_account',
+          title: t('pages.accountManagement.delete_account.notifications.success_title'),
+          message: t('pages.accountManagement.delete_account.notifications.success_body'),
+          color: "green"
+        });
+        deleteAccountForm.reset();
+      })
+      .catch((error: AuthenticationError) => {
+        console.error(error.reason);
+        notifications.show({
+          id: 'delete_account',
+          title: t('pages.accountManagement.delete_account.notifications.failure_title'),
+          message: getAuthErrorAlertMessage(error),
+          color: "red"
+        });
+      })
   }
 
   return (
@@ -190,7 +190,7 @@ const AccountManagementPage = (props: PaperProps) => {
                   required
                   {...deleteAccountForm.getInputProps('password')}
                 />
-                <Button type='submit' disabled={!deleteAccountForm.isValid()} color='red' leftIcon={<IconTrash />}>
+                <Button type='submit' disabled={!deleteAccountForm.isValid()} color='red' leftSection={<IconTrash />}>
                   {t('pages.accountManagement.delete_account.title')}
                 </Button>
               </form>

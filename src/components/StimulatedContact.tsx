@@ -1,4 +1,5 @@
-import { Chip, ChipProps, MantineColor, MantineTheme, Sx, useMantineTheme } from "@mantine/core";
+import { Chip, ChipProps, MantineColor, MantineTheme, useMantineTheme } from "@mantine/core";
+import React from "react";
 import { Stimulation } from "../core/models/stimulationForm";
 import { NO_EFFECT } from "./StimulationEffectSelection";
 
@@ -6,27 +7,27 @@ import { NO_EFFECT } from "./StimulationEffectSelection";
 const StimulatedContact = ({ selected, stimulations, onChange, forcedVariant, forcedEffect, ...props }: StimulatedContactProps) => {
     const theme = useMantineTheme();
 
-    const getContactBorderStyle = (): Sx => {
-        const EFFECT_BORDER_SX = { '& .mantine-Chip-label': getEffectBorderStyle(theme) };
-        const NO_EFFECT_BORDER_SX = {};
+    const getContactBorderStyle = (): React.CSSProperties => {
+        const EFFECT_BORDER_STYLE = getEffectBorderStyle(theme);
+        const NO_EFFECT_BORDER_STYLE = {};
         if (forcedEffect !== undefined) {
-            return forcedEffect ? EFFECT_BORDER_SX : NO_EFFECT_BORDER_SX
+            return forcedEffect ? EFFECT_BORDER_STYLE : NO_EFFECT_BORDER_STYLE
         }
         const hasEffect = stimulations.some((stim) => JSON.stringify(stim.effect.observed_effect) !== JSON.stringify(NO_EFFECT));
-        return hasEffect ? EFFECT_BORDER_SX : NO_EFFECT_BORDER_SX;
+        return hasEffect ? EFFECT_BORDER_STYLE : NO_EFFECT_BORDER_STYLE;
     }
 
     const nbStims = stimulations.length;
     const color = getStimulatedStyledContactColor(stimulations, selected, theme, false, forcedVariant);
-    const sx = getContactBorderStyle();
+    const labelStyle = getContactBorderStyle();
 
     return (
         <Chip
             checked={selected || nbStims > 0 || forcedVariant !== undefined}
             variant={selected || nbStims > 0 || forcedVariant !== undefined ? 'filled' : 'light'}
-            onChange={onChange}
+            onChange={onChange as any} // Typing hack for Chip onChange differences
             color={color}
-            sx={sx}
+            styles={{ label: labelStyle }}
             {...props}
         >
             {props.children}

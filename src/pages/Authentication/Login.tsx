@@ -113,7 +113,7 @@ export function LoginPage(props: PaperProps) {
                             />
                         </Stack>
 
-                        <Group position='apart' mt="xl">
+                        <Group justify='space-between' mt="xl">
                             <Anchor component="button" type="button" c="dimmed" onClick={() => navigate(AppPath.REGISTER, { state: state })} size="xs">
                                 {t('pages.login.go_to_register_msg')}
                             </Anchor>

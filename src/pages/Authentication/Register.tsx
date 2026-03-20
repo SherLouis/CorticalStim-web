@@ -24,7 +24,7 @@ import { isPasswordSecure } from './Password';
 
 export function RegisterPage(props: PaperProps) {
     const { t } = useTranslation();
-    
+
     const form = useForm({
         initialValues: {
             email: '',
@@ -104,7 +104,7 @@ export function RegisterPage(props: PaperProps) {
                         />
                     </Stack>
 
-                    <Group position='apart' mt="xl">
+                    <Group justify='space-between' mt="xl">
                         <Anchor component="button" type="button" c="dimmed" onClick={() => navigate(AppPath.LOGIN, { state: state })} size="xs">
                             {t('pages.register.go_to_login_msg')}
                         </Anchor>
