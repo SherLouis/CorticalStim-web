@@ -42,3 +42,22 @@ The web application primarily consists of 3 main screens:
 ## 6. Development Workflow
 - **Run dev server**: `npm run dev:start` (Note: `npm run dev` also runs firebase emulators, which might be overkill if you're purely working on UI and not auth).
 - **Format / Lint**: Keep your code clean, adhere to existing React hooks best practices, and respect the strict TypeScript compiler checks.
+
+## 7. Current Work in Progress (UI Revamp)
+- **Mantine to Tailwind CSS Transition**: The application is currently undergoing a major UI redesign, migrating away from Mantine components to exclusively utilize Tailwind CSS. This ensures a more flexible, cohesive, and modern interface.
+- **Implantation Screen Redesign**: The Implantation Planification screen has been the prime focus of this Tailwinds overhaul. It now features an interactive 3D brain visualizer (`@react-three/fiber`) and fully resizable layout panels.
+- **Note to Agents**: When modifying or creating components, strictly prioritize Tailwind utility classes. Avoid introducing new Mantine UI dependencies unless temporarily necessary to bridge legacy logic during the ongoing transition.
+
+## 8. Future Features & TODOs
+*(Use this section as a scratchpad for upcoming milestones and feature requests.)*
+- [ ] Apply the new Tailwind redesign to the **Stimulation** screen.
+- [ ] Apply the new Tailwind redesign to the **Summary** screen.
+- [ ] Finalize logic and visualizations for **Grid Electrodes** (2D matrices of contacts).
+- [ ] Unify and resolve styling mappings for the global dark theme across all remaining legacy components.
+- [ ] Translations for the new UI.
+
+### Implantation screen
+- [ ] FEAT : Auto-configure contacts placement based on electrode type and electrode parameters.
+- [ ] FEAT : Import MRI Scan for the 3D brain model.
+- [ ] FEAT : Auto-detect brain hemisphere based on electrode coordinates.
+
