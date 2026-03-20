@@ -3,7 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Sphere, Html, useGLTF } from "@react-three/drei";
 import { useStimulationRepository } from "../../../../infra/ZustandStimulationRepository";
 import { getStimPointLabel } from "../../../../core/models/stimulationForm";
-import { useMemo, Suspense } from "react";
+import { useMemo, Suspense, useRef, useState } from "react";
 import * as THREE from 'three';
 
 const BrainPlaceholder = () => {
@@ -123,45 +123,70 @@ const ElectrodesLayer = () => {
 };
 
 export default function Brain3DView() {
+    const orbitRef = useRef<any>(null);
+    const [showBrain, setShowBrain] = useState(true);
+
+    const zoomIn = () => {
+        if (!orbitRef.current) return;
+        orbitRef.current.object.position.lerp(orbitRef.current.target, 0.2);
+        orbitRef.current.update();
+    };
+
+    const zoomOut = () => {
+        if (!orbitRef.current) return;
+        orbitRef.current.object.position.lerp(orbitRef.current.target, -0.25);
+        orbitRef.current.update();
+    };
+
+    const resetView = () => {
+        if (!orbitRef.current) return;
+        orbitRef.current.object.position.set(150, 50, 150);
+        orbitRef.current.target.set(0, 0, 0);
+        orbitRef.current.update();
+    };
+
     return (
         <section className="w-full h-full relative bg-surface-container-low overflow-hidden flex items-center justify-center">
             {/* The 3D Canvas rendering the brain and configured electrodes */}
             <div className="absolute inset-0 cursor-move">
-                <Canvas camera={{ position: [150, 50, 150], fov: 45 }}>
+                <Canvas camera={{ position: [150, 50, 150], fov: 45, near: 0.1, far: 5000 }}>
                     <ambientLight intensity={1.5} />
                     <directionalLight position={[100, 100, 50]} intensity={2} />
                     <directionalLight position={[-100, -100, -50]} intensity={1} />
                     <pointLight position={[0, 0, 0]} intensity={0.5} color="#ffffff" />
                     
-                    <Suspense fallback={<BrainPlaceholder />}>
-                        <CustomBrainModel />
-                    </Suspense>
+                    {showBrain && (
+                        <Suspense fallback={<BrainPlaceholder />}>
+                            <CustomBrainModel />
+                        </Suspense>
+                    )}
                     <ElectrodesLayer />
                     
                     <OrbitControls 
+                        ref={orbitRef}
                         enableDamping 
                         dampingFactor={0.05} 
-                        minDistance={50} 
-                        maxDistance={400} 
+                        minDistance={20} 
+                        maxDistance={2000} 
                     />
                 </Canvas>
             </div>
 
             {/* Floating toolbar for 3D interactions */}
             <div className="absolute bottom-6 left-6 flex gap-2 bg-white/80 dark:bg-slate-900/80 p-1.5 rounded-lg shadow-sm backdrop-blur-md border border-outline-variant/30">
-                <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-on-surface-variant transition-colors group relative" aria-label="Zoom In">
+                <button onClick={zoomIn} className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-on-surface-variant transition-colors group relative" aria-label="Zoom In" title="Zoom In">
                     <IconZoomIn size="1.2rem" />
                 </button>
                 <div className="w-[1px] bg-outline-variant/30 my-1 mx-0.5"></div>
-                <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-on-surface-variant transition-colors group relative" aria-label="Zoom Out">
+                <button onClick={zoomOut} className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-on-surface-variant transition-colors group relative" aria-label="Zoom Out" title="Zoom Out">
                     <IconZoomOut size="1.2rem" />
                 </button>
                 <div className="w-[1px] bg-outline-variant/30 my-1 mx-0.5"></div>
-                <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-on-surface-variant transition-colors group relative" aria-label="Reset View">
+                <button onClick={resetView} className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-on-surface-variant transition-colors group relative" aria-label="Reset View" title="Reset Camera">
                     <IconRefresh size="1.2rem" />
                 </button>
                 <div className="w-[1px] bg-outline-variant/30 my-1 mx-0.5"></div>
-                <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-on-surface-variant transition-colors group relative" aria-label="Toggle Brain Model">
+                <button onClick={() => setShowBrain(!showBrain)} className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors group relative ${showBrain ? 'bg-primary/10 text-primary dark:bg-primary/20 hover:bg-primary/20' : 'hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-on-surface-variant'}`} aria-label="Toggle Brain Model" title="Toggle Brain Cortical Surface">
                     <IconBox size="1.2rem" />
                 </button>
             </div>
