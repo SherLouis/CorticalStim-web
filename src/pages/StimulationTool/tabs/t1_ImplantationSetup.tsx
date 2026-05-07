@@ -30,7 +30,7 @@ export default function ElectrodeSetupStep() {
     }, [leftWidth]);
 
     return (
-        <div className="flex w-full h-full overflow-hidden bg-surface relative">
+        <div className="flex w-full h-full overflow-hidden bg-background relative">
             <div style={{ width: `${leftWidth}%` }} className="flex flex-col z-20 shadow-[5px_0_15px_-5px_rgba(0,0,0,0.1)] relative min-w-0 shrink-0 border-r border-outline-variant/30">
                 <Brain3DView />
             </div>

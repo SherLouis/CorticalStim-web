@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect, useState } from 'react'
+import { PropsWithChildren, useEffect } from 'react'
 import { ActionIcon, Avatar, Menu } from '@mantine/core';
 import { IconSun, IconMoonStars, IconSettings, IconLogout, IconLogin } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +21,7 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
     }, [colorScheme]);
 
     return (
-        <div className="bg-surface dark:bg-slate-900 font-body text-on-surface dark:text-gray-100 antialiased overflow-hidden flex flex-col h-screen w-full">
+        <div className="bg-background font-body text-on-background antialiased overflow-hidden flex flex-col h-screen w-full">
             <TopHeader title={props.title} />
             <div className="flex-1 flex overflow-hidden relative">
                 {props.children}
@@ -35,10 +35,10 @@ function TopHeader({ title }: { title: string }) {
     const navigate = useNavigate();
 
     return (
-        <header className="flex-none z-50 w-full bg-slate-50 dark:bg-slate-950 flex justify-between items-center px-6 py-3 border-b border-surface-container-high dark:border-slate-800 shrink-0">
+        <header className="flex-none z-50 w-full bg-surface flex justify-between items-center px-6 py-3 border-b border-primary/10 shadow-[0_1px_3px_rgba(0,0,0,0.05)] shrink-0">
             <div className="flex items-center gap-8">
                 <span 
-                    className="text-xl font-bold text-blue-800 dark:text-blue-300 font-headline cursor-pointer" 
+                    className="text-xl font-bold text-primary font-headline cursor-pointer" 
                     onClick={() => navigate(AppPath.APP_ROOT)}
                 >
                     {title}
@@ -73,7 +73,7 @@ const LanguageSelectionMenu = () => {
     return (
         <Menu withArrow position="bottom">
             <Menu.Target>
-                <ActionIcon variant="subtle" className="hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-full active:scale-95 duration-150 ease-in-out">
+                <ActionIcon variant="subtle" className="hover:bg-surface-container-highest transition-colors rounded-full active:scale-95 duration-150 ease-in-out">
                     <Avatar size="sm" src={getSvgPathForLanguage(currentLanguage)} />
                 </ActionIcon>
             </Menu.Target>
@@ -97,7 +97,7 @@ const ThemeToggleIcon = ({ t }: { t: TFunction }) => {
 
     return (
         <button
-            className="p-2 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors rounded-full flex items-center justify-center active:scale-95 duration-150 ease-in-out text-slate-600 dark:text-slate-300"
+            className="p-2 hover:bg-surface-container-highest transition-colors rounded-full flex items-center justify-center active:scale-95 duration-150 ease-in-out text-on-surface-variant"
             onClick={() => toggleColorScheme()}
             title={t('app.header.toggle_theme')}
         >

@@ -112,7 +112,7 @@ const ElectrodesLayer = () => {
                 <Sphere key={i} args={[Math.max(session.electrode_params.diameter || 1.5, 2.5), 16, 16]} position={c.position}>
                     <meshStandardMaterial color={c.done ? "#10b981" : "#0ea5e9"} roughness={0.3} metalness={0.6} />
                     <Html distanceFactor={150} position={[0, 2, 0]} center>
-                        <div className="bg-slate-900/80 text-white text-[10px] px-1 rounded-sm backdrop-blur-sm pointer-events-none select-none">
+                        <div className="bg-background/80 text-on-surface text-[10px] px-1 rounded-sm backdrop-blur-sm pointer-events-none select-none border border-outline-variant/30">
                             {c.eLabel}{c.label}
                         </div>
                     </Html>
@@ -173,27 +173,27 @@ export default function Brain3DView() {
             </div>
 
             {/* Floating toolbar for 3D interactions */}
-            <div className="absolute bottom-6 left-6 flex gap-2 bg-white/80 dark:bg-slate-900/80 p-1.5 rounded-lg shadow-sm backdrop-blur-md border border-outline-variant/30">
-                <button onClick={zoomIn} className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-on-surface-variant transition-colors group relative" aria-label="Zoom In" title="Zoom In">
+            <div className="absolute bottom-6 left-6 flex gap-2 bg-surface-container/80 p-1.5 rounded-lg shadow-sm backdrop-blur-md border border-outline-variant/30">
+                <button onClick={zoomIn} className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container-highest text-on-surface-variant transition-colors group relative" aria-label="Zoom In" title="Zoom In">
                     <IconZoomIn size="1.2rem" />
                 </button>
                 <div className="w-[1px] bg-outline-variant/30 my-1 mx-0.5"></div>
-                <button onClick={zoomOut} className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-on-surface-variant transition-colors group relative" aria-label="Zoom Out" title="Zoom Out">
+                <button onClick={zoomOut} className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container-highest text-on-surface-variant transition-colors group relative" aria-label="Zoom Out" title="Zoom Out">
                     <IconZoomOut size="1.2rem" />
                 </button>
                 <div className="w-[1px] bg-outline-variant/30 my-1 mx-0.5"></div>
-                <button onClick={resetView} className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-on-surface-variant transition-colors group relative" aria-label="Reset View" title="Reset Camera">
+                <button onClick={resetView} className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container-highest text-on-surface-variant transition-colors group relative" aria-label="Reset View" title="Reset Camera">
                     <IconRefresh size="1.2rem" />
                 </button>
                 <div className="w-[1px] bg-outline-variant/30 my-1 mx-0.5"></div>
-                <button onClick={() => setShowBrain(!showBrain)} className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors group relative ${showBrain ? 'bg-primary/10 text-primary dark:bg-primary/20 hover:bg-primary/20' : 'hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-on-surface-variant'}`} aria-label="Toggle Brain Model" title="Toggle Brain Cortical Surface">
+                <button onClick={() => setShowBrain(!showBrain)} className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors group relative ${showBrain ? 'bg-primary/10 text-primary dark:bg-primary/20 hover:bg-primary/20' : 'hover:bg-surface-container-highest text-on-surface-variant'}`} aria-label="Toggle Brain Model" title="Toggle Brain Cortical Surface">
                     <IconBox size="1.2rem" />
                 </button>
             </div>
             
             <div className="absolute top-6 left-6 flex flex-col gap-1 pointer-events-none">
                 <h2 className="text-xl font-headline font-bold text-on-surface drop-shadow-md">Cortical Implantation</h2>
-                <p className="text-sm text-on-surface-variant font-medium bg-white/50 dark:bg-slate-900/50 px-2 py-0.5 rounded-md inline-block w-fit backdrop-blur-sm border border-outline-variant/20 shadow-sm">
+                <p className="text-sm text-secondary font-bold bg-secondary-container px-2 py-0.5 rounded-md inline-block w-fit backdrop-blur-sm border border-secondary/20 shadow-sm">
                     Interactive 3D MNI Coordinates
                 </p>
             </div>

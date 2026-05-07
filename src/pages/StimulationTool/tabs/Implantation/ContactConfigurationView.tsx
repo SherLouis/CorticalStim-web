@@ -76,7 +76,7 @@ export default function ContactConfigurationView({ electrodeLabel, onBack }: { e
             >
                 <StimulationPointLocationSelection form={locationForm} />
                 <div className="flex justify-end gap-2 mt-4">
-                    <button className="px-4 py-2 border rounded hover:bg-slate-50 transition-colors" onClick={() => setAdvancedPointIndex(null)}>{t("common.cancel", "Cancel")}</button>
+                    <button className="px-4 py-2 border rounded hover:bg-surface-container-high transition-colors" onClick={() => setAdvancedPointIndex(null)}>{t("common.cancel", "Cancel")}</button>
                     <button className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-container transition-colors flex items-center gap-2" onClick={handleSave}>
                         <IconCheck size="1rem" /> {t("pages.stimulationTool.implantation.saveRoi", "Save ROI")}
                     </button>
@@ -95,7 +95,7 @@ export default function ContactConfigurationView({ electrodeLabel, onBack }: { e
                     <span className="text-primary truncate">{electrode.label}</span>
                 </nav>
                 <div className="flex items-center gap-3">
-                    <button onClick={onBack} className="p-1 hover:bg-surface-container-highest rounded-full transition-colors text-slate-500">
+                    <button onClick={onBack} className="p-1 hover:bg-surface-container-highest rounded-full transition-colors text-on-surface-variant">
                         <IconChevronLeft size="1.2rem" />
                     </button>
                     <h2 className="text-xl font-headline font-extrabold tracking-tight truncate">{t("pages.stimulationTool.implantation.configureContacts", "Configure Contacts")}</h2>
@@ -189,7 +189,7 @@ export default function ContactConfigurationView({ electrodeLabel, onBack }: { e
             {/* Footer Action Area */}
             <div className="p-6 border-t border-surface-container-high bg-surface-container text-on-surface shrink-0">
                 <div className="flex gap-3">
-                    <button onClick={onBack} className="flex-1 px-4 py-2.5 bg-surface-container-high text-on-surface font-bold text-sm rounded-md hover:bg-surface-dim transition-colors active:scale-98">
+                    <button onClick={onBack} className="flex-1 px-4 py-2.5 bg-surface-container-high text-on-surface font-bold text-sm rounded-md hover:bg-surface-container-highest transition-colors active:scale-98">
                         {t("common.done", "Done")}
                     </button>
                 </div>

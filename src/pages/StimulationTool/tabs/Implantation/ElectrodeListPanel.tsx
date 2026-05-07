@@ -18,10 +18,10 @@ export default function ElectrodeListPanel({ onConfigure }: { onConfigure: (labe
     const { t } = useTranslation();
     const repository = useStimulationRepository();
     const session = repository.getSession();
-    
+
     const [nextElectrodeDefaultLabel, setNextElectrodeDefaultLabel] = useState('A');
     const [electrodeType, setElectrodeType] = useState<"SEEG" | "Grid">("SEEG");
-    
+
     // Extracted TSV Parse Logic
     const openInputFileRef = useRef<HTMLInputElement | null>(null);
     const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +48,7 @@ export default function ElectrodeListPanel({ onConfigure }: { onConfigure: (labe
     };
 
     const handleDeleteElectrode = (label: string) => {
-        if(window.confirm(`Delete electrode ${label}?`)) {
+        if (window.confirm(`Delete electrode ${label}?`)) {
             repository.removeElectrode(label);
         }
     };
@@ -64,7 +64,7 @@ export default function ElectrodeListPanel({ onConfigure }: { onConfigure: (labe
                 <div className="flex justify-between items-center">
                     <h2 className="font-headline font-bold text-lg text-on-surface">Add Electrode</h2>
                     <input type='file' onChange={handleFileChange} ref={openInputFileRef} accept=".tsv,.txt" className="hidden" />
-                    <button 
+                    <button
                         onClick={() => openInputFileRef.current?.click()}
                         className="text-xs font-bold text-primary flex items-center gap-1 hover:underline active:scale-95 transition-transform"
                     >
@@ -77,13 +77,13 @@ export default function ElectrodeListPanel({ onConfigure }: { onConfigure: (labe
                     <div>
                         <label className="block text-[11px] font-bold text-secondary uppercase tracking-wider mb-2">Electrode Type</label>
                         <div className="grid grid-cols-2 gap-2">
-                            <button 
+                            <button
                                 onClick={() => setElectrodeType("SEEG")}
                                 className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg font-bold text-sm transition-colors border-2 ${electrodeType === "SEEG" ? 'border-primary bg-primary/5 text-primary' : 'border-outline-variant/30 bg-surface-container text-on-surface-variant hover:border-primary/50'}`}
                             >
                                 <IconMicroscope size="1.2rem" /> SEEG
                             </button>
-                            <button 
+                            <button
                                 onClick={() => setElectrodeType("Grid")}
                                 className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg font-bold text-sm transition-colors border-2 ${electrodeType === "Grid" ? 'border-primary bg-primary/5 text-primary' : 'border-outline-variant/30 bg-surface-container text-on-surface-variant hover:border-primary/50'}`}
                             >
@@ -95,43 +95,43 @@ export default function ElectrodeListPanel({ onConfigure }: { onConfigure: (labe
                     <div className="grid grid-cols-3 gap-3">
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-on-surface-variant mb-1 ml-1">{t('pages.stimulationTool.implantation.contactDiameterLabel', 'Diameter')}</label>
-                        <div className="flex flex-row items-center gap-1">
-                            <input 
-                                className="w-full bg-surface-container text-on-surface border-none rounded-md text-sm font-semibold p-2 focus:ring-2 focus:ring-primary focus:outline-none" 
-                                type="number" 
-                                value={session.electrode_params.diameter !== undefined ? session.electrode_params.diameter : ''}
-                                onChange={(e) => repository.updateElectrodeParams({ diameter: e.target.value !== '' ? parseFloat(e.target.value) : 0 })}
-                            />
-                            <span className="text-[10px] text-slate-400 font-medium">mm</span>
-                        </div>
+                            <div className="flex flex-row items-center gap-1">
+                                <input
+                                    className="w-full bg-surface-container-highest text-on-surface border border-outline-variant rounded-md text-sm font-semibold p-2 focus:ring-2 focus:ring-primary focus:outline-none transition-all shadow-inner"
+                                    type="number"
+                                    value={session.electrode_params.diameter !== undefined ? session.electrode_params.diameter : ''}
+                                    onChange={(e) => repository.updateElectrodeParams({ diameter: e.target.value !== '' ? parseFloat(e.target.value) : 0 })}
+                                />
+                                <span className="text-[10px] text-on-surface-variant/60 font-medium">mm</span>
+                            </div>
                         </div>
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-on-surface-variant mb-1 ml-1">{t('pages.stimulationTool.implantation.contactSeparationLabel', 'Separation')}</label>
-                        <div className="flex flex-row items-center gap-1">
-                            <input 
-                                className="w-full bg-surface-container text-on-surface border-none rounded-md text-sm font-semibold p-2 focus:ring-2 focus:ring-primary focus:outline-none" 
-                                type="number" 
-                                value={session.electrode_params.separation !== undefined ? session.electrode_params.separation : ''}
-                                onChange={(e) => repository.updateElectrodeParams({ separation: e.target.value !== '' ? parseFloat(e.target.value) : 0 })}
-                            />
-                            <span className="text-[10px] text-slate-400 font-medium">mm</span>
-                        </div>
+                            <div className="flex flex-row items-center gap-1">
+                                <input
+                                    className="w-full bg-surface-container text-on-surface border-none rounded-md text-sm font-semibold p-2 focus:ring-2 focus:ring-primary focus:outline-none"
+                                    type="number"
+                                    value={session.electrode_params.separation !== undefined ? session.electrode_params.separation : ''}
+                                    onChange={(e) => repository.updateElectrodeParams({ separation: e.target.value !== '' ? parseFloat(e.target.value) : 0 })}
+                                />
+                                <span className="text-[10px] text-on-surface-variant/60 font-medium">mm</span>
+                            </div>
                         </div>
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-on-surface-variant mb-1 ml-1">{t('pages.stimulationTool.implantation.contactLengthLabel', 'Length')}</label>
-                        <div className="flex flex-row items-center gap-1">
-                            <input 
-                                className="w-full bg-surface-container text-on-surface border-none rounded-md text-sm font-semibold p-2 focus:ring-2 focus:ring-primary focus:outline-none" 
-                                type="number" 
-                                value={session.electrode_params.length !== undefined ? session.electrode_params.length : ''}
-                                onChange={(e) => repository.updateElectrodeParams({ length: e.target.value !== '' ? parseFloat(e.target.value) : 0 })}
-                            />
-                            <span className="text-[10px] text-slate-400 font-medium">mm</span>
-                        </div>
+                            <div className="flex flex-row items-center gap-1">
+                                <input
+                                    className="w-full bg-surface-container text-on-surface border-none rounded-md text-sm font-semibold p-2 focus:ring-2 focus:ring-primary focus:outline-none"
+                                    type="number"
+                                    value={session.electrode_params.length !== undefined ? session.electrode_params.length : ''}
+                                    onChange={(e) => repository.updateElectrodeParams({ length: e.target.value !== '' ? parseFloat(e.target.value) : 0 })}
+                                />
+                                <span className="text-[10px] text-on-surface-variant/60 font-medium">mm</span>
+                            </div>
                         </div>
                     </div>
 
-                    <button 
+                    <button
                         onClick={handleAddElectrode}
                         className="w-full bg-gradient-to-br from-primary to-primary-container text-white py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 shadow-md shadow-primary/20 hover:opacity-90 active:scale-95 transition-all"
                     >
@@ -153,14 +153,14 @@ export default function ElectrodeListPanel({ onConfigure }: { onConfigure: (labe
                 <div className="space-y-3">
                     {session.electrodes.length === 0 && (
                         <div className="text-center p-6 bg-surface-container-low rounded-xl border border-dashed border-outline-variant/30">
-                            <p className="text-sm font-medium text-slate-400">No electrodes defined yet.</p>
+                            <p className="text-sm font-medium text-on-surface-variant/60">No electrodes defined yet.</p>
                         </div>
                     )}
 
                     {session.electrodes.map((electrode) => {
                         const configuredContacts = electrode.stim_points.filter(sp => sp.location.done).length;
                         const isLocked = electrode.confirmed;
-                        
+
                         return (
                             <div key={electrode.label} className={`p-4 rounded-xl border transition-colors shadow-sm ${isLocked ? 'bg-surface-container-lowest border-outline-variant/10' : 'bg-surface-container-low/50 border-primary/20 ring-1 ring-primary/10'}`}>
                                 <div className="flex justify-between items-start mb-3">
@@ -170,14 +170,14 @@ export default function ElectrodeListPanel({ onConfigure }: { onConfigure: (labe
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2 mb-1">
-                                                <input 
-                                                    type="text" 
+                                                <input
+                                                    type="text"
                                                     value={electrode.label}
                                                     onChange={(e) => repository.updateElectrodeLabel(electrode.label, e.target.value)}
                                                     className="font-bold text-sm bg-surface-container-highest text-on-surface border-b border-transparent hover:border-outline-variant focus:border-primary focus:outline-none w-16 px-1 py-0.5 rounded-sm transition-colors"
                                                     disabled={isLocked}
                                                 />
-                                                <select 
+                                                <select
                                                     value={electrode.side || ''}
                                                     onChange={(e) => repository.updateElectrodeSide(electrode.label, e.target.value as 'left' | 'right')}
                                                     className="text-xs bg-surface-container rounded px-1 py-0.5 focus:outline-none font-bold text-on-surface-variant"
@@ -192,7 +192,7 @@ export default function ElectrodeListPanel({ onConfigure }: { onConfigure: (labe
                                                 <span className="text-[10px] text-on-surface-variant font-bold uppercase">
                                                     {t("pages.stimulationTool.implantation.nbContactsLabel", "Contacts")}:
                                                 </span>
-                                                <input 
+                                                <input
                                                     type="number"
                                                     value={electrode.n_contacts || ''}
                                                     onChange={(e) => repository.setElectrodeContacts(electrode.label, parseInt(e.target.value) || 0)}
@@ -203,43 +203,43 @@ export default function ElectrodeListPanel({ onConfigure }: { onConfigure: (labe
                                             </div>
                                         </div>
                                     </div>
-                                    <button 
+                                    <button
                                         onClick={() => handleConfirmElectrode(electrode.label)}
-                                        className={`transition-colors shrink-0 ${isLocked ? 'text-primary' : 'text-slate-300 hover:text-primary'}`}
+                                        className={`transition-colors shrink-0 ${isLocked ? 'text-primary' : 'text-on-surface-variant/30 hover:text-primary'}`}
                                         title={isLocked ? "Locked" : "Lock Contact Count"}
                                     >
                                         {isLocked ? <IconLock size="1.2rem" /> : <IconLockOpen size="1.2rem" />}
                                     </button>
                                 </div>
-                                
+
                                 <div className="flex justify-between items-center mt-2">
                                     <div className="flex items-center gap-2 flex-1">
                                         {isLocked && electrode.n_contacts > 0 ? (
                                             <>
                                                 <div className="flex-1 bg-surface-container-high h-1.5 rounded-full overflow-hidden shrink-0">
-                                                    <div 
-                                                        className="bg-primary h-full transition-all duration-300"
+                                                    <div
+                                                        className="bg-tertiary h-full transition-all duration-300"
                                                         style={{ width: `${(configuredContacts / electrode.n_contacts) * 100}%` }}
                                                     ></div>
                                                 </div>
-                                                <span className="text-[10px] font-bold text-on-surface-variant shrink-0 w-16 whitespace-nowrap">
-                                                    {configuredContacts}/{electrode.n_contacts} Placed
+                                                <span className={`text-xs font-bold ${configuredContacts === electrode.n_contacts ? 'text-green-600' : 'text-tertiary'}`}>
+                                                    {configuredContacts}/{electrode.n_contacts} {t("pages.stimulationTool.implantation.placed", "placed")}
                                                 </span>
                                             </>
                                         ) : (
-                                            <span className="text-[10px] font-bold text-slate-400 italic">Unconfirmed or 0 contacts</span>
+                                            <span className="text-[10px] font-bold text-on-surface-variant/60 italic">Unconfirmed or 0 contacts</span>
                                         )}
                                     </div>
                                     <div className="flex gap-1 shrink-0 ml-2">
                                         {isLocked && (
-                                            <button 
+                                            <button
                                                 onClick={() => onConfigure(electrode.label)}
                                                 className="p-1.5 hover:bg-primary/10 rounded-md text-primary transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide"
                                             >
                                                 Edit MNI <IconArrowRight size="1rem" />
                                             </button>
                                         )}
-                                        <button 
+                                        <button
                                             onClick={() => handleDeleteElectrode(electrode.label)}
                                             className="p-1.5 hover:bg-error-container/50 rounded-md text-error/70 hover:text-error transition-colors ml-1"
                                         >
@@ -252,7 +252,7 @@ export default function ElectrodeListPanel({ onConfigure }: { onConfigure: (labe
                     })}
                 </div>
             </div>
-            
+
         </section>
     );
 }
