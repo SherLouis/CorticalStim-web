@@ -194,10 +194,12 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     const CentralBar = () => {
         const theme = useMantineTheme();
         const formatParameters = (params: StimulationParametersFormValues): string => {
+            const chargeDensity = (params.amplitude * params.lenght_path / 5).toFixed(2);
             return t('pages.stimulationTool.stimulation.amplitude_label') + ': ' + params.amplitude + ' (mA)' + ', ' +
                 t('pages.stimulationTool.stimulation.frequency_label') + ': ' + params.frequency + ' (Hz)' + ', ' +
                 t('pages.stimulationTool.stimulation.duration_label') + ': ' + params.duration + ' (s)' + ', ' +
-                t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + ' (µs)';
+                t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + ' (µs)' + ', ' +
+                t('pages.stimulationTool.stimulation.charge_density_label') + ': ' + chargeDensity + ' (µC/cm²)';
         }
 
         const stimPointConfirmedExist = useMemo<boolean>(() => {
