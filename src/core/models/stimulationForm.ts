@@ -77,3 +77,8 @@ export interface StimulationObservedEffectFormValues {
 export const getStimPointLabel = (electrodeLabel: string, stim_point_index: number, showDerivation: boolean = true) => {
     return `${electrodeLabel}/${stim_point_index + 1}${showDerivation ? '-' + (stim_point_index + 2) : ''}`;
 }
+
+export const computeChargeDensity = (amplitude_mA: number, lenght_path_us: number) => {
+    // Amplitude is in mA and length_path is in us. 
+    return ((amplitude_mA * lenght_path_us) / 50); // Division by 0.05 cm^2 contact surface area for 5mm diameter electrodes.
+}

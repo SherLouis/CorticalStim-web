@@ -1,6 +1,6 @@
 import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
-import { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, ElectrodeFormValues } from "../../../core/models/stimulationForm";
+import { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, ElectrodeFormValues, computeChargeDensity } from "../../../core/models/stimulationForm";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
@@ -194,12 +194,11 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     const CentralBar = () => {
         const theme = useMantineTheme();
         const formatParameters = (params: StimulationParametersFormValues): string => {
-            const chargeDensity = (params.amplitude * params.lenght_path / 5).toFixed(2);
             return t('pages.stimulationTool.stimulation.amplitude_label') + ': ' + params.amplitude + ' (mA)' + ', ' +
                 t('pages.stimulationTool.stimulation.frequency_label') + ': ' + params.frequency + ' (Hz)' + ', ' +
                 t('pages.stimulationTool.stimulation.duration_label') + ': ' + params.duration + ' (s)' + ', ' +
                 t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + ' (µs)' + ', ' +
-                t('pages.stimulationTool.stimulation.charge_density_label') + ': ' + chargeDensity + ' (µC/cm²)';
+                t('pages.stimulationTool.stimulation.charge_density_label') + ': ' + computeChargeDensity(params.amplitude, params.lenght_path).toFixed(2) + ' (µC/cm²)';
         }
 
         const stimPointConfirmedExist = useMemo<boolean>(() => {
