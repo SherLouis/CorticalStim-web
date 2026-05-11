@@ -31,7 +31,8 @@
     "dev:start_emulators": "firebase emulators:start",
     "dev:start": "dotenvx run --env-file=config/.env.dev -- react-scripts start",
     "dev": "npm-run-all --parallel dev:start_emulators dev:start",
-    "build": "dotenvx run --env-file=config/.env.prod -- react-scripts build",
+    "build": "react-scripts build",
+    "build:local": "dotenvx run --env-file=config/.env.prod -- react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
