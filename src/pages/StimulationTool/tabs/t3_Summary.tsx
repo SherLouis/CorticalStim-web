@@ -1,5 +1,5 @@
 import { TabProperties } from "./tab_properties";
-import { StimulationLocationFormValues, getStimPointLabel } from "../../../core/models/stimulationForm";
+import { StimulationLocationFormValues, computeChargeDensity, getStimPointLabel } from "../../../core/models/stimulationForm";
 import { useTranslation } from "react-i18next";
 import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { formatEpiManifestation, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
@@ -31,6 +31,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                             duration: stim.parameters.duration,
                             frequency: stim.parameters.frequency,
                             lenght_path: stim.parameters.lenght_path,
+                            charge_density: computeChargeDensity(stim.parameters.amplitude, stim.parameters.lenght_path),
                             task: formatSelectedTask(stim.task),
                             cognitive_effect: formatSelectedObservedEffect(stim.effect.observed_effect),
                             observed_effect_comments: stim.effect.observed_effect_comments,
@@ -127,26 +128,33 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         {
             accessor: 'amplitude',
             title: t('pages.stimulationTool.summary.results_table.amplitude_title'),
-            render: (result) => result.amplitude + 'mA',
+            render: (result) => result.amplitude + ' mA',
             ...allColumnsProps
         },
         {
             accessor: 'duration',
             title: t('pages.stimulationTool.summary.results_table.duration_title'),
-            render: (result) => result.duration + 's',
+            render: (result) => result.duration + ' s',
             ...allColumnsProps
         },
         {
             accessor: 'frequency',
             title: t('pages.stimulationTool.summary.results_table.frequency_title'),
-            render: (result) => result.frequency + 'Hz',
+            render: (result) => result.frequency + ' Hz',
             ...allColumnsProps
         },
         {
             accessor: 'lenght_path',
             title: t('pages.stimulationTool.summary.results_table.length_path_title'),
-            render: (result) => result.lenght_path + 's',
+            render: (result) => result.lenght_path + ' µs',
             defaultToggle: false,
+            ...allColumnsProps
+        },
+        {
+            accessor: 'charge_density',
+            title: t('pages.stimulationTool.summary.results_table.charge_density_title'),
+            render: (result) => result.charge_density.toFixed(2) + ' µC/cm²',
+            defaultToggle: true,
             ...allColumnsProps
         },
         { accessor: 'task', title: t('pages.stimulationTool.summary.results_table.task_title'), ...allColumnsProps },
@@ -267,7 +275,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                         {
                             id: 'stimulation_parameters_group',
                             title: t('pages.stimulationTool.summary.results_table.stimulation_parameters_group_title'),
-                            columns: effectiveColumns.filter((c) => ['stimulation_time', 'amplitude', 'duration', 'frequency', 'lenght_path', 'task'].includes(c.accessor))
+                            columns: effectiveColumns.filter((c) => ['stimulation_time', 'amplitude', 'duration', 'frequency', 'lenght_path', 'charge_density', 'task'].includes(c.accessor))
                         },
                         {
                             id: 'effects_group',
@@ -291,6 +299,7 @@ interface Result {
     duration: number;
     frequency: number;
     lenght_path: number;
+    charge_density: number;
     task: string;
     cognitive_effect: string;
     epi_manifestation: string;
