@@ -1,0 +1,323 @@
+{
+    "app": {
+        "title": "Outil Stimulation Corticale",
+        "header": {
+            "toggle_theme": "Changer les couleurs",
+            "menu": {
+                "profile": "Profile",
+                "logout": "Déconnexion",
+                "login": "Connexion"
+            },
+            "change_language": "Changer de langue"
+        }
+    },
+    "pages": {
+        "stimulationTool": {
+            "button_download_form": "Sauvegarder sur disque",
+            "button_open_form": "Ouvrir une sauvegarde",
+            "unsaved_alert_title": "Changements non sauvegardés",
+            "unsaved_alert_text": "Sauvegarder sur disque pour éviter de perdre les changements effectués.",
+            "notifications": {
+                "loading_data_from_file_title": "Chargement des données depuis le fichier...",
+                "loading_data_from_file_message": "SVP patienter pendant que les données sont chargées",
+                "success_loaded_from_file_title": "Données chargées",
+                "success_loaded_from_file_message": "Les données ont été chargées avec succès",
+                "failed_loading_from_file_title": "Données non chargées",
+                "failed_loading_from_file_message": "Une erreur est survenue lors du chargement des données"
+            },
+            "validation": {
+                "electrode_params": {
+                    "separation": "Ne peut pas être 0.",
+                    "diameter": "Ne peut pas être 0.",
+                    "length": "Ne peut pas être 0."
+                },
+                "electrodes": {
+                    "label": "Les noms d'électrodes doivent être différents",
+                    "side": "Choisir Gauche ou Droite"
+                },
+                "electrodeLabel": "Les noms d'électrodes doivent être différents"
+            },
+            "patient_id_label": "ID Patient",
+            "implantation": {
+                "tab_title": "Implantation",
+                "buttonTsvOpen": "Importer depuis TSV",
+                "guide_params_title": "Sélectionnez la configuration des électrodes.",
+                "guide_params_text": "Choisir parmi les choix de configuration proposés ou entrer manuellement les paramètres d'implantation.",
+                "guide_configure_electrodes_title": "Configurer les électrodes.",
+                "guide_configure_electrodes_text": "Pour chaque électrode, spécifier l'étiquette, la latéralisation et le nombre de contacts. Pour ajouter une électrode, cliquer sur le bouton +.",
+                "guide_select_contact_title": "Sélectionner un ou plusieurs contacts pour spécifier le positionnement.",
+                "guide_select_contact_text": "Sélectionner un ou plusieurs contacts depuis la section ci-haut pour spécifier le positionnement anatomique.",
+                "guide_placement_title": "Spécifier le positionnement.",
+                "guide_placement_text": "Choisir un atlas anatomique et spécifier le positionnement du/des contact(s) sélectionné(s).",
+                "guide_goto_stimulations_title": "Tous les positionnements ont été configurés. Continuer à l'onglet Stimulations.",
+                "guide_goto_stimulations_text": "Le positionnement de tous les contacts a été configuré! Pour continuer, cliquer sur l'onglet \"Stimulations\" afin d'enregistrer les paramètres et résultats de stimulations.",
+                "selected_contacts": "Contact(s) sélectionné(s)",
+                "electrodeConfiguration": "Configuration des électrodes",
+                "contactDiameterLabel": "Diamètre des contacts (mm)",
+                "contactSeparationLabel": "Séparation des contacts (mm)",
+                "contactLengthLabel": "Longueur des contacts (mm)",
+                "contactConfiguration": "Configuration des contacts",
+                "sideLabel": "Côté",
+                "placement": "Positionnement",
+                "addElectrodeButton": "Ajouter une électrode",
+                "electrodeLabel": "Nom",
+                "nbContactsLabel": "Contacts",
+                "setLocationButtonLabel": "Appliquer",
+                "deselectAllContactsButtonLabel": "Désélectionner tous",
+                "clearLocationButtonLabel": "Réinitialiser",
+                "destrieuxRegionLabel": "Region Destrieux",
+                "whiteMatter": "Matière Blanche",
+                "thisIsWhiteMatter": "Ceci est de la matière blanche",
+                "selectAllContactsButtonLabel": "Sélectionner tous",
+                "selectAllNotDoneContactsButtonLabel": "Sélectionner tous non-assignés",
+                "selected_location": "Positionnement sélectionné",
+                "saveButtonLabel": "Enregistrer",
+                "validations": {
+                    "location": {
+                        "type": "SVP choisir un type de localisation.",
+                        "vep": "SVP choisir un item depuis la liste.",
+                        "destrieux": "SVP choisir un item depuis la liste.",
+                        "mni": "SVP spécifier la coordonnée MNI."
+                    }
+                },
+                "confirmDelete": {
+                    "title": "Supprimer l'électrode",
+                    "confirm_label": "Supprimer",
+                    "cancel_label": "Annuler"
+                },
+                "confirmElectrode": {
+                    "title": "Confirmer l'électrode",
+                    "description": "Êtes-vous certain de vouloir confirmer cette électrode? Aucun changement au nombre de contacts ne pourra être fait par la suite.",
+                    "do_not_show_again_label": "Ne plus demander",
+                    "confirm_label": "Confirmer",
+                    "cancel_label": "Annuler"
+                }
+            },
+            "stimulation": {
+                "tab_title": "Stimulations",
+                "contact_color_legend": {
+                    "selected": "Sélectionné",
+                    "stimulated": "Stimulé",
+                    "multi_stim": "Multiple stimulations",
+                    "post_discharge": "Post-décharge",
+                    "crisis": "Crise électrique",
+                    "effect": "Effet observé"
+                },
+                "guide_alert_title": "Sélectionner un point de stimulation pour commencer.",
+                "guide_alert_text": "Vous pourrez ensuite préciser la tâche effectuée, les paramètres de stimulation et noter les effets observés.",
+                "guide_alert_no_electrode_title": "Aucune électrode configurée",
+                "guide_alert_no_electrode_text": "Allez à l'onglet Implantation afin de configurer la disposition des électrodes et le positionnement des contacts.",
+                "guide_alert_fill_task_and_params_title": "Configurez les paramètres de la stimulation et la tâche réalisée.",
+                "guide_alert_fill_task_and_params_text": "Configurez les paramètres de la stimulation (amplitude, fréquence, durée) pour le point sélectionné. Si une tâche est réalisée lors de cette stimulation, veuillez la sélectionner (portion supérieure droite de l'écran). Lorsque prêt, appuyez sur le bouton pour enregistrer l'heure de la stimulation.",
+                "contacts_title": "Contacts",
+                "parameters_title": "Paramètres",
+                "amplitude_label": "Amplitude",
+                "frequency_label": "Fréquence",
+                "duration_label": "Durée",
+                "length_path_label": "Durée Phase",
+                "charge_density_label": "Densité de Charge",
+                "task_title": "Tâche",
+                "task_last_used_title": "Derniers utilisés",
+                "task_other_value_label": "Autre",
+                "task_no_task_used": "Aucune tâche utilisée",
+                "no_task_selected": "Veuillez sélectionner une tâche avant de stimuler",
+                "set_time_label_now": "Enregistrer l'heure actuelle",
+                "set_time_label_custom": "Introduire une autre heure",
+                "saveButtonLabel": "Enregistrer",
+                "numberOfStimulationsLabel": "Stimulations: ",
+                "viewResultsForPointIdLabel": "Voir résultats",
+                "effect": {
+                    "observed_effect_label": "Effet Observé",
+                    "effect_table": {
+                        "class": "Classe",
+                        "descriptor": "Descripteur",
+                        "details": "Détails"
+                    },
+                    "no_effect": "Aucun effet",
+                    "comments_label": "Autre/Commentaires",
+                    "epi_manifestation": "Manif. Cliniques Ictales",
+                    "contact_in_epi_zone_label": "Contact situé dans la zone épileptogène ?",
+                    "contact_in_epi_zone_options": {
+                        "yes": "Oui",
+                        "no": "Non",
+                        "unknown": "Inconnu"
+                    },
+                    "contact_in_epi_zone_comments_label": "Commentaires",
+                    "eeg": "EEG post stim.",
+                    "last_used": "Derniers utilisés",
+                    "epi_manifestation_options_labels": {
+                        "typical_aura": "Aura Typique",
+                        "typical_crisis": "Crise Typique",
+                        "atypical_crisis": "Crise Atypique",
+                        "other": "Autre"
+                    },
+                    "eeg_section": {
+                        "post_discharge_label": "Post Décharge",
+                        "duration_label": "Durée",
+                        "localization_label": "Localisation",
+                        "localization_options": {
+                            "local": "Locale",
+                            "regional": "Régionale",
+                            "wide": "Vaste"
+                        },
+                        "type_label": "Type",
+                        "crisis_label": "Crise (Décharge rythmique)",
+                        "crisis_comments_label": "Commentaires"
+                    }
+                },
+                "no_effect_selected": "Veuillez sélectionner un effet avant d'enregistrer cette stimulation.",
+                "alert_point_changed": {
+                    "title": "Changer de point sans enregistrer?",
+                    "confirm_label": "Ne pas enregistrer",
+                    "cancel_label": "Annuler"
+                }
+            },
+            "summary": {
+                "tab_title": "Résumé",
+                "alert_no_data_title": "Aucune donnée!",
+                "alert_no_data_text": "Il n'y a pas de donnée à afficher. Compléter les volets implantation et stimulation pour ajouter des données.",
+                "button_filter_off": "Réinitialiser les filtres",
+                "button_select_columns": "Sélectionner les colonnes",
+                "button_download_csv": "Télécharger au format CSV",
+                "results_table": {
+                    "implantation_group_title": "Implantation",
+                    "electrode_title": "Électrode",
+                    "pointId_title": "Point",
+                    "roi_title": "Positionnement",
+                    "stimulation_parameters_group_title": "Stimulation",
+                    "stimulation_time_title": "Heure",
+                    "amplitude_title": "Amplitude",
+                    "duration_title": "Durée",
+                    "frequency_title": "Fréquence",
+                    "length_path_title": "LP",
+                    "charge_density_title": "Densité de Charge",
+                    "task_title": "Tâche",
+                    "effects_group_title": "Effets",
+                    "observed_effect_title": "Effet cognitif",
+                    "observed_effect_comments_title": "Effet observé (commentaires)",
+                    "epi_manifestation_title": "Manif. Epi.",
+                    "contact_in_epi_zone_title": "Dans zone Epi.",
+                    "contact_in_epi_zone_comments_title": "Dans zone Epi. commentaires",
+                    "post_discharge_title": "Post Décharge",
+                    "post_discharge_details_title": "Post Décharge - Details",
+                    "crisis_title": "Crise",
+                    "crisis_comments_title": "Crise (commentaires)"
+                }
+            }
+        },
+        "login": {
+            "welcome_message": "Bienvenue! Veuillez vous connecter pour continuer.",
+            "form_fields": {
+                "email": {
+                    "label": "Email",
+                    "placeholder": "vous@email.com"
+                },
+                "password": {
+                    "label": "Mot de passe",
+                    "placeholder": "Votre mot de passe"
+                }
+            },
+            "go_to_register_msg": "Pas de compte? S'inscrire",
+            "signin": "Se connecter",
+            "auth_errors": {
+                "invalid_credentials": "Identifiants invalides",
+                "account_disabled": "Votre compte est désactivé",
+                "other_error": "Une erreur s'est produite. Veuillez réessayer plus tard."
+            }
+        },
+        "register": {
+            "welcome_message": "Bienvenue ! Veuillez vous inscrire pour continuer.",
+            "validations": {
+                "invalid_email_format": "Email invalide",
+                "password_requirements": "Le mot de passe doit comporter au moins 8 caractères et contenir au moins une lettre majuscule, un chiffre et un caractère spécial."
+            },
+            "auth_errors": {
+                "email_exists": "Il semble que vous ayez déjà un compte. ",
+                "login_instead": "Essayez plutôt de vous connecter.",
+                "other_error": "Une erreur s'est produite. Veuillez réessayer ultérieurement."
+            },
+            "form_fields": {
+                "name": {
+                    "label": "Nom",
+                    "placeholder": "Votre Nom"
+                },
+                "email": {
+                    "label": "Email",
+                    "placeholder": "vous@email.com"
+                },
+                "password": {
+                    "label": "Mot de passe",
+                    "placeholder": "Votre mot de passe",
+                    "description": "Doit contenir au moins 8 caractères avec 1 lettre majuscule, 1 chiffre et 1 caractère spécial."
+                }
+            },
+            "go_to_login_msg": "Vous avez déjà un compte ? Se connecter",
+            "register": "S'inscrire"
+        },
+        "verify_email": {
+            "message": "Veuillez vérifier votre adresse e-mail pour continuer.",
+            "send_email_btn": "Envoyer un e-mail de vérification.",
+            "email_confirmed": "Merci d'avoir confirmé votre email.",
+            "go_to_root": "Aller à la page principale"
+        },
+        "accountManagement": {
+            "manage_account": "Gestion du compte",
+            "password_change": {
+                "title": "Changement du mot de passe",
+                "current_password": "Mot de passe actuel",
+                "new_password": "Nouveau mot de passe",
+                "confirm_new_password": "Confirmer le nouveau mot de passe",
+                "notifications": {
+                    "success_title": "Succès",
+                    "success_body": "Mot de passe changé",
+                    "failure_title": "Erreur",
+                    "auth_errors": {
+                        "invalid_credentials": "Identifiants invalides",
+                        "other_error": "Une erreur s'est produite. Veuillez réessayer plus tard."
+                    }
+                },
+                "validations": {
+                    "password_requirements": "Le mot de passe doit comporter au moins 8 caractères et contenir au moins une lettre majuscule, un chiffre et un caractère spécial.",
+                    "passwords_do_not_match": "Les mots de passe entrés ne correspondent pas."
+                }
+            },
+            "displayNameChange": {
+                "title": "Changement du nom d'affichage",
+                "new_display_name": "Nouveau nom",
+                "notifications": {
+                    "success_title": "Succès",
+                    "success_body": "Nom d'affichage changé",
+                    "failure_title": "Erreur",
+                    "failure_body": "Une erreur s'est produite. Veuillez réessayer plus tard."
+                },
+                "validations": {
+                    "same_as_current": "Ceci est déjà votre nom d'affichage."
+                }
+            },
+            "delete_account": {
+                "title": "Supprimer le compte",
+                "confirm_deletion": "Je confirme que je veux supprimer mon compte.",
+                "password": "Mot de passe",
+                "notifications": {
+                    "success_title": "Succès",
+                    "success_body": "Compte supprimé",
+                    "failure_title": "Erreur",
+                    "auth_errors": {
+                        "invalid_credentials": "Identifiants invalides",
+                        "other_error": "Une erreur s'est produite. Veuillez réessayer plus tard."
+                    }
+                },
+                "validations": {
+                    "not_confirmed": "Cocher la case pour confirmer la suppression du compte."
+                }
+            }
+        }
+    },
+    "common": {
+        "okButtonLabel": "OK",
+        "resetButtonLabel": "Réinitialiser",
+        "yes": "oui",
+        "no": "non",
+        "unknown": "inconnu"
+    }
+}
