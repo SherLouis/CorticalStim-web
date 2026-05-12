@@ -1,7 +1,7 @@
 {
   "name": "cortical_stim_web",
   "version": "0.1.0",
-  "homepage": "https://SherLouis.github.io/CorticalStim-web/",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "@dotenvx/dotenvx": "^1.21.1",
