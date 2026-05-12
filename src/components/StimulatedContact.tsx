@@ -1,4 +1,4 @@
-import { Chip, ChipProps, MantineColor, MantineTheme, Sx, useMantineTheme } from "@mantine/core";
+import { Chip, ChipProps, MantineTheme, Sx, useMantineTheme } from "@mantine/core";
 import { Stimulation } from "../core/models/stimulationForm";
 import { NO_EFFECT } from "./StimulationEffectSelection";
 

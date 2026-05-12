@@ -1,4 +1,4 @@
-import { ActionIcon, Text, Box, Group, Tabs, Alert, TextInput, Modal } from "@mantine/core";
+import { ActionIcon, Text, Box, Group, Tabs, Alert, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import StimulationFormValues from "../../core/models/stimulationForm";
