@@ -94,11 +94,11 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
             return true;
         });
         setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
-    }, [form, sortStatus, pointIdList])
+    }, [form, sortStatus, pointIdList, getRecordsFromForm])
 
     useEffect(() => {
         setPointIdListHandlers.setState(filters ? (filters.pointIds ? filters.pointIds : []) : [])
-    }, [filters])
+    }, [filters, setPointIdListHandlers])
 
     const clearAllFilters = () => {
         setPointIdListHandlers.setState([]);

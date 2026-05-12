@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Group, Text, NumberInput, Radio, ScrollArea, Stack, Switch, Table, TextInput, Title, Flex } from "@mantine/core";
+import { Box, Button, Checkbox, Group, Text, Radio, ScrollArea, Stack, Switch, TextInput, Title, Flex } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import { PostDischargeValueOptions, StimulationEffectsValues, StimulationObservedEffectFormValues } from "../core/models/stimulationForm";

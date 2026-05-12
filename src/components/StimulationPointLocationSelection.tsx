@@ -1,4 +1,4 @@
-import { Box, Button, Group, Input, NumberInput, ScrollArea, SegmentedControl, Select, SimpleGrid, Stack, Title } from "@mantine/core";
+import { Box, Button, Input, NumberInput, ScrollArea, SegmentedControl, Select, SimpleGrid, Stack, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 

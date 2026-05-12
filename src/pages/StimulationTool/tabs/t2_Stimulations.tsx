@@ -194,10 +194,10 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     const CentralBar = () => {
         const theme = useMantineTheme();
         const formatParameters = (params: StimulationParametersFormValues): string => {
-            return t('pages.stimulationTool.stimulation.amplitude_label') + ': ' + params.amplitude + ' (mA)' + ', ' +
-                t('pages.stimulationTool.stimulation.frequency_label') + ': ' + params.frequency + ' (Hz)' + ', ' +
-                t('pages.stimulationTool.stimulation.duration_label') + ': ' + params.duration + ' (s)' + ', ' +
-                t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + ' (µs)' + ', ' +
+            return t('pages.stimulationTool.stimulation.amplitude_label') + ': ' + params.amplitude + ' (mA), ' +
+                t('pages.stimulationTool.stimulation.frequency_label') + ': ' + params.frequency + ' (Hz), ' +
+                t('pages.stimulationTool.stimulation.duration_label') + ': ' + params.duration + ' (s), ' +
+                t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + ' (µs), ' +
                 t('pages.stimulationTool.stimulation.charge_density_label') + ': ' + computeChargeDensity(params.amplitude, params.lenght_path).toFixed(2) + ' (µC/cm²)';
         }
 

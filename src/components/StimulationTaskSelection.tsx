@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Group, Stack, Table, TextInput, Title } from "@mantine/core";
+import { Box, Button, Flex, Group, Stack, TextInput, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import ColumnButtonSelect from "./ColumnButtonSelect";
