@@ -76,13 +76,14 @@ export default function BasePage(props: PropsWithChildren<BasePageProps>) {
 }
 
 const getSvgPathForLanguage = (language?: string) => {
+    const publicUrl = process.env.PUBLIC_URL || '';
     switch (language) {
         case 'fr':
-            return '/CorticalStim-web/assets/images/flag_fr.svg';
+            return `${publicUrl}/assets/images/flag_fr.svg`;
         case 'en':
-            return '/CorticalStim-web/assets/images/flag_uk.svg';
+            return `${publicUrl}/assets/images/flag_uk.svg`;
         default:
-            return '/CorticalStim-web/assets/images/flag_uk.svg';
+            return `${publicUrl}/assets/images/flag_uk.svg`;
     }
 }
 
