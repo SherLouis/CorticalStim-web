@@ -22,7 +22,7 @@ i18n
             escapeValue: false, // not needed for react as it escapes by default
         },
         backend: {
-            loadPath: '/CorticalStim-web/locales/{{lng}}/translation.json'
+            loadPath: (process.env.PUBLIC_URL || '') + '/locales/{{lng}}/translation.json'
         }
     });
 
