@@ -1,7 +1,7 @@
 import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
 import { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, ElectrodeFormValues, computeChargeDensity } from "../../../core/models/stimulationForm";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
 import StimulationTaskSelection, { formatSelectedTask, NO_TASK } from "../../../components/StimulationTaskSelection";
@@ -20,6 +20,9 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
     const { t } = useTranslation();
 
     const [selectedPoint, setSelectedPoint] = useState<string>("");
+    useEffect(() => {
+        return () => setSelectedPoint("");
+    }, []);
     const [showConfirmNoSave, setShowConfirmNoSave] = useState<boolean>(false);
 
     const [stimulationTime, setStimulationTime] = useState<string>("");
@@ -560,7 +563,7 @@ const ContactSelection = ({ electrodes, selectedContact, onSelectedChanged, onVi
                                         const pointId = getStimPointLabel(electrode.label, stim_point_i);
                                         const nbStims = stim_point.stimulations.length;
                                         return (
-                                            <Popover position='bottom' opened={selectedContact === pointId} key={pointId}>
+                                            <Popover position='bottom' opened={selectedContact === pointId} key={pointId} withinPortal>
                                                 <Popover.Target>
                                                     <Container p={0}>
                                                         <StimulatedContact
