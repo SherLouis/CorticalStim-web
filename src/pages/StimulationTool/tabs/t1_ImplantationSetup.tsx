@@ -117,30 +117,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
         if (locationForm.values.type === 'mni') { return "MNI (" + locationForm.values.mni_x + ',' + locationForm.values.mni_y + ',' + locationForm.values.mni_z + ")"; }
     }
 
-    const resetSelectedContacts = () => {
-        if (selectedContacts === undefined) { return; }
-        for (let selectedStimPoint of selectedContacts) {
-            const electrode_label = selectedStimPoint.split('/').slice(0, -1).join('/');
 
-            form.values.electrodes.forEach((electrode, electrode_i) => {
-                if (electrode.label === electrode_label) {
-                    electrode.stim_points.forEach((stim_point, stim_point_i) => {
-                        const stimId = getStimPointLabel(electrode.label, stim_point_i)
-                        if (stimId === selectedStimPoint) {
-                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.type`, "vep");
-                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.vep`, "");
-                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.destrieux`, "");
-                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.mni`, { x: 0, y: 0, z: 0 });
-                            form.setFieldValue(`electrodes.${electrode_i}.stim_points.${stim_point.index}.location.done`, false);
-                        }
-                    });
-                }
-            });
-        }
-        const newDoneContacts = doneContacts.filter((c) => !selectedContacts.includes(c));
-        setDoneContacts(newDoneContacts);
-        setSelectedContacts([]);
-    }
 
     const getSelectedContactsROIValue = useCallback((): ElectrodeLocationFormValues => {
         var roi_type = "";
@@ -287,7 +264,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     // Selected contact changed => reset location form values
     useEffect(() => {
         locationForm.setValues(getSelectedContactsROIValue());
-    }, [selectedContacts, getSelectedContactsROIValue]);
+    }, [selectedContacts, getSelectedContactsROIValue, locationForm]);
 
     const CentralBar = () => {
         // TODO: Add instruction when at least 1 electrode configured and all contacts done, but not all electrodes confirmed

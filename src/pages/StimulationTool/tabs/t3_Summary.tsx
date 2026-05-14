@@ -47,6 +47,8 @@ const formatYesNoUnknown = (value: string, t: any) => {
     }
 }
 
+const allColumnsProps = { sortable: true, resizable: false, draggable: false, toggleable: false };
+
 export default function SummaryTab({ form, filters }: SummaryTabProps) {
     const { t } = useTranslation();
 
@@ -110,7 +112,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         setSortStatus({ columnAccessor: 'pointId', direction: 'desc' });
     }
 
-    const allColumnsProps = { sortable: true, resizable: false, draggable: false, toggleable: false };
+
 
     const columnsLocalStorageKey = 'result_table_columns';
     const tableColumns = useMemo(() => [

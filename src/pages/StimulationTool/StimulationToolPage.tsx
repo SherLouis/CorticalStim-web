@@ -115,7 +115,7 @@ export default function StimulationToolPage() {
     useEffect(() => {
         const shouldDisplayUnsavedMessage = JSON.stringify(form.values) !== JSON.stringify(form_previous_values);
         setHasUnsavedData(shouldDisplayUnsavedMessage)
-    }, [form.values, form_previous_values]);
+    }, [form.values, form_previous_values, setHasUnsavedData]);
 
     const customTabStyle = useCustomTabStyle();
     // TODO : different layout for smaller screens
