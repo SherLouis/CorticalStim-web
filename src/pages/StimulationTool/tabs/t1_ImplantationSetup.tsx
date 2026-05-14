@@ -285,7 +285,9 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     // Form change (from file open for example)
     useEffect(() => { updateDoneContacts(); }, [form, updateDoneContacts])
     // Selected contact changed => reset location form values
-    useEffect(() => { locationForm.reset(); locationForm.setValues(getSelectedContactsROIValue()); }, [selectedContacts, locationForm, getSelectedContactsROIValue]);
+    useEffect(() => {
+        locationForm.setValues(getSelectedContactsROIValue());
+    }, [selectedContacts, getSelectedContactsROIValue]);
 
     const CentralBar = () => {
         // TODO: Add instruction when at least 1 electrode configured and all contacts done, but not all electrodes confirmed

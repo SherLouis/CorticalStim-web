@@ -157,7 +157,7 @@ export default function StimulationToolPage() {
                     </Alert>
                 }
             </Group>
-            <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={customTabStyle.classes} h={"96%"}>
+            <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={customTabStyle.classes} h={"96%"} keepMounted={false}>
                 <Tabs.List grow mah={"5%"}>
                     <Tabs.Tab value="implantation">{t("pages.stimulationTool.implantation.tab_title")}</Tabs.Tab>
                     <Tabs.Tab value="stimulation">{t("pages.stimulationTool.stimulation.tab_title")}</Tabs.Tab>

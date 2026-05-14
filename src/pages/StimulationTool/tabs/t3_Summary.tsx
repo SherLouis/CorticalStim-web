@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { formatEpiManifestation, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
 import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import sortBy from 'lodash.sortby';
 import { useListState } from "@mantine/hooks";
 import { ActionIcon, Alert, Box, Checkbox, Group, MultiSelect, Popover } from "@mantine/core";
@@ -12,11 +12,45 @@ import { IconFilterOff, IconFileTypeCsv, IconTableOptions, IconAlertTriangle } f
 import { CSVLink } from "react-csv";
 import { DataTableColumnToggle } from "mantine-datatable/dist/hooks";
 
+const formatPointLocation = (point_location: StimulationLocationFormValues) => {
+    switch (point_location.type) {
+        case 'white':
+            return point_location.white_matter;
+        case 'vep':
+            return point_location.vep;
+        case 'destrieux':
+            return point_location.destrieux;
+        case 'mni':
+            return 'x=' + point_location.mni.x + ' y=' + point_location.mni.y + ' z=' + point_location.mni.z;
+        default:
+            return '-'
+    }
+}
+
+const formatBool = (value: boolean, t: any) => {
+    if (value === true) {
+        return t('common.yes');
+    }
+    return t('common.no');
+}
+
+const formatYesNoUnknown = (value: string, t: any) => {
+    switch (value.toLowerCase()) {
+        case "yes":
+            return t('common.yes');
+        case "no":
+            return t('common.no');
+        case "unknown":
+            return t('common.unknown');
+        default:
+            return value
+    }
+}
+
 export default function SummaryTab({ form, filters }: SummaryTabProps) {
     const { t } = useTranslation();
 
-    const getRecordsFromForm = () => {
-        // Electrode, PointId, ROI, stimulation time, stimulation parameters ..., Task, Cognitive effect, Epi effect, EEG effect
+    const allRecords = useMemo(() => {
         return (
             form.values.electrodes.flatMap((elec) =>
                 elec.stim_points.flatMap((point) =>
@@ -46,74 +80,46 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                     })
                 )
             ));
-    }
-    const formatPointLocation = (point_location: StimulationLocationFormValues) => {
-        switch (point_location.type) {
-            case 'white':
-                return point_location.white_matter;
-            case 'vep':
-                return point_location.vep;
-            case 'destrieux':
-                return point_location.destrieux;
-            case 'mni':
-                return 'x=' + point_location.mni.x + ' y=' + point_location.mni.y + ' z=' + point_location.mni.z;
-            default:
-                return '-'
-        }
-    }
+    }, [form.values.electrodes, t]);
 
-    const formatBool = (value: boolean) => {
-        if (value === true) {
-            return t('common.yes');
-        }
-        return t('common.no');
-    }
-
-    const formatYesNoUnknown = (value: string) => {
-        switch (value.toLowerCase()) {
-            case "yes":
-                return t('common.yes');
-            case "no":
-                return t('common.no');
-            case "unknown":
-                return t('common.unknown');
-            default:
-                return value
-        }
-    }
-
-    const [records, setRecords] = useState(getRecordsFromForm());
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'pointId', direction: 'desc' });
     const [pointIdList, setPointIdListHandlers] = useListState(filters ? filters.pointIds : []);
-    const csvFileRef = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
 
-    useEffect(() => {
-        var data = sortBy(getRecordsFromForm(), sortStatus.columnAccessor);
-        data = data.filter((result) => {
+    const records = useMemo(() => {
+        let data = sortBy(allRecords, sortStatus.columnAccessor);
+        if (sortStatus.direction === 'desc') data.reverse();
+
+        return data.filter((result) => {
             if (pointIdList.length !== 0 && !pointIdList.includes(result.pointId)) { return false; }
             return true;
         });
-        setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
-    }, [form, sortStatus, pointIdList, getRecordsFromForm])
+    }, [allRecords, sortStatus, pointIdList]);
 
+    const csvFileRef = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
+
+    const lastFiltersRef = useRef(filters);
     useEffect(() => {
-        setPointIdListHandlers.setState(filters ? (filters.pointIds ? filters.pointIds : []) : [])
-    }, [filters, setPointIdListHandlers])
+        if (filters !== lastFiltersRef.current) {
+            setPointIdListHandlers.setState(filters?.pointIds ?? []);
+            lastFiltersRef.current = filters;
+        }
+    }, [filters, setPointIdListHandlers]);
 
     const clearAllFilters = () => {
         setPointIdListHandlers.setState([]);
+        setSortStatus({ columnAccessor: 'pointId', direction: 'desc' });
     }
 
     const allColumnsProps = { sortable: true, resizable: false, draggable: false, toggleable: false };
 
     const columnsLocalStorageKey = 'result_table_columns';
-    const tableColumns = [
+    const tableColumns = useMemo(() => [
         { accessor: 'electrode', title: t('pages.stimulationTool.summary.results_table.electrode_title'), ...allColumnsProps },
         {
             accessor: 'pointId', title: t('pages.stimulationTool.summary.results_table.pointId_title'),
             filter: (
                 <MultiSelect
-                    data={getRecordsFromForm().flatMap((r) => r.pointId)}
+                    data={Array.from(new Set(allRecords.map((r) => r.pointId)))}
                     value={pointIdList}
                     label="Points"
                     searchable
@@ -128,32 +134,32 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         {
             accessor: 'amplitude',
             title: t('pages.stimulationTool.summary.results_table.amplitude_title'),
-            render: (result) => result.amplitude + ' mA',
+            render: (result: Result) => result.amplitude + ' mA',
             ...allColumnsProps
         },
         {
             accessor: 'duration',
             title: t('pages.stimulationTool.summary.results_table.duration_title'),
-            render: (result) => result.duration + ' s',
+            render: (result: Result) => result.duration + ' s',
             ...allColumnsProps
         },
         {
             accessor: 'frequency',
             title: t('pages.stimulationTool.summary.results_table.frequency_title'),
-            render: (result) => result.frequency + ' Hz',
+            render: (result: Result) => result.frequency + ' Hz',
             ...allColumnsProps
         },
         {
             accessor: 'lenght_path',
             title: t('pages.stimulationTool.summary.results_table.length_path_title'),
-            render: (result) => result.lenght_path + ' µs',
+            render: (result: Result) => result.lenght_path + ' µs',
             defaultToggle: false,
             ...allColumnsProps
         },
         {
             accessor: 'charge_density',
             title: t('pages.stimulationTool.summary.results_table.charge_density_title'),
-            render: (result) => result.charge_density.toFixed(2) + ' µC/cm²',
+            render: (result: Result) => result.charge_density.toFixed(2) + ' µC/cm²',
             defaultToggle: true,
             ...allColumnsProps
         },
@@ -161,12 +167,12 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         { accessor: 'cognitive_effect', title: t('pages.stimulationTool.summary.results_table.observed_effect_title'), ...allColumnsProps },
         { accessor: 'observed_effect_comments', title: t('pages.stimulationTool.summary.results_table.observed_effect_comments_title'), defaultToggle: false, ...allColumnsProps },
         { accessor: 'epi_manifestation', title: t('pages.stimulationTool.summary.results_table.epi_manifestation_title'), ...allColumnsProps },
-        { accessor: 'contact_in_epi_zone', title: t('pages.stimulationTool.summary.results_table.contact_in_epi_zone_title'), render: (result) => formatYesNoUnknown(result.contact_in_epi_zone), ...allColumnsProps },
+        { accessor: 'contact_in_epi_zone', title: t('pages.stimulationTool.summary.results_table.contact_in_epi_zone_title'), render: (result: Result) => formatYesNoUnknown(result.contact_in_epi_zone, t), ...allColumnsProps },
         { accessor: 'contact_in_epi_zone_comments', title: t('pages.stimulationTool.summary.results_table.contact_in_epi_zone_comments_title'), defaultToggle: false, ...allColumnsProps },
         {
             accessor: 'post_discharge',
             title: t('pages.stimulationTool.summary.results_table.post_discharge_title'),
-            render: (result) => formatBool(result.post_discharge),
+            render: (result: Result) => formatBool(result.post_discharge, t),
             ...allColumnsProps
         },
         {
@@ -178,7 +184,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         {
             accessor: 'crisis',
             title: t('pages.stimulationTool.summary.results_table.crisis_title'),
-            render: (result) => formatBool(result.crisis),
+            render: (result: Result) => formatBool(result.crisis, t),
             defaultToggle: false,
             ...allColumnsProps
         },
@@ -188,7 +194,8 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
             defaultToggle: false,
             ...allColumnsProps
         }
-    ] as DataTableColumn<Result>[];
+    ] as DataTableColumn<Result>[], [t, allRecords, pointIdList, setPointIdListHandlers]);
+
     const { effectiveColumns, columnsToggle, setColumnsToggle } = useDataTableColumns<Result>({
         key: columnsLocalStorageKey,
         columns: tableColumns
@@ -198,17 +205,12 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         csvFileRef?.current?.link.click();
     }
 
-    const getCsvData = () => {
-        // TODO: change this to change data in csv
-        return records;
-    }
-
-    const getCsvHeaders = () => {
+    const csvHeaders = useMemo(() => {
         return tableColumns.map(c => {
             const columnTitle = c?.title as string;
             return { key: c.accessor, label: columnTitle };
         })
-    }
+    }, [tableColumns]);
 
     return (
         <Box h={"100%"}>
@@ -219,8 +221,8 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
             </Alert>
             <Box h={"100%"} display={records.length > 0 ? 'block' : 'none'}>
                 <CSVLink
-                    data={getCsvData()}
-                    headers={getCsvHeaders()}
+                    data={records}
+                    headers={csvHeaders}
                     filename={`${form.values.patient_id}_${new Date().toISOString().split('T')[0]}_summary.csv`}
                     hidden
                     ref={csvFileRef}
