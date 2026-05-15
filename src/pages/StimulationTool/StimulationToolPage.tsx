@@ -113,9 +113,12 @@ export default function StimulationToolPage() {
     }, [hasUnsavedData])
 
     useEffect(() => {
-        const shouldDisplayUnsavedMessage = JSON.stringify(form.values) !== JSON.stringify(form_previous_values);
-        setHasUnsavedData(shouldDisplayUnsavedMessage)
-    }, [form.values, form_previous_values]);
+        const timeoutId = setTimeout(() => {
+            const shouldDisplayUnsavedMessage = JSON.stringify(form.values) !== JSON.stringify(form_previous_values);
+            setHasUnsavedData(shouldDisplayUnsavedMessage);
+        }, 1000);
+        return () => clearTimeout(timeoutId);
+    }, [form.values, form_previous_values, setHasUnsavedData]);
 
     const customTabStyle = useCustomTabStyle();
     // TODO : different layout for smaller screens
@@ -157,7 +160,7 @@ export default function StimulationToolPage() {
                     </Alert>
                 }
             </Group>
-            <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={customTabStyle.classes} h={"96%"}>
+            <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={customTabStyle.classes} h={"96%"} keepMounted={false}>
                 <Tabs.List grow mah={"5%"}>
                     <Tabs.Tab value="implantation">{t("pages.stimulationTool.implantation.tab_title")}</Tabs.Tab>
                     <Tabs.Tab value="stimulation">{t("pages.stimulationTool.stimulation.tab_title")}</Tabs.Tab>
