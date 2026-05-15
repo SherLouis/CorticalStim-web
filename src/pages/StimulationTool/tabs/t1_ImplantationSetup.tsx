@@ -5,8 +5,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { letters } from "../../../lib/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";
 import { TabProperties } from "./tab_properties";
-import { ElectrodeFormValues, getStimPointLabel, StimulationFormValues, StimulationPoint } from "../../../core/models/stimulationForm";
-import { UseFormReturnType } from "@mantine/form";
+import StimulationFormValues, { ElectrodeFormValues, getStimPointLabel, getStimPointDisplayLabel, StimulationPoint } from "../../../core/models/stimulationForm";
+import { useForm, UseFormReturnType } from "@mantine/form";
 import parseMniImplantationFromTsv from "../../../ui/tsvMniImplantationParser/tsvMniImplantationParser";
 
 export default function ElectrodeSetupStep({ form }: TabProperties) {
@@ -136,53 +136,64 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
 
     const getSelectedContactsROIValue = useCallback((): ElectrodeLocationFormValues => {
-        var roi_type: "vep" | "destrieux" | "mni" | "white" = "vep";
-        var roi_vep = "";
-        var roi_destrieux = "";
-        var roi_wm = "";
-        var roi_mni = { x: 0, y: 0, z: 0 };
+        const defaults: ElectrodeLocationFormValues = {
+            type: "vep",
+            vep: "",
+            destrieux: "",
+            white_matter: "",
+            mni_x: 0,
+            mni_y: 0,
+            mni_z: 0
+        };
 
         if (selectedContacts.length === 0) {
-            return { type: roi_type, vep: roi_vep, destrieux: roi_destrieux, white_matter: roi_wm, mni_x: roi_mni.x, mni_y: roi_mni.y, mni_z: roi_mni.z };
+            return defaults;
         }
 
         // Build a lookup map for faster access
-        const pointMap = new Map<string, any>();
+        const pointMap = new Map<string, StimulationPoint>();
         form.values.electrodes.forEach(e => {
             e.stim_points.forEach((p, i) => {
                 pointMap.set(getStimPointLabel(e.label, i), p);
             });
         });
 
-        selectedContacts.forEach((selectedStimPoint, selectedStimPoint_i) => {
-            const stimPoint = pointMap.get(selectedStimPoint);
-            const type = stimPoint?.location.type;
-            const vep = stimPoint?.location.vep;
-            const destrieux = stimPoint?.location.destrieux;
-            const mni = stimPoint?.location.mni;
-            const wm = stimPoint?.location.white_matter;
+        let roi_type: string | undefined = undefined;
+        let roi_vep: string | undefined = undefined;
+        let roi_destrieux: string | undefined = undefined;
+        let roi_wm: string | undefined = undefined;
+        let roi_mni = { x: 0, y: 0, z: 0 };
+        let first = true;
 
-            if (selectedStimPoint_i === 0) {
-                roi_vep = vep !== undefined ? vep : roi_vep;
-                roi_destrieux = destrieux !== undefined ? destrieux : roi_destrieux;
-                roi_mni = mni !== undefined ? mni : roi_mni;
-                roi_wm = wm !== undefined ? wm : roi_wm;
-                roi_type = type !== undefined ? type : roi_type;
-            }
-            else {
-                if (vep !== roi_vep) { roi_vep = ""; }
-                if (wm !== roi_wm) { roi_wm = ""; }
-                if (destrieux !== roi_destrieux) { roi_destrieux = ""; }
-                if (mni?.x !== roi_mni.x || mni?.y !== roi_mni.y || mni?.z !== roi_mni.z) { roi_mni = { x: 0, y: 0, z: 0 }; }
-                if (type !== roi_type) { roi_type = "vep"; }
+        selectedContacts.forEach((selectedStimPoint) => {
+            const stimPoint = pointMap.get(selectedStimPoint);
+            if (!stimPoint) return;
+
+            const { type, vep, destrieux, mni, white_matter } = stimPoint.location;
+
+            if (first) {
+                roi_type = type;
+                roi_vep = vep;
+                roi_destrieux = destrieux;
+                roi_mni = mni || { x: 0, y: 0, z: 0 };
+                roi_wm = white_matter;
+                first = false;
+            } else {
+                if (type !== roi_type) roi_type = "vep"; // Reset to default if mixed
+                if (vep !== roi_vep) roi_vep = "";
+                if (destrieux !== roi_destrieux) roi_destrieux = "";
+                if (white_matter !== roi_wm) roi_wm = "";
+                if (mni?.x !== roi_mni.x || mni?.y !== roi_mni.y || mni?.z !== roi_mni.z) {
+                    roi_mni = { x: 0, y: 0, z: 0 };
+                }
             }
         });
 
         return {
-            type: roi_type,
-            vep: roi_vep,
-            destrieux: roi_destrieux,
-            white_matter: roi_wm,
+            type: roi_type || "vep",
+            vep: roi_vep || "",
+            destrieux: roi_destrieux || "",
+            white_matter: roi_wm || "",
             mni_x: roi_mni.x,
             mni_y: roi_mni.y,
             mni_z: roi_mni.z
@@ -284,8 +295,16 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     }
 
     const locationForm = useForm<ElectrodeLocationFormValues>({
-        initialValues: getSelectedContactsROIValue(),
-        validate: (values) => ({
+        initialValues: {
+            type: "vep",
+            vep: "",
+            destrieux: "",
+            white_matter: "",
+            mni_x: 0,
+            mni_y: 0,
+            mni_z: 0
+        },
+        validate: (values: ElectrodeLocationFormValues) => ({
             type: values.type === '' ? t("pages.stimulationTool.implantation.validations.location.type") : null,
             vep: values.type !== 'vep' ? null : (values.vep === '' || values.vep === null) ? t("pages.stimulationTool.implantation.validations.location.vep") : null,
             destrieux: values.type !== 'destrieux' ? null : (values.destrieux === '' || values.destrieux === null) ? t("pages.stimulationTool.implantation.validations.location.destrieux") : null,
@@ -296,11 +315,16 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     })
 
     // Form change (from file open for example)
-    useEffect(() => { updateDoneContacts(); }, [form, updateDoneContacts])
-    // Selected contact changed => reset location form values
+    useEffect(() => { updateDoneContacts(); }, [form.values.electrodes, updateDoneContacts])
+
+    // Selected contact changed or data model updated => sync location form values
+    // We use a stringified version of selectedContacts to avoid unnecessary triggers
+    const selectedContactsKey = useMemo(() => JSON.stringify(selectedContacts), [selectedContacts]);
     useEffect(() => {
-        locationForm.setValues(getSelectedContactsROIValue());
-    }, [selectedContacts, getSelectedContactsROIValue, locationForm]);
+        const newValues = getSelectedContactsROIValue();
+        locationForm.setValues(newValues);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedContactsKey, getSelectedContactsROIValue]);
 
 
 
@@ -468,7 +492,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                                         variant={doneContacts.includes(pointId) ? 'filled' : 'light'}
                                                         color={selectedContacts?.includes(pointId) ? 'blue' : doneContacts?.includes(pointId) ? 'green' : 'gray'}
                                                         checked={doneContacts.includes(pointId)}>
-                                                        {getStimPointLabel(electrode.label, stim_point_i, false)}
+                                                        {getStimPointLabel(electrode.label, stim_point_i, false, true)}
                                                     </Chip>);
                                             })}
                                         </SimpleGrid>
@@ -592,9 +616,11 @@ const CentralBar = ({
                             {t('pages.stimulationTool.implantation.selected_contacts') + ':'}
                             <ScrollArea type='always' h={"100%"} w={"100%"} sx={{ alignItems: "center", padding: '0' }}>
                                 <Group align="center" position='left' noWrap spacing={"xs"}>
-                                    {selectedContacts.map((point) => {
+                                    {selectedContacts.map((pointId) => {
                                         return (
-                                            <Badge key={point} size="lg" variant="filled">{point}</Badge>
+                                            <Badge key={pointId} size="lg" variant="filled">
+                                                {getStimPointDisplayLabel(pointId)}
+                                            </Badge>
                                         );
                                     })}
                                 </Group>

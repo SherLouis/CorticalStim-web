@@ -1,11 +1,9 @@
 import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
-import { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, ElectrodeFormValues, computeChargeDensity, Stimulation, StimulationPoint } from "../../../core/models/stimulationForm";
-import StimulationFormValues from "../../../core/models/stimulationForm";
-import { UseFormReturnType } from "@mantine/form";
+import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, getStimPointDisplayLabel, ElectrodeFormValues, computeChargeDensity, StimulationPoint } from "../../../core/models/stimulationForm";
+import { useForm, UseFormReturnType } from "@mantine/form";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useForm } from "@mantine/form";
 import StimulationTaskSelection, { formatSelectedTask, NO_TASK } from "../../../components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
 import StimulationEffectSelection, { formatEegPostDichargeLocale, formatEpiManifestation, formatSelectedObservedEffect, NO_EFFECT } from "../../../components/StimulationEffectSelection";
@@ -327,7 +325,7 @@ const ContactSelection = ({ electrodes, selectedContact, onSelectedChanged, onVi
                                                             key={pointId}
                                                             onChange={(_checked) => onSelectedChanged(selectedContact !== pointId ? pointId : "")}
                                                         >
-                                                            {pointId}
+                                                            {getStimPointLabel(electrode.label, stim_point_i, false, true)}
                                                         </StimulatedContact>
                                                     </Container>
                                                 </Popover.Target>
@@ -452,7 +450,7 @@ const CentralBar = ({
                             borderTopLeftRadius: theme.radius.xl,
                             borderBottomLeftRadius: theme.radius.xl,
                         })}>
-                        <Text fz={"xl"} fw={"bolder"}>{selectedPoint}</Text>
+                        <Text fz={"xl"} fw={"bolder"}>{getStimPointDisplayLabel(selectedPoint)}</Text>
                     </Center>
 
                     {/** Implantation ROI or selected Effect */}

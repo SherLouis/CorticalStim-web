@@ -1,5 +1,5 @@
 import { TabProperties } from "./tab_properties";
-import { StimulationLocationFormValues, computeChargeDensity, getStimPointLabel } from "../../../core/models/stimulationForm";
+import { StimulationLocationFormValues, computeChargeDensity, getStimPointLabel, getStimPointDisplayLabel } from "../../../core/models/stimulationForm";
 import { useTranslation } from "react-i18next";
 import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { formatEpiManifestation, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
@@ -119,9 +119,10 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
         { accessor: 'electrode', title: t('pages.stimulationTool.summary.results_table.electrode_title'), ...allColumnsProps },
         {
             accessor: 'pointId', title: t('pages.stimulationTool.summary.results_table.pointId_title'),
+            render: (result: Result) => getStimPointDisplayLabel(result.pointId),
             filter: (
                 <MultiSelect
-                    data={Array.from(new Set(allRecords.map((r) => r.pointId)))}
+                    data={Array.from(new Set(allRecords.map((r) => r.pointId))).map(id => ({ value: id, label: getStimPointDisplayLabel(id) }))}
                     value={pointIdList}
                     label="Points"
                     searchable
