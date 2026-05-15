@@ -1,6 +1,8 @@
 import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
-import { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, ElectrodeFormValues, computeChargeDensity } from "../../../core/models/stimulationForm";
+import { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, ElectrodeFormValues, computeChargeDensity, Stimulation, StimulationPoint } from "../../../core/models/stimulationForm";
+import StimulationFormValues from "../../../core/models/stimulationForm";
+import { UseFormReturnType } from "@mantine/form";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "@mantine/form";
@@ -194,276 +196,11 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
         return `${post_discharge} ${effect_form_values.crisis ? t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_label') : ""}`
     }
 
-    const CentralBar = () => {
-        const theme = useMantineTheme();
-        const formatParameters = (params: StimulationParametersFormValues): string => {
-            return t('pages.stimulationTool.stimulation.amplitude_label') + ': ' + params.amplitude + ' (mA), ' +
-                t('pages.stimulationTool.stimulation.frequency_label') + ': ' + params.frequency + ' (Hz), ' +
-                t('pages.stimulationTool.stimulation.duration_label') + ': ' + params.duration + ' (s), ' +
-                t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + ' (µs), ' +
-                t('pages.stimulationTool.stimulation.charge_density_label') + ': ' + computeChargeDensity(params.amplitude, params.lenght_path).toFixed(2) + ' (µC/cm²)';
-        }
 
-        const stimPointConfirmedExist = useMemo<boolean>(() => {
-            return form.values.electrodes.filter(e => e.confirmed && e.n_contacts > 0).length !== 0;
-        }, []);
-        const stimTimeSet = useMemo<boolean>(() => stimulationTime !== '', []);
 
-        const [useDateTimePicker, setUseDateTimePicker] = useState<boolean>(false);
-        const [customSelectedDateTime, setCustomSelectedDateTime] = useState<DateValue>(null);
 
-        const selectedPointElectrodeLabel = selectedPoint.split('/').slice(0, -1).join('/');
-        const selectedPointStims = form.values.electrodes.find(e => e.label === selectedPointElectrodeLabel)?.stim_points.find(p => getStimPointLabel(selectedPointElectrodeLabel, p.index) === selectedPoint)?.stimulations;
-        const stims = selectedPointStims !== undefined ? selectedPointStims : [];
-        const selectedContactBorderSx = getStimulatedStyledContactBorderStyle(stims, theme);
-        const selectedContactBackgroundColorSx = getStimulatedStyledContactColor(stims, stims.length === 0, theme, true);
 
-        return (
-            <Box h={"100%"} sx={(theme) => (
-                {
-                    borderRadius: theme.radius.xl,
-                    overflow: "hidden",
-                    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[6]
-                })}>
-                {/** No Contact exists */}
-                <Group align='center' position='center' h={"100%"} w={"100%"} display={!stimPointConfirmedExist ? "block" : "none"}>
-                    <Alert h={"100%"}
-                        icon={<IconAlertCircle size="1rem" />}
-                        title={t('pages.stimulationTool.stimulation.guide_alert_no_electrode_title')}>
-                        {t('pages.stimulationTool.stimulation.guide_alert_no_electrode_text')}
-                    </Alert>
-                </Group>
-                {/** Contact Exist */}
-                <Box h={"100%"} display={stimPointConfirmedExist ? 'block' : 'none'}>
-                    {/** No contact selected */}
-                    <Group align='center' position='center' h={"100%"} w={"100%"} display={selectedPoint === "" ? "block" : "none"}>
-                        <Alert h={"100%"}
-                            icon={<IconAlertCircle size="1rem" />}
-                            title={t('pages.stimulationTool.stimulation.guide_alert_title')}>
-                            {t('pages.stimulationTool.stimulation.guide_alert_text')}
-                        </Alert>
-                    </Group>
-                    {/** Contact selected */}
-                    <Flex direction={"row"} justify={"flex-start"} align={"flex-start"} wrap={"nowrap"} w={"100%"} h={"100%"} display={selectedPoint !== "" ? "flex" : "none"}>
-                        {/** Selected contact */}
-                        <Center
-                            sx={(theme) => ({
-                                flex: 1,
-                                backgroundColor: selectedContactBackgroundColorSx,
-                                height: '100%',
-                                padding: theme.spacing.md,
-                                ...selectedContactBorderSx,
-                                borderTopLeftRadius: theme.radius.xl,
-                                borderBottomLeftRadius: theme.radius.xl,
-                            })}>
-                            <Text fz={"xl"} fw={"bolder"}>{selectedPoint}</Text>
-                        </Center>
 
-                        {/** Implantation ROI or selected Effect */}
-                        <Stack sx={{ flex: 3 }} h={"100%"} align="center" justify="center">
-                            <Text fz={"lg"} fw={"bold"} display={stimTimeSet ? 'none' : 'block'}>{getSelectedPointLocation()}</Text>
-                            <Stack display={stimTimeSet ? 'block' : 'none'} align="flex-start" justify="center">
-                                <Text fz={"lg"} fw={"bold"}>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}:</Text>
-                                <Text fz={"lg"}>{getSelectedPointObservedEffect()}</Text>
-                            </Stack>
-                        </Stack>
-
-                        {/** Time selection / Save button */}
-                        <Group position="center" align="center" h={"100%"} noWrap sx={{ flex: 3 }} >
-                            <Group position="center" align="center" h={"100%"} w={"100%"} spacing={"xs"}>
-                                {!stimTimeSet &&
-                                    <HoverCard disabled={isTaskSelected}>
-                                        <HoverCard.Target>
-                                            <Box>
-                                                <Button.Group orientation="horizontal">
-                                                    <Button size="lg"
-                                                        display={useDateTimePicker ? 'none' : 'flex'}
-                                                        onClick={() => setStimulationTime(new Date().toISOString())}
-                                                        leftIcon={<IconClockCheck />}
-                                                        disabled={!isTaskSelected}>
-                                                        <Text w={"9rem"} align='center' size={"md"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_now')}</Text>
-                                                    </Button>
-                                                    <Button size="lg"
-                                                        display={useDateTimePicker ? 'none' : 'flex'}
-                                                        onClick={() => setUseDateTimePicker(true)}
-                                                        leftIcon={<IconClockEdit />}
-                                                        disabled={!isTaskSelected}>
-                                                        <Text w={"9rem"} align='center' size={"md"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_custom')}</Text>
-                                                    </Button>
-                                                </Button.Group>
-                                                <Group position="center" display={useDateTimePicker ? 'flex' : 'none'}>
-                                                    <DateTimePicker
-                                                        withSeconds
-                                                        size="lg"
-                                                        placeholder={t('pages.stimulationTool.stimulation.set_time_label_custom')}
-                                                        onChange={(date) => setCustomSelectedDateTime(date)}
-                                                    />
-                                                    <ActionIcon variant="filled"
-                                                        disabled={customSelectedDateTime === null}
-                                                        color={"green"}
-                                                        size={"xl"}
-                                                        onClick={() => setStimulationTime(customSelectedDateTime!.toISOString())}>
-                                                        <IconCheck size={20} />
-                                                    </ActionIcon>
-                                                </Group>
-                                            </Box>
-                                        </HoverCard.Target>
-                                        <HoverCard.Dropdown>
-                                            <Text>{t('pages.stimulationTool.stimulation.no_task_selected')}</Text>
-                                        </HoverCard.Dropdown>
-                                    </HoverCard>
-                                }
-                                {stimTimeSet &&
-                                    <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
-                                }
-                                {/** Save button */}
-                                <HoverCard disabled={isSelectedPointObservedEffectSelected}>
-                                    <HoverCard.Target>
-                                        <Box>
-                                            <Button variant="filled" size="md" color="green" leftIcon={<IconCircleCheck />}
-                                                display={stimTimeSet ? 'block' : 'none'}
-                                                onClick={handleSubmit}
-                                                disabled={stimulationTime === "" || !isSelectedPointObservedEffectSelected}>
-                                                {t('pages.stimulationTool.stimulation.saveButtonLabel')}
-                                            </Button>
-                                        </Box>
-                                    </HoverCard.Target>
-                                    <HoverCard.Dropdown>
-                                        <Text>{t('pages.stimulationTool.stimulation.no_effect_selected')}</Text>
-                                    </HoverCard.Dropdown>
-                                </HoverCard>
-                            </Group>
-                        </Group>
-
-                        {/** Parameters & Task or Manif & EEG */}
-                        <Box sx={{ flex: 5 }} h={"100%"} p={0} m={0}>
-                            {/** Task & Parameters when stim time is not set */}
-                            <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" spacing={"sm"} display={stimTimeSet ? 'none' : 'flex'}>
-                                <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
-                                <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.parameters_title')} : </strong>{formatParameters(params_form.values)}</Text>
-                            </Stack>
-                            {/** Epi manif & EEG when stim time is set */}
-                            <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" spacing={"sm"} display={stimTimeSet ? 'flex' : 'none'}>
-                                <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}:</strong> {getSelectedPointEpiManifEffect()}</Text>
-                                <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.effect.eeg')} :</strong> {getSelectedPointEEGEffect()}</Text>
-                            </Stack>
-                        </Box>
-                    </Flex >
-                </Box>
-            </Box>
-        );
-    }
-
-    const StimulationParametersSelection = () => {
-        const parameterSelection = (
-            <Group position="center" align="top" noWrap>
-                <CustomNumberInput
-                    h={"100%"}
-                    label={t('pages.stimulationTool.stimulation.amplitude_label') + ' (mA)'}
-                    precision={1}
-                    digit_step={1}
-                    decimal_step={0.1}
-                    min={0}
-                    max={10}
-                    variant='default'
-                    useCustom={true}
-                    {...params_form.getInputProps('amplitude')}
-                />
-                <Stack align="center" h={"100%"} spacing={0}>
-                    <CustomNumberInput
-                        label={t('pages.stimulationTool.stimulation.frequency_label') + ' (Hz)'}
-                        precision={0}
-                        step={1}
-                        min={0}
-                        styles={{ input: { textAlign: "center" } }}
-                        {...params_form.getInputProps('frequency')}
-                    />
-                    <Group spacing={0} grow w={"100%"}>
-                        {[1, 5, 50, 55].map((v) =>
-                            <Button compact key={"freq_" + v}
-                                onClick={() => params_form.setFieldValue('frequency', v)}
-                                variant={params_form.values.frequency === v ? 'filled' : 'default'}>
-                                {v}
-                            </Button>
-                        )}
-                    </Group>
-                </Stack>
-
-                <Stack align="center" h={"100%"} spacing={0}>
-                    <CustomNumberInput
-                        label={t('pages.stimulationTool.stimulation.duration_label') + ' (s)'}
-                        precision={0}
-                        step={1}
-                        min={0}
-                        styles={{ input: { textAlign: "center" } }}
-                        {...params_form.getInputProps('duration')}
-                    />
-                    <Group spacing={0} grow w={"100%"}>
-                        {[5, 10, 30, 60].map((v) =>
-                            <Button compact key={"duration_" + v}
-                                onClick={() => params_form.setFieldValue('duration', v)}
-                                variant={params_form.values.duration === v ? 'filled' : 'default'}>
-                                {v}
-                            </Button>
-                        )}
-                    </Group>
-                </Stack>
-
-                <Stack align="center" h={"100%"} spacing={0}>
-                    <CustomNumberInput
-                        label={t('pages.stimulationTool.stimulation.length_path_label') + ' (µs)'}
-                        precision={0}
-                        step={1}
-                        min={0}
-                        styles={{ input: { textAlign: "center" } }}
-                        {...params_form.getInputProps('lenght_path')}
-                    />
-                    <Group spacing={0} grow w={"100%"}>
-                        {[300, 500].map((v) =>
-                            <Button compact key={"lp_" + v}
-                                onClick={() => params_form.setFieldValue('lenght_path', v)}
-                                variant={params_form.values.lenght_path === v ? 'filled' : 'default'}>
-                                {v}
-                            </Button>
-                        )}
-                    </Group>
-                </Stack>
-            </Group>
-        );
-        return (
-            <Section
-                header={<Title order={5}>{t('pages.stimulationTool.stimulation.parameters_title')}</Title>}
-                children={parameterSelection}
-            />
-        );
-    }
-
-    const ContactColorLegend = (props: GroupProps) => {
-        const variants = [{ variant: "selected", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.selected') },
-        { variant: "singleStim", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.stimulated') },
-        { variant: "multipleStim", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.multi_stim') },
-        { variant: "postDischarge", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.post_discharge') },
-        { variant: "crisis", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.crisis') },
-        { variant: "singleStim", effect: true, label: t('pages.stimulationTool.stimulation.contact_color_legend.effect') }
-        ] as {
-            variant: 'default' | 'selected' | 'crisis' | 'postDischarge' | 'singleStim' | 'multipleStim',
-            effect: boolean,
-            label: string
-        }[];
-
-        return (
-            <Group {...props}>
-                {variants.map((v) =>
-                    <Stack align="center" justify="center" spacing={0}>
-                        <StimulatedContact size="xs" selected={false} forcedVariant={v.variant} forcedEffect={v.effect} onChange={() => { }} stimulations={[]}>
-                            {"A1/2"}
-                        </StimulatedContact>
-                        <Text>{v.label}</Text>
-                    </Stack>
-                )}
-            </Group>
-        );
-    }
 
     return (
         <Box pt={"md"} h={"100%"}>
@@ -482,7 +219,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                             header={
                                 <Group position="apart" align="center" noWrap>
                                     <Title order={3} h={"100%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
-                                    <ContactColorLegend h={"100%"} w={"80%"} position="apart" noWrap />
+                                    <ContactColorLegend h={"100%"} w={"80%"} position="apart" noWrap t={t} />
                                 </Group>
                             }
                             children={
@@ -500,7 +237,7 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
                     <Box h={"100%"} sx={{ flex: 5 }}>
                         <Stack h={"100%"} w={"100%"} spacing={0} display={selectedPoint !== '' ? 'flex' : 'none'}>
                             <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
-                            <StimulationParametersSelection />
+                            <StimulationParametersSelection form={params_form} t={t} />
                         </Stack>
 
                     </Box>
@@ -508,7 +245,23 @@ export default function StimulationsTab({ form, viewPointSummary }: StimulationT
             </Box>
 
             <Box h={"15%"} w={"100%"} py={"sm"}>
-                <CentralBar />
+                <CentralBar
+                    form={form}
+                    selectedPoint={selectedPoint}
+                    stimulationTime={stimulationTime}
+                    setStimulationTime={setStimulationTime}
+                    params_form={params_form}
+                    task_form={task_form}
+                    effect_form={effect_form}
+                    handleSubmit={handleSubmit}
+                    getSelectedPointLocation={getSelectedPointLocation}
+                    getSelectedPointObservedEffect={getSelectedPointObservedEffect}
+                    isTaskSelected={isTaskSelected}
+                    isSelectedPointObservedEffectSelected={isSelectedPointObservedEffectSelected}
+                    getSelectedPointEpiManifEffect={getSelectedPointEpiManifEffect}
+                    getSelectedPointEEGEffect={getSelectedPointEEGEffect}
+                    t={t}
+                />
             </Box>
 
             <Box h={"40%"} w={"100%"}>
@@ -601,4 +354,314 @@ interface ContactSelectionProps {
     selectedContact: string,
     onSelectedChanged: (newValue: string) => void
     onViewResultsForPoint: (pointId: string) => void
+}
+
+interface CentralBarProps {
+    form: UseFormReturnType<StimulationFormValues>;
+    selectedPoint: string;
+    stimulationTime: string;
+    setStimulationTime: (time: string) => void;
+    params_form: UseFormReturnType<StimulationParametersFormValues>;
+    task_form: UseFormReturnType<StimulationTaskFormValues>;
+    effect_form: UseFormReturnType<StimulationEffectsValues>;
+    handleSubmit: () => void;
+    getSelectedPointLocation: () => string;
+    getSelectedPointObservedEffect: () => string;
+    isTaskSelected: boolean;
+    isSelectedPointObservedEffectSelected: boolean;
+    getSelectedPointEpiManifEffect: () => string;
+    getSelectedPointEEGEffect: () => string;
+    t: any;
+}
+
+const CentralBar = ({
+    form,
+    selectedPoint,
+    stimulationTime,
+    setStimulationTime,
+    params_form,
+    task_form,
+    effect_form,
+    handleSubmit,
+    getSelectedPointLocation,
+    getSelectedPointObservedEffect,
+    isTaskSelected,
+    isSelectedPointObservedEffectSelected,
+    getSelectedPointEpiManifEffect,
+    getSelectedPointEEGEffect,
+    t
+}: CentralBarProps) => {
+    const theme = useMantineTheme();
+    const formatParameters = (params: StimulationParametersFormValues): string => {
+        return t('pages.stimulationTool.stimulation.amplitude_label') + ': ' + params.amplitude + ' (mA), ' +
+            t('pages.stimulationTool.stimulation.frequency_label') + ': ' + params.frequency + ' (Hz), ' +
+            t('pages.stimulationTool.stimulation.duration_label') + ': ' + params.duration + ' (s), ' +
+            t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + ' (µs), ' +
+            t('pages.stimulationTool.stimulation.charge_density_label') + ': ' + computeChargeDensity(params.amplitude, params.lenght_path).toFixed(2) + ' (µC/cm²)';
+    }
+
+    const stimPointConfirmedExist = useMemo<boolean>(() => {
+        return form.values.electrodes.filter((e: ElectrodeFormValues) => e.confirmed && e.n_contacts > 0).length !== 0;
+    }, [form.values.electrodes]);
+    const stimTimeSet = stimulationTime !== '';
+
+    const [useDateTimePicker, setUseDateTimePicker] = useState<boolean>(false);
+    const [customSelectedDateTime, setCustomSelectedDateTime] = useState<DateValue>(null);
+
+    const selectedPointElectrodeLabel = selectedPoint.split('/').slice(0, -1).join('/');
+    const selectedPointStims = form.values.electrodes.find((e: ElectrodeFormValues) => e.label === selectedPointElectrodeLabel)?.stim_points.find((p: StimulationPoint) => getStimPointLabel(selectedPointElectrodeLabel, p.index) === selectedPoint)?.stimulations;
+    const stims = selectedPointStims !== undefined ? selectedPointStims : [];
+    const selectedContactBorderSx = getStimulatedStyledContactBorderStyle(stims, theme);
+    const selectedContactBackgroundColorSx = getStimulatedStyledContactColor(stims, stims.length === 0, theme, true);
+
+    return (
+        <Box h={"100%"} sx={(theme) => (
+            {
+                borderRadius: theme.radius.xl,
+                overflow: "hidden",
+                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[6]
+            })}>
+            {/** No Contact exists */}
+            <Group align='center' position='center' h={"100%"} w={"100%"} display={!stimPointConfirmedExist ? "block" : "none"}>
+                <Alert h={"100%"}
+                    icon={<IconAlertCircle size="1rem" />}
+                    title={t('pages.stimulationTool.stimulation.guide_alert_no_electrode_title')}>
+                    {t('pages.stimulationTool.stimulation.guide_alert_no_electrode_text')}
+                </Alert>
+            </Group>
+            {/** Contact Exist */}
+            <Box h={"100%"} display={stimPointConfirmedExist ? 'block' : 'none'}>
+                {/** No contact selected */}
+                <Group align='center' position='center' h={"100%"} w={"100%"} display={selectedPoint === "" ? "block" : "none"}>
+                    <Alert h={"100%"}
+                        icon={<IconAlertCircle size="1rem" />}
+                        title={t('pages.stimulationTool.stimulation.guide_alert_title')}>
+                        {t('pages.stimulationTool.stimulation.guide_alert_text')}
+                    </Alert>
+                </Group>
+                {/** Contact selected */}
+                <Flex direction={"row"} justify={"flex-start"} align={"flex-start"} wrap={"nowrap"} w={"100%"} h={"100%"} display={selectedPoint !== "" ? "flex" : "none"}>
+                    {/** Selected contact */}
+                    <Center
+                        sx={(theme) => ({
+                            flex: 1,
+                            backgroundColor: selectedContactBackgroundColorSx,
+                            height: '100%',
+                            padding: theme.spacing.md,
+                            ...selectedContactBorderSx,
+                            borderTopLeftRadius: theme.radius.xl,
+                            borderBottomLeftRadius: theme.radius.xl,
+                        })}>
+                        <Text fz={"xl"} fw={"bolder"}>{selectedPoint}</Text>
+                    </Center>
+
+                    {/** Implantation ROI or selected Effect */}
+                    <Stack sx={{ flex: 3 }} h={"100%"} align="center" justify="center">
+                        <Text fz={"lg"} fw={"bold"} display={stimTimeSet ? 'none' : 'block'}>{getSelectedPointLocation()}</Text>
+                        <Stack display={stimTimeSet ? 'block' : 'none'} align="flex-start" justify="center">
+                            <Text fz={"lg"} fw={"bold"}>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}:</Text>
+                            <Text fz={"lg"}>{getSelectedPointObservedEffect()}</Text>
+                        </Stack>
+                    </Stack>
+
+                    {/** Time selection / Save button */}
+                    <Group position="center" align="center" h={"100%"} noWrap sx={{ flex: 3 }} >
+                        <Group position="center" align="center" h={"100%"} w={"100%"} spacing={"xs"}>
+                            {!stimTimeSet &&
+                                <HoverCard disabled={isTaskSelected}>
+                                    <HoverCard.Target>
+                                        <Box>
+                                            <Button.Group orientation="horizontal">
+                                                <Button size="lg"
+                                                    display={useDateTimePicker ? 'none' : 'flex'}
+                                                    onClick={() => setStimulationTime(new Date().toISOString())}
+                                                    leftIcon={<IconClockCheck />}
+                                                    disabled={!isTaskSelected}>
+                                                    <Text w={"9rem"} align='center' size={"md"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_now')}</Text>
+                                                </Button>
+                                                <Button size="lg"
+                                                    display={useDateTimePicker ? 'none' : 'flex'}
+                                                    onClick={() => setUseDateTimePicker(true)}
+                                                    leftIcon={<IconClockEdit />}
+                                                    disabled={!isTaskSelected}>
+                                                    <Text w={"9rem"} align='center' size={"md"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_custom')}</Text>
+                                                </Button>
+                                            </Button.Group>
+                                            <Group position="center" display={useDateTimePicker ? 'flex' : 'none'}>
+                                                <DateTimePicker
+                                                    withSeconds
+                                                    size="lg"
+                                                    placeholder={t('pages.stimulationTool.stimulation.set_time_label_custom')}
+                                                    onChange={(date) => setCustomSelectedDateTime(date)}
+                                                />
+                                                <ActionIcon variant="filled"
+                                                    disabled={customSelectedDateTime === null}
+                                                    color={"green"}
+                                                    size={"xl"}
+                                                    onClick={() => setStimulationTime(customSelectedDateTime!.toISOString())}>
+                                                    <IconCheck size={20} />
+                                                </ActionIcon>
+                                            </Group>
+                                        </Box>
+                                    </HoverCard.Target>
+                                    <HoverCard.Dropdown>
+                                        <Text>{t('pages.stimulationTool.stimulation.no_task_selected')}</Text>
+                                    </HoverCard.Dropdown>
+                                </HoverCard>
+                            }
+                            {stimTimeSet &&
+                                <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
+                            }
+                            {/** Save button */}
+                            <HoverCard disabled={isSelectedPointObservedEffectSelected}>
+                                <HoverCard.Target>
+                                    <Box>
+                                        <Button variant="filled" size="md" color="green" leftIcon={<IconCircleCheck />}
+                                            display={stimTimeSet ? 'block' : 'none'}
+                                            onClick={handleSubmit}
+                                            disabled={stimulationTime === "" || !isSelectedPointObservedEffectSelected}>
+                                            {t('pages.stimulationTool.stimulation.saveButtonLabel')}
+                                        </Button>
+                                    </Box>
+                                </HoverCard.Target>
+                                <HoverCard.Dropdown>
+                                    <Text>{t('pages.stimulationTool.stimulation.no_effect_selected')}</Text>
+                                </HoverCard.Dropdown>
+                            </HoverCard>
+                        </Group>
+                    </Group>
+
+                    {/** Parameters & Task or Manif & EEG */}
+                    <Box sx={{ flex: 5 }} h={"100%"} p={0} m={0}>
+                        {/** Task & Parameters when stim time is not set */}
+                        <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" spacing={"sm"} display={stimTimeSet ? 'none' : 'flex'}>
+                            <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
+                            <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.parameters_title')} : </strong>{formatParameters(params_form.values)}</Text>
+                        </Stack>
+                        {/** Epi manif & EEG when stim time is set */}
+                        <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" spacing={"sm"} display={stimTimeSet ? 'flex' : 'none'}>
+                            <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}:</strong> {getSelectedPointEpiManifEffect()}</Text>
+                            <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.effect.eeg')} :</strong> {getSelectedPointEEGEffect()}</Text>
+                        </Stack>
+                    </Box>
+                </Flex >
+            </Box>
+        </Box>
+    );
+}
+
+interface StimulationParametersSelectionProps {
+    form: UseFormReturnType<StimulationParametersFormValues>;
+    t: any;
+}
+
+const StimulationParametersSelection = ({ form, t }: StimulationParametersSelectionProps) => {
+    const parameterSelection = (
+        <Group position="center" align="top" noWrap>
+            <CustomNumberInput
+                h={"100%"}
+                label={t('pages.stimulationTool.stimulation.amplitude_label') + ' (mA)'}
+                precision={1}
+                digit_step={1}
+                decimal_step={0.1}
+                min={0}
+                max={10}
+                variant='default'
+                useCustom={true}
+                {...form.getInputProps('amplitude')}
+            />
+            <Stack align="center" h={"100%"} spacing={0}>
+                <CustomNumberInput
+                    label={t('pages.stimulationTool.stimulation.frequency_label') + ' (Hz)'}
+                    precision={0}
+                    step={1}
+                    min={0}
+                    styles={{ input: { textAlign: "center" } }}
+                    {...form.getInputProps('frequency')}
+                />
+                <Group spacing={0} grow w={"100%"}>
+                    {[1, 5, 50, 55].map((v) =>
+                        <Button compact key={"freq_" + v}
+                            onClick={() => form.setFieldValue('frequency', v)}
+                            variant={form.values.frequency === v ? 'filled' : 'default'}>
+                            {v}
+                        </Button>
+                    )}
+                </Group>
+            </Stack>
+
+            <Stack align="center" h={"100%"} spacing={0}>
+                <CustomNumberInput
+                    label={t('pages.stimulationTool.stimulation.duration_label') + ' (s)'}
+                    precision={0}
+                    step={1}
+                    min={0}
+                    styles={{ input: { textAlign: "center" } }}
+                    {...form.getInputProps('duration')}
+                />
+                <Group spacing={0} grow w={"100%"}>
+                    {[5, 10, 30, 60].map((v) =>
+                        <Button compact key={"duration_" + v}
+                            onClick={() => form.setFieldValue('duration', v)}
+                            variant={form.values.duration === v ? 'filled' : 'default'}>
+                            {v}
+                        </Button>
+                    )}
+                </Group>
+            </Stack>
+
+            <Stack align="center" h={"100%"} spacing={0}>
+                <CustomNumberInput
+                    label={t('pages.stimulationTool.stimulation.length_path_label') + ' (µs)'}
+                    precision={0}
+                    step={1}
+                    min={0}
+                    styles={{ input: { textAlign: "center" } }}
+                    {...form.getInputProps('lenght_path')}
+                />
+                <Group spacing={0} grow w={"100%"}>
+                    {[300, 500].map((v) =>
+                        <Button compact key={"lp_" + v}
+                            onClick={() => form.setFieldValue('lenght_path', v)}
+                            variant={form.values.lenght_path === v ? 'filled' : 'default'}>
+                            {v}
+                        </Button>
+                    )}
+                </Group>
+            </Stack>
+        </Group>
+    );
+    return (
+        <Section
+            header={<Title order={5}>{t('pages.stimulationTool.stimulation.parameters_title')}</Title>}
+            children={parameterSelection}
+        />
+    );
+}
+
+const ContactColorLegend = ({ t, ...props }: GroupProps & { t: any }) => {
+    const variants = [{ variant: "selected", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.selected') },
+    { variant: "singleStim", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.stimulated') },
+    { variant: "multipleStim", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.multi_stim') },
+    { variant: "postDischarge", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.post_discharge') },
+    { variant: "crisis", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.crisis') },
+    { variant: "singleStim", effect: true, label: t('pages.stimulationTool.stimulation.contact_color_legend.effect') }
+    ] as {
+        variant: 'default' | 'selected' | 'crisis' | 'postDischarge' | 'singleStim' | 'multipleStim',
+        effect: boolean,
+        label: string
+    }[];
+
+    return (
+        <Group {...props}>
+            {variants.map((v) =>
+                <Stack align="center" justify="center" spacing={0} key={v.label}>
+                    <StimulatedContact size="xs" selected={false} forcedVariant={v.variant} forcedEffect={v.effect} onChange={() => { }} stimulations={[]}>
+                        {"A1/2"}
+                    </StimulatedContact>
+                    <Text>{v.label}</Text>
+                </Stack>
+            )}
+        </Group>
+    );
 }

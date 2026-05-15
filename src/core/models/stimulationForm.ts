@@ -9,16 +9,18 @@ export default interface StimulationFormValues {
     electrodes: ElectrodeFormValues[]
 };
 
+export interface StimulationPoint {
+    index: number;
+    location: StimulationLocationFormValues;
+    stimulations: Stimulation[]
+}
+
 export interface ElectrodeFormValues {
     label: string;
     side: SideOptions | undefined;
     n_contacts: number;
     confirmed: boolean;
-    stim_points: {
-        index: number;
-        location: StimulationLocationFormValues;
-        stimulations: Stimulation[]
-    }[];
+    stim_points: StimulationPoint[];
 }
 
 export type SideOptions = 'left' | 'right';
