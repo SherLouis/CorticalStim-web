@@ -113,8 +113,11 @@ export default function StimulationToolPage() {
     }, [hasUnsavedData])
 
     useEffect(() => {
-        const shouldDisplayUnsavedMessage = JSON.stringify(form.values) !== JSON.stringify(form_previous_values);
-        setHasUnsavedData(shouldDisplayUnsavedMessage)
+        const timeoutId = setTimeout(() => {
+            const shouldDisplayUnsavedMessage = JSON.stringify(form.values) !== JSON.stringify(form_previous_values);
+            setHasUnsavedData(shouldDisplayUnsavedMessage);
+        }, 1000);
+        return () => clearTimeout(timeoutId);
     }, [form.values, form_previous_values, setHasUnsavedData]);
 
     const customTabStyle = useCustomTabStyle();
