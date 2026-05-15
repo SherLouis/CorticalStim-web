@@ -453,9 +453,9 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
     const post_discharge_local_options = getEegPostDischargeLocalOptions(t);
 
     const post_discharge_type = [
-        { label: "DATA1", value: "data1" },
-        { label: "DATA2", value: "data2" },
-        { label: "DATA3", value: "data3" }
+        { label: "Spike-wave", value: "spike-wave" },
+        { label: "Polyspike", value: "polyspike" },
+        { label: "Sequential", value: "sequential" }
     ]
 
     return (
