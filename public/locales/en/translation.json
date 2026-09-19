@@ -163,7 +163,10 @@
                         "type_label": "Type",
                         "crisis_label": "Crisis (Rhythmic discharge)",
                         "crisis_comments_label": "Comments"
-                    }
+                    },
+                    "add_effect": "Add effect",
+                    "selected_effects": "Selected Effects",
+                    "no_active_effect": "No effect selected. Add or select an effect to edit."
                 },
                 "no_effect_selected": "Please select an effect before saving this stimulation.",
                 "alert_point_changed": {

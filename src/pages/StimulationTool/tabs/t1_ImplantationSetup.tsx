@@ -56,7 +56,9 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     }, [form]);
 
     const addElectrode = () => {
-        form.insertListItem('electrodes', { label: nextElectrodeDefaultLabel, side: undefined, n_contacts: 0, confirmed: false, stim_points: [] } as ElectrodeFormValues);
+        form.insertListItem('electrodes',
+            { label: nextElectrodeDefaultLabel, side: undefined, n_contacts: 0, confirmed: false, stim_points: [] } as ElectrodeFormValues,
+            0);
         setNextElectrodeDefaultLabel(letters.increment(nextElectrodeDefaultLabel));
         form.validate();
     }
@@ -64,20 +66,22 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     const setContactsToElectrode = (electrodeIndex: number, nbContacts: number) => {
         form.setFieldValue(`electrodes.${electrodeIndex}.stim_points`, []);
         form.setFieldValue(`electrodes.${electrodeIndex}.n_contacts`, nbContacts);
-        for (let i = 0; i < nbContacts - 1; i++) {
-            form.insertListItem(`electrodes.${electrodeIndex}.stim_points`,
-                {
-                    index: i,
-                    location: {
-                        type: 'vep',
-                        vep: "",
-                        destrieux: "",
-                        mni: { x: 0, y: 0, z: 0 },
-                        done: false,
-                    },
-                    stimulations: []
-                });
+        const newStimPoints = [];
+        // Stimulation point is between 2 contacts, so nb stimulation points = nb contacts - 1
+        for (let i = 0; i < nbContacts -1; i++) {
+            newStimPoints.push({
+                index: i,
+                location: {
+                    type: 'vep',
+                    vep: "",
+                    destrieux: "",
+                    mni: { x: 0, y: 0, z: 0 },
+                    done: false,
+                },
+                stimulations: []
+            });
         }
+        form.setFieldValue(`electrodes.${electrodeIndex}.stim_points`, newStimPoints);
     }
 
     const handleElectrodeLocationFormSubmit = () => {
@@ -88,18 +92,18 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
         // Create a copy of the electrodes to update them all at once
         const nextElectrodes = [...form.values.electrodes];
-        
+
         selectedContacts.forEach(selectedStimPoint => {
             const parts = selectedStimPoint.split('/');
             const electrode_label = parts.slice(0, -1).join('/');
-            
+
             const electrode_i = nextElectrodes.findIndex(e => e.label === electrode_label);
             if (electrode_i !== -1) {
                 const electrode = nextElectrodes[electrode_i];
                 // We assume the stim_point index in the label matches the array index or we find it
                 // getStimPointLabel uses electrode.label and index
                 const stim_point_i = electrode.stim_points.findIndex((_, i) => getStimPointLabel(electrode.label, i) === selectedStimPoint);
-                
+
                 if (stim_point_i !== -1) {
                     const sp = electrode.stim_points[stim_point_i];
                     const updatedPoint = {
@@ -114,7 +118,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                             done: true
                         }
                     };
-                    
+
                     const nextStimPoints = [...electrode.stim_points];
                     nextStimPoints[stim_point_i] = updatedPoint;
                     nextElectrodes[electrode_i] = { ...electrode, stim_points: nextStimPoints };
@@ -459,7 +463,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                         disabled={electrode.confirmed}
                                         label={t("pages.stimulationTool.implantation.nbContactsLabel")}
                                         min={0}
-                                        defaultValue={electrode.n_contacts}
+                                        value={electrode.n_contacts}
                                         onChange={(v) => setContactsToElectrode(electrode_i, v === "" ? 0 : v)}
                                     />
                                     <Button sx={{ flex: 2, flexGrow: 1 }}
