@@ -66,20 +66,22 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     const setContactsToElectrode = (electrodeIndex: number, nbContacts: number) => {
         form.setFieldValue(`electrodes.${electrodeIndex}.stim_points`, []);
         form.setFieldValue(`electrodes.${electrodeIndex}.n_contacts`, nbContacts);
-        for (let i = 0; i < nbContacts - 1; i++) {
-            form.insertListItem(`electrodes.${electrodeIndex}.stim_points`,
-                {
-                    index: i,
-                    location: {
-                        type: 'vep',
-                        vep: "",
-                        destrieux: "",
-                        mni: { x: 0, y: 0, z: 0 },
-                        done: false,
-                    },
-                    stimulations: []
-                });
+        const newStimPoints = [];
+        // Stimulation point is between 2 contacts, so nb stimulation points = nb contacts - 1
+        for (let i = 0; i < nbContacts -1; i++) {
+            newStimPoints.push({
+                index: i,
+                location: {
+                    type: 'vep',
+                    vep: "",
+                    destrieux: "",
+                    mni: { x: 0, y: 0, z: 0 },
+                    done: false,
+                },
+                stimulations: []
+            });
         }
+        form.setFieldValue(`electrodes.${electrodeIndex}.stim_points`, newStimPoints);
     }
 
     const handleElectrodeLocationFormSubmit = () => {
@@ -461,7 +463,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                                         disabled={electrode.confirmed}
                                         label={t("pages.stimulationTool.implantation.nbContactsLabel")}
                                         min={0}
-                                        defaultValue={electrode.n_contacts}
+                                        value={electrode.n_contacts}
                                         onChange={(v) => setContactsToElectrode(electrode_i, v === "" ? 0 : v)}
                                     />
                                     <Button sx={{ flex: 2, flexGrow: 1 }}
