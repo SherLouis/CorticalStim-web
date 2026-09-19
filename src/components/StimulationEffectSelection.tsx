@@ -89,18 +89,20 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
         <Group w={"100%"} h={"90%"} align='flex-start'>
             <Box sx={{ flex: 3 }} h={"100%"}>
                 <Stack h={"100%"} spacing={0}>
-                    <Button compact size="sm"
-                        variant={form.values.observed_effect.length === 1 && JSON.stringify(form.values.observed_effect[0]) === JSON.stringify(NO_EFFECT) ? "filled" : "light"}
-                        onClick={() => {
-                            form.setFieldValue('observed_effect', [NO_EFFECT]);
-                            setActiveEffectIndex(0);
-                        }}>
-                        {t('pages.stimulationTool.stimulation.effect.no_effect')}
-                    </Button>
-                    <Button compact size="sm" leftIcon={<IconPlus size={14} />}
-                        onClick={() => addEffect({ class: "", descriptor: "", details: "" })}>
-                        {t('pages.stimulationTool.stimulation.effect.add_effect')}
-                    </Button>
+                    <Group w={"100%"} spacing={4} position="apart" noWrap grow>
+                        <Button compact size="sm"
+                            variant={form.values.observed_effect.length === 1 && JSON.stringify(form.values.observed_effect[0]) === JSON.stringify(NO_EFFECT) ? "filled" : "light"}
+                            onClick={() => {
+                                form.setFieldValue('observed_effect', [NO_EFFECT]);
+                                setActiveEffectIndex(0);
+                            }}>
+                            {t('pages.stimulationTool.stimulation.effect.no_effect')}
+                        </Button>
+                        <Button compact size="sm" leftIcon={<IconPlus size={14} />}
+                            onClick={() => addEffect({ class: "", descriptor: "", details: "" })}>
+                            {t('pages.stimulationTool.stimulation.effect.add_effect')}
+                        </Button>
+                    </Group>
                     <Title order={6} mt={"sm"} mb={4}>{t('pages.stimulationTool.stimulation.effect.selected_effects')}</Title>
                     <ScrollArea type="auto" offsetScrollbars w={"100%"} h={"100%"} sx={{ overflowX: 'hidden' }}>
                         <Stack spacing={4} m={0} p={0}>

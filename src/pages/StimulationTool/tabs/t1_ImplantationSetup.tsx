@@ -56,7 +56,9 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
     }, [form]);
 
     const addElectrode = () => {
-        form.insertListItem('electrodes', { label: nextElectrodeDefaultLabel, side: undefined, n_contacts: 0, confirmed: false, stim_points: [] } as ElectrodeFormValues);
+        form.insertListItem('electrodes',
+            { label: nextElectrodeDefaultLabel, side: undefined, n_contacts: 0, confirmed: false, stim_points: [] } as ElectrodeFormValues,
+            0);
         setNextElectrodeDefaultLabel(letters.increment(nextElectrodeDefaultLabel));
         form.validate();
     }
@@ -88,18 +90,18 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
 
         // Create a copy of the electrodes to update them all at once
         const nextElectrodes = [...form.values.electrodes];
-        
+
         selectedContacts.forEach(selectedStimPoint => {
             const parts = selectedStimPoint.split('/');
             const electrode_label = parts.slice(0, -1).join('/');
-            
+
             const electrode_i = nextElectrodes.findIndex(e => e.label === electrode_label);
             if (electrode_i !== -1) {
                 const electrode = nextElectrodes[electrode_i];
                 // We assume the stim_point index in the label matches the array index or we find it
                 // getStimPointLabel uses electrode.label and index
                 const stim_point_i = electrode.stim_points.findIndex((_, i) => getStimPointLabel(electrode.label, i) === selectedStimPoint);
-                
+
                 if (stim_point_i !== -1) {
                     const sp = electrode.stim_points[stim_point_i];
                     const updatedPoint = {
@@ -114,7 +116,7 @@ export default function ElectrodeSetupStep({ form }: TabProperties) {
                             done: true
                         }
                     };
-                    
+
                     const nextStimPoints = [...electrode.stim_points];
                     nextStimPoints[stim_point_i] = updatedPoint;
                     nextElectrodes[electrode_i] = { ...electrode, stim_points: nextStimPoints };
