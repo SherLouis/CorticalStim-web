@@ -163,7 +163,10 @@
                         "type_label": "Type",
                         "crisis_label": "Crise (Décharge rythmique)",
                         "crisis_comments_label": "Commentaires"
-                    }
+                    },
+                    "add_effect": "Ajouter un effet",
+                    "selected_effects": "Effets sélectionnés",
+                    "no_active_effect": "Aucun effet sélectionné. Ajoutez ou sélectionnez un effet pour le modifier."
                 },
                 "no_effect_selected": "Veuillez sélectionner un effet avant d'enregistrer cette stimulation.",
                 "alert_point_changed": {

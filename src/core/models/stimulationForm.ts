@@ -55,7 +55,7 @@ export interface StimulationTaskFormValues {
 }
 
 export interface StimulationEffectsValues {
-    observed_effect: StimulationObservedEffectFormValues;
+    observed_effect: StimulationObservedEffectFormValues[];
     observed_effect_comments: string;
     epi_manifestation: string;
     contact_in_epi_zone: string;

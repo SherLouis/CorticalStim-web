@@ -1,6 +1,21 @@
 import { Chip, ChipProps, MantineTheme, Sx, useMantineTheme } from "@mantine/core";
-import { Stimulation } from "../core/models/stimulationForm";
+import { Stimulation, StimulationObservedEffectFormValues } from "../core/models/stimulationForm";
 import { NO_EFFECT } from "./StimulationEffectSelection";
+
+
+const hasObservedEffect = (stimulations: Stimulation[]): boolean => {
+    return stimulations.some((stim) => stim.effect.observed_effect.some(
+        (effect: StimulationObservedEffectFormValues) => JSON.stringify(effect) !== JSON.stringify(NO_EFFECT)
+    ));
+};
+
+export const getEffectBorderStyle = (theme: MantineTheme) => {
+    return { borderColor: theme.colors.red[9], borderWidth: 3, borderStyle: 'solid', borderRadius: 'xl' };
+}
+
+export const getStimulatedStyledContactBorderStyle = (stimulations: Stimulation[], theme: MantineTheme) => {
+    return hasObservedEffect(stimulations) ? getEffectBorderStyle(theme) : {};
+}
 
 
 const StimulatedContact = ({ selected, stimulations, onChange, forcedVariant, forcedEffect, ...props }: StimulatedContactProps) => {
@@ -12,7 +27,7 @@ const StimulatedContact = ({ selected, stimulations, onChange, forcedVariant, fo
         if (forcedEffect !== undefined) {
             return forcedEffect ? EFFECT_BORDER_SX : NO_EFFECT_BORDER_SX
         }
-        const hasEffect = stimulations.some((stim) => stim.effect.observed_effect.class !== "None" && stim.effect.observed_effect.class !== "");
+        const hasEffect = hasObservedEffect(stimulations)
         return hasEffect ? EFFECT_BORDER_SX : NO_EFFECT_BORDER_SX;
     }
 
@@ -45,15 +60,6 @@ interface StimulatedContactProps extends ChipProps {
 type ForcedVariantOptions = 'default' | 'selected' | 'crisis' | 'postDischarge' | 'singleStim' | 'multipleStim' | undefined;
 
 export default StimulatedContact;
-
-const getEffectBorderStyle = (theme: MantineTheme) => {
-    return { borderColor: theme.colors.red[9], borderWidth: 3, borderStyle: 'solid', borderRadius: 'xl' };
-}
-
-export const getStimulatedStyledContactBorderStyle = (stimulations: Stimulation[], theme: MantineTheme) => {
-    const hasEffect = stimulations.some((stim) => stim.effect.observed_effect.class !== "None" && stim.effect.observed_effect.class !== "");
-    return hasEffect ? getEffectBorderStyle(theme) : {};
-}
 
 export const getStimulatedStyledContactColor = (stimulations: Stimulation[], selected: boolean, theme: MantineTheme, useThemeColor: boolean, forcedVariant?: ForcedVariantOptions): string => {
     const COLORS = {

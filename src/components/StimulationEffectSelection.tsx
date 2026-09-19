@@ -1,31 +1,80 @@
-import { Box, Button, Checkbox, Group, Text, Radio, ScrollArea, Stack, Switch, TextInput, Title, Flex } from "@mantine/core";
+import { Box, Button, Checkbox, Group, Text, Radio, ScrollArea, Stack, Switch, TextInput, Title, Flex, ActionIcon } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import { PostDischargeValueOptions, StimulationEffectsValues, StimulationObservedEffectFormValues } from "../core/models/stimulationForm";
 import ColumnButtonSelect from "./ColumnButtonSelect";
 import { TFunction } from "i18next";
 import Section from "./Section";
+import { useState } from "react";
+import { IconPlus, IconTrash } from "@tabler/icons-react";
 
 export default function StimulationEffectSelection({ form, observed_effect_last_values }: StimulationEffectSelectionProps) {
     const { t } = useTranslation();
 
-    // TODO: preset
+    const [activeEffectIndex, setActiveEffectIndex] = useState<number | null>(
+        form.values.observed_effect.length > 0 ? 0 : null
+    );
+
+    const addEffect = (effect: StimulationObservedEffectFormValues) => {
+        const currentEffects = form.values.observed_effect;
+
+        if (JSON.stringify(effect) !== JSON.stringify(NO_EFFECT)) {
+            const filtered = currentEffects.filter(e => JSON.stringify(e) !== JSON.stringify(NO_EFFECT));
+            const existingIndex = filtered.findIndex(e =>
+                JSON.stringify(e) === JSON.stringify(effect)
+            );
+
+            if (existingIndex !== -1) {
+                setActiveEffectIndex(existingIndex);
+            } else {
+                const newEffects = [...filtered, effect];
+                form.setFieldValue('observed_effect', newEffects);
+                setActiveEffectIndex(newEffects.length - 1);
+            }
+        } else {
+                form.setFieldValue('observed_effect', [NO_EFFECT]);
+                setActiveEffectIndex(0);
+        }
+    };
+
+    const removeEffect = (index: number) => {
+        const currentEffects = form.values.observed_effect;
+        const newEffects = currentEffects.filter((_, i) => i !== index);
+        form.setFieldValue('observed_effect', newEffects);
+
+        if (newEffects.length === 0) {
+            setActiveEffectIndex(null);
+        } else if (index === currentEffects.length - 1) {
+            setActiveEffectIndex(newEffects.length - 1);
+        } else {
+            setActiveEffectIndex(Math.min(index, newEffects.length - 1));
+        }
+    };
 
     const handleCognitiveEffectValueChange = (level: 'class' | 'descriptor' | 'details', newValue: string) => {
+        if (activeEffectIndex === null) return;
+
+        const currentEffects = form.values.observed_effect;
+        const newEffects = [...currentEffects];
+        const activeEffect = { ...newEffects[activeEffectIndex] };
+
         switch (level) {
             case 'class':
-                form.setFieldValue('observed_effect.details', "");
-                form.setFieldValue('observed_effect.descriptor', "");
-                form.setFieldValue('observed_effect.class', newValue === form.values.observed_effect.class ? "" : newValue);
+                activeEffect.details = "";
+                activeEffect.descriptor = "";
+                activeEffect.class = newValue === activeEffect.class ? "" : newValue;
                 break;
             case 'descriptor':
-                form.setFieldValue('observed_effect.details', "");
-                form.setFieldValue('observed_effect.descriptor', newValue === form.values.observed_effect.descriptor ? "" : newValue);
+                activeEffect.details = "";
+                activeEffect.descriptor = newValue === activeEffect.descriptor ? "" : newValue;
                 break;
             case 'details':
-                form.setFieldValue('observed_effect.details', newValue === form.values.observed_effect.details ? "" : newValue);
+                activeEffect.details = newValue === activeEffect.details ? "" : newValue;
                 break;
         }
+
+        newEffects[activeEffectIndex] = activeEffect;
+        form.setFieldValue('observed_effect', newEffects);
     }
 
     const getContactInEpiZoneOptions = () => {
@@ -41,31 +90,69 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
             <Box sx={{ flex: 3 }} h={"100%"}>
                 <Stack h={"100%"}>
                     <Button compact size="sm"
-                        variant={form.values.observed_effect === NO_EFFECT ? "filled" : "light"}
-                        onClick={() => { form.setFieldValue('observed_effect', NO_EFFECT); }}>
+                        variant={form.values.observed_effect.length === 1 && JSON.stringify(form.values.observed_effect[0]) === JSON.stringify(NO_EFFECT) ? "filled" : "light"}
+                        onClick={() => {
+                            form.setFieldValue('observed_effect', [NO_EFFECT]);
+                            setActiveEffectIndex(0);
+                        }}>
                         {t('pages.stimulationTool.stimulation.effect.no_effect')}
+                    </Button>
+                    <Button compact size="sm" leftIcon={<IconPlus size={14} />}
+                        onClick={() => addEffect({ class: "", descriptor: "", details: "" })}>
+                        {t('pages.stimulationTool.stimulation.effect.add_effect')}
                     </Button>
                     <Title order={6}>{t('pages.stimulationTool.stimulation.effect.last_used')}</Title>
                     <Button.Group orientation='vertical'>
                         {observed_effect_last_values.map((v, i) => (
                             <Button compact size="sm" key={"btn_last_effect_" + i}
-                                variant={formatSelectedObservedEffect(form.values.observed_effect) === formatSelectedObservedEffect(v) ? "filled" : "light"}
-                                onClick={() => { form.setFieldValue('observed_effect', v); }}>
+                                variant={form.values.observed_effect.some(e => formatSelectedObservedEffect(e) === formatSelectedObservedEffect(v)) ? "filled" : "light"}
+                                onClick={() => addEffect(v)}>
                                 {formatSelectedObservedEffect(v)}
                             </Button>
                         ))}
                     </Button.Group>
+                    <Title order={6} mt={"sm"}>{t('pages.stimulationTool.stimulation.effect.selected_effects')}</Title>
+                    <Stack spacing={4}>
+                        {form.values.observed_effect.map((effect, index) => {
+                            const formatted = formatSelectedObservedEffect(effect);
+                            return (
+                                <Group key={"effect_" + index} noWrap spacing="xs" position="apart">
+                                    <Button
+                                        compact size="sm"
+                                        variant={activeEffectIndex === index ? "filled" : "light"}
+                                        onClick={() => setActiveEffectIndex(index)}
+                                    >
+                                        {formatted}
+                                    </Button>
+                                    <ActionIcon
+                                        size="sm"
+                                        variant="subtle"
+                                        color="red"
+                                        onClick={() => removeEffect(index)}
+                                    >
+                                        <IconTrash size={14} />
+                                    </ActionIcon>
+                                </Group>
+                            );
+                        })}
+                    </Stack>
                 </Stack>
             </Box>
 
             <Box sx={{ flex: 9 }} h={"100%"}>
                 <Stack w={"100%"} h={"100%"} spacing={0}>
                     <Box h={"90%"}>
-                        <CognitiveEffectTable
-                            cognitive_values={form.values.observed_effect}
-                            handleValueChange={handleCognitiveEffectValueChange}
-                            t={t}
-                        />
+                        {activeEffectIndex !== null && form.values.observed_effect[activeEffectIndex] ? (
+                            <CognitiveEffectTable
+                                cognitive_values={form.values.observed_effect[activeEffectIndex]}
+                                handleValueChange={handleCognitiveEffectValueChange}
+                                t={t}
+                            />
+                        ) : (
+                            <Flex h={"100%"} align={"center"} justify={"center"}>
+                                <Text c="dimmed">{t('pages.stimulationTool.stimulation.effect.no_active_effect')}</Text>
+                            </Flex>
+                        )}
                     </Box>
                     <TextInput
                         h={"10%"}
@@ -539,8 +626,12 @@ export const formatEpiManifestation = (epiManif: string, t: TFunction): string =
     return epiManif;
 };
 
-export const formatSelectedObservedEffect = (values: StimulationObservedEffectFormValues): string => {
-    return values.class !== "" ? (values.class +
-        (values.descriptor !== "" ? ('/' + values.descriptor
-            + (values.details !== "" ? ('/' + values.details) : '')) : '')) : "-";
+export const formatSelectedObservedEffect = (values: StimulationObservedEffectFormValues | StimulationObservedEffectFormValues[]): string => {
+    const effects = Array.isArray(values) ? values : [values];
+    return effects
+        .filter(e => e.class !== "")
+        .map(e => e.class +
+            (e.descriptor !== "" ? ('/' + e.descriptor
+                + (e.details !== "" ? ('/' + e.details) : '')) : ''))
+        .join('; ') || "-";
 };
