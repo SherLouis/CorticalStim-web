@@ -32,8 +32,8 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
                 setActiveEffectIndex(newEffects.length - 1);
             }
         } else {
-                form.setFieldValue('observed_effect', [NO_EFFECT]);
-                setActiveEffectIndex(0);
+            form.setFieldValue('observed_effect', [NO_EFFECT]);
+            setActiveEffectIndex(0);
         }
     };
 
@@ -88,7 +88,7 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
     const observedEffect = (
         <Group w={"100%"} h={"90%"} align='flex-start'>
             <Box sx={{ flex: 3 }} h={"100%"}>
-                <Stack h={"100%"}>
+                <Stack h={"100%"} spacing={0}>
                     <Button compact size="sm"
                         variant={form.values.observed_effect.length === 1 && JSON.stringify(form.values.observed_effect[0]) === JSON.stringify(NO_EFFECT) ? "filled" : "light"}
                         onClick={() => {
@@ -101,41 +101,45 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
                         onClick={() => addEffect({ class: "", descriptor: "", details: "" })}>
                         {t('pages.stimulationTool.stimulation.effect.add_effect')}
                     </Button>
-                    <Title order={6}>{t('pages.stimulationTool.stimulation.effect.last_used')}</Title>
-                    <Button.Group orientation='vertical'>
-                        {observed_effect_last_values.map((v, i) => (
-                            <Button compact size="sm" key={"btn_last_effect_" + i}
-                                variant={form.values.observed_effect.some(e => formatSelectedObservedEffect(e) === formatSelectedObservedEffect(v)) ? "filled" : "light"}
-                                onClick={() => addEffect(v)}>
-                                {formatSelectedObservedEffect(v)}
-                            </Button>
-                        ))}
-                    </Button.Group>
-                    <Title order={6} mt={"sm"}>{t('pages.stimulationTool.stimulation.effect.selected_effects')}</Title>
-                    <Stack spacing={4}>
-                        {form.values.observed_effect.map((effect, index) => {
-                            const formatted = formatSelectedObservedEffect(effect);
-                            return (
-                                <Group key={"effect_" + index} noWrap spacing="xs" position="apart">
-                                    <Button
-                                        compact size="sm"
-                                        variant={activeEffectIndex === index ? "filled" : "light"}
-                                        onClick={() => setActiveEffectIndex(index)}
-                                    >
-                                        {formatted}
-                                    </Button>
-                                    <ActionIcon
-                                        size="sm"
-                                        variant="subtle"
-                                        color="red"
-                                        onClick={() => removeEffect(index)}
-                                    >
-                                        <IconTrash size={14} />
-                                    </ActionIcon>
-                                </Group>
-                            );
-                        })}
-                    </Stack>
+                    <Title order={6} mt={"sm"} mb={4}>{t('pages.stimulationTool.stimulation.effect.selected_effects')}</Title>
+                    <ScrollArea type="auto" offsetScrollbars w={"100%"} h={"100%"} sx={{ overflowX: 'hidden' }}>
+                        <Stack spacing={4} m={0} p={0}>
+                            {form.values.observed_effect.map((effect, index) => {
+                                const formatted = formatSelectedObservedEffect(effect);
+                                return (
+                                    <Group key={"effect_" + index} noWrap spacing="xs" position="apart">
+                                        <Button
+                                            compact size="sm"
+                                            variant={activeEffectIndex === index ? "filled" : "light"}
+                                            onClick={() => setActiveEffectIndex(index)}
+                                        >
+                                            {formatted}
+                                        </Button>
+                                        <ActionIcon
+                                            size="sm"
+                                            variant="subtle"
+                                            color="red"
+                                            onClick={() => removeEffect(index)}
+                                        >
+                                            <IconTrash size={14} />
+                                        </ActionIcon>
+                                    </Group>
+                                );
+                            })}
+                        </Stack>
+                    </ScrollArea>
+                    <Title order={6} mt={"sm"} mb={4}>{t('pages.stimulationTool.stimulation.effect.last_used')}</Title>
+                    <ScrollArea type="auto" offsetScrollbars w={"100%"} h={"100%"} sx={{ overflowX: 'hidden' }}>
+                        <Button.Group orientation='vertical'>
+                            {observed_effect_last_values.map((v, i) => (
+                                <Button compact size="sm" key={"btn_last_effect_" + i}
+                                    variant={form.values.observed_effect.some(e => formatSelectedObservedEffect(e) === formatSelectedObservedEffect(v)) ? "filled" : "light"}
+                                    onClick={() => addEffect(v)}>
+                                    {formatSelectedObservedEffect(v)}
+                                </Button>
+                            ))}
+                        </Button.Group>
+                    </ScrollArea>
                 </Stack>
             </Box>
 

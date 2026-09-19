@@ -457,9 +457,11 @@ const CentralBar = ({
                     {/** Implantation ROI or selected Effect */}
                     <Stack sx={{ flex: 3 }} h={"100%"} align="center" justify="center">
                         <Text fz={"lg"} fw={"bold"} display={stimTimeSet ? 'none' : 'block'}>{getSelectedPointLocation()}</Text>
-                        <Stack display={stimTimeSet ? 'block' : 'none'} align="flex-start" justify="center">
+                        <Stack display={stimTimeSet ? 'block' : 'none'} align="flex-start" justify="center" spacing={2}>
                             <Text fz={"lg"} fw={"bold"}>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}:</Text>
-                            <Text fz={"lg"}>{getSelectedPointObservedEffect()}</Text>
+                            <ScrollArea h={40} type="auto" sx={{ overflowX: 'hidden' }}>
+                                <Text fz={"lg"}>{getSelectedPointObservedEffect()}</Text>
+                            </ScrollArea>
                         </Stack>
                     </Stack>
 
