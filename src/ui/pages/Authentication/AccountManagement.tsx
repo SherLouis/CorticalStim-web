@@ -12,8 +12,8 @@ import {
 import { useForm } from '@mantine/form';
 import { useTranslation } from 'react-i18next';
 import { isPasswordSecure } from './Password';
-import { useAuthState } from '../../context/AuthContext';
-import AuthenticationError, { AuthenticationErrorReason } from '../../core/auth/authenticationError';
+import { useAuthState } from '../../providers/AuthProvider';
+import AuthenticationError, { AuthenticationErrorReason } from '../../../core/auth/authenticationError';
 import { notifications } from '@mantine/notifications';
 import { IconTrash } from '@tabler/icons-react';
 

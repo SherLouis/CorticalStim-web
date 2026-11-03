@@ -2,7 +2,7 @@ import { Box, Button, Flex, Group, Stack, TextInput, Title } from "@mantine/core
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import ColumnButtonSelect from "./ColumnButtonSelect";
-import { StimulationTaskFormValues } from "../core/models/stimulationForm";
+import { StimulationTaskFormValues } from "../../core/models/stimulationForm";
 import Section from "./Section";
 
 

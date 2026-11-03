@@ -2,7 +2,7 @@ import { ActionIcon, AppShell, Avatar, Burger, Button, Container, Divider, Group
 import { PropsWithChildren, useState } from 'react'
 import { IconSun, IconMoonStars, IconSettings, IconLogout, IconLogin } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import { useAuthState } from '../context/AuthContext';
+import { useAuthState } from '../providers/AuthProvider';
 import { TFunction } from 'i18next';
 import { useNavigate } from 'react-router-dom';
 import { AppPath } from '../pages/Routes';

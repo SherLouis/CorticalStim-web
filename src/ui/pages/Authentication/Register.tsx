@@ -13,8 +13,8 @@ import {
     Alert,
 } from '@mantine/core';
 import { useLocation, useNavigate } from 'react-router-dom';
-import AuthenticationError, { AuthenticationErrorReason } from '../../core/auth/authenticationError';
-import { useAuthState } from '../../context/AuthContext';
+import AuthenticationError, { AuthenticationErrorReason } from '../../../core/auth/authenticationError';
+import { useAuthState } from '../../providers/AuthProvider';
 import { useState } from 'react';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { AppPath } from '../Routes';

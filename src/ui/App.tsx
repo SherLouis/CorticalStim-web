@@ -6,10 +6,11 @@ import BasePage from './entry/BasePage';
 import { useTranslation } from 'react-i18next';
 import StimulationToolPage from './pages/StimulationTool/StimulationToolPage';
 import { LoginPage } from './pages/Authentication/Login';
-import FirebaseAuthenticationProvider from './infra/firebase/firebaseAuthenticationProvider';
-import { AuthenticationProvider } from './core/auth/authenticationProvider';
+import FirebaseAuthenticationProvider from '../infra/firebase/firebaseAuthenticationProvider';
+import { AuthenticationProvider } from '../core/auth/authenticationProvider';
 import { RegisterPage } from './pages/Authentication/Register';
-import { AuthContextProvider } from './context/AuthContext';
+import { AuthContextProvider } from './providers/AuthProvider';
+import { RootStoreProvider } from './providers/RootStoreProvider';
 import { RequireAuth } from './components/routing/RequireAuth';
 import { VerifyEmailPage } from './pages/Authentication/VerifyEmail';
 import { RequireVerifiedUser } from './components/routing/RequireVerifiedUser';
@@ -87,10 +88,12 @@ function App() {
     return (
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
             <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+                <RootStoreProvider>
                 <AuthContextProvider authProvider={authProvider}>
                     <Notifications position="top-right" />
                     <RouterProvider router={router} />
                 </AuthContextProvider>
+            </RootStoreProvider>
             </MantineProvider>
         </ColorSchemeProvider>
     );

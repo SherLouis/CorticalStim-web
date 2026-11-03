@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom"
-import { useAuthState } from "../../context/AuthContext"
+import { useAuthState } from "../../providers/AuthProvider"
 
 const RequireVerifiedUser = ({ children, notVerifiedPage }: { children: React.ReactElement, notVerifiedPage: string }): React.ReactElement => {
     const authState = useAuthState()
