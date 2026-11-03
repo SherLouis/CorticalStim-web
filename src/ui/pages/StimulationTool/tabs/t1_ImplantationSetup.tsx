@@ -2,12 +2,12 @@ import { ActionIcon, Alert, Badge, Box, Button, Checkbox, Chip, Flex, Group, Inp
 import { useTranslation } from "react-i18next";
 import { IconAlertCircle, IconCircleCheck, IconCirclePlus, IconCircleX, IconDeselect, IconFileImport, IconLockCheck, IconTrash } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { letters } from "../../../lib/letterTools";
+import { letters } from "../../../../lib/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";
 import { TabProperties } from "./tab_properties";
-import StimulationFormValues, { ElectrodeFormValues, getStimPointLabel, getStimPointDisplayLabel, StimulationPoint } from "../../../core/models/stimulationForm";
+import StimulationFormValues, { ElectrodeFormValues, getStimPointLabel, getStimPointDisplayLabel, StimulationPoint } from "../../../../core/models/stimulationForm";
 import { useForm, UseFormReturnType } from "@mantine/form";
-import parseMniImplantationFromTsv from "../../../ui/tsvMniImplantationParser/tsvMniImplantationParser";
+import parseMniImplantationFromTsv from "../../../tsvMniImplantationParser/tsvMniImplantationParser";
 
 export default function ElectrodeSetupStep({ form }: TabProperties) {
     const { t } = useTranslation();

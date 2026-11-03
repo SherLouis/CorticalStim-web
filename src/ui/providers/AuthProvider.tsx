@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { AuthenticationProvider } from "../core/auth/authenticationProvider";
-import User from "../core/auth/user";
+import { AuthenticationProvider } from "../../core/auth/authenticationProvider";
+import User from "../../core/auth/user";
 
 type AuthContextProps = { authProvider: AuthenticationProvider, children: React.ReactNode }
 

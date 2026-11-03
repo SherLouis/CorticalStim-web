@@ -1,5 +1,5 @@
 import { Box, Button, Text, Paper, PaperProps } from "@mantine/core";
-import { useAuthState } from "../../context/AuthContext";
+import { useAuthState } from "../../providers/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { AppPath } from "../Routes";
