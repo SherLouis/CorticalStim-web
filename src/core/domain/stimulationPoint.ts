@@ -6,7 +6,7 @@ export interface StimulationLocation {
     destrieux: string;
     mni: { x: number; y: number; z: number };
     isWhiteMatter: boolean;
-    idDone: boolean;
+    isDone: boolean;
 }
 
 export interface StimulationPoint {
