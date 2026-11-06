@@ -9,12 +9,20 @@ import SummaryTab, { SummaryFilters } from "./tabs/t3_Summary";
 import { IconFolderOpen, IconDownload, IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useCustomTabStyle } from "../../components/StyledComponents/StyledTabs";
+import { useStimulationSession, RootStoreContext } from "../../hooks/useStimulationSession";
+import { observer } from "mobx-react-lite";
+import { useContext } from "react";
+import { StimulationSessionStore } from "../../../core/application/stores/stimulationSessionStore";
 
 // TODO: make everything (text, sizes, layout) responsive
 
-export default function StimulationToolPage() {
+const StimulationToolPage = observer(function StimulationToolPage() {
     const { t } = useTranslation();
     const openInputFileRef = useRef<HTMLInputElement | null>(null);
+
+    // Direct store access for reactivity
+    const rootStore = useContext(RootStoreContext);
+    const store: StimulationSessionStore = rootStore.stimulationSession;
 
     const [form_previous_values, set_form_previous_values] = useState<StimulationFormValues>({
         patient_id: "",
@@ -41,6 +49,12 @@ export default function StimulationToolPage() {
         },
         validateInputOnBlur: true
     })
+
+    // Transitional adapter for MobX store
+    const stimulationAdapter = useStimulationSession();
+
+    // Force re-render when store changes (directly observe store's electrodeCount)
+    const _storeElectrodeCount = store.electrodeCount;
 
     const [activeTab, setActiveTab] = useState<string | null>('implantation');
     const [summaryFilters, setSummaryFilters] = useState<SummaryFilters>({});
@@ -75,6 +89,7 @@ export default function StimulationToolPage() {
             try {
                 const values = JSON.parse(fileReader.result as string);
                 form.setValues(values);
+                stimulationAdapter.load(values);
                 set_form_previous_values(values);
                 notifications.update({
                     id: 'opened_file',
@@ -114,7 +129,7 @@ export default function StimulationToolPage() {
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            const shouldDisplayUnsavedMessage = JSON.stringify(form.values) !== JSON.stringify(form_previous_values);
+            const shouldDisplayUnsavedMessage = stimulationAdapter.isDirty || (JSON.stringify(form.values) !== JSON.stringify(form_previous_values));
             setHasUnsavedData(shouldDisplayUnsavedMessage);
         }, 1000);
         return () => clearTimeout(timeoutId);
@@ -167,10 +182,12 @@ export default function StimulationToolPage() {
                     <Tabs.Tab value="summary">{t("pages.stimulationTool.summary.tab_title")}</Tabs.Tab>
                 </Tabs.List>
 
-                <Tabs.Panel value="implantation" h={"95%"}><ElectrodeSetupStep form={form} /></Tabs.Panel>
-                <Tabs.Panel value="stimulation" h={"95%"}><StimulationsTab form={form} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
-                <Tabs.Panel value="summary" h={"95%"} ><SummaryTab form={form} filters={summaryFilters} /></Tabs.Panel>
+                <Tabs.Panel value="implantation" h={"95%"}><ElectrodeSetupStep form={form} stimulationAdapter={stimulationAdapter} /></Tabs.Panel>
+                <Tabs.Panel value="stimulation" h={"95%"}><StimulationsTab form={form} stimulationAdapter={stimulationAdapter} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
+                <Tabs.Panel value="summary" h={"95%"} ><SummaryTab form={form} stimulationAdapter={stimulationAdapter} filters={summaryFilters} /></Tabs.Panel>
             </Tabs>
         </Box >
     );
-}
+});
+
+export default StimulationToolPage;

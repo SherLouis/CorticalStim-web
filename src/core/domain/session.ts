@@ -1,3 +1,4 @@
+import { makeAutoObservable } from 'mobx';
 import { Electrode } from './electrode';
 
 export class ElectrodeParams {
@@ -11,6 +12,10 @@ export class StimulationSession {
     patient_id: string = '';
     electrode_params: ElectrodeParams = new ElectrodeParams();
     electrodes: Electrode[] = [];
+
+    constructor() {
+        makeAutoObservable(this);
+    }
 
     toValues() {
         return {
