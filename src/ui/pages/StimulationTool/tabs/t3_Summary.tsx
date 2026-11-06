@@ -1,5 +1,5 @@
 import { TabProperties } from "./tab_properties";
-import { StimulationLocationFormValues, computeChargeDensity, getStimPointLabel, getStimPointDisplayLabel } from "../../../../core/models/stimulationForm";
+import { StimulationLocationFormValues, computeChargeDensity, getStimPointLabel, getStimPointDisplayLabel, ElectrodeFormValues, StimulationPoint as LegacyStimulationPoint, Stimulation as LegacyStimulation } from "../../../../core/models/stimulationForm";
 import { useTranslation } from "react-i18next";
 import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { formatEpiManifestation, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
@@ -49,14 +49,17 @@ const formatYesNoUnknown = (value: string, t: any) => {
 
 const allColumnsProps = { sortable: true, resizable: false, draggable: false, toggleable: false };
 
-export default function SummaryTab({ form, filters }: SummaryTabProps) {
+export default function SummaryTab({ form, stimulationAdapter, filters }: SummaryTabProps) {
     const { t } = useTranslation();
+
+    // Use adapter if available, otherwise fall back to form
+    const source = stimulationAdapter ? stimulationAdapter.formValues : form.values;
 
     const allRecords = useMemo(() => {
         return (
-            form.values.electrodes.flatMap((elec) =>
-                elec.stim_points.flatMap((point) =>
-                    point.stimulations.flatMap((stim, i) => {
+            source.electrodes.flatMap((elec: ElectrodeFormValues) =>
+                elec.stim_points.flatMap((point: LegacyStimulationPoint) =>
+                    point.stimulations.flatMap((stim: LegacyStimulation, i: number) => {
                         return {
                             id: getStimPointLabel(elec.label, point.index) + i,
                             electrode: elec.label,
@@ -82,7 +85,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                     })
                 )
             ));
-    }, [form.values.electrodes, t]);
+    }, [source.electrodes, t]);
 
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'pointId', direction: 'desc' });
     const [pointIdList, setPointIdListHandlers] = useListState(filters ? filters.pointIds : []);
@@ -113,7 +116,6 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
     }
 
 
-
     const columnsLocalStorageKey = 'result_table_columns';
     const tableColumns = useMemo(() => [
         { accessor: 'electrode', title: t('pages.stimulationTool.summary.results_table.electrode_title'), ...allColumnsProps },
@@ -122,7 +124,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
             render: (result: Result) => getStimPointDisplayLabel(result.pointId),
             filter: (
                 <MultiSelect
-                    data={Array.from(new Set(allRecords.map((r) => r.pointId))).map(id => ({ value: id, label: getStimPointDisplayLabel(id) }))}
+                    data={Array.from(new Set(allRecords.map((r: Result) => r.pointId))).map((id: string) => ({ value: id, label: getStimPointDisplayLabel(id) }))}
                     value={pointIdList}
                     label="Points"
                     searchable
@@ -226,7 +228,7 @@ export default function SummaryTab({ form, filters }: SummaryTabProps) {
                 <CSVLink
                     data={records}
                     headers={csvHeaders}
-                    filename={`${form.values.patient_id}_${new Date().toISOString().split('T')[0]}_summary.csv`}
+                    filename={`${source.patient_id}_${new Date().toISOString().split('T')[0]}_summary.csv`}
                     hidden
                     ref={csvFileRef}
                     target='_blank'
@@ -323,5 +325,4 @@ interface SummaryTabProps extends TabProperties {
 export interface SummaryFilters {
     electrodes?: string[],
     pointIds?: string[],
-
 }

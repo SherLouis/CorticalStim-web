@@ -14,7 +14,7 @@ import StimulatedContact, { getStimulatedStyledContactBorderStyle, getStimulated
 import Section from "../../../components/Section";
 import { DateTimePicker, DateValue } from "@mantine/dates";
 
-export default function StimulationsTab({ form, viewPointSummary }: StimulationTabProps) {
+export default function StimulationsTab({ form, stimulationAdapter, viewPointSummary }: StimulationTabProps) {
     // TODO: ajouter validations (ex: post discharge time cannot be 0 or negative if set to true)
 
     const { t } = useTranslation();
