@@ -135,7 +135,7 @@ function ElectrodeSetupStep({ form, stimulationAdapter }: TabProperties) {
 
         // Build a lookup map for faster access
         const pointMap = new Map<string, any>();
-const sourceElectrodes = stimulationAdapter ? stimulationAdapter.formValues.electrodes : form.values.electrodes;
+        const sourceElectrodes = stimulationAdapter ? stimulationAdapter.formValues.electrodes : form.values.electrodes;
         sourceElectrodes.forEach(e => {
             e.stim_points.forEach((p: any, i: number) => {
                 pointMap.set(getStimPointLabel(e.label, i), p);
@@ -436,8 +436,8 @@ const sourceElectrodes = stimulationAdapter ? stimulationAdapter.formValues.elec
                                         label={t("pages.stimulationTool.implantation.electrodeLabel")}
                                         placeholder="A"
                                         required
-                                        {...(stimulationAdapter ? { 
-                                            value: electrode.label, 
+                                        {...(stimulationAdapter ? {
+                                            value: electrode.label,
                                             onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
                                                 // We'd need an updateElectrodeLabel method; for now fall back to form
                                                 form.setFieldValue(`electrodes.${electrode_i}.label`, e.target.value);
@@ -453,8 +453,8 @@ const sourceElectrodes = stimulationAdapter ? stimulationAdapter.formValues.elec
                                     >
                                         <SegmentedControl
                                             data={getSideOptions()}
-                                            {...(stimulationAdapter ? { 
-                                                value: electrode.side, 
+                                            {...(stimulationAdapter ? {
+                                                value: electrode.side,
                                                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
                                                     form.setFieldValue(`electrodes.${electrode_i}.side`, e.target.value);
                                                 }
