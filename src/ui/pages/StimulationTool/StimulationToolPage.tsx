@@ -53,9 +53,6 @@ const StimulationToolPage = observer(function StimulationToolPage() {
     // Transitional adapter for MobX store
     const stimulationAdapter = useStimulationSession();
 
-    // Force re-render when store changes (directly observe store's electrodeCount)
-    const _storeElectrodeCount = store.electrodeCount;
-
     const [activeTab, setActiveTab] = useState<string | null>('implantation');
     const [summaryFilters, setSummaryFilters] = useState<SummaryFilters>({});
     const [hasUnsavedData, setHasUnsavedData] = useState(false);
@@ -68,6 +65,7 @@ const StimulationToolPage = observer(function StimulationToolPage() {
         tempLink.setAttribute('download', `${form.values.patient_id}-${new Date().toISOString().split('T')[0]}.json`);
         tempLink.click();
         set_form_previous_values(form.values);
+        stimulationAdapter.markSaved();
     }
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files === null) {

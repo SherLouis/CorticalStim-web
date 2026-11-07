@@ -83,9 +83,6 @@ export function useStimulationSession(): StimulationSessionAdapter {
         addStimulation: (electrodeIndex: number, stimPointIndex: number) => store.addStimulation(electrodeIndex, stimPointIndex),
     };
 
-    // Debug
-    console.debug('[useStimulationSession] adapter.formValues.electrodes:', adapter.formValues.electrodes?.length);
-
     return adapter;
 }
 

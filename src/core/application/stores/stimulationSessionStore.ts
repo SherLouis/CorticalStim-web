@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, makeObservable, observable } from 'mobx';
 import { StimulationSession, ElectrodeParams } from '../../domain/session';
 import { Electrode } from '../../domain/electrode';
 import { StimulationLocation, StimulationPoint } from '../../domain/stimulationPoint';
@@ -37,6 +37,12 @@ export class StimulationSessionStore {
     lastSavedSnapshot: StimulationSessionValues | null = null;
 
     constructor() {
+        makeObservable(this.session, {
+            patient_id: observable,
+            electrode_params: observable,
+            electrodes: observable,
+        });
+
         makeAutoObservable(this);
     }
 
@@ -81,19 +87,13 @@ export class StimulationSessionStore {
 
     /** Add a new electrode with default empty config. */
     addElectrode(label: string) {
-        console.debug("Adding electrode with label : " + label);
-        this.session.electrodes.push({ label, side: undefined, nContacts: 0, confirmed: false, stimulationPoints: [] } as Electrode);
+        this.session.electrodes.unshift({ label, side: undefined, nContacts: 0, confirmed: false, stimulationPoints: [] } as Electrode);
         this.markDirty();
     }
 
     /** Remove electrode by index. */
     removeElectrode(index: number) {
-        console.debug("Store - removing electrode at index " + index);
-        console.debug("Store - electrodes before remove");
-        console.debug(this.session.electrodes);
         this.session.electrodes.splice(index, 1);
-        console.debug("Store - electrodes after remove");
-        console.debug(this.session.electrodes);
         this.markDirty();
     }
 
@@ -191,7 +191,9 @@ export class StimulationSessionStore {
     setValues(values: StimulationSessionValues) {
         this.session.patient_id = values.patient_id;
         this.session.electrode_params = Object.assign(new ElectrodeParams(), values.electrode_params);
-        this.session.electrodes = values.electrodes.map((e) => ({ ...e }));
+        // Replace observable array contents instead of replacing the array reference
+        const newElectrodes = values.electrodes.map((e) => ({ ...e }));
+        this.session.electrodes.splice(0, this.session.electrodes.length, ...newElectrodes);
         this.isDirty = false;
         this.lastSavedSnapshot = this.toValues();
     }
