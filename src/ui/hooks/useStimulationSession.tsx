@@ -36,10 +36,10 @@ export interface StimulationSessionAdapter {
     removeElectrode: (index: number) => void;
     updateElectrodeParams: (params: { type?: string; separation?: number; diameter?: number; length?: number }) => void;
     setElectrodeContacts: (electrodeIndex: number, nbContacts: number) => void;
-    addStimulationPoint: (electrodeIndex: number) => void;
     confirmElectrode: (electrodeIndex: number) => void;
+    updateElectrodeLabel: (electrodeIndex: number, label: string) => void;
+    updateElectrodeSide: (electrodeIndex: number, side: 'left' | 'right' | undefined) => void;
     updateStimulationPointLocation: (electrodeIndex: number, stimPointIndex: number, location: any) => void;
-    addStimulation: (electrodeIndex: number, stimPointIndex: number) => void;
 }
 
 /**
@@ -77,10 +77,10 @@ export function useStimulationSession(): StimulationSessionAdapter {
         removeElectrode: (index: number) => store.removeElectrode(index),
         updateElectrodeParams: (params: { type?: string; separation?: number; diameter?: number; length?: number }) => store.updateElectrodeParams(params),
         setElectrodeContacts: (electrodeIndex: number, nbContacts: number) => store.setElectrodeContacts(electrodeIndex, nbContacts),
-        addStimulationPoint: (electrodeIndex: number) => store.addStimulationPoint(electrodeIndex),
         confirmElectrode: (electrodeIndex: number) => store.confirmElectrode(electrodeIndex),
+        updateElectrodeLabel: (electrodeIndex: number, label: string) => store.updateElectrodeLabel(electrodeIndex, label),
+        updateElectrodeSide: (electrodeIndex: number, side: 'left' | 'right' | undefined) => store.updateElectrodeSide(electrodeIndex, side),
         updateStimulationPointLocation: (electrodeIndex: number, stimPointIndex: number, location: any) => store.updateStimulationPointLocation(electrodeIndex, stimPointIndex, location),
-        addStimulation: (electrodeIndex: number, stimPointIndex: number) => store.addStimulation(electrodeIndex, stimPointIndex),
     };
 
     return adapter;
