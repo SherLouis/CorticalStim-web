@@ -16,42 +16,30 @@ interface ElectrodeRowProps {
     electrode: ElectrodeFormValues;
     electrode_i: number;
     stimulationAdapter: StimulationSessionAdapter | undefined;
-    form: UseFormReturnType<StimulationFormValues>;
     t: ReturnType<typeof useTranslation>['t'];
     selectedContacts: string[];
     doneContacts: string[];
     setSelectedContacts: React.Dispatch<React.SetStateAction<string[]>>;
-    setDoneContacts: React.Dispatch<React.SetStateAction<string[]>>;
     getStimPointLabel: (label: string, index: number, showDerivation?: boolean, forDisplay?: boolean) => string;
-    getStimPointDisplayLabel: (pointId: string) => string;
     getSideOptions: () => { label: string; value: string }[];
     handleDeleteElectrodeButtonClicked: (label: string) => void;
     handleConfirmElectrodeButtonClicked: (label: string) => void;
     setContactsToElectrode: (index: number, nbContacts: number) => void;
-    handleElectrodeLocationFormSubmit: () => void;
-    getSelectedContactsROIValue: () => ElectrodeLocationFormValues;
-    locationForm: UseFormReturnType<ElectrodeLocationFormValues>;
 }
 
 const ElectrodeRow = memo(function ElectrodeRow({
     electrode,
     electrode_i,
     stimulationAdapter,
-    form,
     t,
     selectedContacts,
     doneContacts,
     setSelectedContacts,
-    setDoneContacts,
     getStimPointLabel,
-    getStimPointDisplayLabel,
     getSideOptions,
     handleDeleteElectrodeButtonClicked,
     handleConfirmElectrodeButtonClicked,
     setContactsToElectrode,
-    handleElectrodeLocationFormSubmit,
-    getSelectedContactsROIValue,
-    locationForm,
 }: ElectrodeRowProps) {
     return (
         <Flex direction={"row"} justify={"space-between"} align={"center"} wrap={"nowrap"}
@@ -71,28 +59,23 @@ const ElectrodeRow = memo(function ElectrodeRow({
                     label={t("pages.stimulationTool.implantation.electrodeLabel")}
                     placeholder="A"
                     required
-                    {...(stimulationAdapter ? {
-                        value: electrode.label,
-                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                            stimulationAdapter.updateElectrodeLabel(electrode_i, e.target.value);
-                        }
-                    } : form.getInputProps(`electrodes.${electrode_i}.label`))}
+                    value={electrode.label}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        stimulationAdapter?.updateElectrodeLabel(electrode_i, e.target.value);
+                    }}
                 />
                 {/** Side */}
                 <Input.Wrapper sx={{ flex: 2 }}
                     size="sm"
                     label={t("pages.stimulationTool.implantation.sideLabel")}
                     required
-                    error={form.getInputProps(`electrodes.${electrode_i}.side`).error}
                 >
                     <SegmentedControl
                         data={getSideOptions()}
-                        {...(stimulationAdapter ? {
-                            value: electrode.side,
-                            onChange: (value: string) => {
-                                stimulationAdapter.updateElectrodeSide(electrode_i, value as 'left' | 'right' | undefined);
-                            }
-                        } : form.getInputProps(`electrodes.${electrode_i}.side`))}
+                        value={electrode.side}
+                        onChange={(value: string) => {
+                            stimulationAdapter?.updateElectrodeSide(electrode_i, value as 'left' | 'right' | undefined);
+                        }}
                     />
                 </Input.Wrapper>
                 {/** Number of contacts */}
@@ -510,33 +493,28 @@ function ElectrodeSetupStep({ form, stimulationAdapter }: TabProperties) {
                                         separation: option.separation,
                                         length: option.length
                                     });
-                                } else {
-                                    form.setFieldValue('electrode_params.type', option.implantationType);
-                                    form.setFieldValue('electrode_params.diameter', option.diameter);
-                                    form.setFieldValue('electrode_params.separation', option.separation);
-                                    form.setFieldValue('electrode_params.length', option.length);
-                                }
+    
                             }
-                        }}
+                        }}}
                     />
                     <Group position="apart" spacing={"sm"}>
                         <NumberInput
                             label={t('pages.stimulationTool.implantation.contactDiameterLabel')}
                             precision={1}
                             required
-                            {...(stimulationAdapter ? { value: stimulationAdapter.formValues.electrode_params.diameter, onChange: (v: number) => stimulationAdapter.updateElectrodeParams({ diameter: v }) } : form.getInputProps('electrode_params.diameter'))}
+                            value={stimulationAdapter?.formValues.electrode_params.diameter ?? 0} onChange={(v: number) => stimulationAdapter?.updateElectrodeParams({ diameter: v })}
                         />
                         <NumberInput
                             label={t('pages.stimulationTool.implantation.contactSeparationLabel')}
                             precision={1}
                             required
-                            {...(stimulationAdapter ? { value: stimulationAdapter.formValues.electrode_params.separation, onChange: (v: number) => stimulationAdapter.updateElectrodeParams({ separation: v }) } : form.getInputProps('electrode_params.separation'))}
+                            value={stimulationAdapter?.formValues.electrode_params.separation ?? 0} onChange={(v: number) => stimulationAdapter?.updateElectrodeParams({ separation: v })}
                         />
                         <NumberInput
                             label={t('pages.stimulationTool.implantation.contactLengthLabel')}
                             precision={1}
                             required
-                            {...(stimulationAdapter ? { value: stimulationAdapter.formValues.electrode_params.length, onChange: (v: number) => stimulationAdapter.updateElectrodeParams({ length: v }) } : form.getInputProps('electrode_params.length'))}
+                            value={stimulationAdapter?.formValues.electrode_params.length ?? 0} onChange={(v: number) => stimulationAdapter?.updateElectrodeParams({ length: v })}
                         />
                     </Group>
                 </Group>
@@ -556,21 +534,15 @@ function ElectrodeSetupStep({ form, stimulationAdapter }: TabProperties) {
                             electrode={electrode}
                             electrode_i={electrode_i}
                             stimulationAdapter={stimulationAdapter}
-                            form={form}
                             t={t}
                             selectedContacts={selectedContacts}
                             doneContacts={doneContacts}
                             setSelectedContacts={setSelectedContacts}
-                            setDoneContacts={setDoneContacts}
                             getStimPointLabel={getStimPointLabel}
-                            getStimPointDisplayLabel={getStimPointDisplayLabel}
                             getSideOptions={getSideOptions}
                             handleDeleteElectrodeButtonClicked={handleDeleteElectrodeButtonClicked}
                             handleConfirmElectrodeButtonClicked={handleConfirmElectrodeButtonClicked}
                             setContactsToElectrode={setContactsToElectrode}
-                            handleElectrodeLocationFormSubmit={handleElectrodeLocationFormSubmit}
-                            getSelectedContactsROIValue={getSelectedContactsROIValue}
-                            locationForm={locationForm}
                         />
                     ))}
                 </ScrollArea>
