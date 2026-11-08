@@ -2,7 +2,7 @@ import { ActionIcon, Alert, Badge, Box, Button, Checkbox, Chip, Flex, Group, Inp
 import { useTranslation } from "react-i18next";
 import { IconAlertCircle, IconCircleCheck, IconCirclePlus, IconCircleX, IconDeselect, IconFileImport, IconLockCheck, IconTrash } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
-import { letters } from "../../../../lib/letterTools";
+import { letters } from "../../../../ui/tools/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";
 import { TabProperties } from "./tab_properties";
 import { useForm, UseFormReturnType } from "@mantine/form";
