@@ -13,8 +13,10 @@ import CustomNumberInput from "../../../components/CustomNumberInput";
 import StimulatedContact, { getStimulatedStyledContactBorderStyle, getStimulatedStyledContactColor } from "../../../components/StimulatedContact";
 import Section from "../../../components/Section";
 import { DateTimePicker, DateValue } from "@mantine/dates";
+import { Stimulation, StimulationParameters } from "../../../../core/domain/stimulation";
+import { StimulationSessionAdapter } from "../../../hooks/useStimulationSession";
 
-export default function StimulationsTab({ form, stimulationAdapter, viewPointSummary }: StimulationTabProps) {
+export default function StimulationsTab({ form: _form, stimulationAdapter, viewPointSummary }: StimulationTabProps) {
     // TODO: ajouter validations (ex: post discharge time cannot be 0 or negative if set to true)
 
     const { t } = useTranslation();
@@ -60,6 +62,7 @@ export default function StimulationsTab({ form, stimulationAdapter, viewPointSum
     const handleSubmit = () => {
         if (selectedPoint === undefined) { return; }
         if (stimulationTime === '') { return; }
+        if (!stimulationAdapter) { return; }
 
         // validate forms
         params_form.validate();
@@ -67,79 +70,98 @@ export default function StimulationsTab({ form, stimulationAdapter, viewPointSum
         effect_form.validate();
         if (!params_form.isValid() || !task_form.isValid() || !effect_form.isValid()) { return; }
 
-        const params_values = params_form.values;
-        const task_values = task_form.values;
-        const effect_values = effect_form.values;
-
         const electrode_label = selectedPoint.split('/').slice(0, -1).join('/');
 
-        form.values.electrodes.forEach((electrode, electrode_i) => {
+        // Find electrode and stimulation point indices
+        let electrode_i = -1;
+        let stim_point_i = -1;
+        stimulationAdapter.formValues.electrodes.forEach((electrode, ei) => {
             if (electrode.label === electrode_label) {
-                electrode.stim_points.forEach((stim_point, stim_point_i) => {
-                    const stimId = getStimPointLabel(electrode.label, stim_point_i)
+                electrode_i = ei;
+                electrode.stim_points.forEach((stim_point, spi) => {
+                    const stimId = getStimPointLabel(electrode.label, spi);
                     if (stimId === selectedPoint) {
-                        // Insert new stimulatinon for this stimulation point
-                        form.insertListItem(`electrodes.${electrode_i}.stim_points.${stim_point.index}.stimulations`,
-                            {
-                                time: stimulationTime,
-                                parameters: {
-                                    amplitude: params_values.amplitude,
-                                    duration: params_values.duration,
-                                    frequency: params_values.frequency,
-                                    lenght_path: params_values.lenght_path
-                                },
-                                task: {
-                                    category: task_values.category,
-                                    subcategory: task_values.subcategory,
-                                    characteristic: task_values.characteristic
-                                },
-                                effect: effect_values
-                            });
-                        // Save last used task
-                        if (JSON.stringify(task_values) === JSON.stringify(NO_TASK)) {
-                            // NO-OP - do not save no effect in last values
-                        }
-                        else if (lastTaskValues.map(t => formatSelectedTask(t)).includes(formatSelectedTask(task_values))) {
-                            lastTaskValuesHandlers.reorder({ from: lastTaskValues.findIndex(t => formatSelectedTask(t) === formatSelectedTask(task_values)), to: 0 });
-                        }
-                        else {
-                            lastTaskValuesHandlers.prepend(task_values);
-                            if (lastTaskValues.length >= MAX_LAST_TASK) {
-                                lastTaskValues.pop();
-                            }
-                        }
-
-                        // Save last used effect
-                        effect_values.observed_effect.forEach(effect => {
-                            if (JSON.stringify(effect) === JSON.stringify(NO_EFFECT)) {
-                                // NO-OP - do not save no effect in last values
-                            }
-                            else if (lastCognitiveEffectValues.map(e => formatSelectedObservedEffect(e)).includes(formatSelectedObservedEffect(effect))) {
-                                lastCognitiveEffectValuesHandlers.reorder({ from: lastCognitiveEffectValues.findIndex(e => formatSelectedObservedEffect(e) === formatSelectedObservedEffect(effect)), to: 0 });
-                            }
-                            else {
-                                lastCognitiveEffectValuesHandlers.prepend({
-                                    class: effect.class,
-                                    descriptor: effect.descriptor,
-                                    details: effect.details
-                                });
-                                if (lastCognitiveEffectValues.length >= MAX_LAST_EFFECT) {
-                                    lastCognitiveEffectValuesHandlers.pop();
-                                }
-                            }
-                        });
-
-                        // unselect point and reset inner forms to prepare for next stimulation
-                        resetForNewPoint('');
-                        return;
+                        stim_point_i = spi;
                     }
                 });
             }
         });
+
+        if (electrode_i === -1 || stim_point_i === -1) { return; }
+
+        // Create domain Stimulation object
+        const stimulation: Stimulation = {
+            time: stimulationTime,
+            parameters: new StimulationParameters({
+                amplitude: params_form.values.amplitude,
+                duration: params_form.values.duration,
+                frequency: params_form.values.frequency,
+                lengthPath: params_form.values.lenght_path
+            }),
+            task: {
+                category: task_form.values.category,
+                subcategory: task_form.values.subcategory,
+                characteristic: task_form.values.characteristic
+            },
+            effect: {
+                observed_effect: effect_form.values.observed_effect,
+                observed_effect_comments: effect_form.values.observed_effect_comments,
+                epi_manifestation: effect_form.values.epi_manifestation,
+                contact_in_epi_zone: effect_form.values.contact_in_epi_zone,
+                contact_in_epi_zone_comments: effect_form.values.contact_in_epi_zone_comments,
+                post_discharge: effect_form.values.post_discharge,
+                pd_duration: effect_form.values.pd_duration,
+                pd_local: effect_form.values.pd_local,
+                pd_type: effect_form.values.pd_type,
+                crisis: effect_form.values.crisis,
+                crisis_comments: effect_form.values.crisis_comments
+            }
+        };
+
+        // Save to store via adapter
+        stimulationAdapter.addStimulation(electrode_i, stim_point_i, stimulation);
+
+        // Save last used task
+        if (JSON.stringify(task_form.values) === JSON.stringify(NO_TASK)) {
+            // NO-OP - do not save no effect in last values
+        }
+        else if (lastTaskValues.map(t => formatSelectedTask(t)).includes(formatSelectedTask(task_form.values))) {
+            lastTaskValuesHandlers.reorder({ from: lastTaskValues.findIndex(t => formatSelectedTask(t) === formatSelectedTask(task_form.values)), to: 0 });
+        }
+        else {
+            lastTaskValuesHandlers.prepend(task_form.values);
+            if (lastTaskValues.length >= MAX_LAST_TASK) {
+                lastTaskValues.pop();
+            }
+        }
+
+        // Save last used effect
+        effect_form.values.observed_effect.forEach(effect => {
+            if (JSON.stringify(effect) === JSON.stringify(NO_EFFECT)) {
+                // NO-OP - do not save no effect in last values
+            }
+            else if (lastCognitiveEffectValues.map(e => formatSelectedObservedEffect(e)).includes(formatSelectedObservedEffect(effect))) {
+                lastCognitiveEffectValuesHandlers.reorder({ from: lastCognitiveEffectValues.findIndex(e => formatSelectedObservedEffect(e) === formatSelectedObservedEffect(effect)), to: 0 });
+            }
+            else {
+                lastCognitiveEffectValuesHandlers.prepend({
+                    class: effect.class,
+                    descriptor: effect.descriptor,
+                    details: effect.details
+                });
+                if (lastCognitiveEffectValues.length >= MAX_LAST_EFFECT) {
+                    lastCognitiveEffectValues.pop();
+                }
+            }
+        });
+
+        // unselect point and reset inner forms to prepare for next stimulation
+        resetForNewPoint('');
+        return;
     }
 
     const getSelectedPointLocationFormInfo = () => {
-        for (const electrode of form.values.electrodes) {
+        for (const electrode of stimulationAdapter.formValues.electrodes) {
             let foundStimPoint = electrode.stim_points.find(point =>
                 selectedPoint === getStimPointLabel(electrode.label, point.index)
             );
@@ -195,12 +217,6 @@ export default function StimulationsTab({ form, stimulationAdapter, viewPointSum
         return `${post_discharge} ${effect_form_values.crisis ? t('pages.stimulationTool.stimulation.effect.eeg_section.crisis_label') : ""}`
     }
 
-
-
-
-
-
-
     return (
         <Box pt={"md"} h={"100%"}>
             {/** Confirm change contact without saving */}
@@ -224,7 +240,7 @@ export default function StimulationsTab({ form, stimulationAdapter, viewPointSum
                             children={
                                 <Box h={"100%"} w={"100%"} p={0} m={0}>
                                     <ContactSelection
-                                        electrodes={form.values.electrodes.filter(e => e.confirmed)}
+                                        electrodes={stimulationAdapter.formValues.electrodes.filter(e => e.confirmed)}
                                         selectedContact={selectedPoint}
                                         onSelectedChanged={handleSelectedPointChanged}
                                         onViewResultsForPoint={handleViewResultsForPoint}
@@ -245,13 +261,12 @@ export default function StimulationsTab({ form, stimulationAdapter, viewPointSum
 
             <Box h={"15%"} w={"100%"} py={"sm"}>
                 <CentralBar
-                    form={form}
+                    stimulationAdapter={stimulationAdapter}
                     selectedPoint={selectedPoint}
                     stimulationTime={stimulationTime}
                     setStimulationTime={setStimulationTime}
                     params_form={params_form}
                     task_form={task_form}
-                    effect_form={effect_form}
                     handleSubmit={handleSubmit}
                     getSelectedPointLocation={getSelectedPointLocation}
                     getSelectedPointObservedEffect={getSelectedPointObservedEffect}
@@ -356,13 +371,12 @@ interface ContactSelectionProps {
 }
 
 interface CentralBarProps {
-    form: UseFormReturnType<StimulationFormValues>;
+    stimulationAdapter: StimulationSessionAdapter
     selectedPoint: string;
     stimulationTime: string;
     setStimulationTime: (time: string) => void;
     params_form: UseFormReturnType<StimulationParametersFormValues>;
     task_form: UseFormReturnType<StimulationTaskFormValues>;
-    effect_form: UseFormReturnType<StimulationEffectsValues>;
     handleSubmit: () => void;
     getSelectedPointLocation: () => string;
     getSelectedPointObservedEffect: () => string;
@@ -374,13 +388,12 @@ interface CentralBarProps {
 }
 
 const CentralBar = ({
-    form,
+    stimulationAdapter,
     selectedPoint,
     stimulationTime,
     setStimulationTime,
     params_form,
     task_form,
-    effect_form,
     handleSubmit,
     getSelectedPointLocation,
     getSelectedPointObservedEffect,
@@ -398,17 +411,17 @@ const CentralBar = ({
             t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + ' (µs), ' +
             t('pages.stimulationTool.stimulation.charge_density_label') + ': ' + computeChargeDensity(params.amplitude, params.lenght_path).toFixed(2) + ' (µC/cm²)';
     }
-
+    const formValues = stimulationAdapter.formValues;
     const stimPointConfirmedExist = useMemo<boolean>(() => {
-        return form.values.electrodes.filter((e: ElectrodeFormValues) => e.confirmed && e.n_contacts > 0).length !== 0;
-    }, [form.values.electrodes]);
+        return formValues.electrodes.filter((e: ElectrodeFormValues) => e.confirmed && e.n_contacts > 0).length !== 0;
+    }, [formValues.electrodes]);
     const stimTimeSet = stimulationTime !== '';
 
     const [useDateTimePicker, setUseDateTimePicker] = useState<boolean>(false);
     const [customSelectedDateTime, setCustomSelectedDateTime] = useState<DateValue>(null);
 
     const selectedPointElectrodeLabel = selectedPoint.split('/').slice(0, -1).join('/');
-    const selectedPointStims = form.values.electrodes.find((e: ElectrodeFormValues) => e.label === selectedPointElectrodeLabel)?.stim_points.find((p: StimulationPoint) => getStimPointLabel(selectedPointElectrodeLabel, p.index) === selectedPoint)?.stimulations;
+    const selectedPointStims = formValues.electrodes.find((e: ElectrodeFormValues) => e.label === selectedPointElectrodeLabel)?.stim_points.find((p: StimulationPoint) => getStimPointLabel(selectedPointElectrodeLabel, p.index) === selectedPoint)?.stimulations;
     const stims = selectedPointStims !== undefined ? selectedPointStims : [];
     const selectedContactBorderSx = getStimulatedStyledContactBorderStyle(stims, theme);
     const selectedContactBackgroundColorSx = getStimulatedStyledContactColor(stims, stims.length === 0, theme, true);

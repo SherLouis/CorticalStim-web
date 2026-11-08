@@ -1,4 +1,5 @@
 import { StimulationSessionStore } from './stimulationSessionStore';
+import { Stimulation, StimulationParameters } from '../../domain/stimulation';
 
 test('add electrode and stim point', () => {
     const store = new StimulationSessionStore();
@@ -112,5 +113,39 @@ test('updateStimulationPointLocation', () => {
     expect(point.location.type).toBe('mni');
     expect(point.location.mni).toEqual({ x: 10, y: 20, z: 30 });
     expect(point.location.isDone).toBe(true);
+    expect(store.isDirty).toBe(true);
+});
+
+test('addStimulation', () => {
+    const store = new StimulationSessionStore();
+    store.setValues({ patient_id: 'p1', electrode_params: { type: 't', separation: 1, diameter: 2, length: 3 }, electrodes: [] });
+    store.addElectrode('E1');
+    store.setElectrodeContacts(0, 2);
+    
+    const stimulation = {
+        time: '2024-01-01T10:00:00Z',
+        parameters: new StimulationParameters({ amplitude: 2.0, duration: 5, frequency: 50, lengthPath: 300 }),
+        task: { category: 'language', subcategory: 'naming', characteristic: 'overt' },
+        effect: { 
+            observed_effect: [], 
+            observed_effect_comments: '', 
+            epi_manifestation: '', 
+            contact_in_epi_zone: 'unknown', 
+            contact_in_epi_zone_comments: '', 
+            post_discharge: false, 
+            pd_duration: undefined, 
+            pd_local: 'local', 
+            pd_type: '', 
+            crisis: false, 
+            crisis_comments: '' 
+        }
+    };
+    
+    store.addStimulation(0, 0, stimulation);
+    
+    const vals = store.toValues();
+    expect(vals.electrodes[0].stimulationPoints[0].stimulations.length).toBe(1);
+    expect(vals.electrodes[0].stimulationPoints[0].stimulations[0].parameters.amplitude).toBe(2.0);
+    expect(vals.electrodes[0].stimulationPoints[0].stimulations[0].task.category).toBe('language');
     expect(store.isDirty).toBe(true);
 });
