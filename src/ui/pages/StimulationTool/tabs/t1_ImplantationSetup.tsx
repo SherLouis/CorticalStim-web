@@ -439,8 +439,7 @@ function ElectrodeSetupStep({ form, stimulationAdapter }: TabProperties) {
                                         {...(stimulationAdapter ? {
                                             value: electrode.label,
                                             onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                                                // We'd need an updateElectrodeLabel method; for now fall back to form
-                                                form.setFieldValue(`electrodes.${electrode_i}.label`, e.target.value);
+                                                stimulationAdapter.updateElectrodeLabel(electrode_i, e.target.value);
                                             }
                                         } : form.getInputProps(`electrodes.${electrode_i}.label`))}
                                     />
@@ -455,8 +454,8 @@ function ElectrodeSetupStep({ form, stimulationAdapter }: TabProperties) {
                                             data={getSideOptions()}
                                             {...(stimulationAdapter ? {
                                                 value: electrode.side,
-                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                                                    form.setFieldValue(`electrodes.${electrode_i}.side`, e.target.value);
+                                                onChange: (value: string) => {
+                                                    stimulationAdapter.updateElectrodeSide(electrode_i, value as 'left' | 'right' | undefined);
                                                 }
                                             } : form.getInputProps(`electrodes.${electrode_i}.side`))}
                                         />

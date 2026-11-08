@@ -103,18 +103,6 @@ export class StimulationSessionStore {
         this.markDirty();
     }
 
-    /** Add a new stimulation point to an electrode (between two contacts). */
-    addStimulationPoint(electrodeIndex: number) {
-        const electrode = this.session.electrodes[electrodeIndex];
-        if (!electrode) return;
-        electrode.stimulationPoints.push({
-            index: electrode.stimulationPoints.length,
-            location: { type: 'white', vep: '', destrieux: '', mni: { x: 0, y: 0, z: 0 }, isWhiteMatter: false, isDone: false },
-            stimulations: []
-        } as any);
-        this.markDirty();
-    }
-
     // TODO (future): reference electrodes by label instead of index
     /**
      * Configure an electrode's contact count and create corresponding stimulation points.
@@ -153,6 +141,32 @@ export class StimulationSessionStore {
     }
 
     /**
+     * Update an electrode's label
+     * @param electrodeIndex Index of the electrode
+     * @param label New label for the electrode
+     * @returns Void
+     */
+    updateElectrodeLabel(electrodeIndex: number, label: string) {
+        if (electrodeIndex >= this.electrodeCount + 1) return;
+        const electrode = this.session.electrodes[electrodeIndex];
+        electrode.label = label;
+        this.markDirty();
+    }
+
+    /**
+     * Update an electrode's side (left/right)
+     * @param electrodeIndex Index of the electrode
+     * @param side New side for the electrode
+     * @returns Void
+     */
+    updateElectrodeSide(electrodeIndex: number, side: 'left' | 'right' | undefined) {
+        if (electrodeIndex >= this.electrodeCount + 1) return;
+        const electrode = this.session.electrodes[electrodeIndex];
+        electrode.side = side;
+        this.markDirty();
+    }
+
+    /**
      * Update a stimulation point's location (ROI type, VEP, Destrieux, MNI, white matter).
      * @param electrodeIndex Index of the electrode
      * @param stimPointIndex Index of the stimulation point in the electrode
@@ -164,23 +178,6 @@ export class StimulationSessionStore {
         if (stimPointIndex >= this.session.electrodes[electrodeIndex].stimulationPoints.length + 1) return;
         const sp = this.session.electrodes[electrodeIndex].stimulationPoints[stimPointIndex];
         sp.location = location;
-        this.markDirty();
-    }
-
-    /**
-     * Add a new **saved** stimulation to a stimulation point.
-     * Called from UI when user clicks "Save" on the transient stimulation form.
-     */
-    addStimulation(electrodeIndex: number, stimPointIndex: number) {
-        if (electrodeIndex >= this.electrodeCount + 1) return;
-        if (stimPointIndex >= this.session.electrodes[electrodeIndex].stimulationPoints.length + 1) return;
-        const sp = this.session.electrodes[electrodeIndex].stimulationPoints[stimPointIndex];
-        sp.stimulations.push({
-            time: new Date().toISOString(),
-            parameters: new StimulationParameters({ amplitude: 0, duration: 0, frequency: 0, lengthPath: 0 }),
-            task: { category: '', subcategory: '', characteristic: '' },
-            effect: { observed_effect: [], observed_effect_comments: '', epi_manifestation: '', contact_in_epi_zone: '', contact_in_epi_zone_comments: '', post_discharge: false, pd_duration: undefined, pd_local: '', pd_type: '', crisis: false, crisis_comments: '' }
-        } as Stimulation);
         this.markDirty();
     }
 
