@@ -5,10 +5,9 @@ import { useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
 import { letters } from "../../../../ui/tools/letterTools";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "../../../components/StimulationPointLocationSelection";
 import { TabProperties } from "./tab_properties";
-import { useForm, UseFormReturnType } from "@mantine/form";
+import { useForm } from "@mantine/form";
 import parseMniImplantationFromTsv from "../../../tsvMniImplantationParser/tsvMniImplantationParser";
 import { getStimPointLabel, getStimPointDisplayLabel, ElectrodeFormValues } from "../../../../core/models/stimulationForm";
-import StimulationFormValues from "../../../../core/models/stimulationForm";
 import { StimulationSessionAdapter } from "../../../hooks/useStimulationSession";
 import { observer } from "mobx-react-lite";
 
@@ -127,7 +126,7 @@ const ElectrodeRow = memo(function ElectrodeRow({
     );
 });
 
-function ElectrodeSetupStep({ form, stimulationAdapter }: TabProperties) {
+function ElectrodeSetupStep({ stimulationAdapter }: TabProperties) {
     const { t } = useTranslation();
     const [nextElectrodeDefaultLabel, setNextElectrodeDefaultLabel] = useState('A');
     const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
@@ -252,7 +251,7 @@ function ElectrodeSetupStep({ form, stimulationAdapter }: TabProperties) {
 
         // Build a lookup map for faster access
         const pointMap = new Map<string, any>();
-        const sourceElectrodes = stimulationAdapter ? stimulationAdapter.formValues.electrodes : form.values.electrodes;
+        const sourceElectrodes = stimulationAdapter.formValues.electrodes;
         sourceElectrodes.forEach(e => {
             e.stim_points.forEach((p: any, i: number) => {
                 pointMap.set(getStimPointLabel(e.label, i), p);
@@ -354,7 +353,7 @@ function ElectrodeSetupStep({ form, stimulationAdapter }: TabProperties) {
         stimulationAdapter?.confirmElectrode(electrode_i);
     }
 
-    const sourceElectrodes = stimulationAdapter ? stimulationAdapter.formValues.electrodes : form.values.electrodes;
+    const sourceElectrodes = stimulationAdapter.formValues.electrodes;
 
     const getSideOptions = () => {
         return [
@@ -384,7 +383,7 @@ function ElectrodeSetupStep({ form, stimulationAdapter }: TabProperties) {
             })
         })
         setDoneContacts(donePoints);
-    }, [stimulationAdapter?.formValues.electrodes, form.values.electrodes]);
+    }, [stimulationAdapter.formValues.electrodes]);
 
     const selectAllContacts = () => {
         var allPointsLabel = sourceElectrodes.flatMap((electrode: any) => electrode.stim_points.map((point: any) => getStimPointLabel(electrode.label, point.index)));
@@ -421,7 +420,7 @@ function ElectrodeSetupStep({ form, stimulationAdapter }: TabProperties) {
     })
 
     // Form change (from file open for example)
-    useEffect(() => { updateDoneContacts(); }, [stimulationAdapter?.formValues.electrodes, form.values.electrodes, updateDoneContacts])
+    useEffect(() => { updateDoneContacts(); }, [stimulationAdapter.formValues.electrodes, updateDoneContacts])
 
     // Selected contact changed or data model updated => sync location form values
     // We use a stringified version of selectedContacts to avoid unnecessary triggers
@@ -551,7 +550,6 @@ function ElectrodeSetupStep({ form, stimulationAdapter }: TabProperties) {
             {/* Central bar */}
             <Box h={"15%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
                 <CentralBar
-                    form={form}
                     stimulationAdapter={stimulationAdapter}
                     selectedContacts={selectedContacts}
                     t={t}
@@ -580,8 +578,7 @@ function ElectrodeSetupStep({ form, stimulationAdapter }: TabProperties) {
 interface ElectrodeOption { implantationType: "SEEG" | "Grids", diameter: number, separation: number, length: number }
 
 interface CentralBarProps {
-    form: UseFormReturnType<StimulationFormValues>;
-    stimulationAdapter: StimulationSessionAdapter | undefined;
+    stimulationAdapter: StimulationSessionAdapter;
     selectedContacts: string[];
     t: ReturnType<typeof useTranslation>['t'];
     selectAllContacts: () => void;
@@ -592,7 +589,6 @@ interface CentralBarProps {
 }
 
 const CentralBar = observer(({
-    form,
     stimulationAdapter,
     selectedContacts,
     t,
@@ -602,8 +598,8 @@ const CentralBar = observer(({
     unselectAllContacts,
     handleElectrodeLocationFormSubmit
 }: CentralBarProps) => {
-    const sourceElectrodes = stimulationAdapter ? stimulationAdapter.formValues.electrodes : form.values.electrodes;
-    const electrode_parameters_selected = stimulationAdapter ? stimulationAdapter.formValues.electrode_params.diameter > 0 : form.values.electrode_params.diameter > 0;
+    const sourceElectrodes = stimulationAdapter.formValues.electrodes;
+    const electrode_parameters_selected = (stimulationAdapter.formValues.electrode_params.diameter ?? 0) > 0;
     const contacts_configured = sourceElectrodes.flatMap((e: any) => e.stim_points).length > 0;
     const all_contacts_roi_configured = sourceElectrodes.flatMap((e: any) => e.stim_points).every((sp: any) => sp.location.done === true || sp.location.isDone === true);
     const contacts_selected = selectedContacts.length > 0;

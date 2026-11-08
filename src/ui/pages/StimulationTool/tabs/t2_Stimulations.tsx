@@ -1,6 +1,6 @@
 import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
-import StimulationFormValues, { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, getStimPointDisplayLabel, ElectrodeFormValues, computeChargeDensity, StimulationPoint } from "../../../../core/models/stimulationForm";
+import { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, getStimPointDisplayLabel, ElectrodeFormValues, computeChargeDensity, StimulationPoint } from "../../../../core/models/stimulationForm";
 import { useForm, UseFormReturnType } from "@mantine/form";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,7 +16,7 @@ import { DateTimePicker, DateValue } from "@mantine/dates";
 import { Stimulation, StimulationParameters } from "../../../../core/domain/stimulation";
 import { StimulationSessionAdapter } from "../../../hooks/useStimulationSession";
 
-export default function StimulationsTab({ form: _form, stimulationAdapter, viewPointSummary }: StimulationTabProps) {
+export default function StimulationsTab({ stimulationAdapter, viewPointSummary }: StimulationTabProps) {
     // TODO: ajouter validations (ex: post discharge time cannot be 0 or negative if set to true)
 
     const { t } = useTranslation();

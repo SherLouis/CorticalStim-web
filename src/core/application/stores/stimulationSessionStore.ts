@@ -85,6 +85,10 @@ export class StimulationSessionStore {
         return this.validationErrors.size === 0;
     }
 
+    setPatientId(patientId: string) {
+        this.session.patient_id = patientId;
+    }
+
     /** Add a new electrode with default empty config. */
     addElectrode(label: string) {
         this.session.electrodes.unshift({ label, side: undefined, nContacts: 0, confirmed: false, stimulationPoints: [] } as Electrode);
