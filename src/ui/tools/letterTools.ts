@@ -1,5 +1,3 @@
-const letterArray: string[] = [];
-
 export function increment(c: string): string {
     const arr = c.split("");
 

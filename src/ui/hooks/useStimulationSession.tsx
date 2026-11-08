@@ -33,6 +33,7 @@ export interface StimulationSessionAdapter {
     load: (values: StimulationFormValues) => void;
     save: () => StimulationFormValues;
     markSaved: () => void;
+    setPatientId: (patientId: string) => void;
     addElectrode: (label: string) => void;
     removeElectrode: (index: number) => void;
     updateElectrodeParams: (params: { type?: string; separation?: number; diameter?: number; length?: number }) => void;
@@ -75,6 +76,7 @@ export function useStimulationSession(): StimulationSessionAdapter {
         load,
         save,
         markSaved: () => store.markSaved(),
+        setPatientId: (patientId: string) => store.setPatientId(patientId),
         addElectrode: (label: string) => store.addElectrode(label),
         removeElectrode: (index: number) => store.removeElectrode(index),
         updateElectrodeParams: (params: { type?: string; separation?: number; diameter?: number; length?: number }) => store.updateElectrodeParams(params),

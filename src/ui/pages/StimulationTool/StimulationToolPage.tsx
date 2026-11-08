@@ -1,7 +1,5 @@
 import { ActionIcon, Text, Box, Group, Tabs, Alert, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
-import StimulationFormValues from "../../../core/models/stimulationForm";
 import { useEffect, useRef, useState } from "react";
 import ElectrodeSetupStep from "./tabs/t1_ImplantationSetup";
 import StimulationsTab from "./tabs/t2_Stimulations";
@@ -9,46 +7,14 @@ import SummaryTab, { SummaryFilters } from "./tabs/t3_Summary";
 import { IconFolderOpen, IconDownload, IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useCustomTabStyle } from "../../components/StyledComponents/StyledTabs";
-import { useStimulationSession, RootStoreContext } from "../../hooks/useStimulationSession";
+import { useStimulationSession } from "../../hooks/useStimulationSession";
 import { observer } from "mobx-react-lite";
-import { useContext } from "react";
-import { StimulationSessionStore } from "../../../core/application/stores/stimulationSessionStore";
 
 // TODO: make everything (text, sizes, layout) responsive
 
 const StimulationToolPage = observer(function StimulationToolPage() {
     const { t } = useTranslation();
     const openInputFileRef = useRef<HTMLInputElement | null>(null);
-
-    // Direct store access for reactivity
-    const rootStore = useContext(RootStoreContext);
-    const store: StimulationSessionStore = rootStore.stimulationSession;
-
-    const [form_previous_values, set_form_previous_values] = useState<StimulationFormValues>({
-        patient_id: "",
-        electrode_params: {
-            type: "",
-            separation: 0,
-            diameter: 0,
-            length: 0
-        },
-        electrodes: []
-    });
-    const form = useForm<StimulationFormValues>({
-        initialValues: form_previous_values,
-        validate: {
-            electrode_params: {
-                separation: (value) => value === 0 ? t("pages.stimulationTool.validation.electrode_params.separation") : null,
-                diameter: (value) => value === 0 ? t("pages.stimulationTool.validation.electrode_params.diameter") : null,
-                length: (value) => value === 0 ? t("pages.stimulationTool.validation.electrode_params.length") : null
-            },
-            electrodes: {
-                label: (value, values) => values.electrodes.map((e) => e.label).filter((v) => v === value).length > 1 ? t("pages.stimulationTool.validation.electrodes.label") : null,
-                side: (value) => value === undefined ? t("pages.stimulationTool.validation.electrodes.side") : null
-            }
-        },
-        validateInputOnBlur: true
-    })
 
     // Transitional adapter for MobX store
     const stimulationAdapter = useStimulationSession();
@@ -58,15 +24,16 @@ const StimulationToolPage = observer(function StimulationToolPage() {
     const [hasUnsavedData, setHasUnsavedData] = useState(false);
 
     const downloadFormValues = () => {
-        var data = new Blob([JSON.stringify(form.values)], { type: 'application/json' });
+        const values = stimulationAdapter.save();
+        var data = new Blob([JSON.stringify(values)], { type: 'application/json' });
         var dataURL = window.URL.createObjectURL(data);
         var tempLink = document.createElement('a');
         tempLink.href = dataURL;
-        tempLink.setAttribute('download', `${form.values.patient_id}-${new Date().toISOString().split('T')[0]}.json`);
+        tempLink.setAttribute('download', `${values.patient_id}-${new Date().toISOString().split('T')[0]}.json`);
         tempLink.click();
-        set_form_previous_values(form.values);
         stimulationAdapter.markSaved();
     }
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files === null) {
             return;
@@ -86,9 +53,7 @@ const StimulationToolPage = observer(function StimulationToolPage() {
         fileReader.onload = () => {
             try {
                 const values = JSON.parse(fileReader.result as string);
-                form.setValues(values);
                 stimulationAdapter.load(values);
-                set_form_previous_values(values);
                 notifications.update({
                     id: 'opened_file',
                     title: t('pages.stimulationTool.notifications.success_loaded_from_file_title'),
@@ -127,11 +92,10 @@ const StimulationToolPage = observer(function StimulationToolPage() {
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            const shouldDisplayUnsavedMessage = stimulationAdapter.isDirty || (JSON.stringify(form.values) !== JSON.stringify(form_previous_values));
-            setHasUnsavedData(shouldDisplayUnsavedMessage);
+            setHasUnsavedData(stimulationAdapter.isDirty);
         }, 1000);
         return () => clearTimeout(timeoutId);
-    }, [form.values, form_previous_values, setHasUnsavedData]);
+    }, [stimulationAdapter.isDirty]);
 
     const customTabStyle = useCustomTabStyle();
     // TODO : different layout for smaller screens
@@ -152,11 +116,12 @@ const StimulationToolPage = observer(function StimulationToolPage() {
                         style={{ marginRight: 10, fontWeight: 'bold' }}
                     >{t('pages.stimulationTool.patient_id_label')}</label>
                     <TextInput
-                        {...form.getInputProps('patient_id')}
+                        value={stimulationAdapter.formValues.patient_id}
+                        onChange={(e) => stimulationAdapter.setPatientId(e.target.value)}
                         id="patient_id"
                         placeholder={"patient id"}
                         required
-                        autoFocus={form.values.patient_id === ""}
+                        autoFocus={stimulationAdapter.formValues.patient_id === ""}
                         styles={{ input: { fontWeight: 'bold' } }}
                     />
                 </Group>
@@ -180,9 +145,9 @@ const StimulationToolPage = observer(function StimulationToolPage() {
                     <Tabs.Tab value="summary">{t("pages.stimulationTool.summary.tab_title")}</Tabs.Tab>
                 </Tabs.List>
 
-                <Tabs.Panel value="implantation" h={"95%"}><ElectrodeSetupStep form={form} stimulationAdapter={stimulationAdapter} /></Tabs.Panel>
-                <Tabs.Panel value="stimulation" h={"95%"}><StimulationsTab form={form} stimulationAdapter={stimulationAdapter} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
-                <Tabs.Panel value="summary" h={"95%"} ><SummaryTab form={form} stimulationAdapter={stimulationAdapter} filters={summaryFilters} /></Tabs.Panel>
+                <Tabs.Panel value="implantation" h={"95%"}><ElectrodeSetupStep stimulationAdapter={stimulationAdapter} /></Tabs.Panel>
+                <Tabs.Panel value="stimulation" h={"95%"}><StimulationsTab stimulationAdapter={stimulationAdapter} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
+                <Tabs.Panel value="summary" h={"95%"} ><SummaryTab stimulationAdapter={stimulationAdapter} filters={summaryFilters} /></Tabs.Panel>
             </Tabs>
         </Box >
     );

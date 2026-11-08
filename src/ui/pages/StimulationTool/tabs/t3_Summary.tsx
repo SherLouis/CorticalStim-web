@@ -49,11 +49,11 @@ const formatYesNoUnknown = (value: string, t: any) => {
 
 const allColumnsProps = { sortable: true, resizable: false, draggable: false, toggleable: false };
 
-export default function SummaryTab({ form, stimulationAdapter, filters }: SummaryTabProps) {
+export default function SummaryTab({ stimulationAdapter, filters }: SummaryTabProps) {
     const { t } = useTranslation();
 
     // Use adapter if available, otherwise fall back to form
-    const source = stimulationAdapter ? stimulationAdapter.formValues : form.values;
+    const source = stimulationAdapter.formValues;
 
     const allRecords = useMemo(() => {
         return (
