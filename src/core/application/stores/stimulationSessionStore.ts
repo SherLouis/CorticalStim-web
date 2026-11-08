@@ -182,6 +182,22 @@ export class StimulationSessionStore {
     }
 
     /**
+     * Add a new **saved** stimulation to a stimulation point.
+     * Called from UI when user clicks "Save" on the transient stimulation form.
+     * @param electrodeIndex Index of the electrode
+     * @param stimPointIndex Index of the stimulation point
+     * @param stimulation Full stimulation data (time, parameters, task, effect)
+     * @returns Void
+     */
+    addStimulation(electrodeIndex: number, stimPointIndex: number, stimulation: Stimulation) {
+        if (electrodeIndex >= this.electrodeCount + 1) return;
+        if (stimPointIndex >= this.session.electrodes[electrodeIndex].stimulationPoints.length + 1) return;
+        const sp = this.session.electrodes[electrodeIndex].stimulationPoints[stimPointIndex];
+        sp.stimulations.push(stimulation);
+        this.markDirty();
+    }
+
+    /**
      * Load full session from serialized values (e.g. from JSON file or Firebase).
      * Resets dirty flag and captures snapshot for unsaved detection.
      */

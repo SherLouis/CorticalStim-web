@@ -4,6 +4,7 @@ import { RootStoreContext } from '../providers/RootStoreProvider';
 import { StimulationSessionStore } from '../../core/application/stores/stimulationSessionStore';
 import StimulationFormValues from '../../core/models/stimulationForm';
 import { toStimulationSession, toStimulationFormValues } from '../../core/application/mappers/stimulationSessionMapper';
+import { Stimulation } from '../../core/domain/stimulation';
 
 /**
  * Root store context for direct store access in components.
@@ -40,6 +41,7 @@ export interface StimulationSessionAdapter {
     updateElectrodeLabel: (electrodeIndex: number, label: string) => void;
     updateElectrodeSide: (electrodeIndex: number, side: 'left' | 'right' | undefined) => void;
     updateStimulationPointLocation: (electrodeIndex: number, stimPointIndex: number, location: any) => void;
+    addStimulation: (electrodeIndex: number, stimPointIndex: number, stimulation: Stimulation) => void;
 }
 
 /**
@@ -81,6 +83,7 @@ export function useStimulationSession(): StimulationSessionAdapter {
         updateElectrodeLabel: (electrodeIndex: number, label: string) => store.updateElectrodeLabel(electrodeIndex, label),
         updateElectrodeSide: (electrodeIndex: number, side: 'left' | 'right' | undefined) => store.updateElectrodeSide(electrodeIndex, side),
         updateStimulationPointLocation: (electrodeIndex: number, stimPointIndex: number, location: any) => store.updateStimulationPointLocation(electrodeIndex, stimPointIndex, location),
+        addStimulation: (electrodeIndex: number, stimPointIndex: number, stimulation: Stimulation) => store.addStimulation(electrodeIndex, stimPointIndex, stimulation),
     };
 
     return adapter;

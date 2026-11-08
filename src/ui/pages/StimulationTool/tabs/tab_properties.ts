@@ -4,5 +4,5 @@ import { StimulationSessionAdapter } from "../../../hooks/useStimulationSession"
 
 export interface TabProperties {
     form: UseFormReturnType<StimulationFormValues>;
-    stimulationAdapter?: StimulationSessionAdapter;
+    stimulationAdapter: StimulationSessionAdapter;
 }
