@@ -1,7 +1,7 @@
 import { Box, Button, Checkbox, Group, Text, Radio, ScrollArea, Stack, Switch, TextInput, Title, Flex, ActionIcon } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
-import { PostDischargeValueOptions, StimulationEffectsValues, StimulationObservedEffectFormValues } from "../../core/models/stimulationForm";
+import { POST_DISCHARGE_VALUE_OPTIONS, StimulationEffectsValues, StimulationObservedEffectFormValues } from "@ui/core/types";
 import ColumnButtonSelect from "./ColumnButtonSelect";
 import { TFunction } from "i18next";
 import Section from "./Section";
@@ -566,7 +566,7 @@ const EEGSection = ({ form, t }: EEGSectionProps) => {
                             {...form.getInputProps('pd_duration')}
                         />
                         <Group spacing={0} grow w={"100%"}>
-                            {PostDischargeValueOptions.map((v, i) =>
+                            {POST_DISCHARGE_VALUE_OPTIONS.map((v, i) =>
                                 <Button compact key={"pd_duration_" + i}
                                     onClick={() => form.setFieldValue('pd_duration', v)}
                                     variant={form.values.pd_duration === v ? 'filled' : 'default'}>

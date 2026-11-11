@@ -17,5 +17,3 @@ export interface StimulationEffects {
     crisis: boolean;
     crisis_comments: string;
 }
-
-export const POST_DISCHARGE_VALUE_OPTIONS = ['<5', '5-10', '>10'];

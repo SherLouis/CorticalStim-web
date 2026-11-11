@@ -1,5 +1,4 @@
 import parseMniImplantationFromTsv from './tsvMniImplantationParser';
-import { ElectrodeFormValues, SideOptions } from '../../core/models/stimulationForm';
 
 describe('parseMniImplantationFromTsv', () => {
     it('should return correct electrodes from valid TSV data', () => {
@@ -12,11 +11,11 @@ describe('parseMniImplantationFromTsv', () => {
         // then
         expect(result).toHaveLength(2); // Two electrodes: C' and K'
         expect(result[0].label).toBe(`C'`);
-        expect(result[0].n_contacts).toBe(10);
-        expect(result[0].stim_points.length).toBe(9);
+        expect(result[0].nContacts).toBe(10);
+        expect(result[0].stimulationPoints.length).toBe(9);
         expect(result[1].label).toBe(`K'`);
-        expect(result[1].n_contacts).toBe(5);
-        expect(result[1].stim_points.length).toBe(4);
+        expect(result[1].nContacts).toBe(5);
+        expect(result[1].stimulationPoints.length).toBe(4);
     });
 
     it('should remove trailing _ from electrode label', () => {
@@ -52,8 +51,8 @@ describe('parseMniImplantationFromTsv', () => {
 
         // then
         expect(result).toHaveLength(1);
-        expect(result[0].n_contacts).toBe(3); // C1, C3 and C4 are valid
-        expect(result[0].stim_points.length).toBe(2);
+        expect(result[0].nContacts).toBe(3); // C1, C3 and C4 are valid
+        expect(result[0].stimulationPoints.length).toBe(2);
         expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
         consoleWarnSpy.mockRestore();
     });

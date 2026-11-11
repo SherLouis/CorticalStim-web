@@ -27,16 +27,16 @@
     "react-router-dom": "^6.19.0"
   },
   "scripts": {
-    "predeploy": "dotenvx run --env-file=config/.env.prod -- react-scripts build",
+    "predeploy": "dotenvx run --env-file=config/.env.prod -- craco build",
     "deploy": "gh-pages -d build",
-    "start": "react-scripts start",
+    "start": "craco start",
     "dev:start_emulators": "firebase emulators:start",
-    "dev:start": "dotenvx run --env-file=config/.env.dev -- react-scripts start",
+    "dev:start": "dotenvx run --env-file=config/.env.dev -- craco start",
     "dev": "npm-run-all --parallel dev:start_emulators dev:start",
-    "build": "react-scripts build",
-    "build:local": "dotenvx run --env-file=config/.env.prod -- react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "craco build",
+    "build:local": "dotenvx run --env-file=config/.env.prod -- craco build",
+    "test": "craco test",
+    "eject": "craco eject"
   },
   "eslintConfig": {
     "extends": [
@@ -67,6 +67,8 @@
     "@types/react": "^18.2.38",
     "@types/react-csv": "^1.1.10",
     "@types/react-dom": "^18.2.16",
+    "craco": "^0.0.3",
+    "craco-alias": "^3.0.1",
     "dotenv": "^16.4.5",
     "gh-pages": "^6.1.0",
     "npm-run-all": "^4.1.5",

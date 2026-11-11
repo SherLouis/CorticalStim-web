@@ -1,7 +1,7 @@
 import { Box, Button, Group, SimpleGrid, Stack, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
-import { StimulationParametersFormValues } from "../../core/models/stimulationForm";
+import { StimulationParametersFormValues } from "@ui/core/types";
 
 
 export default function StimulationParametersSelection({ form }: StimulationParametersSelectionProps) {
@@ -85,7 +85,7 @@ export default function StimulationParametersSelection({ form }: StimulationPara
                 >
                     <Title order={4} w={"5%"} p={"sm"}>{t('pages.stimulationTool.stimulation.length_path_label')}</Title>
                     <Group spacing='xs' position='left' align='center'>
-                        <Button size="sm" variant={form.values.lenght_path === 5 ? 'filled' : 'light'} onClick={() => form.setFieldValue('lenght_path', 5)} compact>5</Button>
+                        <Button size="sm" variant={form.values.lengthPath === 5 ? 'filled' : 'light'} onClick={() => form.setFieldValue('length_path', 5)} compact>5</Button>
                     </Group>
                 </Group>
             </Stack>

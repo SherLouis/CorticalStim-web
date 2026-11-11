@@ -9,6 +9,7 @@
 ## New features
 - [x] multiple observed effects
 - [x] New electrode should show on top of the list
+- [ ] Fix UI sizing / adapte to window : if easier: just allow scrolling. 
 - [ ] Multiple possible electrode configuration
     - [ ] Configure new electrode configuration options globally
     - [ ] Assign configuration to all electrodes
@@ -24,8 +25,9 @@
 - [ ] Stimulation tab : option to enlarge contact selection when none is selected (take up entire width and larger height (all - bar)). Takes back original size when contact is selected. Button to enlarge is small in a corner of the section.
 
 ## Refactor
-- [ ] Define domain objects with methods
-- [ ] Use state management framework instead of relying on form data : zustand or mobx
+- [ ] MUST : allow still working with old/existing saved stimulations. No breaking changes. Add schema version for future. Add conversion to latest for next save. 
+- [x] Define domain objects with methods
+- [x] Use state management framework instead of relying on form data :  mobx
 - [ ] Add domain logic tests !!
 - [ ] Add ui tests
 

@@ -1,14 +1,15 @@
-import { ActionIcon, Text, Box, Group, Tabs, Alert, TextInput } from "@mantine/core";
+import { StimulationSessionStore } from "@core/application/stores/stimulationSessionStore";
+import { ActionIcon, Alert, Box, Group, Tabs, Text, TextInput } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { IconAlertCircle, IconCheck, IconDownload, IconFolderOpen, IconX } from "@tabler/icons-react";
+import { observer } from "mobx-react-lite";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useEffect, useRef, useState } from "react";
+import { useCustomTabStyle } from "../../components/StyledComponents/StyledTabs";
+import { RootStoreContext } from "../../providers/RootStoreProvider";
 import ElectrodeSetupStep from "./tabs/t1_ImplantationSetup";
 import StimulationsTab from "./tabs/t2_Stimulations";
 import SummaryTab, { SummaryFilters } from "./tabs/t3_Summary";
-import { IconFolderOpen, IconDownload, IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
-import { notifications } from "@mantine/notifications";
-import { useCustomTabStyle } from "../../components/StyledComponents/StyledTabs";
-import { useStimulationSession } from "../../hooks/useStimulationSession";
-import { observer } from "mobx-react-lite";
 
 // TODO: make everything (text, sizes, layout) responsive
 
@@ -16,22 +17,24 @@ const StimulationToolPage = observer(function StimulationToolPage() {
     const { t } = useTranslation();
     const openInputFileRef = useRef<HTMLInputElement | null>(null);
 
-    // Transitional adapter for MobX store
-    const stimulationAdapter = useStimulationSession();
+    // Direct store access
+    const rootStore = useContext(RootStoreContext);
+    const store: StimulationSessionStore = rootStore.stimulationSession;
 
     const [activeTab, setActiveTab] = useState<string | null>('implantation');
     const [summaryFilters, setSummaryFilters] = useState<SummaryFilters>({});
     const [hasUnsavedData, setHasUnsavedData] = useState(false);
 
     const downloadFormValues = () => {
-        const values = stimulationAdapter.save();
+        // TODO: call service to get values to save. 
+        const values = store.toValues();
         var data = new Blob([JSON.stringify(values)], { type: 'application/json' });
         var dataURL = window.URL.createObjectURL(data);
         var tempLink = document.createElement('a');
         tempLink.href = dataURL;
         tempLink.setAttribute('download', `${values.patient_id}-${new Date().toISOString().split('T')[0]}.json`);
         tempLink.click();
-        stimulationAdapter.markSaved();
+        store.markSaved();
     }
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +56,9 @@ const StimulationToolPage = observer(function StimulationToolPage() {
         fileReader.onload = () => {
             try {
                 const values = JSON.parse(fileReader.result as string);
-                stimulationAdapter.load(values);
+                // TODO: extract logic to read values, schema version, adapt to used schema and set values.
+                // TODO: show notification if schema was migrated. 
+                store.setValues(values);
                 notifications.update({
                     id: 'opened_file',
                     title: t('pages.stimulationTool.notifications.success_loaded_from_file_title'),
@@ -92,10 +97,10 @@ const StimulationToolPage = observer(function StimulationToolPage() {
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            setHasUnsavedData(stimulationAdapter.isDirty);
+            setHasUnsavedData(store.isDirty);
         }, 1000);
         return () => clearTimeout(timeoutId);
-    }, [stimulationAdapter.isDirty]);
+    }, [store.isDirty]);
 
     const customTabStyle = useCustomTabStyle();
     // TODO : different layout for smaller screens
@@ -116,12 +121,12 @@ const StimulationToolPage = observer(function StimulationToolPage() {
                         style={{ marginRight: 10, fontWeight: 'bold' }}
                     >{t('pages.stimulationTool.patient_id_label')}</label>
                     <TextInput
-                        value={stimulationAdapter.formValues.patient_id}
-                        onChange={(e) => stimulationAdapter.setPatientId(e.target.value)}
+                        value={store.session.patient_id}
+                        onChange={(e) => { store.session.patient_id = e.target.value; store.markDirty(); }}
                         id="patient_id"
                         placeholder={"patient id"}
                         required
-                        autoFocus={stimulationAdapter.formValues.patient_id === ""}
+                        autoFocus={store.session.patient_id === ""}
                         styles={{ input: { fontWeight: 'bold' } }}
                     />
                 </Group>
@@ -145,9 +150,9 @@ const StimulationToolPage = observer(function StimulationToolPage() {
                     <Tabs.Tab value="summary">{t("pages.stimulationTool.summary.tab_title")}</Tabs.Tab>
                 </Tabs.List>
 
-                <Tabs.Panel value="implantation" h={"95%"}><ElectrodeSetupStep stimulationAdapter={stimulationAdapter} /></Tabs.Panel>
-                <Tabs.Panel value="stimulation" h={"95%"}><StimulationsTab stimulationAdapter={stimulationAdapter} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
-                <Tabs.Panel value="summary" h={"95%"} ><SummaryTab stimulationAdapter={stimulationAdapter} filters={summaryFilters} /></Tabs.Panel>
+                <Tabs.Panel value="implantation" h={"95%"}><ElectrodeSetupStep store={store} /></Tabs.Panel>
+                <Tabs.Panel value="stimulation" h={"95%"}><StimulationsTab store={store} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
+                <Tabs.Panel value="summary" h={"95%"} ><SummaryTab store={store} filters={summaryFilters} /></Tabs.Panel>
             </Tabs>
         </Box >
     );

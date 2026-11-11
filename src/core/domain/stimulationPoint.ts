@@ -14,3 +14,4 @@ export interface StimulationPoint {
     location: StimulationLocation;
     stimulations: Stimulation[];
 }
+

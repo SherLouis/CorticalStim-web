@@ -1,7 +1,7 @@
-import StimulationFormValues from "../models/stimulationForm";
+import { StimulationSessionValues } from "@core/application/stores/stimulationSessionStore";
 
 // TODO: unsure how to use this yet ...
 export default interface StimulationRecord {
     id: string;
-    stimulation_data: StimulationFormValues;
+    stimulation_data: StimulationSessionValues;
 }
