@@ -1,7 +1,7 @@
 import naturalCompare from 'natural-compare'
-import { ElectrodeFormValues, SideOptions } from "../../core/models/stimulationForm";
+import { Electrode, SideOptions } from "@core/domain/electrode"
 
-const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => {
+const parseMniImplantationFromTsv = (tsvData: string): Electrode[] => {
     const getSideFromMni = (x: number, y: number, z: number): SideOptions => {
         return x > 0 ? 'right' : 'left';
     };
@@ -41,16 +41,16 @@ const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => 
         return [];
     }
 
-    let results = [] as ElectrodeFormValues[];
+    let results = [] as Electrode[];
 
     // sorted data based on contact label. Assuming first contact of every electrode ends with 1 (contact number)
     let currentElectrode = {
         label: getElectrodeLabelFromContactLabel(contactsData[0].contactLabel),
         side: undefined,
-        n_contacts: 0,
+        nContacts: 0,
         confirmed: false,
-        stim_points: []
-    } as ElectrodeFormValues;
+        stimulationPoints: []
+    } as Electrode;
 
     let previousContactPosition = { x: 0, y: 0, z: 0 };
 
@@ -58,27 +58,27 @@ const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => 
     for (const contactData of contactsData) {
         if (contactData.contactLabel.startsWith(currentElectrode.label)) {
             // Still same electrode
-            if (currentElectrode.n_contacts === 0) {
+            if (currentElectrode.nContacts === 0) {
                 // Compute side based on position of first contact of electrode
                 currentElectrode.side = getSideFromMni(contactData.mniX, contactData.mniY, contactData.mniZ);
             }
             else {
                 const stim_point_mni = getMNIPositionBetweenTwoContacts(previousContactPosition, { x: contactData.mniX, y: contactData.mniY, z: contactData.mniZ });
-                currentElectrode.stim_points.push({
-                    index: currentElectrode.n_contacts - 1,
+                currentElectrode.stimulationPoints.push({
+                    index: currentElectrode.nContacts - 1,
                     location: {
                         type: 'mni',
                         vep: "",
                         destrieux: "",
-                        white_matter: "",
+                        isWhiteMatter: false,
                         mni: stim_point_mni,
-                        done: true
+                        isDone: true
                     },
                     stimulations: []
                 });
             }
             previousContactPosition = { x: contactData.mniX, y: contactData.mniY, z: contactData.mniZ };
-            currentElectrode.n_contacts += 1;
+            currentElectrode.nContacts += 1;
         }
         else {
             // Moved to new electrode
@@ -87,9 +87,9 @@ const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => 
             currentElectrode = {
                 label: getElectrodeLabelFromContactLabel(contactData.contactLabel),
                 side: getSideFromMni(contactData.mniX, contactData.mniY, contactData.mniZ),
-                n_contacts: 1,
+                nContacts: 1,
                 confirmed: false,
-                stim_points: []
+                stimulationPoints: []
             };
 
             previousContactPosition = { x: contactData.mniX, y: contactData.mniY, z: contactData.mniZ };
@@ -98,7 +98,7 @@ const parseMniImplantationFromTsv = (tsvData: string): ElectrodeFormValues[] => 
     // Add last electrode to results
     results.push(currentElectrode)
 
-    return results as ElectrodeFormValues[];
+    return results as Electrode[];
 }
 
 type TsvRowData = {

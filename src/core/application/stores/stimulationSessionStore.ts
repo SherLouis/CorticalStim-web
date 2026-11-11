@@ -227,7 +227,7 @@ export class StimulationSessionStore {
     }
 
     /** Internal: mark session as having unsaved changes. */
-    private markDirty() {
+    markDirty() {
         this.isDirty = true;
     }
 }

@@ -1,22 +1,27 @@
 import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { TabProperties } from "./tab_properties";
-import { StimulationObservedEffectFormValues, StimulationEffectsValues, StimulationParametersFormValues, StimulationTaskFormValues, getStimPointLabel, getStimPointDisplayLabel, ElectrodeFormValues, computeChargeDensity, StimulationPoint } from "../../../../core/models/stimulationForm";
+import { getStimPointLabel, getStimPointDisplayLabel, computeChargeDensity } from "@core/domain/utils";
+import { Electrode } from "@core/domain/electrode";
 import { useForm, UseFormReturnType } from "@mantine/form";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import StimulationTaskSelection, { formatSelectedTask, NO_TASK } from "../../../components/StimulationTaskSelection";
+import StimulationTaskSelection, { formatSelectedTask, NO_TASK } from "@ui/components/StimulationTaskSelection";
 import { useListState } from "@mantine/hooks";
-import StimulationEffectSelection, { formatEegPostDichargeLocale, formatEpiManifestation, formatSelectedObservedEffect, NO_EFFECT } from "../../../components/StimulationEffectSelection";
+import StimulationEffectSelection, { formatEegPostDichargeLocale, formatEpiManifestation, formatSelectedObservedEffect, NO_EFFECT } from "@ui/components/StimulationEffectSelection";
 import { IconAlertCircle, IconCheck, IconCircleCheck, IconCircleX, IconClockCheck, IconClockEdit, IconEye, IconTrash } from "@tabler/icons-react";
 import { t } from "i18next";
-import CustomNumberInput from "../../../components/CustomNumberInput";
-import StimulatedContact, { getStimulatedStyledContactBorderStyle, getStimulatedStyledContactColor } from "../../../components/StimulatedContact";
-import Section from "../../../components/Section";
+import CustomNumberInput from "@ui/components/CustomNumberInput";
+import StimulatedContact, { getStimulatedStyledContactBorderStyle, getStimulatedStyledContactColor } from "@ui/components/StimulatedContact";
+import Section from "@ui/components/Section";
 import { DateTimePicker, DateValue } from "@mantine/dates";
-import { Stimulation, StimulationParameters } from "../../../../core/domain/stimulation";
-import { StimulationSessionAdapter } from "../../../hooks/useStimulationSession";
+import { Stimulation, StimulationParameters } from "@core/domain/stimulation";
+import { StimulationPoint } from "@core/domain/stimulationPoint";
+import { StimulationSessionStore } from "@core/application/stores/stimulationSessionStore";
+import { StimulationParametersFormValues, StimulationTaskFormValues, StimulationEffectsValues, StimulationObservedEffectFormValues } from "@ui/core/types";
 
-export default function StimulationsTab({ stimulationAdapter, viewPointSummary }: StimulationTabProps) {
+// TODO: organize imports in files
+
+export default function StimulationsTab({ store, viewPointSummary }: StimulationTabProps) {
     // TODO: ajouter validations (ex: post discharge time cannot be 0 or negative if set to true)
 
     const { t } = useTranslation();
@@ -30,7 +35,7 @@ export default function StimulationsTab({ stimulationAdapter, viewPointSummary }
     const [stimulationTime, setStimulationTime] = useState<string>("");
 
     // Forms
-    const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 1.0, duration: 0, frequency: 0, lenght_path: 0 } });
+    const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 1.0, duration: 0, frequency: 0, lengthPath: 0 } });
     const task_form = useForm<StimulationTaskFormValues>({ initialValues: { category: "", subcategory: "", characteristic: "" } });
     const effect_form = useForm<StimulationEffectsValues>({ initialValues: { observed_effect: [], observed_effect_comments: "", epi_manifestation: "", contact_in_epi_zone: "unknown", contact_in_epi_zone_comments: "", post_discharge: false, pd_duration: undefined, pd_local: "local", pd_type: "", crisis: false, crisis_comments: "" } });
 
@@ -62,7 +67,7 @@ export default function StimulationsTab({ stimulationAdapter, viewPointSummary }
     const handleSubmit = () => {
         if (selectedPoint === undefined) { return; }
         if (stimulationTime === '') { return; }
-        if (!stimulationAdapter) { return; }
+        if (!store) { return; }
 
         // validate forms
         params_form.validate();
@@ -75,10 +80,10 @@ export default function StimulationsTab({ stimulationAdapter, viewPointSummary }
         // Find electrode and stimulation point indices
         let electrode_i = -1;
         let stim_point_i = -1;
-        stimulationAdapter.formValues.electrodes.forEach((electrode, ei) => {
+        store.toValues().electrodes.forEach((electrode, ei) => {
             if (electrode.label === electrode_label) {
                 electrode_i = ei;
-                electrode.stim_points.forEach((stim_point, spi) => {
+                electrode.stimulationPoints.forEach((stim_point, spi) => {
                     const stimId = getStimPointLabel(electrode.label, spi);
                     if (stimId === selectedPoint) {
                         stim_point_i = spi;
@@ -90,13 +95,14 @@ export default function StimulationsTab({ stimulationAdapter, viewPointSummary }
         if (electrode_i === -1 || stim_point_i === -1) { return; }
 
         // Create domain Stimulation object
+        // TODO: move logic to a mapper
         const stimulation: Stimulation = {
             time: stimulationTime,
             parameters: new StimulationParameters({
                 amplitude: params_form.values.amplitude,
                 duration: params_form.values.duration,
                 frequency: params_form.values.frequency,
-                lengthPath: params_form.values.lenght_path
+                lengthPath: params_form.values.lengthPath
             }),
             task: {
                 category: task_form.values.category,
@@ -119,7 +125,7 @@ export default function StimulationsTab({ stimulationAdapter, viewPointSummary }
         };
 
         // Save to store via adapter
-        stimulationAdapter.addStimulation(electrode_i, stim_point_i, stimulation);
+        store.addStimulation(electrode_i, stim_point_i, stimulation);
 
         // Save last used task
         if (JSON.stringify(task_form.values) === JSON.stringify(NO_TASK)) {
@@ -161,8 +167,8 @@ export default function StimulationsTab({ stimulationAdapter, viewPointSummary }
     }
 
     const getSelectedPointLocationFormInfo = () => {
-        for (const electrode of stimulationAdapter.formValues.electrodes) {
-            let foundStimPoint = electrode.stim_points.find(point =>
+        for (const electrode of store.toValues().electrodes) {
+            let foundStimPoint = electrode.stimulationPoints.find(point =>
                 selectedPoint === getStimPointLabel(electrode.label, point.index)
             );
 
@@ -239,8 +245,8 @@ export default function StimulationsTab({ stimulationAdapter, viewPointSummary }
                             }
                             children={
                                 <Box h={"100%"} w={"100%"} p={0} m={0}>
-                                    <ContactSelection
-                                        electrodes={stimulationAdapter.formValues.electrodes.filter(e => e.confirmed)}
+                                    <ContactSelection store={store}
+                                        electrodes={store.toValues().electrodes.filter(e => e.confirmed)}
                                         selectedContact={selectedPoint}
                                         onSelectedChanged={handleSelectedPointChanged}
                                         onViewResultsForPoint={handleViewResultsForPoint}
@@ -261,12 +267,13 @@ export default function StimulationsTab({ stimulationAdapter, viewPointSummary }
 
             <Box h={"15%"} w={"100%"} py={"sm"}>
                 <CentralBar
-                    stimulationAdapter={stimulationAdapter}
+                    store={store}
                     selectedPoint={selectedPoint}
                     stimulationTime={stimulationTime}
                     setStimulationTime={setStimulationTime}
                     params_form={params_form}
                     task_form={task_form}
+                    effect_form={effect_form}
                     handleSubmit={handleSubmit}
                     getSelectedPointLocation={getSelectedPointLocation}
                     getSelectedPointObservedEffect={getSelectedPointObservedEffect}
@@ -326,7 +333,7 @@ const ContactSelection = ({ electrodes, selectedContact, onSelectedChanged, onVi
                                         { maxWidth: '40rem', cols: 3, spacing: 'xs' },
                                         { maxWidth: '35rem', cols: 2, spacing: 'sm' },
                                     ]}>
-                                    {electrode.stim_points.map((stim_point, stim_point_i) => {
+                                    {electrode.stimulationPoints.map((stim_point, stim_point_i) => {
                                         const pointId = getStimPointLabel(electrode.label, stim_point_i);
                                         const nbStims = stim_point.stimulations.length;
                                         return (
@@ -364,19 +371,21 @@ const ContactSelection = ({ electrodes, selectedContact, onSelectedChanged, onVi
 }
 
 interface ContactSelectionProps {
-    electrodes: ElectrodeFormValues[],
-    selectedContact: string,
-    onSelectedChanged: (newValue: string) => void
-    onViewResultsForPoint: (pointId: string) => void
+    electrodes: Electrode[];
+    selectedContact: string;
+    onSelectedChanged: (newValue: string) => void;
+    onViewResultsForPoint: (pointId: string) => void;
+    store: StimulationSessionStore;
 }
 
 interface CentralBarProps {
-    stimulationAdapter: StimulationSessionAdapter
+    store: StimulationSessionStore;
     selectedPoint: string;
     stimulationTime: string;
     setStimulationTime: (time: string) => void;
     params_form: UseFormReturnType<StimulationParametersFormValues>;
     task_form: UseFormReturnType<StimulationTaskFormValues>;
+    effect_form: UseFormReturnType<StimulationEffectsValues>;
     handleSubmit: () => void;
     getSelectedPointLocation: () => string;
     getSelectedPointObservedEffect: () => string;
@@ -388,7 +397,7 @@ interface CentralBarProps {
 }
 
 const CentralBar = ({
-    stimulationAdapter,
+    store,
     selectedPoint,
     stimulationTime,
     setStimulationTime,
@@ -408,12 +417,12 @@ const CentralBar = ({
         return t('pages.stimulationTool.stimulation.amplitude_label') + ': ' + params.amplitude + ' (mA), ' +
             t('pages.stimulationTool.stimulation.frequency_label') + ': ' + params.frequency + ' (Hz), ' +
             t('pages.stimulationTool.stimulation.duration_label') + ': ' + params.duration + ' (s), ' +
-            t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lenght_path + ' (µs), ' +
-            t('pages.stimulationTool.stimulation.charge_density_label') + ': ' + computeChargeDensity(params.amplitude, params.lenght_path).toFixed(2) + ' (µC/cm²)';
+            t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lengthPath + ' (µs), ' +
+            t('pages.stimulationTool.stimulation.charge_density_label') + ': ' + computeChargeDensity(params.amplitude, params.lengthPath).toFixed(2) + ' (µC/cm²)';
     }
-    const formValues = stimulationAdapter.formValues;
+    const formValues = store.toValues();
     const stimPointConfirmedExist = useMemo<boolean>(() => {
-        return formValues.electrodes.filter((e: ElectrodeFormValues) => e.confirmed && e.n_contacts > 0).length !== 0;
+        return formValues.electrodes.filter((e: Electrode) => e.confirmed && e.nContacts > 0).length !== 0;
     }, [formValues.electrodes]);
     const stimTimeSet = stimulationTime !== '';
 
@@ -421,7 +430,7 @@ const CentralBar = ({
     const [customSelectedDateTime, setCustomSelectedDateTime] = useState<DateValue>(null);
 
     const selectedPointElectrodeLabel = selectedPoint.split('/').slice(0, -1).join('/');
-    const selectedPointStims = formValues.electrodes.find((e: ElectrodeFormValues) => e.label === selectedPointElectrodeLabel)?.stim_points.find((p: StimulationPoint) => getStimPointLabel(selectedPointElectrodeLabel, p.index) === selectedPoint)?.stimulations;
+    const selectedPointStims = formValues.electrodes.find((e: Electrode) => e.label === selectedPointElectrodeLabel)?.stimulationPoints.find((p: StimulationPoint) => getStimPointLabel(selectedPointElectrodeLabel, p.index) === selectedPoint)?.stimulations;
     const stims = selectedPointStims !== undefined ? selectedPointStims : [];
     const selectedContactBorderSx = getStimulatedStyledContactBorderStyle(stims, theme);
     const selectedContactBackgroundColorSx = getStimulatedStyledContactColor(stims, stims.length === 0, theme, true);
@@ -569,7 +578,7 @@ interface StimulationParametersSelectionProps {
     t: any;
 }
 
-const StimulationParametersSelection = ({ form, t }: StimulationParametersSelectionProps) => {
+const StimulationParametersSelection = ({ form: params_form, t }: StimulationParametersSelectionProps) => {
     const parameterSelection = (
         <Group position="center" align="top" noWrap>
             <CustomNumberInput
@@ -582,7 +591,7 @@ const StimulationParametersSelection = ({ form, t }: StimulationParametersSelect
                 max={10}
                 variant='default'
                 useCustom={true}
-                {...form.getInputProps('amplitude')}
+                value={params_form.values.amplitude} onChange={(v) => params_form.setFieldValue('amplitude', v)}
             />
             <Stack align="center" h={"100%"} spacing={0}>
                 <CustomNumberInput
@@ -591,13 +600,13 @@ const StimulationParametersSelection = ({ form, t }: StimulationParametersSelect
                     step={1}
                     min={0}
                     styles={{ input: { textAlign: "center" } }}
-                    {...form.getInputProps('frequency')}
+                    value={params_form.values.frequency} onChange={(v) => params_form.setFieldValue('frequency', v)}
                 />
                 <Group spacing={0} grow w={"100%"}>
                     {[1, 5, 50, 55].map((v) =>
                         <Button compact key={"freq_" + v}
-                            onClick={() => form.setFieldValue('frequency', v)}
-                            variant={form.values.frequency === v ? 'filled' : 'default'}>
+                            onClick={() => params_form.setFieldValue('frequency', v)}
+                            variant={params_form.values.frequency === v ? 'filled' : 'default'}>
                             {v}
                         </Button>
                     )}
@@ -611,13 +620,13 @@ const StimulationParametersSelection = ({ form, t }: StimulationParametersSelect
                     step={1}
                     min={0}
                     styles={{ input: { textAlign: "center" } }}
-                    {...form.getInputProps('duration')}
+                    value={params_form.values.duration} onChange={(v) => params_form.setFieldValue('duration', v)}
                 />
                 <Group spacing={0} grow w={"100%"}>
                     {[5, 10, 30, 60].map((v) =>
                         <Button compact key={"duration_" + v}
-                            onClick={() => form.setFieldValue('duration', v)}
-                            variant={form.values.duration === v ? 'filled' : 'default'}>
+                            onClick={() => params_form.setFieldValue('duration', v)}
+                            variant={params_form.values.duration === v ? 'filled' : 'default'}>
                             {v}
                         </Button>
                     )}
@@ -631,13 +640,13 @@ const StimulationParametersSelection = ({ form, t }: StimulationParametersSelect
                     step={1}
                     min={0}
                     styles={{ input: { textAlign: "center" } }}
-                    {...form.getInputProps('lenght_path')}
+                    value={params_form.values.lengthPath} onChange={(v) => params_form.setFieldValue('length_path', v)}
                 />
                 <Group spacing={0} grow w={"100%"}>
                     {[300, 500].map((v) =>
                         <Button compact key={"lp_" + v}
-                            onClick={() => form.setFieldValue('lenght_path', v)}
-                            variant={form.values.lenght_path === v ? 'filled' : 'default'}>
+                            onClick={() => params_form.setFieldValue('length_path', v)}
+                            variant={params_form.values.lengthPath === v ? 'filled' : 'default'}>
                             {v}
                         </Button>
                     )}

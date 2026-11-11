@@ -1,5 +1,8 @@
 import { TabProperties } from "./tab_properties";
-import { StimulationLocationFormValues, computeChargeDensity, getStimPointLabel, getStimPointDisplayLabel, ElectrodeFormValues, StimulationPoint as LegacyStimulationPoint, Stimulation as LegacyStimulation } from "../../../../core/models/stimulationForm";
+import { getStimPointLabel, getStimPointDisplayLabel, computeChargeDensity } from "@core/domain/utils";
+import { StimulationLocation } from "@core/domain/stimulationPoint";
+import { StimulationPoint, Stimulation, Electrode } from "@core/domain";
+import { StimulationEffects } from "@core/domain/stimulationEffects";
 import { useTranslation } from "react-i18next";
 import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 import { formatEpiManifestation, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
@@ -12,10 +15,10 @@ import { IconFilterOff, IconFileTypeCsv, IconTableOptions, IconAlertTriangle } f
 import { CSVLink } from "react-csv";
 import { DataTableColumnToggle } from "mantine-datatable/dist/hooks";
 
-const formatPointLocation = (point_location: StimulationLocationFormValues) => {
+const formatPointLocation = (point_location: StimulationLocation) => {
     switch (point_location.type) {
         case 'white':
-            return point_location.white_matter;
+            return point_location.isWhiteMatter ? 'white' : '';
         case 'vep':
             return point_location.vep;
         case 'destrieux':
@@ -49,17 +52,17 @@ const formatYesNoUnknown = (value: string, t: any) => {
 
 const allColumnsProps = { sortable: true, resizable: false, draggable: false, toggleable: false };
 
-export default function SummaryTab({ stimulationAdapter, filters }: SummaryTabProps) {
+export default function SummaryTab({ store, filters }: SummaryTabProps) {
     const { t } = useTranslation();
 
     // Use adapter if available, otherwise fall back to form
-    const source = stimulationAdapter.formValues;
+    const source = store.session
 
     const allRecords = useMemo(() => {
         return (
-            source.electrodes.flatMap((elec: ElectrodeFormValues) =>
-                elec.stim_points.flatMap((point: LegacyStimulationPoint) =>
-                    point.stimulations.flatMap((stim: LegacyStimulation, i: number) => {
+            source.electrodes.flatMap((elec: Electrode) =>
+                elec.stimulationPoints.flatMap((point: StimulationPoint) =>
+                    point.stimulations.flatMap((stim: Stimulation, i: number) => {
                         return {
                             id: getStimPointLabel(elec.label, point.index) + i,
                             electrode: elec.label,
@@ -69,8 +72,8 @@ export default function SummaryTab({ stimulationAdapter, filters }: SummaryTabPr
                             amplitude: stim.parameters.amplitude,
                             duration: stim.parameters.duration,
                             frequency: stim.parameters.frequency,
-                            lenght_path: stim.parameters.lenght_path,
-                            charge_density: computeChargeDensity(stim.parameters.amplitude, stim.parameters.lenght_path),
+                            length_path: stim.parameters.lengthPath,
+                            charge_density: computeChargeDensity(stim.parameters.amplitude, stim.parameters.lengthPath),
                             task: formatSelectedTask(stim.task),
                             cognitive_effect: formatSelectedObservedEffect(stim.effect.observed_effect),
                             observed_effect_comments: stim.effect.observed_effect_comments,
@@ -124,7 +127,8 @@ export default function SummaryTab({ stimulationAdapter, filters }: SummaryTabPr
             render: (result: Result) => getStimPointDisplayLabel(result.pointId),
             filter: (
                 <MultiSelect
-                    data={Array.from(new Set(allRecords.map((r: Result) => r.pointId))).map((id: string) => ({ value: id, label: getStimPointDisplayLabel(id) }))}
+                    data={Array.from(new Set(allRecords.map((r: Result) => r.pointId)))
+                        .map((id: string) => ({ value: id, label: getStimPointDisplayLabel(id) }))}
                     value={pointIdList}
                     label="Points"
                     searchable
@@ -155,9 +159,9 @@ export default function SummaryTab({ stimulationAdapter, filters }: SummaryTabPr
             ...allColumnsProps
         },
         {
-            accessor: 'lenght_path',
+            accessor: 'length_path',
             title: t('pages.stimulationTool.summary.results_table.length_path_title'),
-            render: (result: Result) => result.lenght_path + ' µs',
+            render: (result: Result) => result.length_path + ' µs',
             defaultToggle: false,
             ...allColumnsProps
         },
@@ -282,7 +286,7 @@ export default function SummaryTab({ stimulationAdapter, filters }: SummaryTabPr
                         {
                             id: 'stimulation_parameters_group',
                             title: t('pages.stimulationTool.summary.results_table.stimulation_parameters_group_title'),
-                            columns: effectiveColumns.filter((c) => ['stimulation_time', 'amplitude', 'duration', 'frequency', 'lenght_path', 'charge_density', 'task'].includes(c.accessor))
+                            columns: effectiveColumns.filter((c) => ['stimulation_time', 'amplitude', 'duration', 'frequency', 'length_path', 'charge_density', 'task'].includes(c.accessor))
                         },
                         {
                             id: 'effects_group',
@@ -305,7 +309,7 @@ interface Result {
     amplitude: number;
     duration: number;
     frequency: number;
-    lenght_path: number;
+    length_path: number;
     charge_density: number;
     task: string;
     cognitive_effect: string;

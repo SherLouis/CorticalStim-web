@@ -1,5 +1,5 @@
-import { StimulationSessionAdapter } from "../../../hooks/useStimulationSession";
+import { StimulationSessionStore } from "../../../../core/application/stores/stimulationSessionStore";
 
 export interface TabProperties {
-    stimulationAdapter: StimulationSessionAdapter;
+    store: StimulationSessionStore;
 }
