@@ -1,5 +1,6 @@
+import { ReactNode } from "react";
+
 import { Box, BoxProps, Stack, StackProps, useMantineTheme } from "@mantine/core";
-import { ReactNode } from "react"
 
 const Section = ({ header, children, bodyOpts, ...props }: SectionProps) => {
     const theme = useMantineTheme();

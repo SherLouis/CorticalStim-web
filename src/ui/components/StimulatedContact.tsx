@@ -1,6 +1,8 @@
 import { Chip, ChipProps, MantineTheme, Sx, useMantineTheme } from "@mantine/core";
-import { Stimulation } from "@core/domain/stimulation";
-import { StimulationObservedEffectFormValues } from "@ui/core/types";
+
+import { Stimulation } from "@/core/domain/stimulation";
+import { StimulationObservedEffectFormValues } from "@/ui/core/types";
+
 import { NO_EFFECT } from "./StimulationEffectSelection";
 
 

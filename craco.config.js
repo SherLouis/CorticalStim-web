@@ -6,8 +6,7 @@ module.exports = {
       plugin: CracoAliasPlugin,
       options: {
         aliases: {
-          '@core': 'src/core',
-          '@ui': 'src/ui'
+          '@': 'src',
         }
       }
     }

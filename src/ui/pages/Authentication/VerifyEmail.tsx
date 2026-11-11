@@ -1,9 +1,11 @@
-import { Box, Button, Text, Paper, PaperProps } from "@mantine/core";
-import { useAuthState } from "../../providers/AuthProvider";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { AppPath } from "../Routes";
+
+import { Box, Button, Paper, PaperProps, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+
+import { useAuthState } from "../../providers/AuthProvider";
+import { AppPath } from "../Routes";
 
 
 export function VerifyEmailPage(props: PaperProps) {

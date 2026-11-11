@@ -1,8 +1,9 @@
 import { makeAutoObservable, makeObservable, observable } from 'mobx';
-import { StimulationSession, ElectrodeParams } from '../../domain/session';
+
 import { Electrode } from '../../domain/electrode';
+import { ElectrodeParams, StimulationSession } from '../../domain/session';
+import { Stimulation } from '../../domain/stimulation';
 import { StimulationLocation, StimulationPoint } from '../../domain/stimulationPoint';
-import { Stimulation, StimulationParameters } from '../../domain/stimulation';
 
 /**
  * Shape returned by toValues() - matches legacy StimulationFormValues for JSON compatibility.

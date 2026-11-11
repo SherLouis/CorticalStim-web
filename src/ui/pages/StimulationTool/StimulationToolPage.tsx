@@ -1,15 +1,18 @@
-import { StimulationSessionStore } from "@core/application/stores/stimulationSessionStore";
+import { useContext, useEffect, useRef, useState } from "react";
+
 import { ActionIcon, Alert, Box, Group, Tabs, Text, TextInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck, IconDownload, IconFolderOpen, IconX } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
-import { useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useCustomTabStyle } from "../../components/StyledComponents/StyledTabs";
-import { RootStoreContext } from "../../providers/RootStoreProvider";
+
+import { StimulationSessionStore } from "@/core/application/stores/stimulationSessionStore";
+
 import ElectrodeSetupStep from "./tabs/t1_ImplantationSetup";
 import StimulationsTab from "./tabs/t2_Stimulations";
 import SummaryTab, { SummaryFilters } from "./tabs/t3_Summary";
+import { useCustomTabStyle } from "../../components/StyledComponents/StyledTabs";
+import { RootStoreContext } from "../../providers/RootStoreProvider";
 
 // TODO: make everything (text, sizes, layout) responsive
 

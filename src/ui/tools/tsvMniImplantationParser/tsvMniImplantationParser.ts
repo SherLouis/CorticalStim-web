@@ -1,5 +1,6 @@
 import naturalCompare from 'natural-compare'
-import { Electrode, SideOptions } from "@core/domain/electrode"
+
+import { Electrode, SideOptions } from "@/core/domain/electrode"
 
 const parseMniImplantationFromTsv = (tsvData: string): Electrode[] => {
     const getSideFromMni = (x: number, y: number, z: number): SideOptions => {

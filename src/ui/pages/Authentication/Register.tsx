@@ -1,25 +1,27 @@
-import { useForm } from '@mantine/form';
+import { useState } from 'react';
+
 import {
-    TextInput,
-    PasswordInput,
-    Text,
-    Paper,
-    Group,
-    PaperProps,
-    Button,
-    Anchor,
-    Stack,
-    Box,
     Alert,
+    Anchor,
+    Box,
+    Button,
+    Group,
+    Paper,
+    PaperProps,
+    PasswordInput,
+    Stack,
+    Text,
+    TextInput,
 } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import { isPasswordSecure } from './Password';
 import AuthenticationError, { AuthenticationErrorReason } from '../../../core/auth/authenticationError';
 import { useAuthState } from '../../providers/AuthProvider';
-import { useState } from 'react';
-import { IconAlertCircle } from '@tabler/icons-react';
 import { AppPath } from '../Routes';
-import { useTranslation } from 'react-i18next';
-import { isPasswordSecure } from './Password';
 
 
 export function RegisterPage(props: PaperProps) {

@@ -1,25 +1,27 @@
-import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
-import { TabProperties } from "./tab_properties";
-import { getStimPointLabel, getStimPointDisplayLabel, computeChargeDensity } from "@core/domain/utils";
-import { Electrode } from "@core/domain/electrode";
-import { useForm, UseFormReturnType } from "@mantine/form";
 import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import StimulationTaskSelection, { formatSelectedTask, NO_TASK } from "@ui/components/StimulationTaskSelection";
+
+import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
+import { DateTimePicker, DateValue } from "@mantine/dates";
+import { useForm, UseFormReturnType } from "@mantine/form";
 import { useListState } from "@mantine/hooks";
-import StimulationEffectSelection, { formatEegPostDichargeLocale, formatEpiManifestation, formatSelectedObservedEffect, NO_EFFECT } from "@ui/components/StimulationEffectSelection";
 import { IconAlertCircle, IconCheck, IconCircleCheck, IconCircleX, IconClockCheck, IconClockEdit, IconEye, IconTrash } from "@tabler/icons-react";
 import { t } from "i18next";
-import CustomNumberInput from "@ui/components/CustomNumberInput";
-import StimulatedContact, { getStimulatedStyledContactBorderStyle, getStimulatedStyledContactColor } from "@ui/components/StimulatedContact";
-import Section from "@ui/components/Section";
-import { DateTimePicker, DateValue } from "@mantine/dates";
-import { Stimulation, StimulationParameters } from "@core/domain/stimulation";
-import { StimulationPoint } from "@core/domain/stimulationPoint";
-import { StimulationSessionStore } from "@core/application/stores/stimulationSessionStore";
-import { StimulationParametersFormValues, StimulationTaskFormValues, StimulationEffectsValues, StimulationObservedEffectFormValues } from "@ui/core/types";
+import { useTranslation } from "react-i18next";
 
-// TODO: organize imports in files
+import { StimulationSessionStore } from "@/core/application/stores/stimulationSessionStore";
+import { Electrode } from "@/core/domain/electrode";
+import { Stimulation, StimulationParameters } from "@/core/domain/stimulation";
+import { StimulationPoint } from "@/core/domain/stimulationPoint";
+import { computeChargeDensity, getStimPointDisplayLabel, getStimPointLabel } from "@/core/domain/utils";
+import Section from "@/ui/components/Section";
+import StimulatedContact, { getStimulatedStyledContactBorderStyle, getStimulatedStyledContactColor } from "@/ui/components/StimulatedContact";
+import StimulationEffectSelection, { formatEegPostDichargeLocale, formatEpiManifestation, formatSelectedObservedEffect, NO_EFFECT } from "@/ui/components/StimulationEffectSelection";
+import StimulationParametersSelection from "@/ui/components/StimulationParametersSelection";
+import StimulationTaskSelection, { formatSelectedTask, NO_TASK } from "@/ui/components/StimulationTaskSelection";
+import { StimulationEffectsValues, StimulationObservedEffectFormValues, StimulationParametersFormValues, StimulationTaskFormValues } from "@/ui/core/types";
+
+
+import { TabProperties } from "./tab_properties";
 
 export default function StimulationsTab({ store, viewPointSummary }: StimulationTabProps) {
     // TODO: ajouter validations (ex: post discharge time cannot be 0 or negative if set to true)
@@ -258,7 +260,7 @@ export default function StimulationsTab({ store, viewPointSummary }: Stimulation
                     <Box h={"100%"} sx={{ flex: 5 }}>
                         <Stack h={"100%"} w={"100%"} spacing={0} display={selectedPoint !== '' ? 'flex' : 'none'}>
                             <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
-                            <StimulationParametersSelection form={params_form} t={t} />
+                            <StimulationParametersSelection form={params_form} />
                         </Stack>
 
                     </Box>
@@ -570,95 +572,6 @@ const CentralBar = ({
                 </Flex >
             </Box>
         </Box>
-    );
-}
-
-interface StimulationParametersSelectionProps {
-    form: UseFormReturnType<StimulationParametersFormValues>;
-    t: any;
-}
-
-const StimulationParametersSelection = ({ form: params_form, t }: StimulationParametersSelectionProps) => {
-    const parameterSelection = (
-        <Group position="center" align="top" noWrap>
-            <CustomNumberInput
-                h={"100%"}
-                label={t('pages.stimulationTool.stimulation.amplitude_label') + ' (mA)'}
-                precision={1}
-                digit_step={1}
-                decimal_step={0.1}
-                min={0}
-                max={10}
-                variant='default'
-                useCustom={true}
-                value={params_form.values.amplitude} onChange={(v) => params_form.setFieldValue('amplitude', v)}
-            />
-            <Stack align="center" h={"100%"} spacing={0}>
-                <CustomNumberInput
-                    label={t('pages.stimulationTool.stimulation.frequency_label') + ' (Hz)'}
-                    precision={0}
-                    step={1}
-                    min={0}
-                    styles={{ input: { textAlign: "center" } }}
-                    value={params_form.values.frequency} onChange={(v) => params_form.setFieldValue('frequency', v)}
-                />
-                <Group spacing={0} grow w={"100%"}>
-                    {[1, 5, 50, 55].map((v) =>
-                        <Button compact key={"freq_" + v}
-                            onClick={() => params_form.setFieldValue('frequency', v)}
-                            variant={params_form.values.frequency === v ? 'filled' : 'default'}>
-                            {v}
-                        </Button>
-                    )}
-                </Group>
-            </Stack>
-
-            <Stack align="center" h={"100%"} spacing={0}>
-                <CustomNumberInput
-                    label={t('pages.stimulationTool.stimulation.duration_label') + ' (s)'}
-                    precision={0}
-                    step={1}
-                    min={0}
-                    styles={{ input: { textAlign: "center" } }}
-                    value={params_form.values.duration} onChange={(v) => params_form.setFieldValue('duration', v)}
-                />
-                <Group spacing={0} grow w={"100%"}>
-                    {[5, 10, 30, 60].map((v) =>
-                        <Button compact key={"duration_" + v}
-                            onClick={() => params_form.setFieldValue('duration', v)}
-                            variant={params_form.values.duration === v ? 'filled' : 'default'}>
-                            {v}
-                        </Button>
-                    )}
-                </Group>
-            </Stack>
-
-            <Stack align="center" h={"100%"} spacing={0}>
-                <CustomNumberInput
-                    label={t('pages.stimulationTool.stimulation.length_path_label') + ' (µs)'}
-                    precision={0}
-                    step={1}
-                    min={0}
-                    styles={{ input: { textAlign: "center" } }}
-                    value={params_form.values.lengthPath} onChange={(v) => params_form.setFieldValue('length_path', v)}
-                />
-                <Group spacing={0} grow w={"100%"}>
-                    {[300, 500].map((v) =>
-                        <Button compact key={"lp_" + v}
-                            onClick={() => params_form.setFieldValue('length_path', v)}
-                            variant={params_form.values.lengthPath === v ? 'filled' : 'default'}>
-                            {v}
-                        </Button>
-                    )}
-                </Group>
-            </Stack>
-        </Group>
-    );
-    return (
-        <Section
-            header={<Title order={5}>{t('pages.stimulationTool.stimulation.parameters_title')}</Title>}
-            children={parameterSelection}
-        />
     );
 }
 
