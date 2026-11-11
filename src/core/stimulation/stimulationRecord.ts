@@ -1,4 +1,4 @@
-import { StimulationSessionValues } from "@core/application/stores/stimulationSessionStore";
+import { StimulationSessionValues } from "@/core/application/stores/stimulationSessionStore";
 
 // TODO: unsure how to use this yet ...
 export default interface StimulationRecord {

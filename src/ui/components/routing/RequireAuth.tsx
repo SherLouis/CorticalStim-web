@@ -1,5 +1,6 @@
-import { Navigate, useLocation } from "react-router-dom"
-import { useAuthState } from "../../providers/AuthProvider"
+import { Navigate, useLocation } from "react-router-dom";
+
+import { useAuthState } from "../../providers/AuthProvider";
 
 const RequireAuth = ({ children, noAuthRedirect }: { children: React.ReactElement, noAuthRedirect: string }): React.ReactElement => {
     const authState = useAuthState()
@@ -7,4 +8,4 @@ const RequireAuth = ({ children, noAuthRedirect }: { children: React.ReactElemen
     return authState.isAuthenticated ? children : <Navigate to={noAuthRedirect} replace state={{ path: location.pathname }} />;
 }
 
-export { RequireAuth }
+export { RequireAuth };

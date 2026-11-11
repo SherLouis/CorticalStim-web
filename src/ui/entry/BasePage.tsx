@@ -1,11 +1,13 @@
+import { PropsWithChildren, useState } from 'react';
+
 import { ActionIcon, AppShell, Avatar, Burger, Button, Container, Divider, Group, Header, MediaQuery, Menu, Navbar, Stack, Switch, Text, Title, useMantineColorScheme, useMantineTheme } from '@mantine/core';
-import { PropsWithChildren, useState } from 'react'
-import { IconSun, IconMoonStars, IconSettings, IconLogout, IconLogin } from '@tabler/icons-react';
-import { useTranslation } from 'react-i18next';
-import { useAuthState } from '../providers/AuthProvider';
+import { IconLogin, IconLogout, IconMoonStars, IconSettings, IconSun } from '@tabler/icons-react';
 import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+
 import { AppPath } from '../pages/Routes';
+import { useAuthState } from '../providers/AuthProvider';
 
 export default function BasePage(props: PropsWithChildren<BasePageProps>) {
     const { colorScheme } = useMantineColorScheme();

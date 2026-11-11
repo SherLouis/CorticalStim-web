@@ -1,21 +1,23 @@
+import { Suspense, useState } from 'react';
+
 import { ColorScheme, ColorSchemeProvider, MantineProvider, Skeleton } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
-import { Suspense, useState } from 'react';
-import { createHashRouter, RouterProvider } from 'react-router-dom';
-import BasePage from './entry/BasePage';
 import { useTranslation } from 'react-i18next';
-import StimulationToolPage from './pages/StimulationTool/StimulationToolPage';
+import { createHashRouter, RouterProvider } from 'react-router-dom';
+
+import { RequireAuth } from './components/routing/RequireAuth';
+import { RequireVerifiedUser } from './components/routing/RequireVerifiedUser';
+import BasePage from './entry/BasePage';
+import AccountManagementPage from './pages/Authentication/AccountManagement';
 import { LoginPage } from './pages/Authentication/Login';
-import FirebaseAuthenticationProvider from '../infra/firebase/firebaseAuthenticationProvider';
-import { AuthenticationProvider } from '../core/auth/authenticationProvider';
 import { RegisterPage } from './pages/Authentication/Register';
+import { VerifyEmailPage } from './pages/Authentication/VerifyEmail';
+import { AppPath } from './pages/Routes';
+import StimulationToolPage from './pages/StimulationTool/StimulationToolPage';
 import { AuthContextProvider } from './providers/AuthProvider';
 import { RootStoreProvider } from './providers/RootStoreProvider';
-import { RequireAuth } from './components/routing/RequireAuth';
-import { VerifyEmailPage } from './pages/Authentication/VerifyEmail';
-import { RequireVerifiedUser } from './components/routing/RequireVerifiedUser';
-import { AppPath } from './pages/Routes';
-import AccountManagementPage from './pages/Authentication/AccountManagement';
+import { AuthenticationProvider } from '../core/auth/authenticationProvider';
+import FirebaseAuthenticationProvider from '../infra/firebase/firebaseAuthenticationProvider';
 
 // TODO: upgrade to mantine v7
 

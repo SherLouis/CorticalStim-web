@@ -1,19 +1,21 @@
-import { TabProperties } from "./tab_properties";
-import { getStimPointLabel, getStimPointDisplayLabel, computeChargeDensity } from "@core/domain/utils";
-import { StimulationLocation } from "@core/domain/stimulationPoint";
-import { StimulationPoint, Stimulation, Electrode } from "@core/domain";
-import { StimulationEffects } from "@core/domain/stimulationEffects";
-import { useTranslation } from "react-i18next";
-import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
-import { formatEpiManifestation, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
-import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
-import { useEffect, useRef, useState, useMemo } from "react";
-import sortBy from 'lodash.sortby';
-import { useListState } from "@mantine/hooks";
+import { useEffect, useMemo, useRef, useState } from "react";
+
 import { ActionIcon, Alert, Box, Checkbox, Group, MultiSelect, Popover } from "@mantine/core";
-import { IconFilterOff, IconFileTypeCsv, IconTableOptions, IconAlertTriangle } from "@tabler/icons-react";
-import { CSVLink } from "react-csv";
+import { useListState } from "@mantine/hooks";
+import { IconAlertTriangle, IconFileTypeCsv, IconFilterOff, IconTableOptions } from "@tabler/icons-react";
+import sortBy from 'lodash.sortby';
+import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
 import { DataTableColumnToggle } from "mantine-datatable/dist/hooks";
+import { CSVLink } from "react-csv";
+import { useTranslation } from "react-i18next";
+
+import { Electrode, Stimulation, StimulationPoint } from "@/core/domain";
+import { StimulationLocation } from "@/core/domain/stimulationPoint";
+import { computeChargeDensity, getStimPointDisplayLabel, getStimPointLabel } from "@/core/domain/utils";
+
+import { TabProperties } from "./tab_properties";
+import { formatEpiManifestation, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
+import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
 
 const formatPointLocation = (point_location: StimulationLocation) => {
     switch (point_location.type) {

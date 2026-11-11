@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { RootApplicationStore } from '../../core/application/stores/rootApplicationStore';
 
 const store = new RootApplicationStore();

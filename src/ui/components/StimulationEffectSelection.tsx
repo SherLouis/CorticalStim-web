@@ -1,12 +1,15 @@
-import { Box, Button, Checkbox, Group, Text, Radio, ScrollArea, Stack, Switch, TextInput, Title, Flex, ActionIcon } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
-import { useTranslation } from "react-i18next";
-import { POST_DISCHARGE_VALUE_OPTIONS, StimulationEffectsValues, StimulationObservedEffectFormValues } from "@ui/core/types";
-import ColumnButtonSelect from "./ColumnButtonSelect";
-import { TFunction } from "i18next";
-import Section from "./Section";
 import { useState } from "react";
+
+import { ActionIcon, Box, Button, Checkbox, Flex, Group, Radio, ScrollArea, Stack, Switch, Text, TextInput, Title } from "@mantine/core";
+import { UseFormReturnType } from "@mantine/form";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
+import { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
+
+import { POST_DISCHARGE_VALUE_OPTIONS, StimulationEffectsValues, StimulationObservedEffectFormValues } from "@/ui/core/types";
+
+import ColumnButtonSelect from "./ColumnButtonSelect";
+import Section from "./Section";
 
 export default function StimulationEffectSelection({ form, observed_effect_last_values }: StimulationEffectSelectionProps) {
     const { t } = useTranslation();

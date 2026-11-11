@@ -1,15 +1,18 @@
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+
 import { ActionIcon, Alert, Badge, Box, Button, Checkbox, Chip, Flex, Group, Input, Modal, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
-import { useTranslation } from "react-i18next";
-import { IconAlertCircle, IconCircleCheck, IconCirclePlus, IconCircleX, IconDeselect, IconFileImport, IconLockCheck, IconTrash } from "@tabler/icons-react";
-import { useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
-import { letters } from "@ui/tools/letterTools";
-import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "@ui/components/StimulationPointLocationSelection";
-import { TabProperties } from "@ui/pages/StimulationTool/tabs/tab_properties";
 import { useForm } from "@mantine/form";
-import parseMniImplantationFromTsv from "@ui/tools/tsvMniImplantationParser/tsvMniImplantationParser";
-import { getStimPointLabel, getStimPointDisplayLabel } from "@core/domain/utils";
-import { StimulationSessionStore } from "@core/application/stores/stimulationSessionStore";
+import { IconAlertCircle, IconCircleCheck, IconCirclePlus, IconCircleX, IconDeselect, IconFileImport, IconLockCheck, IconTrash } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
+
+import { StimulationSessionStore } from "@/core/application/stores/stimulationSessionStore";
+import { getStimPointDisplayLabel, getStimPointLabel } from "@/core/domain/utils";
+import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "@/ui/components/StimulationPointLocationSelection";
+import { TabProperties } from "@/ui/pages/StimulationTool/tabs/tab_properties";
+import { letters } from "@/ui/tools/letterTools";
+import parseMniImplantationFromTsv from "@/ui/tools/tsvMniImplantationParser/tsvMniImplantationParser";
+
 
 
 interface ElectrodeRowProps {
@@ -84,7 +87,7 @@ const ElectrodeRow = memo(function ElectrodeRow({
                     disabled={electrode.confirmed}
                     label={t("pages.stimulationTool.implantation.nbContactsLabel")}
                     min={0}
-                    value={electrode.n_contacts ?? 0}
+                    value={electrode.nContacts ?? 0}
                     onChange={(v) => setContactsToElectrode(electrode_i, v === "" ? 0 : v)}
                 />
                 <Button sx={{ flex: 2, flexGrow: 1 }}
@@ -354,7 +357,7 @@ function ElectrodeSetupStep({ store }: TabProperties) {
         store?.confirmElectrode(electrode_i);
     }
 
-    const sourceElectrodes = store.toValues().electrodes;
+    const sourceElectrodes = store.session.electrodes;
 
     const getSideOptions = () => {
         return [
@@ -384,7 +387,7 @@ function ElectrodeSetupStep({ store }: TabProperties) {
             })
         })
         setDoneContacts(donePoints);
-    }, [store.toValues().electrodes]);
+    }, [sourceElectrodes]);
 
     const selectAllContacts = () => {
         var allPointsLabel = sourceElectrodes.flatMap((electrode: any) => electrode.stimulationPoints.map((point: any) => getStimPointLabel(electrode.label, point.index)));
@@ -421,7 +424,7 @@ function ElectrodeSetupStep({ store }: TabProperties) {
     })
 
     // Form change (from file open for example)
-    useEffect(() => { updateDoneContacts(); }, [store.toValues().electrodes, updateDoneContacts])
+    useEffect(() => { updateDoneContacts(); }, [store.session.electrodes, updateDoneContacts])
 
     // Selected contact changed or data model updated => sync location form values
     // We use a stringified version of selectedContacts to avoid unnecessary triggers

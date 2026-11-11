@@ -1,21 +1,22 @@
 import {
-  Container,
-  PasswordInput,
-  Button,
-  Title,
-  PaperProps,
-  Paper,
   Accordion,
-  TextInput,
+  Button,
   Checkbox,
+  Container,
+  Paper,
+  PaperProps,
+  PasswordInput,
+  TextInput,
+  Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useTranslation } from 'react-i18next';
-import { isPasswordSecure } from './Password';
-import { useAuthState } from '../../providers/AuthProvider';
-import AuthenticationError, { AuthenticationErrorReason } from '../../../core/auth/authenticationError';
 import { notifications } from '@mantine/notifications';
 import { IconTrash } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
+
+import { isPasswordSecure } from './Password';
+import AuthenticationError, { AuthenticationErrorReason } from '../../../core/auth/authenticationError';
+import { useAuthState } from '../../providers/AuthProvider';
 
 const AccountManagementPage = (props: PaperProps) => {
   // TODO: ajouter option pour supprimer le compte

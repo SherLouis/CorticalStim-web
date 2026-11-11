@@ -1,10 +1,10 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, sendEmailVerification, updatePassword, Auth, setPersistence, browserSessionPersistence, AuthErrorCodes, deleteUser, connectAuthEmulator } from "firebase/auth";
-import { User as FirebaseUser } from "firebase/auth";
-import firebaseApp from './firebaseApp'
+import { FirebaseError } from "firebase/app";
+import { Auth, AuthErrorCodes, browserSessionPersistence, connectAuthEmulator, createUserWithEmailAndPassword, deleteUser, User as FirebaseUser, getAuth, sendEmailVerification, setPersistence, signInWithEmailAndPassword, signOut, updatePassword, updateProfile } from "firebase/auth";
+
+import firebaseApp from './firebaseApp';
+import AuthenticationError, { AuthenticationErrorReason } from "../../core/auth/authenticationError";
 import { AuthenticationProvider } from "../../core/auth/authenticationProvider";
 import User from "../../core/auth/user";
-import AuthenticationError, { AuthenticationErrorReason } from "../../core/auth/authenticationError";
-import { FirebaseError } from "firebase/app";
 
 export default class FirebaseAuthenticationProvider implements AuthenticationProvider {
 

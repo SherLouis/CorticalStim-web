@@ -1,4 +1,4 @@
-import { NumberInput, Group, ActionIcon, NumberInputProps, MantineNumberSize, Stack, Variants, Input } from '@mantine/core';
+import { ActionIcon, Group, Input, MantineNumberSize, NumberInput, NumberInputProps, Stack, Variants } from '@mantine/core';
 import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 
 export default function CustomNumberInput(props: CustomNumberInputProps) {

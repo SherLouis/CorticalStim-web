@@ -1,5 +1,5 @@
 import { StimulationSessionStore } from './stimulationSessionStore';
-import { Stimulation, StimulationParameters } from '../../domain/stimulation';
+import { StimulationParameters } from '../../domain/stimulation';
 
 test('add electrode and stim point', () => {
     const store = new StimulationSessionStore();

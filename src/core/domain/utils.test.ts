@@ -1,4 +1,4 @@
-import { getStimPointLabel, getStimPointDisplayLabel } from './utils';
+import { getStimPointDisplayLabel, getStimPointLabel } from './utils';
 
 test('getStimPointLabel', () => {
     expect(getStimPointLabel('E1', 0)).toBe('E1/1-2');
