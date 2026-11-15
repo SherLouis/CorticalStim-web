@@ -11,9 +11,9 @@ test('serialization roundtrip', () => {
     const store = new StimulationSessionStore();
     const values = { patientId: 'p1', electrodeParameters: { type: 't', separation: 1, diameter: 2, length: 3 }, electrodes: [] }
     store.loadFromJson(JSON.stringify({ schemaVersion: 2, ...values }));
-    const v = store.toValues();
-    expect(v).toEqual(values)
-    expect(v.patientId).toBe('p1')
+    expect(store.session.patientId).toBe('p1')
+    expect(store.session.electrodeParameters).toEqual(values.electrodeParameters)
+    expect(store.session.electrodes).toEqual(values.electrodes)
 });
 
 test('validationErrors computed', () => {
@@ -50,9 +50,9 @@ test('confirmElectrode', () => {
     const store = new StimulationSessionStore();
     store.loadFromJson(JSON.stringify({ schemaVersion: 2, patientId: 'p1', electrodeParameters: { type: 't', separation: 1, diameter: 2, length: 3 }, electrodes: [] }));
     store.addElectrode('E1');
-    expect(store.toValues().electrodes[0].confirmed).toBe(false);
+    expect(store.session.electrodes[0].confirmed).toBe(false);
     store.confirmElectrode(0);
-    expect(store.toValues().electrodes[0].confirmed).toBe(true);
+    expect(store.session.electrodes[0].confirmed).toBe(true);
     expect(store.isDirty).toBe(true);
 });
 
@@ -61,7 +61,7 @@ test('updateElectrodeLabel', () => {
     store.loadFromJson(JSON.stringify({ schemaVersion: 2, patientId: 'p1', electrodeParameters: { type: 't', separation: 1, diameter: 2, length: 3 }, electrodes: [] }));
     store.addElectrode('E1');
     store.updateElectrodeLabel(0, 'A2');
-    expect(store.toValues().electrodes[0].label).toBe('A2');
+    expect(store.session.electrodes[0].label).toBe('A2');
     expect(store.isDirty).toBe(true);
 });
 
@@ -69,13 +69,13 @@ test('updateElectrodeSide', () => {
     const store = new StimulationSessionStore();
     store.loadFromJson(JSON.stringify({ schemaVersion: 2, patientId: 'p1', electrodeParameters: { type: 't', separation: 1, diameter: 2, length: 3 }, electrodes: [] }));
     store.addElectrode('E1');
-    expect(store.toValues().electrodes[0].side).toBeUndefined();
+    expect(store.session.electrodes[0].side).toBeUndefined();
     store.updateElectrodeSide(0, 'left');
-    expect(store.toValues().electrodes[0].side).toBe('left');
+    expect(store.session.electrodes[0].side).toBe('left');
     store.updateElectrodeSide(0, 'right');
-    expect(store.toValues().electrodes[0].side).toBe('right');
+    expect(store.session.electrodes[0].side).toBe('right');
     store.updateElectrodeSide(0, undefined);
-    expect(store.toValues().electrodes[0].side).toBeUndefined();
+    expect(store.session.electrodes[0].side).toBeUndefined();
     expect(store.isDirty).toBe(true);
 });
 
@@ -83,7 +83,7 @@ test('updateElectrodeParameters', () => {
     const store = new StimulationSessionStore();
     store.loadFromJson(JSON.stringify({ schemaVersion: 2, patientId: 'p1', electrodeParameters: { type: 't', separation: 1, diameter: 2, length: 3 }, electrodes: [] }));
     store.updateElectrodeParameters({ separation: 5 });
-    const params = store.toValues().electrodeParameters;
+    const params = store.session.electrodeParameters;
     expect(params.separation).toBe(5);
     expect(params.diameter).toBe(2); // unchanged
     expect(params.length).toBe(3); // unchanged
@@ -95,7 +95,7 @@ test('setElectrodeContacts creates stimulation points', () => {
     store.loadFromJson(JSON.stringify({ schemaVersion: 2, patientId: 'p1', electrodeParameters: { type: 't', separation: 1, diameter: 2, length: 3 }, electrodes: [] }));
     store.addElectrode('E1');
     store.setElectrodeContacts(0, 4);
-    const electrode = store.toValues().electrodes[0];
+    const electrode = store.session.electrodes[0];
     expect(electrode.nContacts).toBe(4);
     expect(electrode.stimulationPoints.length).toBe(3); // nbContacts - 1
     expect(electrode.stimulationPoints[0].index).toBe(0);
@@ -109,7 +109,7 @@ test('updateStimulationPointLocation', () => {
     store.addElectrode('E1');
     store.setElectrodeContacts(0, 3);
     store.updateStimulationPointLocation(0, 0, { type: 'mni', vep: '', destrieux: '', mni: { x: 10, y: 20, z: 30 }, isWhiteMatter: false, isDone: true });
-    const point = store.toValues().electrodes[0].stimulationPoints[0];
+    const point = store.session.electrodes[0].stimulationPoints[0];
     expect(point.location.type).toBe('mni');
     expect(point.location.mni).toEqual({ x: 10, y: 20, z: 30 });
     expect(point.location.isDone).toBe(true);
@@ -143,10 +143,9 @@ test('addStimulation', () => {
     
     store.addStimulation(0, 0, stimulation);
     
-    const vals = store.toValues();
-    expect(vals.electrodes[0].stimulationPoints[0].stimulations.length).toBe(1);
-    expect(vals.electrodes[0].stimulationPoints[0].stimulations[0].parameters.amplitude).toBe(2.0);
-    expect(vals.electrodes[0].stimulationPoints[0].stimulations[0].task.category).toBe('language');
+    expect(store.session.electrodes[0].stimulationPoints[0].stimulations.length).toBe(1);
+    expect(store.session.electrodes[0].stimulationPoints[0].stimulations[0].parameters.amplitude).toBe(2.0);
+    expect(store.session.electrodes[0].stimulationPoints[0].stimulations[0].task.category).toBe('language');
     expect(store.isDirty).toBe(true);
 });
 
@@ -175,5 +174,5 @@ test('setElectrodes replaces electrode array and marks dirty', () => {
     expect(store.isDirty).toBe(false);
     store.setElectrodes([{ label: 'E1', side: 'left', nContacts: 2, confirmed: false, stimulationPoints: [] }]);
     expect(store.isDirty).toBe(true);
-    expect(store.toValues().electrodes).toEqual([{ label: 'E1', side: 'left', nContacts: 2, confirmed: false, stimulationPoints: [] }]);
+    expect(store.session.electrodes).toEqual([{ label: 'E1', side: 'left', nContacts: 2, confirmed: false, stimulationPoints: [] }]);
 });

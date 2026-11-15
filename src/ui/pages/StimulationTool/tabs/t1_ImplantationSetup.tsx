@@ -203,7 +203,7 @@ function ElectrodeSetupStep({ store }: TabProperties) {
             const electrode_label = parts.slice(0, -1).join('/');
 
             // Find electrode index
-            const electrodes = store.toValues().electrodes;
+            const electrodes = store.session.electrodes;
             const electrode_i = electrodes.findIndex(e => e.label === electrode_label);
             if (electrode_i !== -1) {
                 const electrode = electrodes[electrode_i];
@@ -301,7 +301,7 @@ function ElectrodeSetupStep({ store }: TabProperties) {
     const handleDeleteElectrode = () => {
         setShowConfirmDeleteElectrode(false);
         if (electrodeLabelToDelete === undefined || !store) { return; }
-        const sourceElectrodes = store.toValues().electrodes;
+        const sourceElectrodes = store.session.electrodes;
         const electrode = sourceElectrodes.find((e: any) => e.label === electrodeLabelToDelete);
         const electrodeIndex = sourceElectrodes.findIndex((e: any) => e.label === electrodeLabelToDelete);
         setSelectedContacts(selectedContacts.filter((c) => !c.startsWith(electrode!.label)));
@@ -495,19 +495,19 @@ function ElectrodeSetupStep({ store }: TabProperties) {
                             label={t('pages.stimulationTool.implantation.contactDiameterLabel')}
                             precision={1}
                             required
-                            value={store.toValues().electrodeParameters.diameter ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ diameter: v })}
+                            value={store.session.electrodeParameters.diameter ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ diameter: v })}
                         />
                         <NumberInput
                             label={t('pages.stimulationTool.implantation.contactSeparationLabel')}
                             precision={1}
                             required
-                            value={store.toValues().electrodeParameters.separation ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ separation: v })}
+                            value={store.session.electrodeParameters.separation ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ separation: v })}
                         />
                         <NumberInput
                             label={t('pages.stimulationTool.implantation.contactLengthLabel')}
                             precision={1}
                             required
-                            value={store.toValues().electrodeParameters.length ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ length: v })}
+                            value={store.session.electrodeParameters.length ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ length: v })}
                         />
                     </Group>
                 </Group>
@@ -592,8 +592,8 @@ const CentralBar = observer(({
     unselectAllContacts,
     handleElectrodeLocationFormSubmit
 }: CentralBarProps) => {
-    const sourceElectrodes = store.toValues().electrodes;
-    const electrode_parameters_selected = (store.toValues().electrodeParameters.diameter ?? 0) > 0;
+    const sourceElectrodes = store.session.electrodes;
+    const electrode_parameters_selected = (store.session.electrodeParameters.diameter ?? 0) > 0;
     const contacts_configured = sourceElectrodes.flatMap((e: any) => e.stimulationPoints).length > 0;
     const all_contacts_roi_configured = sourceElectrodes.flatMap((e: any) => e.stimulationPoints).every((sp: any) => sp.location.done === true || sp.location.isDone === true);
     const contacts_selected = selectedContacts.length > 0;
