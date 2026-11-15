@@ -234,7 +234,7 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
                 <CSVLink
                     data={records}
                     headers={csvHeaders}
-                    filename={`${source.patient_id}_${new Date().toISOString().split('T')[0]}_summary.csv`}
+                    filename={`${source.patientId}_${new Date().toISOString().split('T')[0]}_summary.csv`}
                     hidden
                     ref={csvFileRef}
                     target='_blank'

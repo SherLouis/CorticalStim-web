@@ -8,14 +8,14 @@ export class ElectrodeParams {
 }
 
 export class StimulationSession {
-    patient_id: string = '';
-    electrode_params: ElectrodeParams = new ElectrodeParams();
+    patientId: string = '';
+    electrodeParameters: ElectrodeParams = new ElectrodeParams();
     electrodes: Electrode[] = [];
 
     toValues() {
         return {
-            patient_id: this.patient_id,
-            electrode_params: { ...this.electrode_params },
+            patientId: this.patientId,
+            electrodeParameters: { ...this.electrodeParameters },
             electrodes: this.electrodes.map((e) => ({ ...e })),
         };
     }

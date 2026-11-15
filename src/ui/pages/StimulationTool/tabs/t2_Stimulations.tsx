@@ -10,9 +10,9 @@ import { useTranslation } from "react-i18next";
 
 import { StimulationSessionStore } from "@/core/application/stores/stimulationSessionStore";
 import { Electrode } from "@/core/domain/electrode";
-import { Stimulation, StimulationParameters } from "@/core/domain/stimulation";
 import { StimulationPoint } from "@/core/domain/stimulationPoint";
 import { computeChargeDensity, getStimPointDisplayLabel, getStimPointLabel } from "@/core/domain/utils";
+import { toStimulation } from "@/ui/application/mappers/stimulationMapper";
 import Section from "@/ui/components/Section";
 import StimulatedContact, { getStimulatedStyledContactBorderStyle, getStimulatedStyledContactColor } from "@/ui/components/StimulatedContact";
 import StimulationEffectSelection, { formatEegPostDichargeLocale, formatEpiManifestation, formatSelectedObservedEffect, NO_EFFECT } from "@/ui/components/StimulationEffectSelection";
@@ -96,35 +96,7 @@ export default function StimulationsTab({ store, viewPointSummary }: Stimulation
 
         if (electrode_i === -1 || stim_point_i === -1) { return; }
 
-        // Create domain Stimulation object
-        // TODO: move logic to a mapper
-        const stimulation: Stimulation = {
-            time: stimulationTime,
-            parameters: new StimulationParameters({
-                amplitude: params_form.values.amplitude,
-                duration: params_form.values.duration,
-                frequency: params_form.values.frequency,
-                lengthPath: params_form.values.lengthPath
-            }),
-            task: {
-                category: task_form.values.category,
-                subcategory: task_form.values.subcategory,
-                characteristic: task_form.values.characteristic
-            },
-            effect: {
-                observed_effect: effect_form.values.observed_effect,
-                observed_effect_comments: effect_form.values.observed_effect_comments,
-                epi_manifestation: effect_form.values.epi_manifestation,
-                contact_in_epi_zone: effect_form.values.contact_in_epi_zone,
-                contact_in_epi_zone_comments: effect_form.values.contact_in_epi_zone_comments,
-                post_discharge: effect_form.values.post_discharge,
-                pd_duration: effect_form.values.pd_duration,
-                pd_local: effect_form.values.pd_local,
-                pd_type: effect_form.values.pd_type,
-                crisis: effect_form.values.crisis,
-                crisis_comments: effect_form.values.crisis_comments
-            }
-        };
+        const stimulation = toStimulation(stimulationTime, params_form.values, task_form.values, effect_form.values);
 
         // Save to store via adapter
         store.addStimulation(electrode_i, stim_point_i, stimulation);

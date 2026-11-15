@@ -32,3 +32,13 @@ export interface StimulationEffectsValues {
     crisis: boolean;
     crisis_comments: string;
 }
+
+export interface ElectrodeLocationFormValues {
+    type: string;
+    vep: string;
+    destrieux: string;
+    white_matter: string;
+    mni_x: number;
+    mni_y: number;
+    mni_z: number;
+}
