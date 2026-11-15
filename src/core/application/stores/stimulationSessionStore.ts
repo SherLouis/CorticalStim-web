@@ -1,15 +1,19 @@
 import { makeAutoObservable, makeObservable, observable } from 'mobx';
 
 import { Electrode } from '../../domain/electrode';
-import { StimulationSession } from '../../domain/session';
+import { ElectrodeParams, StimulationSession } from '../../domain/session';
 import { Stimulation } from '../../domain/stimulation';
 import { StimulationLocation, StimulationPoint } from '../../domain/stimulationPoint';
 import { SessionPersistenceService } from '../services/sessionPersistenceService';
 
 /**
- * Shape returned by toValues() - matches legacy StimulationFormValues for JSON compatibility.
+ * Shape of the serializable session values (v2, camelCase) - matches StimulationSession domain shape.
  */
-export type StimulationSessionValues = ReturnType<StimulationSession['toValues']>;
+export type StimulationSessionValues = {
+    patientId: string;
+    electrodeParameters: ElectrodeParams;
+    electrodes: Electrode[];
+};
 
 /**
  * MobX store holding the **persisted** stimulation session state.
@@ -210,9 +214,12 @@ export class StimulationSessionStore {
      * @param json Serialized session JSON
      */
     loadFromJson(json: string) {
-        this.session = SessionPersistenceService.load(json);
+        const loaded = SessionPersistenceService.load(json);
+        this.session.patientId = loaded.patientId;
+        this.session.electrodeParameters = Object.assign(new ElectrodeParams(), loaded.electrodeParameters);
+        this.session.electrodes.splice(0, this.session.electrodes.length, ...loaded.electrodes);
         this.isDirty = false;
-        this.lastSavedSnapshot = this.toValues();
+        this.lastSavedSnapshot = this.session.toValues();
     }
 
     /** Serialize current session to JSON with schemaVersion: 2. */
@@ -230,15 +237,10 @@ export class StimulationSessionStore {
         this.markDirty();
     }
 
-    /** Serialize current session to StimulationSessionValues (JSON-compatible). */
-    toValues(): StimulationSessionValues {
-        return this.session.toValues();
-    }
-
     /** Call after successful save to backend to clear dirty flag and update snapshot. */
     markSaved() {
         this.isDirty = false;
-        this.lastSavedSnapshot = this.toValues();
+        this.lastSavedSnapshot = this.session.toValues();
     }
 
     /** Internal: mark session as having unsaved changes. */

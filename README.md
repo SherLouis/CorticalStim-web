@@ -25,11 +25,11 @@
 - [ ] Stimulation tab : option to enlarge contact selection when none is selected (take up entire width and larger height (all - bar)). Takes back original size when contact is selected. Button to enlarge is small in a corner of the section.
 
 ## Refactor
-- [ ] MUST : allow still working with old/existing saved stimulations. No breaking changes. Add schema version for future. Add conversion to latest for next save. 
+- [x] MUST : allow still working with old/existing saved stimulations. No breaking changes. Add schema version for future. Add conversion to latest for next save. 
 - [x] Define domain objects with methods
 - [x] Use state management framework instead of relying on form data :  mobx
-- [ ] Add domain logic tests !!
-- [ ] Add ui tests
+- [x] Add domain logic tests !!
+- [x] Add ui tests
 
 
 ## UI refactor

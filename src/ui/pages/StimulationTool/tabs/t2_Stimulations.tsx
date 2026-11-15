@@ -82,7 +82,7 @@ export default function StimulationsTab({ store, viewPointSummary }: Stimulation
         // Find electrode and stimulation point indices
         let electrode_i = -1;
         let stim_point_i = -1;
-        store.toValues().electrodes.forEach((electrode, ei) => {
+        store.session.electrodes.forEach((electrode, ei) => {
             if (electrode.label === electrode_label) {
                 electrode_i = ei;
                 electrode.stimulationPoints.forEach((stim_point, spi) => {
@@ -141,7 +141,7 @@ export default function StimulationsTab({ store, viewPointSummary }: Stimulation
     }
 
     const getSelectedPointLocationFormInfo = () => {
-        for (const electrode of store.toValues().electrodes) {
+        for (const electrode of store.session.electrodes) {
             let foundStimPoint = electrode.stimulationPoints.find(point =>
                 selectedPoint === getStimPointLabel(electrode.label, point.index)
             );
@@ -220,7 +220,7 @@ export default function StimulationsTab({ store, viewPointSummary }: Stimulation
                             children={
                                 <Box h={"100%"} w={"100%"} p={0} m={0}>
                                     <ContactSelection store={store}
-                                        electrodes={store.toValues().electrodes.filter(e => e.confirmed)}
+                                        electrodes={store.session.electrodes.filter(e => e.confirmed)}
                                         selectedContact={selectedPoint}
                                         onSelectedChanged={handleSelectedPointChanged}
                                         onViewResultsForPoint={handleViewResultsForPoint}
@@ -394,17 +394,16 @@ const CentralBar = ({
             t('pages.stimulationTool.stimulation.length_path_label') + ': ' + params.lengthPath + ' (µs), ' +
             t('pages.stimulationTool.stimulation.charge_density_label') + ': ' + computeChargeDensity(params.amplitude, params.lengthPath).toFixed(2) + ' (µC/cm²)';
     }
-    const formValues = store.toValues();
     const stimPointConfirmedExist = useMemo<boolean>(() => {
-        return formValues.electrodes.filter((e: Electrode) => e.confirmed && e.nContacts > 0).length !== 0;
-    }, [formValues.electrodes]);
+        return store.session.electrodes.filter((e: Electrode) => e.confirmed && e.nContacts > 0).length !== 0;
+    }, [store.session.electrodes]);
     const stimTimeSet = stimulationTime !== '';
 
     const [useDateTimePicker, setUseDateTimePicker] = useState<boolean>(false);
     const [customSelectedDateTime, setCustomSelectedDateTime] = useState<DateValue>(null);
 
     const selectedPointElectrodeLabel = selectedPoint.split('/').slice(0, -1).join('/');
-    const selectedPointStims = formValues.electrodes.find((e: Electrode) => e.label === selectedPointElectrodeLabel)?.stimulationPoints.find((p: StimulationPoint) => getStimPointLabel(selectedPointElectrodeLabel, p.index) === selectedPoint)?.stimulations;
+    const selectedPointStims = store.session.electrodes.find((e: Electrode) => e.label === selectedPointElectrodeLabel)?.stimulationPoints.find((p: StimulationPoint) => getStimPointLabel(selectedPointElectrodeLabel, p.index) === selectedPoint)?.stimulations;
     const stims = selectedPointStims !== undefined ? selectedPointStims : [];
     const selectedContactBorderSx = getStimulatedStyledContactBorderStyle(stims, theme);
     const selectedContactBackgroundColorSx = getStimulatedStyledContactColor(stims, stims.length === 0, theme, true);
