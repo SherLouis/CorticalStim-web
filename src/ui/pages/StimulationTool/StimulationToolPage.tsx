@@ -29,13 +29,12 @@ const StimulationToolPage = observer(function StimulationToolPage() {
     const [hasUnsavedData, setHasUnsavedData] = useState(false);
 
     const downloadFormValues = () => {
-        // TODO: call service to get values to save. 
-        const values = store.toValues();
-        var data = new Blob([JSON.stringify(values)], { type: 'application/json' });
+        const json = store.toJson();
+        var data = new Blob([json], { type: 'application/json' });
         var dataURL = window.URL.createObjectURL(data);
         var tempLink = document.createElement('a');
         tempLink.href = dataURL;
-        tempLink.setAttribute('download', `${values.patient_id}-${new Date().toISOString().split('T')[0]}.json`);
+        tempLink.setAttribute('download', `${store.session.patientId}-${new Date().toISOString().split('T')[0]}.json`);
         tempLink.click();
         store.markSaved();
     }
@@ -58,10 +57,8 @@ const StimulationToolPage = observer(function StimulationToolPage() {
         fileReader.readAsText(uploadedFile, "UTF-8");
         fileReader.onload = () => {
             try {
-                const values = JSON.parse(fileReader.result as string);
-                // TODO: extract logic to read values, schema version, adapt to used schema and set values.
-                // TODO: show notification if schema was migrated. 
-                store.setValues(values);
+                // TODO: show notification if schema was migrated.
+                store.loadFromJson(fileReader.result as string);
                 notifications.update({
                     id: 'opened_file',
                     title: t('pages.stimulationTool.notifications.success_loaded_from_file_title'),
@@ -124,12 +121,12 @@ const StimulationToolPage = observer(function StimulationToolPage() {
                         style={{ marginRight: 10, fontWeight: 'bold' }}
                     >{t('pages.stimulationTool.patient_id_label')}</label>
                     <TextInput
-                        value={store.session.patient_id}
-                        onChange={(e) => { store.session.patient_id = e.target.value; store.markDirty(); }}
+                        value={store.session.patientId}
+                        onChange={(e) => { store.session.patientId = e.target.value; store.markDirty(); }}
                         id="patient_id"
                         placeholder={"patient id"}
                         required
-                        autoFocus={store.session.patient_id === ""}
+                        autoFocus={store.session.patientId === ""}
                         styles={{ input: { fontWeight: 'bold' } }}
                     />
                 </Group>

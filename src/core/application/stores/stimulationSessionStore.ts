@@ -1,9 +1,10 @@
 import { makeAutoObservable, makeObservable, observable } from 'mobx';
 
 import { Electrode } from '../../domain/electrode';
-import { ElectrodeParams, StimulationSession } from '../../domain/session';
+import { StimulationSession } from '../../domain/session';
 import { Stimulation } from '../../domain/stimulation';
 import { StimulationLocation, StimulationPoint } from '../../domain/stimulationPoint';
+import { SessionPersistenceService } from '../services/sessionPersistenceService';
 
 /**
  * Shape returned by toValues() - matches legacy StimulationFormValues for JSON compatibility.
@@ -14,7 +15,7 @@ export type StimulationSessionValues = ReturnType<StimulationSession['toValues']
  * MobX store holding the **persisted** stimulation session state.
  * 
  * This is the single source of truth for:
- * - Patient ID and electrode configuration (electrode_params)
+ * - Patient ID and electrode configuration (electrodeParameters)
  * - Electrode list with contacts and stimulation points
  * - **Saved** stimulations (parameters, task, effects)
  * 
@@ -31,7 +32,7 @@ export class StimulationSessionStore {
     /** The domain aggregate root containing all session data. */
     session: StimulationSession = new StimulationSession();
 
-    /** True if any mutation occurred since last setValues()/markSaved(). */
+    /** True if any mutation occurred since last loadFromJson()/markSaved(). */
     isDirty = false;
 
     /** Serialized snapshot at last successful save/load for diff comparison. */
@@ -39,8 +40,8 @@ export class StimulationSessionStore {
 
     constructor() {
         makeObservable(this.session, {
-            patient_id: observable,
-            electrode_params: observable,
+            patientId: observable,
+            electrodeParameters: observable,
             electrodes: observable,
         });
 
@@ -54,14 +55,14 @@ export class StimulationSessionStore {
 
     /**
      * Computed validation errors for **persisted** session data.
-     * Checks: patient_id present, electrode labels unique/non-empty,
+     * Checks: patientId present, electrode labels unique/non-empty,
      * amplitude/duration > 0 on saved stimulations.
      * Runs reactively via MobX.
      */
     get validationErrors(): Map<string, string> {
         const errors = new Map<string, string>();
-        if (!this.session.patient_id) {
-            errors.set('patient_id', 'Patient ID is required');
+        if (!this.session.patientId) {
+            errors.set('patientId', 'Patient ID is required');
         }
         this.session.electrodes.forEach((electrode, eIdx) => {
             if (!electrode.label) {
@@ -87,7 +88,7 @@ export class StimulationSessionStore {
     }
 
     setPatientId(patientId: string) {
-        this.session.patient_id = patientId;
+        this.session.patientId = patientId;
     }
 
     /** Add a new electrode with default empty config. */
@@ -102,9 +103,9 @@ export class StimulationSessionStore {
         this.markDirty();
     }
 
-    /** Update electrode_params (type, separation, diameter, length). */
-    updateElectrodeParams(params: { type?: string; separation?: number; diameter?: number; length?: number }) {
-        Object.assign(this.session.electrode_params, params);
+    /** Update electrodeParameters (type, separation, diameter, length). */
+    updateElectrodeParameters(params: { type?: string; separation?: number; diameter?: number; length?: number }) {
+        Object.assign(this.session.electrodeParameters, params);
         this.markDirty();
     }
 
@@ -203,17 +204,30 @@ export class StimulationSessionStore {
     }
 
     /**
-     * Load full session from serialized values (e.g. from JSON file or Firebase).
-     * Resets dirty flag and captures snapshot for unsaved detection.
+     * Load full session from a JSON string (v1 legacy or v2 current).
+     * Runs v1->v2 migration when schemaVersion is missing, resets dirty flag
+     * and captures snapshot for unsaved detection.
+     * @param json Serialized session JSON
      */
-    setValues(values: StimulationSessionValues) {
-        this.session.patient_id = values.patient_id;
-        this.session.electrode_params = Object.assign(new ElectrodeParams(), values.electrode_params);
-        // Replace observable array contents instead of replacing the array reference
-        const newElectrodes = values.electrodes.map((e) => ({ ...e }));
-        this.session.electrodes.splice(0, this.session.electrodes.length, ...newElectrodes);
+    loadFromJson(json: string) {
+        this.session = SessionPersistenceService.load(json);
         this.isDirty = false;
         this.lastSavedSnapshot = this.toValues();
+    }
+
+    /** Serialize current session to JSON with schemaVersion: 2. */
+    toJson(): string {
+        return SessionPersistenceService.serialize(this.session);
+    }
+
+    /**
+     * Replace the electrode array directly (e.g. after TSV import) and mark dirty.
+     * Avoids round-tripping through JSON.
+     * @param electrodes New electrode list
+     */
+    setElectrodes(electrodes: Electrode[]) {
+        this.session.electrodes.splice(0, this.session.electrodes.length, ...electrodes);
+        this.markDirty();
     }
 
     /** Serialize current session to StimulationSessionValues (JSON-compatible). */

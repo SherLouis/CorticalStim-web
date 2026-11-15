@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 
 import { StimulationSessionStore } from "@/core/application/stores/stimulationSessionStore";
 import { getStimPointDisplayLabel, getStimPointLabel } from "@/core/domain/utils";
+import { toStimulationLocation } from "@/ui/application/mappers/stimulationPointMapper";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "@/ui/components/StimulationPointLocationSelection";
 import { TabProperties } from "@/ui/pages/StimulationTool/tabs/tab_properties";
 import { letters } from "@/ui/tools/letterTools";
@@ -167,10 +168,7 @@ function ElectrodeSetupStep({ store }: TabProperties) {
             try {
                 const electrodes = parseMniImplantationFromTsv(fileReader.result as string);
                 if (store) {
-                    // Load the full form values with imported electrodes
-                    // TODO: streamline this. toValues and setValues should probably not be used.
-                    const currentSession = store.session;
-                    store.setValues({ ...currentSession, electrodes: electrodes })
+                    store.setElectrodes(electrodes);
                 }
             }
             catch (e) {
@@ -213,16 +211,7 @@ function ElectrodeSetupStep({ store }: TabProperties) {
                 const stim_point_i = electrode.stimulationPoints.findIndex((_, i) => getStimPointLabel(electrode.label, i) === selectedStimPoint);
 
                 if (stim_point_i !== -1) {
-                    // Build new location object matching domain StimulationLocation
-                    const newLocation = {
-                        type: values.type as "vep" | "destrieux" | "mni" | "white",
-                        vep: values.vep,
-                        destrieux: values.destrieux,
-                        white_matter: values.white_matter,
-                        mni: { x: values.mni_x, y: values.mni_y, z: values.mni_z },
-                        isWhiteMatter: values.type === 'white',
-                        isDone: true
-                    };
+                    const newLocation = toStimulationLocation(values);
                     store.updateStimulationPointLocation(electrode_i, stim_point_i, newLocation);
                 }
             }
@@ -273,7 +262,7 @@ function ElectrodeSetupStep({ store }: TabProperties) {
             const stimPoint = pointMap.get(selectedStimPoint);
             if (!stimPoint) return;
 
-            const { type, vep, destrieux, mni, white_matter, isWhiteMatter } = stimPoint.location;
+            const { type, vep, destrieux, mni, white_matter } = stimPoint.location;
 
             if (first) {
                 roi_type = type;
@@ -490,7 +479,7 @@ function ElectrodeSetupStep({ store }: TabProperties) {
                             if (ElectrodeOptions.has(event.target.value)) {
                                 var option = ElectrodeOptions.get(event.target.value)!;
                                 if (store) {
-                                    store.updateElectrodeParams({
+                                    store.updateElectrodeParameters({
                                         type: option.implantationType,
                                         diameter: option.diameter,
                                         separation: option.separation,
@@ -506,19 +495,19 @@ function ElectrodeSetupStep({ store }: TabProperties) {
                             label={t('pages.stimulationTool.implantation.contactDiameterLabel')}
                             precision={1}
                             required
-                            value={store.toValues().electrode_params.diameter ?? 0} onChange={(v: number) => store?.updateElectrodeParams({ diameter: v })}
+                            value={store.toValues().electrodeParameters.diameter ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ diameter: v })}
                         />
                         <NumberInput
                             label={t('pages.stimulationTool.implantation.contactSeparationLabel')}
                             precision={1}
                             required
-                            value={store.toValues().electrode_params.separation ?? 0} onChange={(v: number) => store?.updateElectrodeParams({ separation: v })}
+                            value={store.toValues().electrodeParameters.separation ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ separation: v })}
                         />
                         <NumberInput
                             label={t('pages.stimulationTool.implantation.contactLengthLabel')}
                             precision={1}
                             required
-                            value={store.toValues().electrode_params.length ?? 0} onChange={(v: number) => store?.updateElectrodeParams({ length: v })}
+                            value={store.toValues().electrodeParameters.length ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ length: v })}
                         />
                     </Group>
                 </Group>
@@ -604,7 +593,7 @@ const CentralBar = observer(({
     handleElectrodeLocationFormSubmit
 }: CentralBarProps) => {
     const sourceElectrodes = store.toValues().electrodes;
-    const electrode_parameters_selected = (store.toValues().electrode_params.diameter ?? 0) > 0;
+    const electrode_parameters_selected = (store.toValues().electrodeParameters.diameter ?? 0) > 0;
     const contacts_configured = sourceElectrodes.flatMap((e: any) => e.stimulationPoints).length > 0;
     const all_contacts_roi_configured = sourceElectrodes.flatMap((e: any) => e.stimulationPoints).every((sp: any) => sp.location.done === true || sp.location.isDone === true);
     const contacts_selected = selectedContacts.length > 0;

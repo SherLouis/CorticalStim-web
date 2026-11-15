@@ -2,6 +2,8 @@ import { Box, Button, Input, NumberInput, ScrollArea, SegmentedControl, Select, 
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 
+import { ElectrodeLocationFormValues } from "@/ui/core/types";
+
 // TODO: from figure
 
 export default function StimulationPointLocationSelection({ form }: StimulationPointLocationSelectionProps) {
@@ -463,12 +465,4 @@ const WhiteMatterSelection = ({ form }: StimulationPointLocationSelectionProps) 
 }
 
 
-export interface ElectrodeLocationFormValues {
-    type: string;
-    vep: string;
-    destrieux: string;
-    white_matter: string;
-    mni_x: number;
-    mni_y: number;
-    mni_z: number;
-}
+export type { ElectrodeLocationFormValues } from "@/ui/core/types";
