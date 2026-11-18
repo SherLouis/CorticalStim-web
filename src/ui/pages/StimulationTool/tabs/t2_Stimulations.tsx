@@ -395,7 +395,7 @@ const CentralBar = ({
             t('pages.stimulationTool.stimulation.charge_density_label') + ': ' + computeChargeDensity(params.amplitude, params.lengthPath).toFixed(2) + ' (µC/cm²)';
     }
     const stimPointConfirmedExist = useMemo<boolean>(() => {
-        return store.session.electrodes.filter((e: Electrode) => e.confirmed && e.nContacts > 0).length !== 0;
+        return store.session.electrodes.filter((e: Electrode) => e.confirmed && e.configId).length !== 0;
     }, [store.session.electrodes]);
     const stimTimeSet = stimulationTime !== '';
 

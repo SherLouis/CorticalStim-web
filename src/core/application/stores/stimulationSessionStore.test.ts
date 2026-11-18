@@ -158,7 +158,7 @@ test('setElectrodes replaces electrode array and marks dirty', () => {
     const store = new StimulationSessionStore();
     store.loadFromJson(JSON.stringify({ schemaVersion: 2, patientId: 'p1', electrodeParameters: { id: 't', manufacturer: '', model: 't', nContacts: 2, separation: 1, diameter: 2, length: 3 }, electrodes: [] }));
     expect(store.isDirty).toBe(false);
-    store.setElectrodes([{ label: 'E1', side: 'left', nContacts: 2, confirmed: false, stimulationPoints: [] }]);
+    store.setElectrodes([{ label: 'E1', side: 'left', confirmed: false, stimulationPoints: [] }]);
     expect(store.isDirty).toBe(true);
-    expect(store.session.electrodes).toEqual([{ label: 'E1', side: 'left', nContacts: 2, confirmed: false, stimulationPoints: [] }]);
+    expect(store.session.electrodes).toEqual([{ label: 'E1', side: 'left', confirmed: false, stimulationPoints: [] }]);
 });
