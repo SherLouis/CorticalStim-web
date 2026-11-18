@@ -70,7 +70,6 @@ export class SessionPersistenceService {
         const electrodes = (data.electrodes ?? []).map((e) => ({
             label: e.label,
             side: e.side,
-            nContacts: e.n_contacts,
             configId: configIdFor(e.n_contacts ?? 0),
             confirmed: e.confirmed,
             stimulationPoints: (e.stim_points ?? []).map((sp) => {

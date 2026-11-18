@@ -10,10 +10,10 @@
 - [x] multiple observed effects
 - [x] New electrode should show on top of the list
 - [ ] Fix UI sizing / adapte to window : if easier: just allow scrolling. 
-- [ ] Multiple possible electrode configuration
+- [x] Multiple possible electrode configuration
     - [ ] Configure new electrode configuration options globally
     - [ ] Assign configuration to all electrodes
-    - [ ] Set different configuration per electrode
+    - [x] Set different configuration per electrode
 - [ ] Retrospective mode :
     - [ ] New mode selection screen (first page) : "new session" = existing behavior; "retrospective" = new mode
     - [ ] No requirement to select stimulation time

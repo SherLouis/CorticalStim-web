@@ -101,7 +101,7 @@ export class StimulationSessionStore {
 
     /** Add a new electrode with default empty config. */
     addElectrode(label: string) {
-        let electrode = { label, side: undefined, configId: undefined, nContacts: 0, confirmed: false, stimulationPoints: [] } as Electrode
+        let electrode = { label, side: undefined, configId: undefined, confirmed: false, stimulationPoints: [] } as Electrode
         if (this.session.electrodeParameters) {
             this.ensureElectrodeConfig(this.session.electrodeParameters)
             electrode.configId = this.session.electrodeParameters.id;
@@ -264,7 +264,6 @@ export class StimulationSessionStore {
             for (let i = 0; i < cfg.nContacts - 1; i++) {
                 points.push({ index: i, location: { type: 'vep', vep: '', destrieux: '', mni: { x: 0, y: 0, z: 0 }, isWhiteMatter: false, isDone: false }, stimulations: [] });
             }
-            (updated as Electrode).nContacts = cfg.nContacts;
             (updated as Electrode).stimulationPoints = points;
         }
         this.session.electrodes[index] = updated as Electrode;

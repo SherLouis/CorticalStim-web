@@ -48,25 +48,25 @@ const parseMniImplantationFromTsv = (tsvData: string): Electrode[] => {
     let currentElectrode = {
         label: getElectrodeLabelFromContactLabel(contactsData[0].contactLabel),
         side: undefined,
-        nContacts: 0,
         confirmed: false,
         stimulationPoints: []
     } as Electrode;
 
     let previousContactPosition = { x: 0, y: 0, z: 0 };
+    let currentElectrodeNbContacts = 0;
 
 
     for (const contactData of contactsData) {
         if (contactData.contactLabel.startsWith(currentElectrode.label)) {
             // Still same electrode
-            if (currentElectrode.nContacts === 0) {
+            if (currentElectrodeNbContacts === 0) {
                 // Compute side based on position of first contact of electrode
                 currentElectrode.side = getSideFromMni(contactData.mniX, contactData.mniY, contactData.mniZ);
             }
             else {
                 const stim_point_mni = getMNIPositionBetweenTwoContacts(previousContactPosition, { x: contactData.mniX, y: contactData.mniY, z: contactData.mniZ });
                 currentElectrode.stimulationPoints.push({
-                    index: currentElectrode.nContacts - 1,
+                    index: currentElectrodeNbContacts - 1,
                     location: {
                         type: 'mni',
                         vep: "",
@@ -79,7 +79,7 @@ const parseMniImplantationFromTsv = (tsvData: string): Electrode[] => {
                 });
             }
             previousContactPosition = { x: contactData.mniX, y: contactData.mniY, z: contactData.mniZ };
-            currentElectrode.nContacts += 1;
+            currentElectrodeNbContacts += 1;
         }
         else {
             // Moved to new electrode
@@ -88,10 +88,10 @@ const parseMniImplantationFromTsv = (tsvData: string): Electrode[] => {
             currentElectrode = {
                 label: getElectrodeLabelFromContactLabel(contactData.contactLabel),
                 side: getSideFromMni(contactData.mniX, contactData.mniY, contactData.mniZ),
-                nContacts: 1,
                 confirmed: false,
                 stimulationPoints: []
             };
+            currentElectrodeNbContacts = 1;
 
             previousContactPosition = { x: contactData.mniX, y: contactData.mniY, z: contactData.mniZ };
         }

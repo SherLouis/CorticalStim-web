@@ -74,7 +74,6 @@ test('load v1 legacy JSON migrates to v2 domain session', () => {
     const electrode = session.electrodes[0];
     expect(electrode.label).toBe('A');
     expect(electrode.side).toBe('left');
-    expect(electrode.nContacts).toBe(4);
     expect(electrode.confirmed).toBe(true);
 
     expect(electrode.stimulationPoints.length).toBe(1);
@@ -167,7 +166,6 @@ test('load is idempotent for v2-shaped data without schemaVersion', () => {
     const session = SessionPersistenceService.load(v2ShapedJson) as StimulationSession;
     expect(session.patientId).toBe('p2');
     const electrode = session.electrodes[0];
-    expect(electrode.nContacts).toBe(3);
     expect(electrode.side).toBe('right');
     expect(electrode.stimulationPoints[0].location.isWhiteMatter).toBe(true);
     expect(electrode.stimulationPoints[0].location.isDone).toBe(true);
