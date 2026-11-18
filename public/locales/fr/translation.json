@@ -53,6 +53,8 @@
                 "guide_goto_stimulations_text": "Le positionnement de tous les contacts a été configuré! Pour continuer, cliquer sur l'onglet \"Stimulations\" afin d'enregistrer les paramètres et résultats de stimulations.",
                 "selected_contacts": "Contact(s) sélectionné(s)",
                 "electrodeConfiguration": "Configuration des électrodes",
+                "defaultElectrodeConfigurationSelectLabel": "Configuration par défaut",
+                "electrodeConfigurationLabel": "Configuration",
                 "contactDiameterLabel": "Diamètre des contacts (mm)",
                 "contactSeparationLabel": "Séparation des contacts (mm)",
                 "contactLengthLabel": "Longueur des contacts (mm)",

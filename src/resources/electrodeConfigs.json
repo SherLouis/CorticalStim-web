@@ -1,0 +1,317 @@
+[
+  {
+    "id": "DIXI_D08-05AM",
+    "manufacturer": "DIXI",
+    "model": "D08-05AM",
+    "nContacts": 5,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "DIXI_D08-08AM",
+    "manufacturer": "DIXI",
+    "model": "D08-08AM",
+    "nContacts": 8,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "DIXI_D08-10AM",
+    "manufacturer": "DIXI",
+    "model": "D08-10AM",
+    "nContacts": 10,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "DIXI_D08-12AM",
+    "manufacturer": "DIXI",
+    "model": "D08-12AM",
+    "nContacts": 12,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "DIXI_D08-15AM",
+    "manufacturer": "DIXI",
+    "model": "D08-15AM",
+    "nContacts": 15,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "DIXI_D08-15BM",
+    "manufacturer": "DIXI",
+    "model": "D08-15BM",
+    "nContacts": 15,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "DIXI_D08-15CM",
+    "manufacturer": "DIXI",
+    "model": "D08-15CM",
+    "nContacts": 15,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "DIXI_D08-18AM",
+    "manufacturer": "DIXI",
+    "model": "D08-18AM",
+    "nContacts": 18,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "DIXI_D08-18CM",
+    "manufacturer": "DIXI",
+    "model": "D08-18CM",
+    "nContacts": 18,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "AdTech_RD10R-SP03X",
+    "manufacturer": "AdTech",
+    "model": "RD10R-SP03X",
+    "nContacts": 10,
+    "diameter": 0.8,
+    "separation": 3,
+    "length": 2.3
+  },
+  {
+    "id": "AdTech_RD10R-SP04X",
+    "manufacturer": "AdTech",
+    "model": "RD10R-SP04X",
+    "nContacts": 10,
+    "diameter": 0.8,
+    "separation": 4,
+    "length": 2.3
+  },
+  {
+    "id": "AdTech_RD10R-SP05X",
+    "manufacturer": "AdTech",
+    "model": "RD10R-SP05X",
+    "nContacts": 10,
+    "diameter": 0.8,
+    "separation": 5,
+    "length": 2.3
+  },
+  {
+    "id": "AdTech_RD10R-SP06X",
+    "manufacturer": "AdTech",
+    "model": "RD10R-SP06X",
+    "nContacts": 10,
+    "diameter": 0.8,
+    "separation": 6,
+    "length": 2.3
+  },
+  {
+    "id": "AdTech_RD10R-SP07X",
+    "manufacturer": "AdTech",
+    "model": "RD10R-SP07X",
+    "nContacts": 10,
+    "diameter": 0.8,
+    "separation": 7,
+    "length": 2.3
+  },
+  {
+    "id": "AdTech_RD10R-SP08X",
+    "manufacturer": "AdTech",
+    "model": "RD10R-SP08X",
+    "nContacts": 10,
+    "diameter": 0.8,
+    "separation": 8,
+    "length": 2.3
+  },
+  {
+    "id": "AdTech_RD10R-SP10X",
+    "manufacturer": "AdTech",
+    "model": "RD10R-SP10X",
+    "nContacts": 10,
+    "diameter": 0.8,
+    "separation": 10,
+    "length": 2.3
+  },
+  {
+    "id": "Huake-Hengsheng_SDE-08-S08",
+    "manufacturer": "Huake-Hengsheng",
+    "model": "SDE-08-S08",
+    "nContacts": 8,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "Huake-Hengsheng_SDE-08-S10",
+    "manufacturer": "Huake-Hengsheng",
+    "model": "SDE-08-S10",
+    "nContacts": 10,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "Huake-Hengsheng_SDE-08-S12",
+    "manufacturer": "Huake-Hengsheng",
+    "model": "SDE-08-S12",
+    "nContacts": 12,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "Huake-Hengsheng_SDE-08-S14",
+    "manufacturer": "Huake-Hengsheng",
+    "model": "SDE-08-S14",
+    "nContacts": 14,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "Huake-Hengsheng_SDE-08-S16",
+    "manufacturer": "Huake-Hengsheng",
+    "model": "SDE-08-S16",
+    "nContacts": 16,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "PMT_2102-08-091",
+    "manufacturer": "PMT",
+    "model": "2102-08-091",
+    "nContacts": 8,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "PMT_2102-10-091",
+    "manufacturer": "PMT",
+    "model": "2102-10-091",
+    "nContacts": 10,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "PMT_2102-12-091",
+    "manufacturer": "PMT",
+    "model": "2102-12-091",
+    "nContacts": 12,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "PMT_2102-14-091",
+    "manufacturer": "PMT",
+    "model": "2102-14-091",
+    "nContacts": 14,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "PMT_2102-16-091",
+    "manufacturer": "PMT",
+    "model": "2102-16-091",
+    "nContacts": 16,
+    "diameter": 0.8,
+    "separation": 3.5,
+    "length": 2
+  },
+  {
+    "id": "AdTech_BF08R-SP05X",
+    "manufacturer": "AdTech",
+    "model": "BF08R-SP05X",
+    "nContacts": 10,
+    "diameter": 1.3,
+    "separation": 5,
+    "length": 1.6
+  },
+  {
+    "id": "AdTech_SD04R-SP05X",
+    "manufacturer": "AdTech",
+    "model": "SD04R-SP05X",
+    "nContacts": 4,
+    "diameter": 1.1,
+    "separation": 5,
+    "length": 2.4
+  },
+  {
+    "id": "AdTech_SD04R-SP10X",
+    "manufacturer": "AdTech",
+    "model": "SD04R-SP10X",
+    "nContacts": 4,
+    "diameter": 1.1,
+    "separation": 10,
+    "length": 2.4
+  },
+  {
+    "id": "AdTech_SD06R-SP05X",
+    "manufacturer": "AdTech",
+    "model": "SD06R-SP05X",
+    "nContacts": 6,
+    "diameter": 1.1,
+    "separation": 5,
+    "length": 2.4
+  },
+  {
+    "id": "AdTech_SD06R-SP10X",
+    "manufacturer": "AdTech",
+    "model": "SD06R-SP10X",
+    "nContacts": 6,
+    "diameter": 1.1,
+    "separation": 10,
+    "length": 2.4
+  },
+  {
+    "id": "AdTech_SD08R-SP05X",
+    "manufacturer": "AdTech",
+    "model": "SD08R-SP05X",
+    "nContacts": 8,
+    "diameter": 1.1,
+    "separation": 5,
+    "length": 2.4
+  },
+  {
+    "id": "AdTech_SD08R-SP10X",
+    "manufacturer": "AdTech",
+    "model": "SD08R-SP10X",
+    "nContacts": 8,
+    "diameter": 1.1,
+    "separation": 10,
+    "length": 2.4
+  },
+  {
+    "id": "AdTech_SD10R-SP05X",
+    "manufacturer": "AdTech",
+    "model": "SD10R-SP05X",
+    "nContacts": 10,
+    "diameter": 1.1,
+    "separation": 5,
+    "length": 2.4
+  },
+  {
+    "id": "AdTech_SD10R-SP10X",
+    "manufacturer": "AdTech",
+    "model": "SD10R-SP10X",
+    "nContacts": 10,
+    "diameter": 1.1,
+    "separation": 10,
+    "length": 2.4
+  }
+]

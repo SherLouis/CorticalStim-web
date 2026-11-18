@@ -1,9 +1,11 @@
 import { makeAutoObservable, makeObservable, observable } from 'mobx';
 
 import { Electrode } from '../../domain/electrode';
-import { ElectrodeParams, StimulationSession } from '../../domain/session';
+import { ElectrodeConfig } from '../../domain/electrodeConfig';
+import { StimulationSession } from '../../domain/session';
 import { Stimulation } from '../../domain/stimulation';
 import { StimulationLocation, StimulationPoint } from '../../domain/stimulationPoint';
+import { getElectrodeConfigs } from '../services/electrodeConfigCatalog';
 import { SessionPersistenceService } from '../services/sessionPersistenceService';
 
 /**
@@ -11,7 +13,8 @@ import { SessionPersistenceService } from '../services/sessionPersistenceService
  */
 export type StimulationSessionValues = {
     patientId: string;
-    electrodeParameters: ElectrodeParams;
+    electrodeParameters: ElectrodeConfig | undefined;
+    usedElectrodeConfigs: ElectrodeConfig[];
     electrodes: Electrode[];
 };
 
@@ -46,6 +49,7 @@ export class StimulationSessionStore {
         makeObservable(this.session, {
             patientId: observable,
             electrodeParameters: observable,
+            usedElectrodeConfigs: observable,
             electrodes: observable,
         });
 
@@ -97,7 +101,21 @@ export class StimulationSessionStore {
 
     /** Add a new electrode with default empty config. */
     addElectrode(label: string) {
-        this.session.electrodes.unshift({ label, side: undefined, nContacts: 0, confirmed: false, stimulationPoints: [] } as Electrode);
+        let electrode = { label, side: undefined, configId: undefined, nContacts: 0, confirmed: false, stimulationPoints: [] } as Electrode
+        if (this.session.electrodeParameters) {
+            this.ensureElectrodeConfig(this.session.electrodeParameters)
+            electrode.configId = this.session.electrodeParameters.id;
+            const points: StimulationPoint[] = [];
+            for (let i = 0; i < this.session.electrodeParameters.nContacts - 1; i++) {
+                points.push({
+                    index: i,
+                    location: { type: 'vep', vep: '', destrieux: '', mni: { x: 0, y: 0, z: 0 }, isWhiteMatter: false, isDone: false },
+                    stimulations: []
+                });
+            }
+            electrode.stimulationPoints = points;
+        }
+        this.session.electrodes.unshift(electrode);
         this.markDirty();
     }
 
@@ -107,44 +125,13 @@ export class StimulationSessionStore {
         this.markDirty();
     }
 
-    /** Update electrodeParameters (type, separation, diameter, length). */
-    updateElectrodeParameters(params: { type?: string; separation?: number; diameter?: number; length?: number }) {
-        Object.assign(this.session.electrodeParameters, params);
-        this.markDirty();
-    }
-
-    // TODO (future): reference electrodes by label instead of index
-    /**
-     * Configure an electrode's contact count and create corresponding stimulation points.
-     * Called when user sets the number of contacts for an electrode.
-     * Creates (nbContacts - 1) stimulation points (between adjacent contacts).
-     * @param electrodeIndex Index of the electrode
-     * @param nbContacts Number of contacts to set for this electrode
-     * @returns Void
-     */
-    setElectrodeContacts(electrodeIndex: number, nbContacts: number) {
-        if (electrodeIndex >= this.electrodeCount + 1) return;
-        const electrode = this.session.electrodes[electrodeIndex];
-        electrode.nContacts = nbContacts;
-        electrode.stimulationPoints = [];
-        // Stimulation point is between 2 contacts, so nb stimulation points = nb contacts - 1
-        for (let i = 0; i < nbContacts - 1; i++) {
-            electrode.stimulationPoints.push({
-                index: i,
-                location: { type: 'vep', vep: '', destrieux: '', mni: { x: 0, y: 0, z: 0 }, isWhiteMatter: false, isDone: false },
-                stimulations: []
-            } as StimulationPoint);
-        }
-        this.markDirty();
-    }
-
     /**
      * Mark an electrode as confirmed
      * @param electrodeIndex Index of the electrode 
      * @returns Void
      */
     confirmElectrode(electrodeIndex: number) {
-        if (electrodeIndex >= this.electrodeCount + 1) return;
+        if (electrodeIndex >= this.electrodeCount) return;
         const electrode = this.session.electrodes[electrodeIndex];
         electrode.confirmed = true;
         this.markDirty();
@@ -157,7 +144,7 @@ export class StimulationSessionStore {
      * @returns Void
      */
     updateElectrodeLabel(electrodeIndex: number, label: string) {
-        if (electrodeIndex >= this.electrodeCount + 1) return;
+        if (electrodeIndex >= this.electrodeCount) return;
         const electrode = this.session.electrodes[electrodeIndex];
         electrode.label = label;
         this.markDirty();
@@ -170,7 +157,7 @@ export class StimulationSessionStore {
      * @returns Void
      */
     updateElectrodeSide(electrodeIndex: number, side: 'left' | 'right' | undefined) {
-        if (electrodeIndex >= this.electrodeCount + 1) return;
+        if (electrodeIndex >= this.electrodeCount) return;
         const electrode = this.session.electrodes[electrodeIndex];
         electrode.side = side;
         this.markDirty();
@@ -184,8 +171,8 @@ export class StimulationSessionStore {
      * @returns Void
      */
     updateStimulationPointLocation(electrodeIndex: number, stimPointIndex: number, location: StimulationLocation) {
-        if (electrodeIndex >= this.electrodeCount + 1) return;
-        if (stimPointIndex >= this.session.electrodes[electrodeIndex].stimulationPoints.length + 1) return;
+        if (electrodeIndex >= this.electrodeCount) return;
+        if (stimPointIndex >= this.session.electrodes[electrodeIndex].stimulationPoints.length) return;
         const sp = this.session.electrodes[electrodeIndex].stimulationPoints[stimPointIndex];
         sp.location = location;
         this.markDirty();
@@ -200,8 +187,8 @@ export class StimulationSessionStore {
      * @returns Void
      */
     addStimulation(electrodeIndex: number, stimPointIndex: number, stimulation: Stimulation) {
-        if (electrodeIndex >= this.electrodeCount + 1) return;
-        if (stimPointIndex >= this.session.electrodes[electrodeIndex].stimulationPoints.length + 1) return;
+        if (electrodeIndex >= this.electrodeCount) return;
+        if (stimPointIndex >= this.session.electrodes[electrodeIndex].stimulationPoints.length) return;
         const sp = this.session.electrodes[electrodeIndex].stimulationPoints[stimPointIndex];
         sp.stimulations.push(stimulation);
         this.markDirty();
@@ -216,7 +203,8 @@ export class StimulationSessionStore {
     loadFromJson(json: string) {
         const loaded = SessionPersistenceService.load(json);
         this.session.patientId = loaded.patientId;
-        this.session.electrodeParameters = Object.assign(new ElectrodeParams(), loaded.electrodeParameters);
+        this.session.electrodeParameters = loaded.electrodeParameters ? ({ ...loaded.electrodeParameters } as any) : undefined;
+        this.session.usedElectrodeConfigs = (loaded.usedElectrodeConfigs ?? []).map((c) => ({ ...c }));
         this.session.electrodes.splice(0, this.session.electrodes.length, ...loaded.electrodes);
         this.isDirty = false;
         this.lastSavedSnapshot = this.session.toValues();
@@ -246,5 +234,40 @@ export class StimulationSessionStore {
     /** Internal: mark session as having unsaved changes. */
     markDirty() {
         this.isDirty = true;
+    }
+
+    ensureElectrodeConfig(config: ElectrodeConfig) {
+        if (!this.session.usedElectrodeConfigs.find((c) => c.id === config.id)) {
+            this.session.usedElectrodeConfigs.push({ ...config });
+            this.markDirty();
+        }
+    }
+
+    setDefaultElectrodeConfig(configId: string) {
+        const cfg = this.session.usedElectrodeConfigs.find(c => c.id === configId)
+            || getElectrodeConfigs().find(c => c.id === configId);
+        if (cfg !== undefined) {
+            this.ensureElectrodeConfig(cfg)
+            this.session.electrodeParameters = cfg ? { ...cfg } : undefined;
+            this.markDirty();
+        }
+    }
+
+    setElectrodeConfig(index: number, configId: string) {
+        const electrode = this.session.electrodes[index];
+        if (!electrode) return;
+        const cfg = this.session.usedElectrodeConfigs.find((c) => c.id === configId);
+        const updated = { ...electrode, configId };
+        if (cfg) {
+            // reuse logic
+            const points: StimulationPoint[] = [];
+            for (let i = 0; i < cfg.nContacts - 1; i++) {
+                points.push({ index: i, location: { type: 'vep', vep: '', destrieux: '', mni: { x: 0, y: 0, z: 0 }, isWhiteMatter: false, isDone: false }, stimulations: [] });
+            }
+            (updated as Electrode).nContacts = cfg.nContacts;
+            (updated as Electrode).stimulationPoints = points;
+        }
+        this.session.electrodes[index] = updated as Electrode;
+        this.markDirty();
     }
 }

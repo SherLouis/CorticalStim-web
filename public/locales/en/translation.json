@@ -53,6 +53,8 @@
                 "guide_goto_stimulations_text": "All contacts locations are configured! To continue, click on the \"Stimulations\" tab to record stimulation parameters and results.",
                 "selected_contacts": "Selected contact",
                 "electrodeConfiguration": "Electrodes Configuration",
+                "defaultElectrodeConfigurationSelectLabel": "Default Configuration",
+                "electrodeConfigurationLabel": "Configuration",
                 "contactDiameterLabel": "Contact diameter (mm)",
                 "contactSeparationLabel": "Contact separation (mm)",
                 "contactLengthLabel": "Contact length (mm)",
