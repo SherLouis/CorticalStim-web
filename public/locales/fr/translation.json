@@ -41,8 +41,8 @@
             "implantation": {
                 "tab_title": "Implantation",
                 "buttonTsvOpen": "Importer depuis TSV",
-                "guide_params_title": "Sélectionnez la configuration des électrodes.",
-                "guide_params_text": "Choisir parmi les choix de configuration proposés ou entrer manuellement les paramètres d'implantation.",
+                "guide_params_title": "Sélectionnez la configuration par défaut des électrodes.",
+                "guide_params_text": "Choisir parmi les choix de configuration proposés. La configuration pourra être choisie pour chaque électrode lorsque ajoutée.",
                 "guide_configure_electrodes_title": "Configurer les électrodes.",
                 "guide_configure_electrodes_text": "Pour chaque électrode, spécifier l'étiquette, la latéralisation et le nombre de contacts. Pour ajouter une électrode, cliquer sur le bouton +.",
                 "guide_select_contact_title": "Sélectionner un ou plusieurs contacts pour spécifier le positionnement.",

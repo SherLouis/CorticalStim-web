@@ -41,8 +41,8 @@
             "implantation": {
                 "tab_title": "Implantation",
                 "buttonTsvOpen": "Import from TSV",
-                "guide_params_title": "Select electrodes configuration.",
-                "guide_params_text": "Choose from the configuration dropdown or manually input electrode configuration parameters.",
+                "guide_params_title": "Select electrodes default configuration.",
+                "guide_params_text": "Choose from the configuration dropdown. Each electrode configuration can be set when adding a new one.",
                 "guide_configure_electrodes_title": "Configure electrodes.",
                 "guide_configure_electrodes_text": "For each electrode, specify the label, the lateralization and number of contacts. To add an electrode click on the + button.",
                 "guide_select_contact_title": "Select contact to specify placement.",
