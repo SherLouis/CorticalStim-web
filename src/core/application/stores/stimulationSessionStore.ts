@@ -42,6 +42,15 @@ export class StimulationSessionStore {
     /** Serialized snapshot at last successful save/load for diff comparison. */
     lastSavedSnapshot: StimulationSessionValues | null = null;
 
+    /**
+     * Make a plain electrode object observable so that mutations to its
+     * fields (nContacts, stimulationPoints, etc.) trigger reactions.
+     */
+    private makeElectrodeObservable(electrode: Electrode): Electrode {
+        makeAutoObservable(electrode);
+        return electrode;
+    }
+
     constructor() {
         makeObservable(this.session, {
             patientId: observable,
@@ -97,7 +106,7 @@ export class StimulationSessionStore {
 
     /** Add a new electrode with default empty config. */
     addElectrode(label: string) {
-        this.session.electrodes.unshift({ label, side: undefined, nContacts: 0, confirmed: false, stimulationPoints: [] } as Electrode);
+        this.session.electrodes.unshift(this.makeElectrodeObservable({ label, side: undefined, nContacts: 0, confirmed: false, stimulationPoints: [] } as Electrode));
         this.markDirty();
     }
 
@@ -217,7 +226,8 @@ export class StimulationSessionStore {
         const loaded = SessionPersistenceService.load(json);
         this.session.patientId = loaded.patientId;
         this.session.electrodeParameters = Object.assign(new ElectrodeParams(), loaded.electrodeParameters);
-        this.session.electrodes.splice(0, this.session.electrodes.length, ...loaded.electrodes);
+        this.session.electrodes.splice(0, this.session.electrodes.length,
+            ...loaded.electrodes.map((e) => this.makeElectrodeObservable({ ...e } as Electrode)));
         this.isDirty = false;
         this.lastSavedSnapshot = this.session.toValues();
     }
@@ -233,7 +243,8 @@ export class StimulationSessionStore {
      * @param electrodes New electrode list
      */
     setElectrodes(electrodes: Electrode[]) {
-        this.session.electrodes.splice(0, this.session.electrodes.length, ...electrodes);
+        this.session.electrodes.splice(0, this.session.electrodes.length,
+            ...electrodes.map((e) => this.makeElectrodeObservable({ ...e } as Electrode)));
         this.markDirty();
     }
 

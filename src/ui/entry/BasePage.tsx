@@ -104,7 +104,7 @@ const LanguageSelectionMenu = () => {
             </Menu.Target>
             <Menu.Dropdown>
                 {languages.map(lang =>
-                    <Menu.Item disabled={currentLanguage === lang}>
+                    <Menu.Item disabled={currentLanguage === lang} key={lang}>
                         <ActionIcon
                             variant={currentLanguage === lang ? "outline" : "default"}
                             onClick={() => i18n.changeLanguage(lang)}

@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ActionIcon, Alert, Badge, Box, Button, Checkbox, Chip, Flex, Group, Input, Modal, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -31,7 +31,7 @@ interface ElectrodeRowProps {
     setContactsToElectrode: (index: number, nbContacts: number) => void;
 }
 
-const ElectrodeRow = memo(function ElectrodeRow({
+const ElectrodeRow = observer(function ElectrodeRow({
     electrode,
     electrode_i,
     store,
@@ -76,7 +76,7 @@ const ElectrodeRow = memo(function ElectrodeRow({
                 >
                     <SegmentedControl
                         data={getSideOptions()}
-                        value={electrode.side}
+                        value={electrode.side ?? ''}
                         onChange={(value: string) => {
                             store?.updateElectrodeSide(electrode_i, value as 'left' | 'right' | undefined);
                         }}
@@ -350,6 +350,7 @@ function ElectrodeSetupStep({ store }: TabProperties) {
 
     const getSideOptions = () => {
         return [
+            { label: '-', value: '' },
             { label: 'L', value: 'left' },
             { label: 'R', value: 'right' }
         ];
@@ -524,6 +525,7 @@ function ElectrodeSetupStep({ store }: TabProperties) {
                 <ScrollArea w={"100%"} h={"95%"} py={"xs"} type="always" sx={{ alignItems: "center", padding: '0' }}>
                     {sourceElectrodes.map((electrode: any, electrode_i: number) => (
                         <ElectrodeRow
+                            key={'electrode_' + electrode_i}
                             electrode={electrode}
                             electrode_i={electrode_i}
                             store={store}
