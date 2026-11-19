@@ -1,3 +1,5 @@
+import { ElectrodeConfig } from '@/core/domain/electrodeConfig';
+
 import { SessionPersistenceService } from './sessionPersistenceService';
 import { StimulationSession } from '../../domain/session';
 
@@ -51,16 +53,27 @@ test('load v1 legacy JSON migrates to v2 domain session', () => {
     const session = SessionPersistenceService.load(legacyV1Json) as StimulationSession;
 
     expect(session.patientId).toBe('legacy-patient');
-    expect(session.electrodeParameters.type).toBe('SEEG');
-    expect(session.electrodeParameters.separation).toBe(3);
-    expect(session.electrodeParameters.diameter).toBe(0.9);
-    expect(session.electrodeParameters.length).toBe(2.3);
+    expect(session.electrodeParameters?.id).toBe('default');
+    expect(session.electrodeParameters?.separation).toBe(3);
+    expect(session.electrodeParameters?.diameter).toBe(0.9);
+    expect(session.electrodeParameters?.length).toBe(2.3);
+
+    expect(session.usedElectrodeConfigs.length).toBe(1);
+    const usedConfig = session.usedElectrodeConfigs[0];
+    expect(usedConfig).toEqual({
+        id: "SEEG|0.9|3|2.3|4",
+        manufacturer: '',
+        model: "SEEG",
+        nContacts: 4,
+        diameter: 0.9,
+        separation: 3,
+        length: 2.3
+    } as ElectrodeConfig)
 
     expect(session.electrodes.length).toBe(1);
     const electrode = session.electrodes[0];
     expect(electrode.label).toBe('A');
     expect(electrode.side).toBe('left');
-    expect(electrode.nContacts).toBe(4);
     expect(electrode.confirmed).toBe(true);
 
     expect(electrode.stimulationPoints.length).toBe(1);
@@ -132,7 +145,7 @@ test('load v1 legacy JSON with observed_effect already array keeps array', () =>
 test('load is idempotent for v2-shaped data without schemaVersion', () => {
     const v2ShapedJson = JSON.stringify({
         patientId: 'p2',
-        electrodeParameters: { type: 't', separation: 1, diameter: 2, length: 3 },
+        electrodeParameters: { id: 't', manufacturer: '', model: 't', nContacts: 0, separation: 1, diameter: 2, length: 3 },
         electrodes: [
             {
                 label: 'A',
@@ -153,7 +166,6 @@ test('load is idempotent for v2-shaped data without schemaVersion', () => {
     const session = SessionPersistenceService.load(v2ShapedJson) as StimulationSession;
     expect(session.patientId).toBe('p2');
     const electrode = session.electrodes[0];
-    expect(electrode.nContacts).toBe(3);
     expect(electrode.side).toBe('right');
     expect(electrode.stimulationPoints[0].location.isWhiteMatter).toBe(true);
     expect(electrode.stimulationPoints[0].location.isDone).toBe(true);
@@ -163,7 +175,7 @@ test('load v2 JSON with schemaVersion 2 is not migrated', () => {
     const v2Json = JSON.stringify({
         schemaVersion: 2,
         patientId: 'v2-patient',
-        electrodeParameters: { type: 't', separation: 1, diameter: 2, length: 3 },
+        electrodeParameters: { id: 't', manufacturer: '', model: 't', nContacts: 0, separation: 1, diameter: 2, length: 3 },
         electrodes: [],
     });
 

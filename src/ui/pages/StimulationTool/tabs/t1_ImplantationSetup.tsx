@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { ActionIcon, Alert, Badge, Box, Button, Checkbox, Chip, Flex, Group, Input, Modal, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Alert, Badge, Box, Button, Checkbox, Chip, Flex, Group, Input, Modal, NativeSelect, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconAlertCircle, IconCircleCheck, IconCirclePlus, IconCircleX, IconDeselect, IconFileImport, IconLockCheck, IconTrash } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
+import { getElectrodeConfigs } from "@/core/application/services/electrodeConfigCatalog";
 import { StimulationSessionStore } from "@/core/application/stores/stimulationSessionStore";
+import { ElectrodeConfig } from "@/core/domain/electrodeConfig";
 import { getStimPointDisplayLabel, getStimPointLabel } from "@/core/domain/utils";
 import { toStimulationLocation } from "@/ui/application/mappers/stimulationPointMapper";
 import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "@/ui/components/StimulationPointLocationSelection";
@@ -16,6 +18,10 @@ import parseMniImplantationFromTsv from "@/ui/tools/tsvMniImplantationParser/tsv
 
 
 
+function getElectrodeConfigOptions() {
+    return [{ value: '', label: '-' }, ...getElectrodeConfigs()
+        .map((c: ElectrodeConfig) => ({ value: c.id, label: `${c.manufacturer} - ${c.model}` }))];
+}
 interface ElectrodeRowProps {
     electrode: any;
     electrode_i: number;
@@ -28,7 +34,6 @@ interface ElectrodeRowProps {
     getSideOptions: () => { label: string; value: string }[];
     handleDeleteElectrodeButtonClicked: (label: string) => void;
     handleConfirmElectrodeButtonClicked: (label: string) => void;
-    setContactsToElectrode: (index: number, nbContacts: number) => void;
 }
 
 const ElectrodeRow = observer(function ElectrodeRow({
@@ -43,23 +48,21 @@ const ElectrodeRow = observer(function ElectrodeRow({
     getSideOptions,
     handleDeleteElectrodeButtonClicked,
     handleConfirmElectrodeButtonClicked,
-    setContactsToElectrode,
 }: ElectrodeRowProps) {
     return (
         <Flex direction={"row"} justify={"space-between"} align={"center"} wrap={"nowrap"}
-            gap={"lg"}
             mt={'sm'}
             key={'div_electrode_' + electrode_i}
             w={"100%"}
         >
-            <Group sx={{ flex: 4 }} position="left" align="center">
+            <Group w={"30%"} miw={430} position="left" align="end" spacing="xs" noWrap pr={"xs"}>
                 {/** Delete button */}
-                <ActionIcon color="red" sx={{ flex: 1 }} onClick={() => handleDeleteElectrodeButtonClicked(electrode.label)}>
-                    <IconTrash size="2rem" />
+                <ActionIcon color="red" sx={{ flex: 1, flexGrow: 0 }} maw={"5%"} onClick={() => handleDeleteElectrodeButtonClicked(electrode.label)}>
+                    <IconTrash size="1.2rem" />
                 </ActionIcon>
                 {/** Electrode Label */}
                 <TextInput
-                    sx={{ flex: 3, flexGrow: 1 }}
+                    w={"20%"}
                     label={t("pages.stimulationTool.implantation.electrodeLabel")}
                     placeholder="A"
                     required
@@ -69,12 +72,15 @@ const ElectrodeRow = observer(function ElectrodeRow({
                     }}
                 />
                 {/** Side */}
-                <Input.Wrapper sx={{ flex: 2 }}
+                <Input.Wrapper w={"20%"}
                     size="sm"
+                    p={0}
+                    m={0}
                     label={t("pages.stimulationTool.implantation.sideLabel")}
                     required
                 >
                     <SegmentedControl
+                        w={"100%"}
                         data={getSideOptions()}
                         value={electrode.side ?? ''}
                         onChange={(value: string) => {
@@ -82,35 +88,27 @@ const ElectrodeRow = observer(function ElectrodeRow({
                         }}
                     />
                 </Input.Wrapper>
-                {/** Number of contacts */}
-                <NumberInput
-                    sx={{ flex: 3, flexGrow: 1 }}
+                {/** Electrode config */}
+                <NativeSelect
+                    w={"40%"}
                     disabled={electrode.confirmed}
-                    label={t("pages.stimulationTool.implantation.nbContactsLabel")}
-                    min={0}
-                    value={electrode.nContacts ?? 0}
-                    onChange={(v) => setContactsToElectrode(electrode_i, v === "" ? 0 : v)}
+                    label={t("pages.stimulationTool.implantation.electrodeConfigurationLabel")}
+                    data={getElectrodeConfigOptions()}
+                    value={electrode.configId ?? ''}
+                    onChange={(e) => {
+                        const cfg = getElectrodeConfigs().find((c: any) => c.id === e.target.value);
+                        if (cfg && store) { store.ensureElectrodeConfig(cfg); store.setElectrodeConfig(electrode_i, cfg.id); }
+                    }}
                 />
-                <Button sx={{ flex: 2, flexGrow: 1 }}
-                    size="sm"
-                    color="green.9"
-                    disabled={electrode.confirmed}
-                    onClick={() => handleConfirmElectrodeButtonClicked(electrode.label)}
-                    leftIcon={<IconLockCheck size="2rem" />}>
-                    {t('pages.stimulationTool.implantation.confirmElectrode.confirm_label')}
-                </Button>
+                <ActionIcon variant="filled" size="lg" color="green.9" disabled={electrode.confirmed} maw={"5%"}
+                    onClick={() => handleConfirmElectrodeButtonClicked(electrode.label)}>
+                    <IconLockCheck size="2rem" />
+                </ActionIcon>
             </Group>
 
-            <Box h={"100%"} sx={{ flex: 10 }} display={"flex"}>
+            <Box h={"100%"} w={"70%"} miw={900} display={"flex"}>
                 <Chip.Group multiple value={selectedContacts} onChange={setSelectedContacts}>
-                    <SimpleGrid cols={10} w={"100%"} h={"100%"}
-                        breakpoints={[
-                            { maxWidth: '90rem', cols: 8, spacing: 'sm' },
-                            { maxWidth: '70rem', cols: 6, spacing: 'sm' },
-                            { maxWidth: '50rem', cols: 4, spacing: 'xs' },
-                            { maxWidth: '40rem', cols: 3, spacing: 'xs' },
-                            { maxWidth: '35rem', cols: 2, spacing: 'sm' },
-                        ]}>
+                    <SimpleGrid cols={10} w={"100%"} h={"100%"} verticalSpacing={"xs"}>
                         {electrode.stimulationPoints.map((stim_point: any, stim_point_i: number) => {
                             const pointId = getStimPointLabel(electrode.label, stim_point_i);
                             return (
@@ -183,12 +181,6 @@ function ElectrodeSetupStep({ store }: TabProperties) {
         if (store) {
             store.addElectrode(nextElectrodeDefaultLabel);
             setNextElectrodeDefaultLabel(letters.increment(nextElectrodeDefaultLabel));
-        }
-    }
-
-    const setContactsToElectrode = (electrodeIndex: number, nbContacts: number) => {
-        if (store) {
-            store.setElectrodeContacts(electrodeIndex, nbContacts);
         }
     }
 
@@ -356,17 +348,6 @@ function ElectrodeSetupStep({ store }: TabProperties) {
         ];
     }
 
-    const getElectrodeOptions = (): Map<string, ElectrodeOption> => {
-        const options = [
-            { implantationType: "SEEG", diameter: 0.9, separation: 3, length: 2.3 },
-            { implantationType: "SEEG", diameter: 0.9, separation: 4, length: 2.3 },
-            { implantationType: "SEEG", diameter: 0.8, separation: 3.5, length: 2 },
-            { implantationType: "SEEG", diameter: 0.8, separation: 3.5, length: 2 },
-        ] as ElectrodeOption[];
-        return new Map(options.map(opt => [opt.implantationType + '|' + opt.diameter + '|' + opt.separation + '|' + opt.length, opt]));
-    }
-    const ElectrodeOptions = getElectrodeOptions();
-
     const updateDoneContacts = useCallback(() => {
         const donePoints: string[] = [];
         sourceElectrodes.forEach((electrode: any) => {
@@ -472,45 +453,14 @@ function ElectrodeSetupStep({ store }: TabProperties) {
 
             <Box h={"10%"}>
                 <Group>
-                    <Title order={3}>{t('pages.stimulationTool.implantation.electrodeConfiguration')}</Title>
+                    <Title order={5}>{t('pages.stimulationTool.implantation.electrodeConfiguration')}</Title>
                     <NativeSelect
-                        label="Configuration"
-                        data={[{ value: '', label: '-' }, ...ElectrodeOptions.keys()]}
+                        label={t("pages.stimulationTool.implantation.defaultElectrodeConfigurationSelectLabel")}
+                        data={getElectrodeConfigOptions()}
                         onChange={(event) => {
-                            if (ElectrodeOptions.has(event.target.value)) {
-                                var option = ElectrodeOptions.get(event.target.value)!;
-                                if (store) {
-                                    store.updateElectrodeParameters({
-                                        type: option.implantationType,
-                                        diameter: option.diameter,
-                                        separation: option.separation,
-                                        length: option.length
-                                    });
-
-                                }
-                            }
+                            store.setDefaultElectrodeConfig(event.target.value);
                         }}
                     />
-                    <Group position="apart" spacing={"sm"}>
-                        <NumberInput
-                            label={t('pages.stimulationTool.implantation.contactDiameterLabel')}
-                            precision={1}
-                            required
-                            value={store.session.electrodeParameters.diameter ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ diameter: v })}
-                        />
-                        <NumberInput
-                            label={t('pages.stimulationTool.implantation.contactSeparationLabel')}
-                            precision={1}
-                            required
-                            value={store.session.electrodeParameters.separation ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ separation: v })}
-                        />
-                        <NumberInput
-                            label={t('pages.stimulationTool.implantation.contactLengthLabel')}
-                            precision={1}
-                            required
-                            value={store.session.electrodeParameters.length ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ length: v })}
-                        />
-                    </Group>
                 </Group>
             </Box>
 
@@ -537,7 +487,6 @@ function ElectrodeSetupStep({ store }: TabProperties) {
                             getSideOptions={getSideOptions}
                             handleDeleteElectrodeButtonClicked={handleDeleteElectrodeButtonClicked}
                             handleConfirmElectrodeButtonClicked={handleConfirmElectrodeButtonClicked}
-                            setContactsToElectrode={setContactsToElectrode}
                         />
                     ))}
                 </ScrollArea>
@@ -571,8 +520,6 @@ function ElectrodeSetupStep({ store }: TabProperties) {
     );
 }
 
-interface ElectrodeOption { implantationType: "SEEG" | "Grids", diameter: number, separation: number, length: number }
-
 interface CentralBarProps {
     store: StimulationSessionStore;
     selectedContacts: string[];
@@ -595,7 +542,7 @@ const CentralBar = observer(({
     handleElectrodeLocationFormSubmit
 }: CentralBarProps) => {
     const sourceElectrodes = store.session.electrodes;
-    const electrode_parameters_selected = (store.session.electrodeParameters.diameter ?? 0) > 0;
+    const electrode_parameters_selected = (store.session.electrodeParameters?.id ?? '') !== '';
     const contacts_configured = sourceElectrodes.flatMap((e: any) => e.stimulationPoints).length > 0;
     const all_contacts_roi_configured = sourceElectrodes.flatMap((e: any) => e.stimulationPoints).every((sp: any) => sp.location.done === true || sp.location.isDone === true);
     const contacts_selected = selectedContacts.length > 0;

@@ -1,4 +1,5 @@
 import { Electrode } from './electrode';
+import { ElectrodeConfig } from './electrodeConfig';
 
 export class ElectrodeParams {
     type: string = '';
@@ -9,13 +10,15 @@ export class ElectrodeParams {
 
 export class StimulationSession {
     patientId: string = '';
-    electrodeParameters: ElectrodeParams = new ElectrodeParams();
+    electrodeParameters: ElectrodeConfig | undefined;
+    usedElectrodeConfigs: ElectrodeConfig[] = [];
     electrodes: Electrode[] = [];
 
     toValues() {
         return {
             patientId: this.patientId,
-            electrodeParameters: { ...this.electrodeParameters },
+            electrodeParameters: this.electrodeParameters ? ({ ...this.electrodeParameters } as ElectrodeConfig) : undefined,
+            usedElectrodeConfigs: this.usedElectrodeConfigs.map((c) => ({ ...c })),
             electrodes: this.electrodes.map((e) => ({ ...e })),
         };
     }

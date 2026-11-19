@@ -106,7 +106,7 @@ const StimulationToolPage = observer(function StimulationToolPage() {
     // TODO : different layout for smaller screens
     return (
         <Box mx={"sm"} h={"100%"} m={0} p={0} >
-            <Group h={"4%"}>
+            <Group h={"4%"} noWrap py={"xs"}>
                 <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} accept=".json" style={{ display: 'none' }} />
                 <ActionIcon title={t('pages.stimulationTool.button_open_form')}>
                     <IconFolderOpen onClick={() => openInputFileRef.current?.click()} />
@@ -115,10 +115,10 @@ const StimulationToolPage = observer(function StimulationToolPage() {
                     <IconDownload onClick={downloadFormValues} />
                 </ActionIcon>
                 {/** Stimulation name / edit box */}
-                <Group spacing={0} position="left" align="center">
+                <Group spacing={0} position="left" align="center" noWrap>
                     <label
                         htmlFor="patient_id"
-                        style={{ marginRight: 10, fontWeight: 'bold' }}
+                        style={{ marginRight: 10, fontWeight: 'bold', whiteSpace:"nowrap" }}
                     >{t('pages.stimulationTool.patient_id_label')}</label>
                     <TextInput
                         value={store.session.patientId}
@@ -128,6 +128,7 @@ const StimulationToolPage = observer(function StimulationToolPage() {
                         required
                         autoFocus={store.session.patientId === ""}
                         styles={{ input: { fontWeight: 'bold' } }}
+                        miw={150}
                     />
                 </Group>
 
@@ -136,9 +137,9 @@ const StimulationToolPage = observer(function StimulationToolPage() {
                 {/** Warning if not saved */}
                 {hasUnsavedData &&
                     <Alert color='yellow' icon={<IconAlertCircle size="1rem" />} radius={'lg'} py={0} m={0}>
-                        <Group p={0} m={0}>
-                            <Text fw={700} >{t('pages.stimulationTool.unsaved_alert_title')}</Text>
-                            <Text >{t('pages.stimulationTool.unsaved_alert_text')}</Text>
+                        <Group p={0} m={0} noWrap>
+                            <Text fw={700} style={{whiteSpace:"nowrap"}}>{t('pages.stimulationTool.unsaved_alert_title')}</Text>
+                            <Text style={{whiteSpace: "nowrap", overflow:"ellipsis"}}>{t('pages.stimulationTool.unsaved_alert_text')}</Text>
                         </Group>
                     </Alert>
                 }

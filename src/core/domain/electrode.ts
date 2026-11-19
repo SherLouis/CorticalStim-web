@@ -5,7 +5,7 @@ export type SideOptions = 'left' | 'right';
 export interface Electrode {
     label: string;
     side: SideOptions | undefined;
-    nContacts: number;
+    configId?: string;
     confirmed: boolean;
     stimulationPoints: StimulationPoint[];
 }

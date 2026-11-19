@@ -1,5 +1,6 @@
 import { StimulationFormValuesV1 } from './v1/schemas';
-import { ElectrodeParams, StimulationSession } from '../../domain/session';
+import { ElectrodeConfig } from '../../domain/electrodeConfig';
+import { StimulationSession } from '../../domain/session';
 import { StimulationParameters } from '../../domain/stimulation';
 
 type StimulationSessionValues = ReturnType<StimulationSession['toValues']>;
@@ -34,21 +35,42 @@ export class SessionPersistenceService {
 
     private static applyV2Values(session: StimulationSession, values: StimulationSessionValues) {
         session.patientId = values.patientId;
-        session.electrodeParameters = Object.assign(new ElectrodeParams(), values.electrodeParameters);
+        session.electrodeParameters = values.electrodeParameters ? ({ ...values.electrodeParameters } as ElectrodeConfig) : undefined;
+        session.usedElectrodeConfigs = (values.usedElectrodeConfigs ?? []).map((c) => ({ ...c }));
         session.electrodes.splice(0, session.electrodes.length, ...values.electrodes);
     }
 
     private static migrateV1ToV2(data: StimulationFormValuesV1): StimulationSessionValues {
         const electrodeParameters = {
-            type: data.electrode_params.type,
+            id: 'default',
+            manufacturer: '',
+            model: data.electrode_params.type,
+            nContacts: 0,
             separation: data.electrode_params.separation,
             diameter: data.electrode_params.diameter,
             length: data.electrode_params.length,
         };
+        const usedConfigs: ElectrodeConfig[] = [];
+        const configIdFor = (nContacts: number) => {
+            const id = `${electrodeParameters.model}|${electrodeParameters.diameter}|${electrodeParameters.separation}|${electrodeParameters.length}|${nContacts}`;
+            if (!usedConfigs.find((c) => c.id === id)) {
+                usedConfigs.push({
+                    id,
+                    manufacturer: '',
+                    model: electrodeParameters.model || 'Electrode',
+                    nContacts,
+                    diameter: electrodeParameters.diameter,
+                    separation: electrodeParameters.separation,
+                    length: electrodeParameters.length,
+                });
+            }
+            return id;
+        };
+
         const electrodes = (data.electrodes ?? []).map((e) => ({
             label: e.label,
             side: e.side,
-            nContacts: e.n_contacts,
+            configId: configIdFor(e.n_contacts ?? 0),
             confirmed: e.confirmed,
             stimulationPoints: (e.stim_points ?? []).map((sp) => {
                 const loc = sp.location;
@@ -97,6 +119,7 @@ export class SessionPersistenceService {
         return {
             patientId: data.patient_id,
             electrodeParameters,
+            usedElectrodeConfigs: usedConfigs,
             electrodes,
         };
     }
