@@ -55,9 +55,9 @@ const ElectrodeRow = observer(function ElectrodeRow({
             key={'div_electrode_' + electrode_i}
             w={"100%"}
         >
-            <Group w={"30%"} miw={430} position="left" align="end" spacing="xs" noWrap>
+            <Group w={"30%"} miw={430} position="left" align="end" spacing="xs" noWrap pr={"xs"}>
                 {/** Delete button */}
-                <ActionIcon color="red" sx={{ flex: 1, flexGrow: 0 }} onClick={() => handleDeleteElectrodeButtonClicked(electrode.label)}>
+                <ActionIcon color="red" sx={{ flex: 1, flexGrow: 0 }} maw={"5%"} onClick={() => handleDeleteElectrodeButtonClicked(electrode.label)}>
                     <IconTrash size="1.2rem" />
                 </ActionIcon>
                 {/** Electrode Label */}
@@ -72,7 +72,7 @@ const ElectrodeRow = observer(function ElectrodeRow({
                     }}
                 />
                 {/** Side */}
-                <Input.Wrapper w={"15%"}
+                <Input.Wrapper w={"20%"}
                     size="sm"
                     p={0}
                     m={0}
@@ -80,7 +80,7 @@ const ElectrodeRow = observer(function ElectrodeRow({
                     required
                 >
                     <SegmentedControl
-                    w={"100%"}
+                        w={"100%"}
                         data={getSideOptions()}
                         value={electrode.side ?? ''}
                         onChange={(value: string) => {
@@ -90,7 +90,7 @@ const ElectrodeRow = observer(function ElectrodeRow({
                 </Input.Wrapper>
                 {/** Electrode config */}
                 <NativeSelect
-                    w={"35%"}
+                    w={"40%"}
                     disabled={electrode.confirmed}
                     label={t("pages.stimulationTool.implantation.electrodeConfigurationLabel")}
                     data={getElectrodeConfigOptions()}
@@ -100,8 +100,8 @@ const ElectrodeRow = observer(function ElectrodeRow({
                         if (cfg && store) { store.ensureElectrodeConfig(cfg); store.setElectrodeConfig(electrode_i, cfg.id); }
                     }}
                 />
-                <ActionIcon variant="filled" size="lg" color="green.9" disabled={electrode.confirmed} 
-                onClick={() => handleConfirmElectrodeButtonClicked(electrode.label)}>
+                <ActionIcon variant="filled" size="lg" color="green.9" disabled={electrode.confirmed} maw={"5%"}
+                    onClick={() => handleConfirmElectrodeButtonClicked(electrode.label)}>
                     <IconLockCheck size="2rem" />
                 </ActionIcon>
             </Group>
