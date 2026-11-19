@@ -1,3 +1,4 @@
+// TODO: Future task: implement persistence of stimulation sessions via StimulationRecordRepository (map StimulationSession <-> StimulationRecord). Do not remove this port.
 import StimulationRecord from "./stimulationRecord";
 import StimulationRecordSummary from "./stimulationRecordSummary";
 

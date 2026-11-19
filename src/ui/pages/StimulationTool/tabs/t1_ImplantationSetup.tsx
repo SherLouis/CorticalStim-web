@@ -1,0 +1,706 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+import { ActionIcon, Alert, Badge, Box, Button, Checkbox, Chip, Flex, Group, Input, Modal, NativeSelect, NumberInput, ScrollArea, SegmentedControl, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { IconAlertCircle, IconCircleCheck, IconCirclePlus, IconCircleX, IconDeselect, IconFileImport, IconLockCheck, IconTrash } from "@tabler/icons-react";
+import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
+
+import { StimulationSessionStore } from "@/core/application/stores/stimulationSessionStore";
+import { getStimPointDisplayLabel, getStimPointLabel } from "@/core/domain/utils";
+import { toStimulationLocation } from "@/ui/application/mappers/stimulationPointMapper";
+import StimulationPointLocationSelection, { ElectrodeLocationFormValues } from "@/ui/components/StimulationPointLocationSelection";
+import { TabProperties } from "@/ui/pages/StimulationTool/tabs/tab_properties";
+import { letters } from "@/ui/tools/letterTools";
+import parseMniImplantationFromTsv from "@/ui/tools/tsvMniImplantationParser/tsvMniImplantationParser";
+
+
+
+interface ElectrodeRowProps {
+    electrode: any;
+    electrode_i: number;
+    store: any;
+    t: ReturnType<typeof useTranslation>['t'];
+    selectedContacts: string[];
+    doneContacts: string[];
+    setSelectedContacts: React.Dispatch<React.SetStateAction<string[]>>;
+    getStimPointLabel: (label: string, index: number, showDerivation?: boolean, forDisplay?: boolean) => string;
+    getSideOptions: () => { label: string; value: string }[];
+    handleDeleteElectrodeButtonClicked: (label: string) => void;
+    handleConfirmElectrodeButtonClicked: (label: string) => void;
+    setContactsToElectrode: (index: number, nbContacts: number) => void;
+}
+
+const ElectrodeRow = observer(function ElectrodeRow({
+    electrode,
+    electrode_i,
+    store,
+    t,
+    selectedContacts,
+    doneContacts,
+    setSelectedContacts,
+    getStimPointLabel,
+    getSideOptions,
+    handleDeleteElectrodeButtonClicked,
+    handleConfirmElectrodeButtonClicked,
+    setContactsToElectrode,
+}: ElectrodeRowProps) {
+    return (
+        <Flex direction={"row"} justify={"space-between"} align={"center"} wrap={"nowrap"}
+            gap={"lg"}
+            mt={'sm'}
+            key={'div_electrode_' + electrode_i}
+            w={"100%"}
+        >
+            <Group sx={{ flex: 4 }} position="left" align="center">
+                {/** Delete button */}
+                <ActionIcon color="red" sx={{ flex: 1 }} onClick={() => handleDeleteElectrodeButtonClicked(electrode.label)}>
+                    <IconTrash size="2rem" />
+                </ActionIcon>
+                {/** Electrode Label */}
+                <TextInput
+                    sx={{ flex: 3, flexGrow: 1 }}
+                    label={t("pages.stimulationTool.implantation.electrodeLabel")}
+                    placeholder="A"
+                    required
+                    value={electrode.label}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        store?.updateElectrodeLabel(electrode_i, e.target.value);
+                    }}
+                />
+                {/** Side */}
+                <Input.Wrapper sx={{ flex: 2 }}
+                    size="sm"
+                    label={t("pages.stimulationTool.implantation.sideLabel")}
+                    required
+                >
+                    <SegmentedControl
+                        data={getSideOptions()}
+                        value={electrode.side ?? ''}
+                        onChange={(value: string) => {
+                            store?.updateElectrodeSide(electrode_i, value as 'left' | 'right' | undefined);
+                        }}
+                    />
+                </Input.Wrapper>
+                {/** Number of contacts */}
+                <NumberInput
+                    sx={{ flex: 3, flexGrow: 1 }}
+                    disabled={electrode.confirmed}
+                    label={t("pages.stimulationTool.implantation.nbContactsLabel")}
+                    min={0}
+                    value={electrode.nContacts ?? 0}
+                    onChange={(v) => setContactsToElectrode(electrode_i, v === "" ? 0 : v)}
+                />
+                <Button sx={{ flex: 2, flexGrow: 1 }}
+                    size="sm"
+                    color="green.9"
+                    disabled={electrode.confirmed}
+                    onClick={() => handleConfirmElectrodeButtonClicked(electrode.label)}
+                    leftIcon={<IconLockCheck size="2rem" />}>
+                    {t('pages.stimulationTool.implantation.confirmElectrode.confirm_label')}
+                </Button>
+            </Group>
+
+            <Box h={"100%"} sx={{ flex: 10 }} display={"flex"}>
+                <Chip.Group multiple value={selectedContacts} onChange={setSelectedContacts}>
+                    <SimpleGrid cols={10} w={"100%"} h={"100%"}
+                        breakpoints={[
+                            { maxWidth: '90rem', cols: 8, spacing: 'sm' },
+                            { maxWidth: '70rem', cols: 6, spacing: 'sm' },
+                            { maxWidth: '50rem', cols: 4, spacing: 'xs' },
+                            { maxWidth: '40rem', cols: 3, spacing: 'xs' },
+                            { maxWidth: '35rem', cols: 2, spacing: 'sm' },
+                        ]}>
+                        {electrode.stimulationPoints.map((stim_point: any, stim_point_i: number) => {
+                            const pointId = getStimPointLabel(electrode.label, stim_point_i);
+                            return (
+                                <Chip size='sm'
+                                    h={"100%"}
+                                    value={pointId}
+                                    key={pointId}
+                                    variant={doneContacts.includes(pointId) ? 'filled' : 'light'}
+                                    color={selectedContacts?.includes(pointId) ? 'blue' : doneContacts?.includes(pointId) ? 'green' : 'gray'}
+                                    checked={doneContacts.includes(pointId)}>
+                                    {getStimPointLabel(electrode.label, stim_point_i, false, true)}
+                                </Chip>);
+                        })}
+                    </SimpleGrid>
+                </Chip.Group>
+            </Box>
+        </Flex>
+    );
+});
+
+function ElectrodeSetupStep({ store }: TabProperties) {
+    const { t } = useTranslation();
+    const [nextElectrodeDefaultLabel, setNextElectrodeDefaultLabel] = useState('A');
+    const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+    const [doneContacts, setDoneContacts] = useState<string[]>([]);
+
+    // Electrode delete
+    const [showConfirmDeleteElectrode, setShowConfirmDeleteElectrode] = useState<boolean>(false);
+    const [electrodeLabelToDelete, setElectrodeLabelToDelete] = useState<string | undefined>(undefined);
+
+    // Confirm / Lock electrode - lock number of contacts
+    const electrodeConfirmForm = useForm({
+        initialValues: {
+            electrode_label: "",
+            do_not_show_again: false
+        }
+    });
+    const [showElectrodeConfirmModal, setShowElectrodeConfirmModal] = useState<boolean>(false);
+    const [doNotShowAgainElectrodeConfirmModal, setDoNotShowAgainElectrodeConfirmModal] = useState<boolean>(false);
+
+    // Implantation from tsv file
+    const openInputFileRef = useRef<HTMLInputElement | null>(null);
+
+    const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files === null) {
+            return;
+        }
+
+        const uploadedFile = e.target.files[0];
+
+        const fileReader = new FileReader();
+        if (uploadedFile !== undefined)
+            fileReader.readAsText(uploadedFile, "UTF-8");
+        fileReader.onload = () => {
+            try {
+                const electrodes = parseMniImplantationFromTsv(fileReader.result as string);
+                if (store) {
+                    store.setElectrodes(electrodes);
+                }
+            }
+            catch (e) {
+                console.error(`Error loading from file: ${e}`)
+            }
+        }
+        // Reset the file input to nothing to allow selecting the same file again to replace the data
+        if (openInputFileRef.current) { openInputFileRef.current.value = ''; }
+    }, [store]);
+
+    const addElectrode = () => {
+        if (store) {
+            store.addElectrode(nextElectrodeDefaultLabel);
+            setNextElectrodeDefaultLabel(letters.increment(nextElectrodeDefaultLabel));
+        }
+    }
+
+    const setContactsToElectrode = (electrodeIndex: number, nbContacts: number) => {
+        if (store) {
+            store.setElectrodeContacts(electrodeIndex, nbContacts);
+        }
+    }
+
+    const handleElectrodeLocationFormSubmit = () => {
+        locationForm.validate();
+        if (!locationForm.isValid()) { return; }
+        const values = locationForm.values;
+        if (selectedContacts.length === 0 || !store) { return; }
+
+        selectedContacts.forEach(selectedStimPoint => {
+            const parts = selectedStimPoint.split('/');
+            const electrode_label = parts.slice(0, -1).join('/');
+
+            // Find electrode index
+            const electrodes = store.session.electrodes;
+            const electrode_i = electrodes.findIndex(e => e.label === electrode_label);
+            if (electrode_i !== -1) {
+                const electrode = electrodes[electrode_i];
+                // Find stim point index
+                const stim_point_i = electrode.stimulationPoints.findIndex((_, i) => getStimPointLabel(electrode.label, i) === selectedStimPoint);
+
+                if (stim_point_i !== -1) {
+                    const newLocation = toStimulationLocation(values);
+                    store.updateStimulationPointLocation(electrode_i, stim_point_i, newLocation);
+                }
+            }
+        });
+        setSelectedContacts([]);
+    }
+
+    const getNewElectrodeLocationFromForm = () => {
+        if (locationForm.values.type === 'white') { return t('pages.stimulationTool.implantation.whiteMatter') + ' (' + locationForm.values.white_matter + ')'; }
+        if (locationForm.values.type === 'vep') { return "vep (" + locationForm.values.vep + ")"; }
+        if (locationForm.values.type === 'destrieux') { return "Destrieux (" + locationForm.values.destrieux + ")"; }
+        if (locationForm.values.type === 'mni') { return "MNI (" + locationForm.values.mni_x + ',' + locationForm.values.mni_y + ',' + locationForm.values.mni_z + ")"; }
+    }
+
+
+    const getSelectedContactsROIValue = useCallback((): ElectrodeLocationFormValues => {
+        const defaults: ElectrodeLocationFormValues = {
+            type: "vep",
+            vep: "",
+            destrieux: "",
+            white_matter: "",
+            mni_x: 0,
+            mni_y: 0,
+            mni_z: 0
+        };
+
+        if (selectedContacts.length === 0) {
+            return defaults;
+        }
+
+        // Build a lookup map for faster access
+        const pointMap = new Map<string, any>();
+        const sourceElectrodes = store.session.electrodes;
+        sourceElectrodes.forEach(e => {
+            e.stimulationPoints.forEach((p: any, i: number) => {
+                pointMap.set(getStimPointLabel(e.label, i), p);
+            });
+        });
+
+        let roi_type: string | undefined = undefined;
+        let roi_vep: string | undefined = undefined;
+        let roi_destrieux: string | undefined = undefined;
+        let roi_wm: string | undefined = undefined;
+        let roi_mni = { x: 0, y: 0, z: 0 };
+        let first = true;
+
+        selectedContacts.forEach((selectedStimPoint) => {
+            const stimPoint = pointMap.get(selectedStimPoint);
+            if (!stimPoint) return;
+
+            const { type, vep, destrieux, mni, white_matter } = stimPoint.location;
+
+            if (first) {
+                roi_type = type;
+                roi_vep = vep;
+                roi_destrieux = destrieux;
+                roi_mni = mni || { x: 0, y: 0, z: 0 };
+                roi_wm = white_matter;
+                first = false;
+            } else {
+                if (type !== roi_type) roi_type = "vep"; // Reset to default if mixed
+                if (vep !== roi_vep) roi_vep = "";
+                if (destrieux !== roi_destrieux) roi_destrieux = "";
+                if (white_matter !== roi_wm) roi_wm = "";
+                if (mni?.x !== roi_mni.x || mni?.y !== roi_mni.y || mni?.z !== roi_mni.z) {
+                    roi_mni = { x: 0, y: 0, z: 0 };
+                }
+            }
+        });
+
+        return {
+            type: roi_type || "vep",
+            vep: roi_vep || "",
+            destrieux: roi_destrieux || "",
+            white_matter: roi_wm || "",
+            mni_x: roi_mni.x,
+            mni_y: roi_mni.y,
+            mni_z: roi_mni.z
+        };
+    }, [store.session.electrodes, selectedContacts]);
+
+    const handleDeleteElectrodeButtonClicked = (electrode_label: string) => {
+        setElectrodeLabelToDelete(electrode_label);
+        setShowConfirmDeleteElectrode(true);
+    }
+
+    const handleDeleteElectrode = () => {
+        setShowConfirmDeleteElectrode(false);
+        if (electrodeLabelToDelete === undefined || !store) { return; }
+        const sourceElectrodes = store.session.electrodes;
+        const electrode = sourceElectrodes.find((e: any) => e.label === electrodeLabelToDelete);
+        const electrodeIndex = sourceElectrodes.findIndex((e: any) => e.label === electrodeLabelToDelete);
+        setSelectedContacts(selectedContacts.filter((c) => !c.startsWith(electrode!.label)));
+        setDoneContacts(doneContacts.filter((c) => !c.startsWith(electrode!.label)));
+        store.removeElectrode(electrodeIndex);
+        console.debug("deleting electrode " + electrodeLabelToDelete + " at index " + electrodeIndex)
+        setElectrodeLabelToDelete(undefined);
+    }
+
+    const shouldShowElectrodeConfirmModal = useMemo<boolean>(
+        () => {
+            return !doNotShowAgainElectrodeConfirmModal && showElectrodeConfirmModal;
+        },
+        [doNotShowAgainElectrodeConfirmModal, showElectrodeConfirmModal]
+    );
+
+    const handleConfirmElectrodeButtonClicked = (electrode_label: string) => {
+        if (doNotShowAgainElectrodeConfirmModal) {
+            confirmElectrode(electrode_label)
+        }
+        else {
+            electrodeConfirmForm.setFieldValue('electrode_label', electrode_label);
+            setShowElectrodeConfirmModal(true);
+        }
+    }
+
+    const handleCancelConfirmElectrode = () => {
+        setShowElectrodeConfirmModal(false);
+        electrodeConfirmForm.reset();
+    }
+
+    const handleConfirmElectrode = () => {
+        setShowElectrodeConfirmModal(false);
+        const values = electrodeConfirmForm.values;
+        confirmElectrode(values.electrode_label);
+        if (!doNotShowAgainElectrodeConfirmModal) { setDoNotShowAgainElectrodeConfirmModal(values.do_not_show_again); }
+    }
+
+    const confirmElectrode = (electrode_label: string) => {
+        const electrode_i = sourceElectrodes.findIndex((e: any) => e.label === electrode_label);
+        if (electrode_i === -1) { return; }
+        store?.confirmElectrode(electrode_i);
+    }
+
+    const sourceElectrodes = store.session.electrodes;
+
+    const getSideOptions = () => {
+        return [
+            { label: '-', value: '' },
+            { label: 'L', value: 'left' },
+            { label: 'R', value: 'right' }
+        ];
+    }
+
+    const getElectrodeOptions = (): Map<string, ElectrodeOption> => {
+        const options = [
+            { implantationType: "SEEG", diameter: 0.9, separation: 3, length: 2.3 },
+            { implantationType: "SEEG", diameter: 0.9, separation: 4, length: 2.3 },
+            { implantationType: "SEEG", diameter: 0.8, separation: 3.5, length: 2 },
+            { implantationType: "SEEG", diameter: 0.8, separation: 3.5, length: 2 },
+        ] as ElectrodeOption[];
+        return new Map(options.map(opt => [opt.implantationType + '|' + opt.diameter + '|' + opt.separation + '|' + opt.length, opt]));
+    }
+    const ElectrodeOptions = getElectrodeOptions();
+
+    const updateDoneContacts = useCallback(() => {
+        const donePoints: string[] = [];
+        sourceElectrodes.forEach((electrode: any) => {
+            electrode.stimulationPoints.forEach((point: any, point_i: number) => {
+                if (point.location.done || point.location.isDone) {
+                    donePoints.push(getStimPointLabel(electrode.label, point_i));
+                }
+            })
+        })
+        setDoneContacts(donePoints);
+    }, [sourceElectrodes]);
+
+    const selectAllContacts = () => {
+        var allPointsLabel = sourceElectrodes.flatMap((electrode: any) => electrode.stimulationPoints.map((point: any) => getStimPointLabel(electrode.label, point.index)));
+        setSelectedContacts(allPointsLabel);
+    }
+
+    const selectAllNotDoneContacts = () => {
+        var allPointsLabel = sourceElectrodes.flatMap((electrode: any) => electrode.stimulationPoints.map((point: any) => getStimPointLabel(electrode.label, point.index)));
+        setSelectedContacts(allPointsLabel.filter(point => !doneContacts.includes(point)));
+    }
+
+    const unselectAllContacts = () => {
+        setSelectedContacts([]);
+    }
+
+    const locationForm = useForm<ElectrodeLocationFormValues>({
+        initialValues: {
+            type: "vep",
+            vep: "",
+            destrieux: "",
+            white_matter: "",
+            mni_x: 0,
+            mni_y: 0,
+            mni_z: 0
+        },
+        validate: (values: ElectrodeLocationFormValues) => ({
+            type: values.type === '' ? t("pages.stimulationTool.implantation.validations.location.type") : null,
+            vep: values.type !== 'vep' ? null : (values.vep === '' || values.vep === null) ? t("pages.stimulationTool.implantation.validations.location.vep") : null,
+            destrieux: values.type !== 'destrieux' ? null : (values.destrieux === '' || values.destrieux === null) ? t("pages.stimulationTool.implantation.validations.location.destrieux") : null,
+            mni_x: values.type !== 'mni' ? null : values.mni_x === 0 ? t("pages.stimulationTool.implantation.validations.location.mni") : null,
+            mni_y: values.type !== 'mni' ? null : values.mni_y === 0 ? t("pages.stimulationTool.implantation.validations.location.mni") : null,
+            mni_z: values.type !== 'mni' ? null : values.mni_z === 0 ? t("pages.stimulationTool.implantation.validations.location.mni") : null,
+        })
+    })
+
+    // Form change (from file open for example)
+    useEffect(() => { updateDoneContacts(); }, [store.session.electrodes, updateDoneContacts])
+
+    // Selected contact changed or data model updated => sync location form values
+    // We use a stringified version of selectedContacts to avoid unnecessary triggers
+    const selectedContactsKey = useMemo(() => JSON.stringify(selectedContacts), [selectedContacts]);
+    useEffect(() => {
+        const newValues = getSelectedContactsROIValue();
+        locationForm.setValues(newValues);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedContactsKey, getSelectedContactsROIValue]);
+
+
+    return (
+        <Box pt={"md"} h={"100%"}>
+            {/** Confirm delete electrode Modal */}
+            <Modal opened={showConfirmDeleteElectrode}
+                onClose={() => setShowConfirmDeleteElectrode(false)}
+                title={<Title order={5}>{t('pages.stimulationTool.implantation.confirmDelete.title') + ' "' + electrodeLabelToDelete + '" ?'}</Title>}>
+                <Group position="apart">
+                    <Button leftIcon={<IconCircleX color="white" />} variant="filled" onClick={() => setShowConfirmDeleteElectrode(false)}>{t('pages.stimulationTool.implantation.confirmDelete.cancel_label')}</Button>
+                    <Button leftIcon={<IconTrash color="white" />} variant="filled" color="red" onClick={handleDeleteElectrode}>{t('pages.stimulationTool.implantation.confirmDelete.confirm_label')}</Button>
+                </Group>
+            </Modal>
+
+            {/** Confirm lock of electrode Modal */}
+            <Modal opened={shouldShowElectrodeConfirmModal}
+                size={"lg"}
+                onClose={handleCancelConfirmElectrode}
+                withCloseButton={false}
+                title={<Title order={5}>{t('pages.stimulationTool.implantation.confirmElectrode.title') + ' ?'}</Title>}>
+                <Stack>
+                    <Alert w={"100%"}
+                        icon={<IconAlertCircle size="1rem" />}
+                        color="yellow"
+                        title={t('pages.stimulationTool.implantation.confirmElectrode.title') + ' "' + electrodeConfirmForm.values.electrode_label + '" ?'}>
+                        {t('pages.stimulationTool.implantation.confirmElectrode.description')}
+                    </Alert>
+                    <Group position="apart">
+                        <Checkbox
+                            label={t('pages.stimulationTool.implantation.confirmElectrode.do_not_show_again_label')}
+                            {...electrodeConfirmForm.getInputProps('do_not_show_again')} />
+
+                        <Group position="right">
+                            <Button leftIcon={<IconCircleX color="white" />} variant="filled" color="gray"
+                                onClick={handleCancelConfirmElectrode}>
+                                {t('pages.stimulationTool.implantation.confirmElectrode.cancel_label')}
+                            </Button>
+                            <Button leftIcon={<IconCircleCheck color="white" />} variant="filled" color="green.9"
+                                onClick={handleConfirmElectrode}>
+                                {t('pages.stimulationTool.implantation.confirmElectrode.confirm_label')}
+                            </Button>
+                        </Group>
+                    </Group>
+                </Stack>
+            </Modal>
+
+            <Box h={"10%"}>
+                <Group>
+                    <Title order={3}>{t('pages.stimulationTool.implantation.electrodeConfiguration')}</Title>
+                    <NativeSelect
+                        label="Configuration"
+                        data={[{ value: '', label: '-' }, ...ElectrodeOptions.keys()]}
+                        onChange={(event) => {
+                            if (ElectrodeOptions.has(event.target.value)) {
+                                var option = ElectrodeOptions.get(event.target.value)!;
+                                if (store) {
+                                    store.updateElectrodeParameters({
+                                        type: option.implantationType,
+                                        diameter: option.diameter,
+                                        separation: option.separation,
+                                        length: option.length
+                                    });
+
+                                }
+                            }
+                        }}
+                    />
+                    <Group position="apart" spacing={"sm"}>
+                        <NumberInput
+                            label={t('pages.stimulationTool.implantation.contactDiameterLabel')}
+                            precision={1}
+                            required
+                            value={store.session.electrodeParameters.diameter ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ diameter: v })}
+                        />
+                        <NumberInput
+                            label={t('pages.stimulationTool.implantation.contactSeparationLabel')}
+                            precision={1}
+                            required
+                            value={store.session.electrodeParameters.separation ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ separation: v })}
+                        />
+                        <NumberInput
+                            label={t('pages.stimulationTool.implantation.contactLengthLabel')}
+                            precision={1}
+                            required
+                            value={store.session.electrodeParameters.length ?? 0} onChange={(v: number) => store?.updateElectrodeParameters({ length: v })}
+                        />
+                    </Group>
+                </Group>
+            </Box>
+
+            <Box py={"md"} h={"30%"} p={'0'}>
+                <Group>
+                    <Button onClick={addElectrode} size="xs" leftIcon={<IconCirclePlus />}>{t("pages.stimulationTool.implantation.addElectrodeButton")}</Button>
+                    <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} accept=".tsv,.txt" style={{ display: 'none' }} />
+                    <Button onClick={() => openInputFileRef.current?.click()} size="xs" leftIcon={<IconFileImport />}>
+                        {t("pages.stimulationTool.implantation.buttonTsvOpen")}
+                    </Button>
+                </Group>
+                <ScrollArea w={"100%"} h={"95%"} py={"xs"} type="always" sx={{ alignItems: "center", padding: '0' }}>
+                    {sourceElectrodes.map((electrode: any, electrode_i: number) => (
+                        <ElectrodeRow
+                            key={'electrode_' + electrode_i}
+                            electrode={electrode}
+                            electrode_i={electrode_i}
+                            store={store}
+                            t={t}
+                            selectedContacts={selectedContacts}
+                            doneContacts={doneContacts}
+                            setSelectedContacts={setSelectedContacts}
+                            getStimPointLabel={getStimPointLabel}
+                            getSideOptions={getSideOptions}
+                            handleDeleteElectrodeButtonClicked={handleDeleteElectrodeButtonClicked}
+                            handleConfirmElectrodeButtonClicked={handleConfirmElectrodeButtonClicked}
+                            setContactsToElectrode={setContactsToElectrode}
+                        />
+                    ))}
+                </ScrollArea>
+            </Box>
+
+            {/* Central bar */}
+            <Box h={"15%"} w={"100%"} sx={{ borderColor: 'grey', borderWidth: '0.2rem 0', borderStyle: 'solid' }}>
+                <CentralBar
+                    store={store}
+                    selectedContacts={selectedContacts}
+                    t={t}
+                    selectAllContacts={selectAllContacts}
+                    selectAllNotDoneContacts={selectAllNotDoneContacts}
+                    getNewElectrodeLocationFromForm={getNewElectrodeLocationFromForm}
+                    unselectAllContacts={unselectAllContacts}
+                    handleElectrodeLocationFormSubmit={handleElectrodeLocationFormSubmit}
+                />
+            </Box>
+
+            {/** Location */}
+            <ScrollArea w={"100%"} h={"45%"} >
+                <Title order={3}>{t('pages.stimulationTool.implantation.placement')}</Title>
+                <Box display={(selectedContacts.length > 0) ? 'block' : 'none'}>
+                    <Stack align='flex-start' justify='flex-start'>
+                        <StimulationPointLocationSelection
+                            form={locationForm} />
+                    </Stack>
+                </Box>
+            </ScrollArea>
+        </Box >
+    );
+}
+
+interface ElectrodeOption { implantationType: "SEEG" | "Grids", diameter: number, separation: number, length: number }
+
+interface CentralBarProps {
+    store: StimulationSessionStore;
+    selectedContacts: string[];
+    t: ReturnType<typeof useTranslation>['t'];
+    selectAllContacts: () => void;
+    selectAllNotDoneContacts: () => void;
+    getNewElectrodeLocationFromForm: () => string | undefined;
+    unselectAllContacts: () => void;
+    handleElectrodeLocationFormSubmit: () => void;
+}
+
+const CentralBar = observer(({
+    store,
+    selectedContacts,
+    t,
+    selectAllContacts,
+    selectAllNotDoneContacts,
+    getNewElectrodeLocationFromForm,
+    unselectAllContacts,
+    handleElectrodeLocationFormSubmit
+}: CentralBarProps) => {
+    const sourceElectrodes = store.session.electrodes;
+    const electrode_parameters_selected = (store.session.electrodeParameters.diameter ?? 0) > 0;
+    const contacts_configured = sourceElectrodes.flatMap((e: any) => e.stimulationPoints).length > 0;
+    const all_contacts_roi_configured = sourceElectrodes.flatMap((e: any) => e.stimulationPoints).every((sp: any) => sp.location.done === true || sp.location.isDone === true);
+    const contacts_selected = selectedContacts.length > 0;
+
+    return (
+        <Box h={"100%"} >
+            {/** Electrode parameters are not set */}
+            <Box h={"100%"} display={!electrode_parameters_selected && !contacts_selected ? "block" : "none"}>
+                <Alert w={"100%"} h={"100%"}
+                    icon={<IconAlertCircle size="1rem" />}
+                    title={t('pages.stimulationTool.implantation.guide_params_title')}>
+                    {t('pages.stimulationTool.implantation.guide_params_text')}
+                </Alert>
+            </Box>
+
+            {/** No contact exists */}
+            <Box h={"100%"} display={electrode_parameters_selected && !contacts_configured && !contacts_selected ? "block" : "none"}>
+                <Alert w={"100%"} h={"100%"}
+                    display={sourceElectrodes.flatMap((e: any) => e.stimulationPoints).length === 0 ? "flex" : "none"}
+                    icon={<IconAlertCircle size="1rem" />}
+                    title={t("pages.stimulationTool.implantation.guide_configure_electrodes_title")}>
+                    {t("pages.stimulationTool.implantation.guide_configure_electrodes_text")}
+                </Alert>
+            </Box >
+
+            {/** All contacts done */}
+            <Box h={"100%"} display={electrode_parameters_selected && contacts_configured && all_contacts_roi_configured && !contacts_selected ? "block" : "none"}>
+                <Alert w={"100%"} h={"100%"}
+                    icon={<IconAlertCircle size="1rem" />}
+                    title={t("pages.stimulationTool.implantation.guide_goto_stimulations_title")}>
+                    {t("pages.stimulationTool.implantation.guide_goto_stimulations_text")}
+                </Alert>
+            </Box >
+
+            {/** Contact exists but none selected */}
+            <Box h={"100%"} w={"100%"} display={electrode_parameters_selected && contacts_configured && !all_contacts_roi_configured && !contacts_selected ? "block" : "none"}>
+                <Group h={"100%"} display={"flex"} w={"100%"}>
+                    <Alert
+                        h={"100%"}
+                        sx={{ flex: 9 }}
+                        icon={<IconAlertCircle size="1rem" />}
+                        title={t("pages.stimulationTool.implantation.guide_select_contact_title")}>
+                        {t("pages.stimulationTool.implantation.guide_select_contact_text")}
+                    </Alert>
+                    {/** Select all and selct all not done buttons */}
+                    <Stack sx={{ flex: 3 }}>
+                        <Button onClick={selectAllContacts}>{t("pages.stimulationTool.implantation.selectAllContactsButtonLabel")}</Button>
+                        <Button onClick={selectAllNotDoneContacts}>{t("pages.stimulationTool.implantation.selectAllNotDoneContactsButtonLabel")}</Button>
+                    </Stack>
+                </Group>
+            </Box>
+
+            {/** Contact(s) selected */}
+            <Box h={"100%"} w={"100%"} display={electrode_parameters_selected && contacts_configured && contacts_selected ? "flex" : "none"}>
+                <Group position='apart' align='flex-start' h={"100%"} w={"100%"} noWrap>
+                    <Stack h={"100%"} w={"80%"} spacing={0}>
+                        {/** Selected contacts */}
+                        <Group h={"35%"} w={"100%"} noWrap>
+                            {t('pages.stimulationTool.implantation.selected_contacts') + ':'}
+                            <ScrollArea type='always' h={"100%"} w={"100%"} sx={{ alignItems: "center", padding: '0' }}>
+                                <Group align="center" position='left' noWrap spacing={"xs"}>
+                                    {selectedContacts.map((pointId) => {
+                                        return (
+                                            <Badge key={pointId} size="lg" variant="filled">
+                                                {getStimPointDisplayLabel(pointId)}
+                                            </Badge>
+                                        );
+                                    })}
+                                </Group>
+                            </ScrollArea>
+                        </Group>
+                        <Alert w={"100%"}
+                            h={"60%"}
+                            icon={<IconAlertCircle size="1rem" />}
+                            title={t('pages.stimulationTool.implantation.guide_placement_title')}>
+                            {t('pages.stimulationTool.implantation.guide_placement_text')}
+                        </Alert>
+                    </Stack>
+
+                    <Stack w={"20%"} h={"100%"} align="center" spacing={0}>
+                        {/** Display selected location */}
+                        {t('pages.stimulationTool.implantation.selected_location')}: {getNewElectrodeLocationFromForm()}
+                        {/** Unselect all Buttons */}
+                        <Button w={"100%"}
+                            leftIcon={<IconDeselect />}
+                            onClick={unselectAllContacts}
+                            display={selectedContacts.length > 0 ? "block" : "none"}
+                        > {t('pages.stimulationTool.implantation.deselectAllContactsButtonLabel')}
+                        </Button>
+                        {/** Confirm button */}
+                        <Button
+                            w={"100%"}
+                            variant='filled'
+                            color='green'
+                            size="lg"
+                            leftIcon={<IconCircleCheck />}
+                            onClick={handleElectrodeLocationFormSubmit}
+                            display={selectedContacts.length > 0 ? "block" : "none"}
+                        > {t('pages.stimulationTool.implantation.saveButtonLabel')}
+                        </Button>
+                    </Stack>
+                </Group>
+            </Box>
+        </Box>
+    );
+});
+
+export default observer(ElectrodeSetupStep);

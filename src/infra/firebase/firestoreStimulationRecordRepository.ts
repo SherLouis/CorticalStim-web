@@ -1,5 +1,6 @@
-import StimulationRecordRepository from "../../core/stimulation/stimulationRecordRepository";
+// TODO: Future task: implement persistence of stimulation sessions via StimulationRecordRepository (map StimulationSession <-> StimulationRecord). Do not remove this port.
 import StimulationRecord from "../../core/stimulation/stimulationRecord";
+import StimulationRecordRepository from "../../core/stimulation/stimulationRecordRepository";
 import StimulationRecordSummary from "../../core/stimulation/stimulationRecordSummary";
 
 export default class FirebaseStimulationRecordRepository implements StimulationRecordRepository {
