@@ -39,10 +39,23 @@ describe('parseMniImplantationFromTsv', () => {
         expect(result[1].side).toBe('right'); // Second electrode (R1) is on the right side
     });
 
-    it('should warn and skip rows with invalid column length', () => {
+    it('should skip rows with no numbers on expected columns', () => {
+        // given
+        const tsvData = `Label\tX\tY\tZ\nL1\t-4\t1\t2\nL2\t-5\t3\t6\nR1\t4\t1\t2\nR2\t5\t3\t6`;
+
+        // when
+        const result = parseMniImplantationFromTsv(tsvData);
+
+        // then
+        expect(result).toHaveLength(2);
+        expect(result[0].stimulationPoints).toHaveLength(1)
+        expect(result[1].stimulationPoints).toHaveLength(1);
+    });
+
+    it('should warn and skip rows with too few columns', () => {
         // given
         const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
-        const tsvData = `C1\t10\t20\t30\nC2\t11\t21\nC3\t-10\t-20\t-30\nC4\t-11\t-21\t-31`;
+        const tsvData = `C1\t10\t20\t30\nC2\t11\t21\nC3\t-10\t-20\t-30\nC4\t-11\t-21\t-31\tSome extra column`;
 
         // when
         const result = parseMniImplantationFromTsv(tsvData);
