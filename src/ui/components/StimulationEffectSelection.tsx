@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { ActionIcon, Box, Button, Checkbox, Flex, Group, Radio, ScrollArea, Stack, Switch, Text, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Box, Button, Flex, Group, Radio, ScrollArea, SimpleGrid, Stack, Switch, Text, TextInput, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { TFunction } from "i18next";
@@ -176,8 +176,8 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
     const clinicalManif = (
         <Stack h={"100%"} w={"100%"} spacing={'xs'}>
             <Box w={"100%"} sx={{ flex: 6 }}>
-                <Stack w={"100%"} spacing={"xs"}>
-                    {getEpiManifestationOptions(t).map((option, i) => <Checkbox key={"epi_option_" + i} value={option.value} label={option.label}
+                <SimpleGrid cols={2} w={"100%"} spacing={"xs"}>
+                    {getEpiManifestationOptions(t).map((option, i) => <Radio key={"epi_option_" + i} value={option.value} label={option.label}
                         onChange={(e) => form.setFieldValue('epi_manifestation', e.target.checked ? e.target.value : "")}
                         checked={option.value === form.values.epi_manifestation}
                     />)}
@@ -185,7 +185,7 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
                         placeholder={t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.other')}
                         {...form.getInputProps('epi_manifestation')}
                     />
-                </Stack>
+                </SimpleGrid>
             </Box>
             <Box w={"100%"} sx={{ flex: 6 }}>
                 <Radio.Group
@@ -247,6 +247,7 @@ interface StimulationEffectSelectionProps {
 const getEpiManifestationOptions = (t: TFunction) => {
     return [
         { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_aura'), value: 'typical_aura' },
+        { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.atypical_aura'), value: 'atypical_aura' },
         { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.typical_crisis'), value: 'typical_crisis' },
         { label: t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.atypical_crisis'), value: 'atypical_crisis' }
     ];

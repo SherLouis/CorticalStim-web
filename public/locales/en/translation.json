@@ -142,6 +142,7 @@
                     "last_used": "Last used",
                     "epi_manifestation_options_labels": {
                         "typical_aura": "Typical Aura",
+                        "atypical_aura": "Atypical Aura",
                         "typical_crisis": "Typical Crisis",
                         "atypical_crisis": "Atypical Crisis",
                         "other": "Other"
