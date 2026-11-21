@@ -22,10 +22,13 @@ const parseMniImplantationFromTsv = (tsvData: string): Electrode[] => {
     const contactsData = tsvData.split('\n')
         .map(row => row.trim().split('\t'))
         .filter(rowData => {
-            if (rowData.length !== 4) {
-                console.warn(`tsv2impl : Skipping row. Expecting 4 columns, got ${rowData.length}. Data: ${rowData}`);
+            if (rowData.length < 4) {
+                console.warn(`tsv2impl : Skipping row. Expecting >=4 columns, got ${rowData.length}. Data: ${rowData}`);
                 return false;
             };
+            // Skip if not numbers
+            if (isNaN(parseFloat(rowData[1])) || isNaN(parseFloat(rowData[2])) || isNaN(parseFloat(rowData[3])))
+                return false;
             return true;
         })
         .map(rowData => {
