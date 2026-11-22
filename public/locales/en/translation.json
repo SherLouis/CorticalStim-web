@@ -191,6 +191,7 @@
                 "button_filter_off": "Reset filters",
                 "button_select_columns": "Select columns",
                 "button_download_csv": "Download as CSV",
+                "button_download_pdf": "Download as PDF",
                 "results_table": {
                     "implantation_group_title": "Implantation",
                     "electrode_title": "Electrode",

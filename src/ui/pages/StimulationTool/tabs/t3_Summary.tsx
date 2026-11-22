@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ActionIcon, Alert, Box, Checkbox, Group, MultiSelect, Popover } from "@mantine/core";
 import { useListState } from "@mantine/hooks";
-import { IconAlertTriangle, IconFileTypeCsv, IconFilterOff, IconTableOptions } from "@tabler/icons-react";
+import { IconAlertTriangle, IconFileTypeCsv, IconFileTypePdf, IconFilterOff, IconTableOptions } from "@tabler/icons-react";
 import sortBy from 'lodash.sortby';
 import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
 import { DataTableColumnToggle } from "mantine-datatable/dist/hooks";
@@ -12,10 +12,13 @@ import { useTranslation } from "react-i18next";
 import { Electrode, Stimulation, StimulationPoint } from "@/core/domain";
 import { StimulationLocation } from "@/core/domain/stimulationPoint";
 import { computeChargeDensity, getStimPointDisplayLabel, getStimPointLabel } from "@/core/domain/utils";
+import { formatEpiManifestation, formatSelectedObservedEffect } from "@/ui/components/StimulationEffectSelection";
+import { formatSelectedTask } from "@/ui/components/StimulationTaskSelection";
+import { Result } from "@/ui/core/types";
+import { exportResultsToPdf } from "@/ui/tools/pdfExport";
 
 import { TabProperties } from "./tab_properties";
-import { formatEpiManifestation, formatSelectedObservedEffect } from "../../../components/StimulationEffectSelection";
-import { formatSelectedTask } from "../../../components/StimulationTaskSelection";
+
 
 const formatPointLocation = (point_location: StimulationLocation) => {
     switch (point_location.type) {
@@ -216,6 +219,15 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
         csvFileRef?.current?.link.click();
     }
 
+    const downloadRecordsToPdf = () => {
+        exportResultsToPdf({
+            records,
+            columns: effectiveColumns,
+            patientId: source.patientId,
+            t,
+        });
+    }
+
     const csvHeaders = useMemo(() => {
         return tableColumns.map(c => {
             const columnTitle = c?.title as string;
@@ -268,6 +280,9 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
                     <ActionIcon title={t('pages.stimulationTool.summary.button_download_csv')}>
                         <IconFileTypeCsv onClick={downloadRecordsToCsv} />
                     </ActionIcon>
+                    <ActionIcon title={t('pages.stimulationTool.summary.button_download_pdf')}>
+                        <IconFileTypePdf onClick={downloadRecordsToPdf} />
+                    </ActionIcon>
                 </Group>
                 <DataTable
                     height={"96%"}
@@ -300,28 +315,6 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
             </Box>
         </Box>
     );
-}
-
-interface Result {
-    id: string;
-    electrode: string;
-    pointId: string;
-    roi: string;
-    stimulation_time: string;
-    amplitude: number;
-    duration: number;
-    frequency: number;
-    length_path: number;
-    charge_density: number;
-    task: string;
-    cognitive_effect: string;
-    epi_manifestation: string;
-    contact_in_epi_zone: string;
-    contact_in_epi_zone_comments: string;
-    post_discharge: boolean;
-    post_discharge_details: string;
-    crisis: boolean;
-    crisis_comments: string;
 }
 
 interface SummaryTabProps extends TabProperties {
