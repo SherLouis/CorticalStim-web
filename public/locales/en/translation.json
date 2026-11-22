@@ -111,6 +111,12 @@
                 "guide_alert_no_electrode_text": "Go to the implantation tab to configure electrode and contact placement.",
                 "guide_alert_fill_task_and_params_title": "Configure stimulation parameters and select task performed",
                 "guide_alert_fill_task_and_params_text": "Please configure stimulation parameters (amplitude, frequency, duration) for selected contact. If a task is performed for this stimulation, please select it (upper right portion of the screen). When ready, press the button to save the time of the stimulation.",
+                "validations": {
+                    "amplitude": "Amplitude must be greater than 0",
+                    "frequency": "Frequency must be greater than 0",
+                    "duration": "Duration must be greater than 0",
+                    "length_path": "Length path must be greater than 0"
+                },
                 "contacts_title": "Contacts",
                 "parameters_title": "Parameters",
                 "amplitude_label": "Amplitude",
@@ -122,7 +128,7 @@
                 "task_last_used_title": "Last used",
                 "task_other_value_label": "Other",
                 "task_no_task_used": "No task used",
-                "no_task_selected": "Please select a task before stimulation",
+                "no_task_selected": "Please select a task and stimulation parameters before stimulation",
                 "set_time_label_now": "Set current time",
                 "set_time_label_custom": "Specify a time",
                 "saveButtonLabel": "Save",

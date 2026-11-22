@@ -111,6 +111,12 @@
                 "guide_alert_no_electrode_text": "Allez à l'onglet Implantation afin de configurer la disposition des électrodes et le positionnement des contacts.",
                 "guide_alert_fill_task_and_params_title": "Configurez les paramètres de la stimulation et la tâche réalisée.",
                 "guide_alert_fill_task_and_params_text": "Configurez les paramètres de la stimulation (amplitude, fréquence, durée) pour le point sélectionné. Si une tâche est réalisée lors de cette stimulation, veuillez la sélectionner (portion supérieure droite de l'écran). Lorsque prêt, appuyez sur le bouton pour enregistrer l'heure de la stimulation.",
+                "validations": {
+                    "amplitude": "Amplitude doit être plus grande que 0",
+                    "frequency": "Fréquence doit être plus grande que 0",
+                    "duration": "Durée doit être plus grande que 0",
+                    "length_path": "Durée de phase doit être plus grande que 0"
+                },
                 "contacts_title": "Contacts",
                 "parameters_title": "Paramètres",
                 "amplitude_label": "Amplitude",
@@ -122,7 +128,7 @@
                 "task_last_used_title": "Derniers utilisés",
                 "task_other_value_label": "Autre",
                 "task_no_task_used": "Aucune tâche utilisée",
-                "no_task_selected": "Veuillez sélectionner une tâche avant de stimuler",
+                "no_task_selected": "Veuillez sélectionner une tâche et les paramètres avant de stimuler",
                 "set_time_label_now": "Enregistrer l'heure actuelle",
                 "set_time_label_custom": "Introduire une autre heure",
                 "saveButtonLabel": "Enregistrer",

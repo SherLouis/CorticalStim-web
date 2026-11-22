@@ -10,7 +10,6 @@ import Section from "./Section";
 
 export default function StimulationParametersSelection({ form: params_form }: StimulationParametersSelectionProps) {
     const { t } = useTranslation();
-
     const parameterSelection = (
         <Group position="center" align="top" noWrap>
             <CustomNumberInput
@@ -23,7 +22,9 @@ export default function StimulationParametersSelection({ form: params_form }: St
                 max={10}
                 variant='default'
                 useCustom={true}
-                value={params_form.values.amplitude} onChange={(v) => params_form.setFieldValue('amplitude', v)}
+                value={params_form.values.amplitude}
+                onChange={(v) => params_form.setFieldValue('amplitude', v)}
+                inputProps={params_form.getInputProps('amplitude')}
             />
             <Stack align="center" h={"100%"} spacing={0}>
                 <CustomNumberInput
@@ -32,7 +33,9 @@ export default function StimulationParametersSelection({ form: params_form }: St
                     step={1}
                     min={0}
                     styles={{ input: { textAlign: "center" } }}
-                    value={params_form.values.frequency} onChange={(v) => params_form.setFieldValue('frequency', v)}
+                    value={params_form.values.frequency} 
+                    onChange={(v) => params_form.setFieldValue('frequency', v)}
+                    inputProps={params_form.getInputProps('frequency')}
                 />
                 <Group spacing={0} grow w={"100%"}>
                     {[1, 5, 50, 55].map((v) =>
@@ -52,7 +55,9 @@ export default function StimulationParametersSelection({ form: params_form }: St
                     step={1}
                     min={0}
                     styles={{ input: { textAlign: "center" } }}
-                    value={params_form.values.duration} onChange={(v) => params_form.setFieldValue('duration', v)}
+                    value={params_form.values.duration}
+                    onChange={(v) => params_form.setFieldValue('duration', v)}
+                    inputProps={params_form.getInputProps('duration')}
                 />
                 <Group spacing={0} grow w={"100%"}>
                     {[5, 10, 30, 60].map((v) =>
@@ -72,7 +77,9 @@ export default function StimulationParametersSelection({ form: params_form }: St
                     step={1}
                     min={0}
                     styles={{ input: { textAlign: "center" } }}
-                    value={params_form.values.lengthPath} onChange={(v) => params_form.setFieldValue('lengthPath', v)}
+                    value={params_form.values.lengthPath}
+                    onChange={(v) => params_form.setFieldValue('lengthPath', v)}
+                    inputProps={params_form.getInputProps('lengthPath')}
                 />
                 <Group spacing={0} grow w={"100%"}>
                     {[300, 500].map((v) =>
