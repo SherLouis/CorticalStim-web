@@ -6,7 +6,6 @@ import { IconAlertTriangle, IconFileTypeCsv, IconFileTypePdf, IconFilterOff, Ico
 import sortBy from 'lodash.sortby';
 import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
 import { DataTableColumnToggle } from "mantine-datatable/dist/hooks";
-import { CSVLink } from "react-csv";
 import { useTranslation } from "react-i18next";
 
 import { Electrode, Stimulation, StimulationPoint } from "@/core/domain";
@@ -15,6 +14,7 @@ import { computeChargeDensity, getStimPointDisplayLabel, getStimPointLabel } fro
 import { formatEpiManifestation, formatSelectedObservedEffect } from "@/ui/components/StimulationEffectSelection";
 import { formatSelectedTask } from "@/ui/components/StimulationTaskSelection";
 import { Result } from "@/ui/core/types";
+import { exportResultsToCsv } from "@/ui/tools/csvExport";
 import { exportResultsToPdf } from "@/ui/tools/pdfExport";
 
 import { TabProperties } from "./tab_properties";
@@ -107,8 +107,6 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
             return true;
         });
     }, [allRecords, sortStatus, pointIdList]);
-
-    const csvFileRef = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
 
     const lastFiltersRef = useRef(filters);
     useEffect(() => {
@@ -216,7 +214,11 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
     })
 
     const downloadRecordsToCsv = () => {
-        csvFileRef?.current?.link.click();
+        exportResultsToCsv({
+            records,
+            columns: effectiveColumns,
+            patientId: source.patientId,
+        });
     }
 
     const downloadRecordsToPdf = () => {
@@ -228,13 +230,6 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
         });
     }
 
-    const csvHeaders = useMemo(() => {
-        return tableColumns.map(c => {
-            const columnTitle = c?.title as string;
-            return { key: c.accessor, label: columnTitle };
-        })
-    }, [tableColumns]);
-
     return (
         <Box h={"100%"}>
             <Alert w={"100%"} display={records.length === 0 ? 'block' : 'none'}
@@ -243,14 +238,6 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
                 {t('pages.stimulationTool.summary.alert_no_data_text')}
             </Alert>
             <Box h={"100%"} display={records.length > 0 ? 'block' : 'none'}>
-                <CSVLink
-                    data={records}
-                    headers={csvHeaders}
-                    filename={`${source.patientId}_${new Date().toISOString().split('T')[0]}_summary.csv`}
-                    hidden
-                    ref={csvFileRef}
-                    target='_blank'
-                />
                 <Group position='right' h={"4%"}>
                     <ActionIcon title={t('pages.stimulationTool.summary.button_filter_off')}>
                         <IconFilterOff onClick={clearAllFilters} />

@@ -23,7 +23,6 @@
     "mobx-react-lite": "^5.1.2",
     "natural-compare": "^1.4.0",
     "react": "^18.2.0",
-    "react-csv": "^2.2.2",
     "react-dom": "^18.2.0",
     "react-i18next": "^13.5.0",
     "react-router-dom": "^6.19.0"
@@ -67,7 +66,6 @@
     "@types/natural-compare": "^1.4.3",
     "@types/node": "^20.9.3",
     "@types/react": "^18.2.38",
-    "@types/react-csv": "^1.1.10",
     "@types/react-dom": "^18.2.16",
     "craco": "^0.0.3",
     "craco-alias": "^3.0.1",
