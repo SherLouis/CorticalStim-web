@@ -190,5 +190,5 @@ interface StimulationTaskSelectionProps {
 }
 
 
-export const NO_TASK: StimulationTaskFormValues = { category: "None", subcategory: "", characteristic: "" };
+export const NO_TASK: StimulationTaskFormValues = { category: "-", subcategory: "", characteristic: "" };
 
