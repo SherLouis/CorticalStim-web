@@ -195,6 +195,10 @@
                 "button_download_csv": "Télécharger au format CSV",
                 "button_download_pdf": "Télécharger au format PDF",
                 "records_shown_total": "{{count}} sur {{total}} enregistrements affichés",
+                "confirm_delete_title": "Supprimer la stimulation?",
+                "confirm_delete_text": "Cette action est irréversible.",
+                "confirm_delete_confirm": "Supprimer",
+                "confirm_delete_cancel": "Annuler",
                 "results_table": {
                     "implantation_group_title": "Implantation",
                     "electrode_title": "Électrode",
@@ -217,7 +221,10 @@
                     "post_discharge_title": "Post Décharge",
                     "post_discharge_details_title": "Post Décharge - Details",
                     "crisis_title": "Crise",
-                    "crisis_comments_title": "Crise (commentaires)"
+                    "crisis_comments_title": "Crise (commentaires)",
+                    "action_title": "Actions",
+                    "delete_tooltip": "Supprimer la stimulation",
+                    "actions_group_title": "Actions"
                 }
             }
         },
