@@ -639,7 +639,7 @@ export const formatEpiManifestation = (epiManif: string, t: TFunction): string =
 export const formatSelectedObservedEffect = (values: StimulationObservedEffectFormValues | StimulationObservedEffectFormValues[]): string => {
     const effects = Array.isArray(values) ? values : [values];
     return effects
-        .filter(e => e.class !== "")
+        .filter(e => e.class !== "" && e.class !== "None")
         .map(e => e.class +
             (e.descriptor !== "" ? ('/' + e.descriptor
                 + (e.details !== "" ? ('/' + e.details) : '')) : ''))

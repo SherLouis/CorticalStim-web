@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { ActionIcon, Alert, Box, Checkbox, Group, MultiSelect, Popover } from "@mantine/core";
+import { ActionIcon, Alert, Box, Button, Checkbox, Group, MultiSelect, Popover, Text, Tooltip } from "@mantine/core";
 import { useListState } from "@mantine/hooks";
-import { IconAlertTriangle, IconFileTypeCsv, IconFileTypePdf, IconFilterOff, IconTableOptions } from "@tabler/icons-react";
+import { IconAlertTriangle, IconFileTypeCsv, IconFileTypePdf, IconFilterBolt, IconFilterOff, IconTableOptions } from "@tabler/icons-react";
 import sortBy from 'lodash.sortby';
 import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
 import { DataTableColumnToggle } from "mantine-datatable/dist/hooks";
@@ -55,6 +55,15 @@ const formatYesNoUnknown = (value: string, t: any) => {
     }
 }
 
+const hasRelevantEffect = (record: Result): boolean => {
+    return (
+        record.cognitive_effect !== '-' ||
+        record.epi_manifestation !== '-' ||
+        record.post_discharge === true ||
+        record.crisis === true
+    );
+};
+
 const allColumnsProps = { sortable: true, resizable: false, draggable: false, toggleable: false };
 
 export default function SummaryTab({ store, filters }: SummaryTabProps) {
@@ -95,6 +104,7 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
             ));
     }, [source.electrodes, t]);
 
+    const [showRelevantOnly, setShowRelevantOnly] = useState(false);
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'pointId', direction: 'desc' });
     const [pointIdList, setPointIdListHandlers] = useListState(filters ? filters.pointIds : []);
 
@@ -104,9 +114,10 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
 
         return data.filter((result) => {
             if (pointIdList.length !== 0 && !pointIdList.includes(result.pointId)) { return false; }
+            if (showRelevantOnly && !hasRelevantEffect(result)) { return false; }
             return true;
         });
-    }, [allRecords, sortStatus, pointIdList]);
+    }, [allRecords, sortStatus, pointIdList, showRelevantOnly]);
 
     const lastFiltersRef = useRef(filters);
     useEffect(() => {
@@ -118,6 +129,7 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
 
     const clearAllFilters = () => {
         setPointIdListHandlers.setState([]);
+        setShowRelevantOnly(false);
         setSortStatus({ columnAccessor: 'pointId', direction: 'desc' });
     }
 
@@ -238,38 +250,53 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
                 {t('pages.stimulationTool.summary.alert_no_data_text')}
             </Alert>
             <Box h={"100%"} display={records.length > 0 ? 'block' : 'none'}>
-                <Group position='right' h={"4%"}>
-                    <ActionIcon title={t('pages.stimulationTool.summary.button_filter_off')}>
-                        <IconFilterOff onClick={clearAllFilters} />
-                    </ActionIcon>
-                    <Popover position='bottom-end'>
-                        <Popover.Target>
-                            <ActionIcon title={t('pages.stimulationTool.summary.button_select_columns')}>
-                                <IconTableOptions />
-                            </ActionIcon>
-                        </Popover.Target>
-                        <Popover.Dropdown>
-                            <Checkbox.Group
-                                value={columnsToggle.filter((col) => col.toggled).map(col => col.accessor)}
-                                onChange={(checkedValues) => { setColumnsToggle((prevToggleState) => prevToggleState.map(toggle => { return { ...toggle, toggled: checkedValues.includes(toggle.accessor) } as DataTableColumnToggle })) }}
-                                label={t('pages.stimulationTool.summary.button_select_columns')}
-                            >
-                                {columnsToggle.map(c =>
-                                    <Checkbox
-                                        value={c.accessor}
-                                        key={c.accessor}
-                                        label={effectiveColumns.filter(ec => ec.accessor === c.accessor).length > 0 ? effectiveColumns.filter(ec => ec.accessor === c.accessor)[0].title : ''} />
-                                )}
-                            </Checkbox.Group>
-                        </Popover.Dropdown>
-                    </Popover>
+                <Group position="apart" h={"4%"}>
+                    <Text c="dimmed" size="sm">
+                        {t('pages.stimulationTool.summary.records_shown_total', { count: records.length, total: allRecords.length })}
+                    </Text>
 
-                    <ActionIcon title={t('pages.stimulationTool.summary.button_download_csv')}>
-                        <IconFileTypeCsv onClick={downloadRecordsToCsv} />
-                    </ActionIcon>
-                    <ActionIcon title={t('pages.stimulationTool.summary.button_download_pdf')}>
-                        <IconFileTypePdf onClick={downloadRecordsToPdf} />
-                    </ActionIcon>
+                    <Group position='right' h={"100%"}>
+                        <Tooltip label={t('pages.stimulationTool.summary.button_filter_relevant_tooltip')}>
+                            <Button py={"sm"}
+                                leftIcon={<IconFilterBolt />}
+                                variant={showRelevantOnly ? 'filled' : 'subtle'}
+                                color={'gray'}
+                                onClick={() => setShowRelevantOnly(!showRelevantOnly)}>
+                                <Text size="xs" ml="xs">{t('pages.stimulationTool.summary.button_filter_relevant')}</Text>
+                            </Button>
+                        </Tooltip>
+                        <ActionIcon title={t('pages.stimulationTool.summary.button_filter_off')}>
+                            <IconFilterOff onClick={clearAllFilters} />
+                        </ActionIcon>
+                        <Popover position='bottom-end'>
+                            <Popover.Target>
+                                <ActionIcon title={t('pages.stimulationTool.summary.button_select_columns')}>
+                                    <IconTableOptions />
+                                </ActionIcon>
+                            </Popover.Target>
+                            <Popover.Dropdown>
+                                <Checkbox.Group
+                                    value={columnsToggle.filter((col) => col.toggled).map(col => col.accessor)}
+                                    onChange={(checkedValues) => { setColumnsToggle((prevToggleState) => prevToggleState.map(toggle => { return { ...toggle, toggled: checkedValues.includes(toggle.accessor) } as DataTableColumnToggle })) }}
+                                    label={t('pages.stimulationTool.summary.button_select_columns')}
+                                >
+                                    {columnsToggle.map(c =>
+                                        <Checkbox
+                                            value={c.accessor}
+                                            key={c.accessor}
+                                            label={effectiveColumns.filter(ec => ec.accessor === c.accessor).length > 0 ? effectiveColumns.filter(ec => ec.accessor === c.accessor)[0].title : ''} />
+                                    )}
+                                </Checkbox.Group>
+                            </Popover.Dropdown>
+                        </Popover>
+
+                        <ActionIcon title={t('pages.stimulationTool.summary.button_download_csv')}>
+                            <IconFileTypeCsv onClick={downloadRecordsToCsv} />
+                        </ActionIcon>
+                        <ActionIcon title={t('pages.stimulationTool.summary.button_download_pdf')}>
+                            <IconFileTypePdf onClick={downloadRecordsToPdf} />
+                        </ActionIcon>
+                    </Group>
                 </Group>
                 <DataTable
                     height={"96%"}

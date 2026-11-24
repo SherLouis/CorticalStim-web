@@ -189,9 +189,12 @@
                 "alert_no_data_title": "Aucune donnée!",
                 "alert_no_data_text": "Il n'y a pas de donnée à afficher. Compléter les volets implantation et stimulation pour ajouter des données.",
                 "button_filter_off": "Réinitialiser les filtres",
+                "button_filter_relevant": "Pertinents",
+                "button_filter_relevant_tooltip": "Afficher uniquement les stimulations avec effets cognitifs, manifestations épileptiques, post-décharges ou crises",
                 "button_select_columns": "Sélectionner les colonnes",
                 "button_download_csv": "Télécharger au format CSV",
                 "button_download_pdf": "Télécharger au format PDF",
+                "records_shown_total": "{{count}} sur {{total}} enregistrements affichés",
                 "results_table": {
                     "implantation_group_title": "Implantation",
                     "electrode_title": "Électrode",
