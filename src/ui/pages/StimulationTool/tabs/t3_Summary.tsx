@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { ActionIcon, Alert, Box, Button, Checkbox, Group, MultiSelect, Popover, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Alert, Box, Button, Checkbox, Group, Modal, MultiSelect, Popover, Text, Tooltip } from "@mantine/core";
 import { useListState } from "@mantine/hooks";
-import { IconAlertTriangle, IconFileTypeCsv, IconFileTypePdf, IconFilterBolt, IconFilterOff, IconTableOptions } from "@tabler/icons-react";
+import { IconAlertTriangle, IconFileTypeCsv, IconFileTypePdf, IconFilterBolt, IconFilterOff, IconTableOptions, IconTrash, IconEdit } from "@tabler/icons-react";
 import sortBy from 'lodash.sortby';
 import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
 import { DataTableColumnToggle } from "mantine-datatable/dist/hooks";
+import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
 import { Electrode, Stimulation, StimulationPoint } from "@/core/domain";
@@ -66,47 +67,73 @@ const hasRelevantEffect = (record: Result): boolean => {
 
 const allColumnsProps = { sortable: true, resizable: false, draggable: false, toggleable: false };
 
-export default function SummaryTab({ store, filters }: SummaryTabProps) {
+function SummaryTab({ store, filters, onEdit }: SummaryTabProps) {
     const { t } = useTranslation();
 
     // Use adapter if available, otherwise fall back to form
     const source = store.session
 
-    const allRecords = useMemo(() => {
-        return (
-            source.electrodes.flatMap((elec: Electrode) =>
-                elec.stimulationPoints.flatMap((point: StimulationPoint) =>
-                    point.stimulations.flatMap((stim: Stimulation, i: number) => {
-                        return {
-                            id: getStimPointLabel(elec.label, point.index) + i,
-                            electrode: elec.label,
-                            pointId: getStimPointLabel(elec.label, point.index),
-                            roi: formatPointLocation(point.location),
-                            stimulation_time: new Date(stim.time).toLocaleString(),
-                            amplitude: stim.parameters.amplitude,
-                            duration: stim.parameters.duration,
-                            frequency: stim.parameters.frequency,
-                            length_path: stim.parameters.lengthPath,
-                            charge_density: computeChargeDensity(stim.parameters.amplitude, stim.parameters.lengthPath),
-                            task: formatSelectedTask(stim.task),
-                            cognitive_effect: formatSelectedObservedEffect(stim.effect.observed_effect),
-                            observed_effect_comments: stim.effect.observed_effect_comments,
-                            epi_manifestation: formatEpiManifestation(stim.effect.epi_manifestation, t),
-                            contact_in_epi_zone: stim.effect.contact_in_epi_zone,
-                            contact_in_epi_zone_comments: stim.effect.contact_in_epi_zone_comments,
-                            post_discharge: stim.effect.post_discharge,
-                            post_discharge_details: stim.effect.post_discharge ? stim.effect.pd_duration + 's, ' + stim.effect.pd_local + ', ' + stim.effect.pd_type : '-',
-                            crisis: stim.effect.crisis,
-                            crisis_comments: stim.effect.crisis_comments
-                        } as Result
-                    })
-                )
-            ));
-    }, [source.electrodes, t]);
+    // Not memoized: recomputed on every render (observer triggers re-render on store changes)
+    const allRecords = (
+        source.electrodes.flatMap((elec: Electrode, eIdx: number) =>
+            elec.stimulationPoints.flatMap((point: StimulationPoint, spIdx: number) =>
+                point.stimulations.flatMap((stim: Stimulation, sIdx: number) => {
+                    return {
+                        id: getStimPointLabel(elec.label, point.index) + sIdx,
+                        electrode: elec.label,
+                        pointId: getStimPointLabel(elec.label, point.index),
+                        roi: formatPointLocation(point.location),
+                        stimulation_time: new Date(stim.time).toLocaleString(),
+                        amplitude: stim.parameters.amplitude,
+                        duration: stim.parameters.duration,
+                        frequency: stim.parameters.frequency,
+                        length_path: stim.parameters.lengthPath,
+                        charge_density: computeChargeDensity(stim.parameters.amplitude, stim.parameters.lengthPath),
+                        task: formatSelectedTask(stim.task),
+                        cognitive_effect: formatSelectedObservedEffect(stim.effect.observed_effect),
+                        observed_effect_comments: stim.effect.observed_effect_comments,
+                        epi_manifestation: formatEpiManifestation(stim.effect.epi_manifestation, t),
+                        contact_in_epi_zone: stim.effect.contact_in_epi_zone,
+                        contact_in_epi_zone_comments: stim.effect.contact_in_epi_zone_comments,
+                        post_discharge: stim.effect.post_discharge,
+                        post_discharge_details: stim.effect.post_discharge ? stim.effect.pd_duration + 's, ' + stim.effect.pd_local + ', ' + stim.effect.pd_type : '-',
+                        crisis: stim.effect.crisis,
+                        crisis_comments: stim.effect.crisis_comments,
+                        electrodeIndex: eIdx,
+                        stimPointIndex: spIdx,
+                        stimulationIndex: sIdx
+                    } as Result
+                })
+            )
+        ));
 
     const [showRelevantOnly, setShowRelevantOnly] = useState(false);
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'pointId', direction: 'desc' });
     const [pointIdList, setPointIdListHandlers] = useListState(filters ? filters.pointIds : []);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [recordToDelete, setRecordToDelete] = useState<Result | null>(null);
+
+    const handleDeleteClick = (record: Result) => {
+        setRecordToDelete(record);
+        setShowDeleteConfirm(true);
+    };
+
+    const confirmDelete = () => {
+        if (recordToDelete && store) {
+            store.deleteStimulation(recordToDelete.electrodeIndex, recordToDelete.stimPointIndex, recordToDelete.stimulationIndex);
+        }
+        setShowDeleteConfirm(false);
+        setRecordToDelete(null);
+    };
+
+    const cancelDelete = () => {
+        setShowDeleteConfirm(false);
+        setRecordToDelete(null);
+    };
+
+    const handleEditClick = useCallback((record: Result) => {
+        onEdit?.(record.electrodeIndex, record.stimPointIndex, record.stimulationIndex);
+    }, [onEdit]);
 
     const records = useMemo(() => {
         let data = sortBy(allRecords, sortStatus.columnAccessor);
@@ -217,18 +244,48 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
             title: t('pages.stimulationTool.summary.results_table.crisis_comments_title'),
             defaultToggle: false,
             ...allColumnsProps
+        },
+        {
+            accessor: 'actions',
+            title: t('pages.stimulationTool.summary.results_table.action_title'),
+            render: (result: Result) => (
+                <Button.Group>
+                    <ActionIcon
+                        title={t('pages.stimulationTool.summary.results_table.edit_tooltip')}
+                        variant="subtle"
+                        onClick={() => handleEditClick(result)}
+                    >
+                        <IconEdit size={16} />
+                    </ActionIcon>
+                    <ActionIcon
+                        title={t('pages.stimulationTool.summary.results_table.delete_tooltip')}
+                        color="red"
+                        variant="subtle"
+                        onClick={() => handleDeleteClick(result)}
+                    >
+                        <IconTrash size={16} />
+                    </ActionIcon>
+                </Button.Group>
+            ),
+            toggleable: false,
+            defaultToggle: true,
+            sortable: false,
+            resizable: false,
+            draggable: false
         }
-    ] as DataTableColumn<Result>[], [t, allRecords, pointIdList, setPointIdListHandlers]);
+    ] as DataTableColumn<Result>[], [t, allRecords, pointIdList, setPointIdListHandlers, handleEditClick]);
 
     const { effectiveColumns, columnsToggle, setColumnsToggle } = useDataTableColumns<Result>({
         key: columnsLocalStorageKey,
         columns: tableColumns
     })
 
+    const columnsForExport = effectiveColumns.filter(c => c.accessor !== "actions");
+
     const downloadRecordsToCsv = () => {
         exportResultsToCsv({
             records,
-            columns: effectiveColumns,
+            columns: columnsForExport,
             patientId: source.patientId,
         });
     }
@@ -236,7 +293,7 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
     const downloadRecordsToPdf = () => {
         exportResultsToPdf({
             records,
-            columns: effectiveColumns,
+            columns: columnsForExport,
             patientId: source.patientId,
             t,
         });
@@ -244,6 +301,21 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
 
     return (
         <Box h={"100%"}>
+            <Modal
+                opened={showDeleteConfirm}
+                onClose={cancelDelete}
+                title={t('pages.stimulationTool.summary.confirm_delete_title')}
+            >
+                <Text>{t('pages.stimulationTool.summary.confirm_delete_text')}</Text>
+                <Group position="apart" mt="md">
+                    <Button variant="subtle" onClick={cancelDelete}>
+                        {t('pages.stimulationTool.summary.confirm_delete_cancel')}
+                    </Button>
+                    <Button leftIcon={<IconTrash color="white" />} color="red" onClick={confirmDelete}>
+                        {t('pages.stimulationTool.summary.confirm_delete_confirm')}
+                    </Button>
+                </Group>
+            </Modal>
             <Alert w={"100%"} display={records.length === 0 ? 'block' : 'none'}
                 icon={<IconAlertTriangle size="2rem" color="red" />}
                 title={t('pages.stimulationTool.summary.alert_no_data_title')}>
@@ -323,6 +395,11 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
                             id: 'effects_group',
                             title: t('pages.stimulationTool.summary.results_table.effects_group_title'),
                             columns: effectiveColumns.filter((c) => ['cognitive_effect', 'observed_effect_comments', 'epi_manifestation', 'contact_in_epi_zone', 'contact_in_epi_zone_comments', 'post_discharge', 'post_discharge_details', 'crisis', 'crisis_comments'].includes(c.accessor))
+                        },
+                        {
+                            id: 'actions_group',
+                            title: t('pages.stimulationTool.summary.results_table.actions_group_title'),
+                            columns: effectiveColumns.filter((c) => ['actions'].includes(c.accessor))
                         }
                     ]}
                 />
@@ -331,8 +408,11 @@ export default function SummaryTab({ store, filters }: SummaryTabProps) {
     );
 }
 
+export default observer(SummaryTab);
+
 interface SummaryTabProps extends TabProperties {
-    filters?: SummaryFilters
+    filters?: SummaryFilters;
+    onEdit?: (electrodeIndex: number, stimPointIndex: number, stimulationIndex: number) => void;
 }
 
 export interface SummaryFilters {

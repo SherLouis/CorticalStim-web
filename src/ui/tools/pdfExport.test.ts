@@ -78,6 +78,9 @@ const createMockRecords = (): Result[] => [
         post_discharge_details: '-',
         crisis: false,
         crisis_comments: '',
+        electrodeIndex: 0,
+        stimPointIndex: 0,
+        stimulationIndex: 0,
     },
     {
         id: '2',
@@ -99,6 +102,9 @@ const createMockRecords = (): Result[] => [
         post_discharge_details: '5s, local, type1',
         crisis: false,
         crisis_comments: '',
+        electrodeIndex: 1,
+        stimPointIndex: 1,
+        stimulationIndex: 0,
     },
 ];
 

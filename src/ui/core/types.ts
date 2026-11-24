@@ -63,4 +63,7 @@ export interface Result {
     post_discharge_details: string;
     crisis: boolean;
     crisis_comments: string;
+    electrodeIndex: number;
+    stimPointIndex: number;
+    stimulationIndex: number;
 }

@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { DateTimePicker, DateValue } from "@mantine/dates";
 import { useForm, UseFormReturnType } from "@mantine/form";
 import { useListState } from "@mantine/hooks";
-import { IconAlertCircle, IconCheck, IconCircleCheck, IconCircleX, IconClockCheck, IconClockEdit, IconEye, IconTrash } from "@tabler/icons-react";
+import { IconAlertCircle, IconCancel, IconCheck, IconCircleCheck, IconCircleX, IconClockCheck, IconClockEdit, IconEye, IconTrash } from "@tabler/icons-react";
 import { t } from "i18next";
 import { useTranslation } from "react-i18next";
 
@@ -23,28 +23,32 @@ import { StimulationEffectsValues, StimulationObservedEffectFormValues, Stimulat
 
 import { TabProperties } from "./tab_properties";
 
-export default function StimulationsTab({ store, viewPointSummary }: StimulationTabProps) {
+const StimulationsTab = function StimulationsTab({ store, viewPointSummary, editStimulation }: StimulationTabProps) {
     // TODO: ajouter validations (ex: post discharge time cannot be 0 or negative if set to true)
 
     const { t } = useTranslation();
 
-    const [selectedPoint, setSelectedPoint] = useState<string>("");
-    useEffect(() => {
-        return () => setSelectedPoint("");
-    }, []);
+    // Edit mode state
+    const isEditMode = !!editStimulation;
+    const loadedEditStimulationRef = useRef<{
+        electrodeIndex: number;
+        stimPointIndex: number;
+        stimulationIndex: number;
+    } | null>(null);
+
+    const [selectedPoint, setSelectedPoint] = useState<string>(isEditMode && editStimulation ? getStimPointLabel(store.session.electrodes[editStimulation.electrodeIndex].label, editStimulation.stimPointIndex) : "");
     const [showConfirmNoSave, setShowConfirmNoSave] = useState<boolean>(false);
 
-    const [stimulationTime, setStimulationTime] = useState<string>("");
+    const [stimulationTime, setStimulationTime] = useState<string>(isEditMode && editStimulation ? store.session.electrodes[editStimulation.electrodeIndex].stimulationPoints[editStimulation.stimPointIndex].stimulations[editStimulation.stimulationIndex].time : "");
 
     // Forms
-    // TODO: add validations on params (positive, not 0)
-    const params_form = useForm<StimulationParametersFormValues>({ 
+    const params_form = useForm<StimulationParametersFormValues>({
         initialValues: { amplitude: 1.0, duration: 0, frequency: 0, lengthPath: 0 },
         validate: {
-            "amplitude": (value) => value<=0 ? t('pages.stimulationTool.stimulation.validations.amplitude'): null,
-            "frequency": (value) => value<=0 ? t('pages.stimulationTool.stimulation.validations.frequency'): null,
-            "duration": (value) => value<=0 ? t('pages.stimulationTool.stimulation.validations.duration'): null,
-            "lengthPath": (value) => value<=0 ? t('pages.stimulationTool.stimulation.validations.length_path'): null,
+            "amplitude": (value) => value <= 0 ? t('pages.stimulationTool.stimulation.validations.amplitude') : null,
+            "frequency": (value) => value <= 0 ? t('pages.stimulationTool.stimulation.validations.frequency') : null,
+            "duration": (value) => value <= 0 ? t('pages.stimulationTool.stimulation.validations.duration') : null,
+            "lengthPath": (value) => value <= 0 ? t('pages.stimulationTool.stimulation.validations.length_path') : null,
         },
         validateInputOnBlur: true, validateInputOnChange: true
     });
@@ -57,16 +61,60 @@ export default function StimulationsTab({ store, viewPointSummary }: Stimulation
     const MAX_LAST_TASK = 5;
     const MAX_LAST_EFFECT = 5;
 
-    const handleSelectedPointChanged = (newPointId: string) => {
-        if (stimulationTime === '') {
-            resetForNewPoint(newPointId);
+    // Load existing stimulation data when in edit mode
+    useEffect(() => {
+        if (!isEditMode || !editStimulation || !store) {
+            loadedEditStimulationRef.current = null;
+            return;
         }
-        else { setShowConfirmNoSave(true); }
-    }
+        const { electrodeIndex, stimPointIndex, stimulationIndex } = editStimulation;
+        const prev = loadedEditStimulationRef.current;
+        if (prev && prev.electrodeIndex === electrodeIndex && prev.stimPointIndex === stimPointIndex && prev.stimulationIndex === stimulationIndex) {
+            return;
+        }
+        const electrode = store.session.electrodes[electrodeIndex];
+        const stimPoint = electrode?.stimulationPoints[stimPointIndex];
+        const stimulation = stimPoint?.stimulations[stimulationIndex];
 
-    const handleViewResultsForPoint = (pointId: string) => {
-        viewPointSummary(pointId);
-    }
+        if (stimulation) {
+            // Set the selected point to disable contact selection
+            const pointId = getStimPointLabel(electrode.label, stimPointIndex);
+            setSelectedPoint(pointId);
+            setStimulationTime(stimulation.time);
+
+            // Load forms with existing data
+            params_form.setValues({
+                amplitude: stimulation.parameters.amplitude,
+                duration: stimulation.parameters.duration,
+                frequency: stimulation.parameters.frequency,
+                lengthPath: stimulation.parameters.lengthPath,
+            });
+
+            task_form.setValues({
+                category: stimulation.task.category,
+                subcategory: stimulation.task.subcategory,
+                characteristic: stimulation.task.characteristic,
+            });
+
+            effect_form.setValues({
+                // Keep MobX observables in the session store out of Mantine's local form state.
+                observed_effect: stimulation.effect.observed_effect.map((effect) => ({ ...effect })),
+                observed_effect_comments: stimulation.effect.observed_effect_comments,
+                epi_manifestation: stimulation.effect.epi_manifestation,
+                contact_in_epi_zone: stimulation.effect.contact_in_epi_zone,
+                contact_in_epi_zone_comments: stimulation.effect.contact_in_epi_zone_comments,
+                post_discharge: stimulation.effect.post_discharge,
+                pd_duration: stimulation.effect.pd_duration,
+                pd_local: stimulation.effect.pd_local,
+                pd_type: stimulation.effect.pd_type,
+                crisis: stimulation.effect.crisis,
+                crisis_comments: stimulation.effect.crisis_comments,
+            });
+        }
+
+        loadedEditStimulationRef.current = { electrodeIndex, stimPointIndex, stimulationIndex };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isEditMode, editStimulation, store, getStimPointLabel]);
 
     const resetForNewPoint = (newPointId: string) => {
         // Do not reset params_form to keep previously selected values
@@ -74,6 +122,20 @@ export default function StimulationsTab({ store, viewPointSummary }: Stimulation
         effect_form.reset();
         setSelectedPoint(newPointId);
         setStimulationTime('');
+    }
+
+    const handleSelectedPointChanged = (newPointId: string) => {
+        if (isEditMode) { return; } // Disable point selection in edit mode
+        if (stimulationTime === '') {
+            resetForNewPoint(newPointId);
+        }
+        else {
+            setShowConfirmNoSave(true);
+        }
+    }
+
+    const handleViewResultsForPoint = (pointId: string) => {
+        viewPointSummary(pointId);
     }
 
     const handleSubmit = () => {
@@ -87,29 +149,43 @@ export default function StimulationsTab({ store, viewPointSummary }: Stimulation
         effect_form.validate();
         if (!params_form.isValid() || !task_form.isValid() || !effect_form.isValid()) { return; }
 
-        const electrode_label = selectedPoint.split('/').slice(0, -1).join('/');
-
-        // Find electrode and stimulation point indices
         let electrode_i = -1;
         let stim_point_i = -1;
-        store.session.electrodes.forEach((electrode, ei) => {
-            if (electrode.label === electrode_label) {
-                electrode_i = ei;
-                electrode.stimulationPoints.forEach((stim_point, spi) => {
-                    const stimId = getStimPointLabel(electrode.label, spi);
-                    if (stimId === selectedPoint) {
-                        stim_point_i = spi;
-                    }
-                });
-            }
-        });
+        let stimulationIndex = -1;
+
+        if (isEditMode && editStimulation) {
+            // In edit mode, use the provided indices
+            electrode_i = editStimulation.electrodeIndex;
+            stim_point_i = editStimulation.stimPointIndex;
+            stimulationIndex = editStimulation.stimulationIndex;
+        } else {
+            // In add mode, find from selected point
+            const electrode_label = selectedPoint.split('/').slice(0, -1).join('/');
+            store.session.electrodes.forEach((electrode, ei) => {
+                if (electrode.label === electrode_label) {
+                    electrode_i = ei;
+                    electrode.stimulationPoints.forEach((stim_point, spi) => {
+                        const stimId = getStimPointLabel(electrode.label, spi);
+                        if (stimId === selectedPoint) {
+                            stim_point_i = spi;
+                        }
+                    });
+                }
+            });
+        }
 
         if (electrode_i === -1 || stim_point_i === -1) { return; }
 
         const stimulation = toStimulation(stimulationTime, params_form.values, task_form.values, effect_form.values);
 
-        // Save to store via adapter
-        store.addStimulation(electrode_i, stim_point_i, stimulation);
+        if (isEditMode && stimulationIndex !== -1) {
+            // Update existing stimulation
+            store.updateStimulation(electrode_i, stim_point_i, stimulationIndex, stimulation);
+            editStimulation.onSave?.();
+        } else {
+            // Add new stimulation
+            store.addStimulation(electrode_i, stim_point_i, stimulation);
+        }
 
         // Save last used task
         if (JSON.stringify(task_form.values) === JSON.stringify(NO_TASK)) {
@@ -267,6 +343,8 @@ export default function StimulationsTab({ store, viewPointSummary }: Stimulation
                     getSelectedPointEpiManifEffect={getSelectedPointEpiManifEffect}
                     getSelectedPointEEGEffect={getSelectedPointEEGEffect}
                     t={t}
+                    isEditMode={isEditMode}
+                    onCancel={editStimulation?.onCancel}
                 />
             </Box>
 
@@ -291,7 +369,14 @@ export default function StimulationsTab({ store, viewPointSummary }: Stimulation
 }
 
 interface StimulationTabProps extends TabProperties {
-    viewPointSummary: (pointId: string) => void
+    viewPointSummary: (pointId: string) => void;
+    editStimulation?: {
+        electrodeIndex: number;
+        stimPointIndex: number;
+        stimulationIndex: number;
+        onSave: () => void;
+        onCancel: () => void;
+    };
 }
 
 const ContactSelection = ({ electrodes, selectedContact, onSelectedChanged, onViewResultsForPoint }: ContactSelectionProps) => {
@@ -379,6 +464,8 @@ interface CentralBarProps {
     getSelectedPointEpiManifEffect: () => string;
     getSelectedPointEEGEffect: () => string;
     t: any;
+    isEditMode?: boolean;
+    onCancel?: () => void;
 }
 
 const CentralBar = ({
@@ -395,7 +482,9 @@ const CentralBar = ({
     isSelectedPointObservedEffectSelected,
     getSelectedPointEpiManifEffect,
     getSelectedPointEEGEffect,
-    t
+    t,
+    isEditMode,
+    onCancel
 }: CentralBarProps) => {
     const theme = useMantineTheme();
     const formatParameters = (params: StimulationParametersFormValues): string => {
@@ -520,33 +609,39 @@ const CentralBar = ({
                                 <Title order={5}>{new Date(stimulationTime).toLocaleTimeString()}</Title>
                             }
                             {/** Save button */}
-                            <HoverCard disabled={isSelectedPointObservedEffectSelected}>
-                                <HoverCard.Target>
-                                    <Box>
+                            <Stack spacing={5} align="stretch">
+                                <HoverCard disabled={isSelectedPointObservedEffectSelected}>
+                                    <HoverCard.Target>
                                         <Button variant="filled" size="md" color="green" leftIcon={<IconCircleCheck />}
                                             display={stimTimeSet ? 'block' : 'none'}
                                             onClick={handleSubmit}
                                             disabled={stimulationTime === "" || !isSelectedPointObservedEffectSelected}>
-                                            {t('pages.stimulationTool.stimulation.saveButtonLabel')}
+                                            {isEditMode ? t('pages.stimulationTool.stimulation.updateButtonLabel') : t('pages.stimulationTool.stimulation.saveButtonLabel')}
                                         </Button>
-                                    </Box>
-                                </HoverCard.Target>
-                                <HoverCard.Dropdown>
-                                    <Text>{t('pages.stimulationTool.stimulation.no_effect_selected')}</Text>
-                                </HoverCard.Dropdown>
-                            </HoverCard>
+                                    </HoverCard.Target>
+                                    <HoverCard.Dropdown>
+                                        <Text>{t('pages.stimulationTool.stimulation.no_effect_selected')}</Text>
+                                    </HoverCard.Dropdown>
+                                </HoverCard>
+                                <Button variant="filled" size="md" color="gray.7"
+                                    display={(isEditMode && onCancel) ? 'block' : 'none'}
+                                    leftIcon={<IconCancel />}
+                                    onClick={onCancel}>
+                                    {t('pages.stimulationTool.stimulation.cancelButtonLabel')}
+                                </Button>
+                            </Stack>
                         </Group>
                     </Group>
 
                     {/** Parameters & Task or Manif & EEG */}
                     <Box sx={{ flex: 5 }} h={"100%"} p={0} m={0}>
-                        {/** Task & Parameters when stim time is not set */}
-                        <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" spacing={"sm"} display={stimTimeSet ? 'none' : 'flex'}>
+                        {/** Task & Parameters when stim time is not set, or always in edit mode */}
+                        <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" spacing={"sm"} display={stimTimeSet && !isEditMode ? 'none' : 'flex'}>
                             <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
                             <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.parameters_title')} : </strong>{formatParameters(params_form.values)}</Text>
                         </Stack>
-                        {/** Epi manif & EEG when stim time is set */}
-                        <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" spacing={"sm"} display={stimTimeSet ? 'flex' : 'none'}>
+                        {/** Epi manif & EEG when stim time is set, or always in edit mode */}
+                        <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" spacing={"sm"} display={(stimTimeSet || isEditMode) ? 'flex' : 'none'}>
                             <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}:</strong> {getSelectedPointEpiManifEffect()}</Text>
                             <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.effect.eeg')} :</strong> {getSelectedPointEEGEffect()}</Text>
                         </Stack>
@@ -555,8 +650,9 @@ const CentralBar = ({
             </Box>
         </Box>
     );
-}
+};
 
+export default StimulationsTab;
 const ContactColorLegend = ({ t, ...props }: GroupProps & { t: any }) => {
     const variants = [{ variant: "selected", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.selected') },
     { variant: "singleStim", effect: false, label: t('pages.stimulationTool.stimulation.contact_color_legend.stimulated') },

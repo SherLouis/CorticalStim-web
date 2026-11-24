@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { ActionIcon, Alert, Box, Group, Tabs, Text, TextInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
@@ -27,6 +27,17 @@ const StimulationToolPage = observer(function StimulationToolPage() {
     const [activeTab, setActiveTab] = useState<string | null>('implantation');
     const [summaryFilters, setSummaryFilters] = useState<SummaryFilters>({});
     const [hasUnsavedData, setHasUnsavedData] = useState(false);
+    const [editContext, setEditContext] = useState<{
+        electrodeIndex: number;
+        stimPointIndex: number;
+        stimulationIndex: number;
+    } | null>(null);
+
+    const editStimulation = useMemo(() => editContext ? {
+        ...editContext,
+        onSave: () => { setEditContext(null); setActiveTab('summary'); },
+        onCancel: () => { setEditContext(null); setActiveTab('summary'); },
+    } : undefined, [editContext, setEditContext, setActiveTab]);
 
     const downloadFormValues = () => {
         const json = store.toJson();
@@ -86,6 +97,11 @@ const StimulationToolPage = observer(function StimulationToolPage() {
     const handleViewPointSummary = (pointId: string) => {
         setSummaryFilters({ pointIds: [pointId] });
         setActiveTab('summary');
+    }
+
+    const handleEditFromSummary = (electrodeIndex: number, stimPointIndex: number, stimulationIndex: number) => {
+        setEditContext({ electrodeIndex, stimPointIndex, stimulationIndex });
+        setActiveTab('stimulation');
     }
 
     useEffect(() => {
@@ -152,8 +168,16 @@ const StimulationToolPage = observer(function StimulationToolPage() {
                 </Tabs.List>
 
                 <Tabs.Panel value="implantation" h={"95%"}><ElectrodeSetupStep store={store} /></Tabs.Panel>
-                <Tabs.Panel value="stimulation" h={"95%"}><StimulationsTab store={store} viewPointSummary={handleViewPointSummary} /></Tabs.Panel>
-                <Tabs.Panel value="summary" h={"95%"} ><SummaryTab store={store} filters={summaryFilters} /></Tabs.Panel>
+                <Tabs.Panel value="stimulation" h={"95%"}>
+                    <StimulationsTab 
+                        store={store} 
+                        viewPointSummary={handleViewPointSummary}
+                        editStimulation={editStimulation}
+                    />
+                </Tabs.Panel>
+                <Tabs.Panel value="summary" h={"95%"} >
+                    <SummaryTab store={store} filters={summaryFilters} onEdit={handleEditFromSummary} />
+                </Tabs.Panel>
             </Tabs>
         </Box >
     );

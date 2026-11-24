@@ -51,6 +51,14 @@ export class StimulationSessionStore {
      */
     private makeElectrodeObservable(electrode: Electrode): Electrode {
         makeAutoObservable(electrode);
+        // Make stimulation points and their stimulations arrays observable
+        electrode.stimulationPoints = observable.array(
+            electrode.stimulationPoints.map(sp => {
+                const observableSP = makeAutoObservable({ ...sp });
+                observableSP.stimulations = observable.array(sp.stimulations);
+                return observableSP;
+            })
+        );
         return electrode;
     }
 
@@ -200,6 +208,44 @@ export class StimulationSessionStore {
         if (stimPointIndex >= this.session.electrodes[electrodeIndex].stimulationPoints.length) return;
         const sp = this.session.electrodes[electrodeIndex].stimulationPoints[stimPointIndex];
         sp.stimulations.push(stimulation);
+        this.markDirty();
+    }
+
+    /**
+     * Remove a stimulation by its indices.
+     * @param electrodeIndex Index of the electrode
+     * @param stimPointIndex Index of the stimulation point
+     * @param stimulationIndex Index of the stimulation within the point
+     * @returns Void
+     */
+    deleteStimulation(electrodeIndex: number, stimPointIndex: number, stimulationIndex: number) {
+        if (electrodeIndex >= this.electrodeCount) return;
+        const electrode = this.session.electrodes[electrodeIndex];
+        if (stimPointIndex >= electrode.stimulationPoints.length) return;
+        const sp = electrode.stimulationPoints[stimPointIndex];
+        if (stimulationIndex >= sp.stimulations.length) return;
+        // Replace the observable array to trigger reactivity
+        sp.stimulations = sp.stimulations.filter((_,i) => i !== stimulationIndex);
+        this.session.electrodes[electrodeIndex].stimulationPoints[stimPointIndex] = sp;
+        this.markDirty();
+    }
+
+    /**
+     * Replace a stimulation at the given indices.
+     * @param electrodeIndex Index of the electrode
+     * @param stimPointIndex Index of the stimulation point
+     * @param stimulationIndex Index of the stimulation within the point
+     * @param stimulation New stimulation data
+     * @returns Void
+     */
+    updateStimulation(electrodeIndex: number, stimPointIndex: number, stimulationIndex: number, stimulation: Stimulation) {
+        if (electrodeIndex >= this.electrodeCount) return;
+        const electrode = this.session.electrodes[electrodeIndex];
+        if (stimPointIndex >= electrode.stimulationPoints.length) return;
+        const sp = electrode.stimulationPoints[stimPointIndex];
+        if (stimulationIndex >= sp.stimulations.length) return;
+        // Replace the stimulation in the observable array
+        sp.stimulations[stimulationIndex] = stimulation;
         this.markDirty();
     }
 

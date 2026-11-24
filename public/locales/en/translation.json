@@ -132,6 +132,8 @@
                 "set_time_label_now": "Set current time",
                 "set_time_label_custom": "Specify a time",
                 "saveButtonLabel": "Save",
+                "updateButtonLabel": "Update",
+                "cancelButtonLabel": "Cancel",
                 "numberOfStimulationsLabel": "Stimulations: ",
                 "viewResultsForPointIdLabel": "View results",
                 "effect": {
@@ -195,6 +197,10 @@
                 "button_download_csv": "Download as CSV",
                 "button_download_pdf": "Download as PDF",
                 "records_shown_total": "{{count}} of {{total}} records shown",
+                "confirm_delete_title": "Delete stimulation?",
+                "confirm_delete_text": "This action cannot be undone.",
+                "confirm_delete_confirm": "Delete",
+                "confirm_delete_cancel": "Cancel",
                 "results_table": {
                     "implantation_group_title": "Implantation",
                     "electrode_title": "Electrode",
@@ -217,7 +223,11 @@
                     "post_discharge_title": "Post Discharge",
                     "post_discharge_details_title": "Post Discharge Details",
                     "crisis_title": "Crisis",
-                    "crisis_comments_title": "Crisis (comments)"
+                    "crisis_comments_title": "Crisis (comments)",
+                    "action_title": "Actions",
+                    "delete_tooltip": "Delete stimulation",
+                    "edit_tooltip": "Edit stimulation",
+                    "actions_group_title": "Actions"
                 }
             }
         },
