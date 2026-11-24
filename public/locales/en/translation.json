@@ -132,6 +132,8 @@
                 "set_time_label_now": "Set current time",
                 "set_time_label_custom": "Specify a time",
                 "saveButtonLabel": "Save",
+                "updateButtonLabel": "Update",
+                "cancelButtonLabel": "Cancel",
                 "numberOfStimulationsLabel": "Stimulations: ",
                 "viewResultsForPointIdLabel": "View results",
                 "effect": {
@@ -224,6 +226,7 @@
                     "crisis_comments_title": "Crisis (comments)",
                     "action_title": "Actions",
                     "delete_tooltip": "Delete stimulation",
+                    "edit_tooltip": "Edit stimulation",
                     "actions_group_title": "Actions"
                 }
             }

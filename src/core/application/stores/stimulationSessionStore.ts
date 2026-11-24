@@ -231,6 +231,25 @@ export class StimulationSessionStore {
     }
 
     /**
+     * Replace a stimulation at the given indices.
+     * @param electrodeIndex Index of the electrode
+     * @param stimPointIndex Index of the stimulation point
+     * @param stimulationIndex Index of the stimulation within the point
+     * @param stimulation New stimulation data
+     * @returns Void
+     */
+    updateStimulation(electrodeIndex: number, stimPointIndex: number, stimulationIndex: number, stimulation: Stimulation) {
+        if (electrodeIndex >= this.electrodeCount) return;
+        const electrode = this.session.electrodes[electrodeIndex];
+        if (stimPointIndex >= electrode.stimulationPoints.length) return;
+        const sp = electrode.stimulationPoints[stimPointIndex];
+        if (stimulationIndex >= sp.stimulations.length) return;
+        // Replace the stimulation in the observable array
+        sp.stimulations[stimulationIndex] = stimulation;
+        this.markDirty();
+    }
+
+    /**
      * Load full session from a JSON string (v1 legacy or v2 current).
      * Runs v1->v2 migration when schemaVersion is missing, resets dirty flag
      * and captures snapshot for unsaved detection.

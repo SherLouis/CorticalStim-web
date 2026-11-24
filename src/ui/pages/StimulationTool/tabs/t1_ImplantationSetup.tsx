@@ -299,7 +299,6 @@ function ElectrodeSetupStep({ store }: TabProperties) {
         setSelectedContacts(selectedContacts.filter((c) => !c.startsWith(electrode!.label)));
         setDoneContacts(doneContacts.filter((c) => !c.startsWith(electrode!.label)));
         store.removeElectrode(electrodeIndex);
-        console.debug("deleting electrode " + electrodeLabelToDelete + " at index " + electrodeIndex)
         setElectrodeLabelToDelete(undefined);
     }
 

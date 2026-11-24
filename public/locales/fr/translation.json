@@ -132,6 +132,8 @@
                 "set_time_label_now": "Enregistrer l'heure actuelle",
                 "set_time_label_custom": "Introduire une autre heure",
                 "saveButtonLabel": "Enregistrer",
+                "updateButtonLabel": "Mettre à jour",
+                "cancelButtonLabel": "Annuler",
                 "numberOfStimulationsLabel": "Stimulations: ",
                 "viewResultsForPointIdLabel": "Voir résultats",
                 "effect": {
@@ -224,6 +226,7 @@
                     "crisis_comments_title": "Crise (commentaires)",
                     "action_title": "Actions",
                     "delete_tooltip": "Supprimer la stimulation",
+                    "edit_tooltip": "Modifier la stimulation",
                     "actions_group_title": "Actions"
                 }
             }

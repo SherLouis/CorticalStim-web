@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ActionIcon, Alert, Box, Button, Checkbox, Group, Modal, MultiSelect, Popover, Text, Tooltip } from "@mantine/core";
 import { useListState } from "@mantine/hooks";
-import { IconAlertTriangle, IconFileTypeCsv, IconFileTypePdf, IconFilterBolt, IconFilterOff, IconTableOptions, IconTrash } from "@tabler/icons-react";
+import { IconAlertTriangle, IconFileTypeCsv, IconFileTypePdf, IconFilterBolt, IconFilterOff, IconTableOptions, IconTrash, IconEdit } from "@tabler/icons-react";
 import sortBy from 'lodash.sortby';
 import { DataTable, DataTableColumn, DataTableSortStatus, useDataTableColumns } from "mantine-datatable";
 import { DataTableColumnToggle } from "mantine-datatable/dist/hooks";
@@ -67,7 +67,7 @@ const hasRelevantEffect = (record: Result): boolean => {
 
 const allColumnsProps = { sortable: true, resizable: false, draggable: false, toggleable: false };
 
-function SummaryTab({ store, filters }: SummaryTabProps) {
+function SummaryTab({ store, filters, onEdit }: SummaryTabProps) {
     const { t } = useTranslation();
 
     // Use adapter if available, otherwise fall back to form
@@ -130,6 +130,10 @@ function SummaryTab({ store, filters }: SummaryTabProps) {
         setShowDeleteConfirm(false);
         setRecordToDelete(null);
     };
+
+    const handleEditClick = useCallback((record: Result) => {
+        onEdit?.(record.electrodeIndex, record.stimPointIndex, record.stimulationIndex);
+    }, [onEdit]);
 
     const records = useMemo(() => {
         let data = sortBy(allRecords, sortStatus.columnAccessor);
@@ -245,7 +249,14 @@ function SummaryTab({ store, filters }: SummaryTabProps) {
             accessor: 'actions',
             title: t('pages.stimulationTool.summary.results_table.action_title'),
             render: (result: Result) => (
-                <Group>
+                <Button.Group>
+                    <ActionIcon
+                        title={t('pages.stimulationTool.summary.results_table.edit_tooltip')}
+                        variant="subtle"
+                        onClick={() => handleEditClick(result)}
+                    >
+                        <IconEdit size={16} />
+                    </ActionIcon>
                     <ActionIcon
                         title={t('pages.stimulationTool.summary.results_table.delete_tooltip')}
                         color="red"
@@ -254,7 +265,7 @@ function SummaryTab({ store, filters }: SummaryTabProps) {
                     >
                         <IconTrash size={16} />
                     </ActionIcon>
-                </Group>
+                </Button.Group>
             ),
             toggleable: false,
             defaultToggle: true,
@@ -262,17 +273,19 @@ function SummaryTab({ store, filters }: SummaryTabProps) {
             resizable: false,
             draggable: false
         }
-    ] as DataTableColumn<Result>[], [t, allRecords, pointIdList, setPointIdListHandlers]);
+    ] as DataTableColumn<Result>[], [t, allRecords, pointIdList, setPointIdListHandlers, handleEditClick]);
 
     const { effectiveColumns, columnsToggle, setColumnsToggle } = useDataTableColumns<Result>({
         key: columnsLocalStorageKey,
         columns: tableColumns
     })
 
+    const columnsForExport = effectiveColumns.filter(c => c.accessor !== "actions");
+
     const downloadRecordsToCsv = () => {
         exportResultsToCsv({
             records,
-            columns: effectiveColumns,
+            columns: columnsForExport,
             patientId: source.patientId,
         });
     }
@@ -280,7 +293,7 @@ function SummaryTab({ store, filters }: SummaryTabProps) {
     const downloadRecordsToPdf = () => {
         exportResultsToPdf({
             records,
-            columns: effectiveColumns,
+            columns: columnsForExport,
             patientId: source.patientId,
             t,
         });
@@ -398,7 +411,8 @@ function SummaryTab({ store, filters }: SummaryTabProps) {
 export default observer(SummaryTab);
 
 interface SummaryTabProps extends TabProperties {
-    filters?: SummaryFilters
+    filters?: SummaryFilters;
+    onEdit?: (electrodeIndex: number, stimPointIndex: number, stimulationIndex: number) => void;
 }
 
 export interface SummaryFilters {
