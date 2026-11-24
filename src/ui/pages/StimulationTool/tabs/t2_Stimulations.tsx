@@ -37,7 +37,17 @@ export default function StimulationsTab({ store, viewPointSummary }: Stimulation
     const [stimulationTime, setStimulationTime] = useState<string>("");
 
     // Forms
-    const params_form = useForm<StimulationParametersFormValues>({ initialValues: { amplitude: 1.0, duration: 0, frequency: 0, lengthPath: 0 } });
+    // TODO: add validations on params (positive, not 0)
+    const params_form = useForm<StimulationParametersFormValues>({ 
+        initialValues: { amplitude: 1.0, duration: 0, frequency: 0, lengthPath: 0 },
+        validate: {
+            "amplitude": (value) => value<=0 ? t('pages.stimulationTool.stimulation.validations.amplitude'): null,
+            "frequency": (value) => value<=0 ? t('pages.stimulationTool.stimulation.validations.frequency'): null,
+            "duration": (value) => value<=0 ? t('pages.stimulationTool.stimulation.validations.duration'): null,
+            "lengthPath": (value) => value<=0 ? t('pages.stimulationTool.stimulation.validations.length_path'): null,
+        },
+        validateInputOnBlur: true, validateInputOnChange: true
+    });
     const task_form = useForm<StimulationTaskFormValues>({ initialValues: { category: "", subcategory: "", characteristic: "" } });
     const effect_form = useForm<StimulationEffectsValues>({ initialValues: { observed_effect: [], observed_effect_comments: "", epi_manifestation: "", contact_in_epi_zone: "unknown", contact_in_epi_zone_comments: "", post_discharge: false, pd_duration: undefined, pd_local: "local", pd_type: "", crisis: false, crisis_comments: "" } });
 
@@ -179,13 +189,14 @@ export default function StimulationsTab({ store, viewPointSummary }: Stimulation
         [effect_form.values.observed_effect]
     );
 
-    const isTaskSelected = useMemo<boolean>(
+    const allowStimulationTimeSet = useMemo<boolean>(
         () => {
             const task = task_form.values;
-            return !(task.category === "" && task.subcategory === "" && task.characteristic === "");
+            const taskSelected = !(task.category === "" && task.subcategory === "" && task.characteristic === "");
+            return taskSelected && params_form.isValid();
         },
-        [task_form.values]
-    );
+        [task_form.values, params_form]
+    )
 
     const getSelectedPointEpiManifEffect = () => {
         return formatEpiManifestation(effect_form.values.epi_manifestation, t);
@@ -251,7 +262,7 @@ export default function StimulationsTab({ store, viewPointSummary }: Stimulation
                     handleSubmit={handleSubmit}
                     getSelectedPointLocation={getSelectedPointLocation}
                     getSelectedPointObservedEffect={getSelectedPointObservedEffect}
-                    isTaskSelected={isTaskSelected}
+                    allowStimulationTimeSet={allowStimulationTimeSet}
                     isSelectedPointObservedEffectSelected={isSelectedPointObservedEffectSelected}
                     getSelectedPointEpiManifEffect={getSelectedPointEpiManifEffect}
                     getSelectedPointEEGEffect={getSelectedPointEEGEffect}
@@ -363,7 +374,7 @@ interface CentralBarProps {
     handleSubmit: () => void;
     getSelectedPointLocation: () => string;
     getSelectedPointObservedEffect: () => string;
-    isTaskSelected: boolean;
+    allowStimulationTimeSet: boolean;
     isSelectedPointObservedEffectSelected: boolean;
     getSelectedPointEpiManifEffect: () => string;
     getSelectedPointEEGEffect: () => string;
@@ -380,7 +391,7 @@ const CentralBar = ({
     handleSubmit,
     getSelectedPointLocation,
     getSelectedPointObservedEffect,
-    isTaskSelected,
+    allowStimulationTimeSet,
     isSelectedPointObservedEffectSelected,
     getSelectedPointEpiManifEffect,
     getSelectedPointEEGEffect,
@@ -464,7 +475,7 @@ const CentralBar = ({
                     <Group position="center" align="center" h={"100%"} noWrap sx={{ flex: 3 }} >
                         <Group position="center" align="center" h={"100%"} w={"100%"} spacing={"xs"}>
                             {!stimTimeSet &&
-                                <HoverCard disabled={isTaskSelected}>
+                                <HoverCard disabled={allowStimulationTimeSet}>
                                     <HoverCard.Target>
                                         <Box>
                                             <Button.Group orientation="horizontal">
@@ -472,14 +483,14 @@ const CentralBar = ({
                                                     display={useDateTimePicker ? 'none' : 'flex'}
                                                     onClick={() => setStimulationTime(new Date().toISOString())}
                                                     leftIcon={<IconClockCheck />}
-                                                    disabled={!isTaskSelected}>
+                                                    disabled={!allowStimulationTimeSet}>
                                                     <Text w={"9rem"} align='center' size={"md"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_now')}</Text>
                                                 </Button>
                                                 <Button size="lg"
                                                     display={useDateTimePicker ? 'none' : 'flex'}
                                                     onClick={() => setUseDateTimePicker(true)}
                                                     leftIcon={<IconClockEdit />}
-                                                    disabled={!isTaskSelected}>
+                                                    disabled={!allowStimulationTimeSet}>
                                                     <Text w={"9rem"} align='center' size={"md"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_custom')}</Text>
                                                 </Button>
                                             </Button.Group>

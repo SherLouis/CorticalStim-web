@@ -44,6 +44,7 @@ export default function CustomNumberInput(props: CustomNumberInputProps) {
                     hideControls={props.useCustom}
                     step={props.step}
                     styles={{ input: { textAlign: 'center' } }}
+                    {...props.inputProps}
                 />
                 {props.useCustom &&
                     <Stack spacing={0}>
@@ -66,4 +67,5 @@ interface CustomNumberInputProps extends NumberInputProps {
     spacing?: MantineNumberSize;
     variant?: Variants<'subtle' | 'filled' | 'outline' | 'light' | 'default' | 'transparent' | 'gradient'>
     useCustom?: boolean;
+    inputProps?: NumberInputProps
 }

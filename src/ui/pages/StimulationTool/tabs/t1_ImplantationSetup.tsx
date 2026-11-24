@@ -357,8 +357,13 @@ function ElectrodeSetupStep({ store }: TabProperties) {
                 }
             })
         })
-        setDoneContacts(donePoints);
-    }, [sourceElectrodes]);
+        if (
+            donePoints.length !== doneContacts.length ||
+            !donePoints.every((p, i) => p === doneContacts[i])
+        ) {
+            setDoneContacts(donePoints);
+        }
+    }, [sourceElectrodes, doneContacts]);
 
     const selectAllContacts = () => {
         var allPointsLabel = sourceElectrodes.flatMap((electrode: any) => electrode.stimulationPoints.map((point: any) => getStimPointLabel(electrode.label, point.index)));
@@ -395,7 +400,7 @@ function ElectrodeSetupStep({ store }: TabProperties) {
     })
 
     // Form change (from file open for example)
-    useEffect(() => { updateDoneContacts(); }, [store.session.electrodes, updateDoneContacts])
+    useEffect(() => { updateDoneContacts(); });
 
     // Selected contact changed or data model updated => sync location form values
     // We use a stringified version of selectedContacts to avoid unnecessary triggers
