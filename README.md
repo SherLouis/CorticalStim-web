@@ -11,9 +11,6 @@
 - [x] New electrode should show on top of the list
 - [ ] Fix UI sizing / adapte to window : if easier: just allow scrolling. 
 - [x] Multiple possible electrode configuration
-    - [ ] Configure new electrode configuration options globally
-    - [ ] Assign configuration to all electrodes
-    - [x] Set different configuration per electrode
 - [ ] Retrospective mode :
     - [ ] New mode selection screen (first page) : "new session" = existing behavior; "retrospective" = new mode
     - [ ] No requirement to select stimulation time
@@ -21,7 +18,7 @@
 - [ ] Editable after the fact
     - [ ] In summary table, edit button that brings back to stimulation tab with selected stimulation in "view" mode
     - [ ] Stimulation tab in view mode for given stimulation : add option to edit + update instead of "save"
-- [ ] Add option in summary table to delete stimulation
+- [x] Add option in summary table to delete stimulation
 - [ ] Stimulation tab : option to enlarge contact selection when none is selected (take up entire width and larger height (all - bar)). Takes back original size when contact is selected. Button to enlarge is small in a corner of the section.
 
 ## Refactor

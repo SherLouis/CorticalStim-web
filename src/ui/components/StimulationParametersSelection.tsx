@@ -1,4 +1,4 @@
-import { Button, Group, Stack, Title } from "@mantine/core";
+import { Button, Group, SimpleGrid, Stack, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 
@@ -11,7 +11,8 @@ import Section from "./Section";
 export default function StimulationParametersSelection({ form: params_form }: StimulationParametersSelectionProps) {
     const { t } = useTranslation();
     const parameterSelection = (
-        <Group position="center" align="top" noWrap>
+        <SimpleGrid cols={4} spacing="xs" verticalSpacing="sm"
+        breakpoints={[{maxWidth: '90rem', cols: 2}]}>
             <CustomNumberInput
                 h={"100%"}
                 label={t('pages.stimulationTool.stimulation.amplitude_label') + ' (mA)'}
@@ -91,7 +92,7 @@ export default function StimulationParametersSelection({ form: params_form }: St
                     )}
                 </Group>
             </Stack>
-        </Group>
+        </SimpleGrid>
     );
     return (
         <Section
