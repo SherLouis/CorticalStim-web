@@ -296,8 +296,8 @@ const StimulationsTab = function StimulationsTab({ store, viewPointSummary, edit
             <Box h={"45%"} w={"100%"}>
                 <Group w={"100%"} h={"100%"} align='flex-start' noWrap spacing="xs" >
                     <Box h={"100%"} sx={{
-                        flex: "1 1 0%",
-                        minWidth: 220, // prevents collapsing into nothing
+                        flex: "2 1 0%",
+                        minWidth: 200,
                         overflow: "hidden",
                     }}>
                         <Section
@@ -323,10 +323,9 @@ const StimulationsTab = function StimulationsTab({ store, viewPointSummary, edit
                         />
                     </Box>
                     <Box h={"100%"} sx={{
-                        flex: "0 0 auto",
-                        width: "38%",
-                        minWidth: 340,
-                        maxWidth: "55%",
+                        flex: "1 1 0%",
+                        minWidth: 450,
+                        maxWidth: "70%",
                         overflowY: "auto",
                         overflowX: "hidden",
                     }}>
@@ -361,7 +360,7 @@ const StimulationsTab = function StimulationsTab({ store, viewPointSummary, edit
                 />
             </Box>
 
-            <Box h={"40%"} w={"100%"}>
+            <Box h={"40%"} w={"100%"} py="0">
                 { /** Stimulation point selected, but stimulation time not set => Display instructions to specify task and stimulation parameters */
                     selectedPoint !== '' && stimulationTime === '' &&
                     <Alert h={"100%"}

@@ -121,8 +121,8 @@ const StimulationToolPage = observer(function StimulationToolPage() {
     const customTabStyle = useCustomTabStyle();
     // TODO : different layout for smaller screens
     return (
-        <Box mx={"sm"} h={"100%"} m={0} p={0} >
-            <Group h={"4%"} noWrap py={"xs"}>
+        <Box h={"100%"} m={0} p={0} sx={{ display: "flex", flexDirection: "column", minHeight: 0, minWidth: 0, overflow: "hidden" }}>
+            <Group noWrap py={"xs"} sx={{ flex: "0 0 auto", minWidth: 0 }}>
                 <input type='file' id='file' onChange={handleFileChange} ref={openInputFileRef} accept=".json" style={{ display: 'none' }} />
                 <ActionIcon title={t('pages.stimulationTool.button_open_form')}>
                     <IconFolderOpen onClick={() => openInputFileRef.current?.click()} />
@@ -160,22 +160,23 @@ const StimulationToolPage = observer(function StimulationToolPage() {
                     </Alert>
                 }
             </Group>
-            <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={customTabStyle.classes} h={"96%"} keepMounted={false}>
-                <Tabs.List grow mah={"5%"}>
+            <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline" radius={"xl"} classNames={customTabStyle.classes} keepMounted={false}
+                sx={{ flex: "1 1 0%", minHeight: 0, minWidth: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                <Tabs.List grow sx={{ flex: "0 0 auto" }}>
                     <Tabs.Tab value="implantation">{t("pages.stimulationTool.implantation.tab_title")}</Tabs.Tab>
                     <Tabs.Tab value="stimulation">{t("pages.stimulationTool.stimulation.tab_title")}</Tabs.Tab>
                     <Tabs.Tab value="summary">{t("pages.stimulationTool.summary.tab_title")}</Tabs.Tab>
                 </Tabs.List>
 
-                <Tabs.Panel value="implantation" h={"95%"}><ElectrodeSetupStep store={store} /></Tabs.Panel>
-                <Tabs.Panel value="stimulation" h={"95%"}>
+                <Tabs.Panel value="implantation" sx={{ flex: "1 1 0%", minHeight: 0, minWidth: 0, overflow: "hidden" }}><ElectrodeSetupStep store={store} /></Tabs.Panel>
+                <Tabs.Panel value="stimulation" sx={{ flex: "1 1 0%", minHeight: 0, minWidth: 0, overflow: "hidden" }}>
                     <StimulationsTab 
                         store={store} 
                         viewPointSummary={handleViewPointSummary}
                         editStimulation={editStimulation}
                     />
                 </Tabs.Panel>
-                <Tabs.Panel value="summary" h={"95%"} >
+                <Tabs.Panel value="summary" sx={{ flex: "1 1 0%", minHeight: 0, minWidth: 0, overflow: "hidden" }}>
                     <SummaryTab store={store} filters={summaryFilters} onEdit={handleEditFromSummary} />
                 </Tabs.Panel>
             </Tabs>
