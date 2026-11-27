@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { ActionIcon, Box, Button, Flex, Group, Radio, ScrollArea, SimpleGrid, Stack, Switch, Text, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Box, Button, Flex, Group, Input, Radio, ScrollArea, SegmentedControl, SimpleGrid, Stack, Switch, Text, TextInput, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { TFunction } from "i18next";
@@ -89,8 +89,8 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
     }
 
     const observedEffect = (
-        <Group w={"100%"} h={"90%"} align='flex-start'>
-            <Box sx={{ flex: 3 }} h={"100%"}>
+        <Group w={"100%"} h={"90%"} align='flex-start' noWrap>
+            <Box sx={{ flex: 3, minWidth: 0 }} h={"100%"}>
                 <Stack h={"100%"} spacing={0}>
                     <Group w={"100%"} spacing={4} position="apart" noWrap grow>
                         <Button compact size="sm"
@@ -148,7 +148,7 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
                 </Stack>
             </Box>
 
-            <Box sx={{ flex: 9 }} h={"100%"}>
+            <Box sx={{ flex: 9, minWidth: 0 }} h={"100%"}>
                 <Stack w={"100%"} h={"100%"} spacing={0}>
                     <Box h={"90%"}>
                         {activeEffectIndex !== null && form.values.observed_effect[activeEffectIndex] ? (
@@ -175,32 +175,30 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
 
     const clinicalManif = (
         <Stack h={"100%"} w={"100%"} spacing={'xs'}>
-            <Box w={"100%"} sx={{ flex: 6 }}>
+            <Box w={"100%"} sx={{ flex: "2 1"}}>
                 <SimpleGrid cols={2} w={"100%"} spacing={"xs"}>
-                    {getEpiManifestationOptions(t).map((option, i) => <Radio key={"epi_option_" + i} value={option.value} label={option.label}
+                    {getEpiManifestationOptions(t).map((option, i) => <Radio size="xs" key={"epi_option_" + i} value={option.value} label={option.label}
                         onChange={(e) => form.setFieldValue('epi_manifestation', e.target.checked ? e.target.value : "")}
                         checked={option.value === form.values.epi_manifestation}
                     />)}
-                    <TextInput
-                        placeholder={t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.other')}
-                        {...form.getInputProps('epi_manifestation')}
-                    />
                 </SimpleGrid>
+                <TextInput
+                    mt="xs"
+                    size="xs"
+                    placeholder={t('pages.stimulationTool.stimulation.effect.epi_manifestation_options_labels.other')}
+                    {...form.getInputProps('epi_manifestation')}
+                />
             </Box>
-            <Box w={"100%"} sx={{ flex: 6 }}>
-                <Radio.Group
-                    defaultValue="unknown"
-                    label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_label')}
-                    {...form.getInputProps('contact_in_epi_zone')}>
-                    <Group>
-                        {getContactInEpiZoneOptions().map((option, i) =>
-                            <Radio
-                                key={"in_epi_zone_" + i}
-                                label={option.label}
-                                value={option.value}
-                            />)}
-                    </Group>
-                </Radio.Group>
+            <Box w={"100%"} sx={{ flex: "3 1"}}>
+                <Input.Wrapper label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_label')}>
+                    <SegmentedControl
+                        fullWidth
+                        size="xs"
+                        data={getContactInEpiZoneOptions()}
+                        value={form.values.contact_in_epi_zone}
+                        onChange={(value) => form.setFieldValue('contact_in_epi_zone', value)}
+                    />
+                </Input.Wrapper>
                 <TextInput
                     label={t('pages.stimulationTool.stimulation.effect.contact_in_epi_zone_comments_label')}
                     {...form.getInputProps('contact_in_epi_zone_comments')}
@@ -211,15 +209,15 @@ export default function StimulationEffectSelection({ form, observed_effect_last_
 
     return (
         <Box w={"100%"} h={"100%"}>
-            <Group w={"100%"} h={"100%"} align='flex-start'>
+            <Group w={"100%"} h={"100%"} align='flex-start' noWrap spacing="xs">
                 <Section
-                    sx={{ flex: 7 }}
+                    sx={{ flex: 7, minWidth: 0 }}
                     header={<Title order={5}>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}</Title>}
                     children={observedEffect}
                 />
 
-                <Box sx={{ flex: 5 }} h={"100%"}>
-                    <Group w={"100%"} h={"100%"} align='flex-start'>
+                <Box sx={{ flex: 5, minWidth: 0 }} h={"100%"}>
+                    <Group w={"100%"} h={"100%"} align='flex-start' noWrap spacing="xs">
                         <Section
                             sx={{ flex: 6 }}
                             header={<Title order={5}>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}</Title>}

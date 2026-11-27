@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { ActionIcon, Alert, Box, Button, Center, Container, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Alert, Box, Button, Center, Divider, Flex, Group, GroupProps, HoverCard, Modal, Popover, ScrollArea, SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { DateTimePicker, DateValue } from "@mantine/dates";
 import { useForm, UseFormReturnType } from "@mantine/form";
 import { useListState } from "@mantine/hooks";
@@ -141,7 +141,6 @@ const StimulationsTab = function StimulationsTab({ store, viewPointSummary, edit
     const handleSubmit = () => {
         if (selectedPoint === undefined) { return; }
         if (stimulationTime === '') { return; }
-        if (!store) { return; }
 
         // validate forms
         params_form.validate();
@@ -295,17 +294,24 @@ const StimulationsTab = function StimulationsTab({ store, viewPointSummary, edit
             </Modal>
 
             <Box h={"45%"} w={"100%"}>
-                <Group w={"100%"} h={"100%"} align='flex-start' >
-                    <Box h={"100%"} sx={{ flex: 7 }}>
+                <Group w={"100%"} h={"100%"} align='flex-start' noWrap spacing="xs" >
+                    <Box h={"100%"} sx={{
+                        flex: "2 1 0%",
+                        minWidth: 200,
+                        overflow: "hidden",
+                    }}>
                         <Section
                             header={
-                                <Group position="apart" align="center" noWrap>
-                                    <Title order={3} h={"100%"}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
-                                    <ContactColorLegend h={"100%"} w={"80%"} position="apart" noWrap t={t} />
+                                <Group position="apart" align="center" noWrap spacing="xs">
+                                    <Title order={3} sx={{ flexShrink: 0 }}>{t('pages.stimulationTool.stimulation.contacts_title')}</Title>
+                                    {/* Horizontally scrollable legend if window is narrow */}
+                                    <ScrollArea type="auto" sx={{ flex: 1, minWidth: 0 }}>
+                                        <ContactColorLegend position="apart" miw={700} h={"100%"} noWrap t={t} />
+                                    </ScrollArea>
                                 </Group>
                             }
                             children={
-                                <Box h={"100%"} w={"100%"} p={0} m={0}>
+                                <Box h={"100%"} w={"100%"} p={0} m={0} sx={{ overflow: "hidden", minWidth:0 }}>
                                     <ContactSelection store={store}
                                         electrodes={store.session.electrodes.filter(e => e.confirmed)}
                                         selectedContact={selectedPoint}
@@ -316,7 +322,13 @@ const StimulationsTab = function StimulationsTab({ store, viewPointSummary, edit
                             }
                         />
                     </Box>
-                    <Box h={"100%"} sx={{ flex: 5 }}>
+                    <Box h={"100%"} sx={{
+                        flex: "1 1 0%",
+                        minWidth: 450,
+                        maxWidth: "70%",
+                        overflowY: "auto",
+                        overflowX: "hidden",
+                    }}>
                         <Stack h={"100%"} w={"100%"} spacing={0} display={selectedPoint !== '' ? 'flex' : 'none'}>
                             <StimulationTaskSelection form={task_form} last_values={lastTaskValues} />
                             <StimulationParametersSelection form={params_form} />
@@ -348,7 +360,7 @@ const StimulationsTab = function StimulationsTab({ store, viewPointSummary, edit
                 />
             </Box>
 
-            <Box h={"40%"} w={"100%"}>
+            <Box h={"40%"} w={"100%"} py="0">
                 { /** Stimulation point selected, but stimulation time not set => Display instructions to specify task and stimulation parameters */
                     selectedPoint !== '' && stimulationTime === '' &&
                     <Alert h={"100%"}
@@ -381,55 +393,51 @@ interface StimulationTabProps extends TabProperties {
 
 const ContactSelection = ({ electrodes, selectedContact, onSelectedChanged, onViewResultsForPoint }: ContactSelectionProps) => {
     return (
-        <ScrollArea w={"100%"} h={"100%"} sx={{ alignItems: "center", padding: '0', margin: '0' }}>
+        <ScrollArea w={"100%"} h={"100%"} type="auto" sx={{ alignItems: "center", padding: '0', margin: '0' }}>
             {electrodes.map((electrode, electrode_i) => {
                 return (
-                    <Stack key={'div_group_electrode_' + electrode_i}>
+                    <Stack key={'div_group_electrode_' + electrode_i} spacing="xs" w={"100%"} sx={{maxWidth: '100%'}}>
                         <Group noWrap
                             spacing='sm'
                             position='left'
                             align='center'
-                            mt={'sm'}
                             key={'div_group_electrode_' + electrode_i}
                             w={"100%"}
+                            sx={{maxWidth: '100%'}}
                         >
-                            <Title order={4} w={"5%"} p={"md"}>{electrode.label}</Title>
-                            <Box h={"100%"} w={"95%"} my={0}>
-                                <SimpleGrid cols={10}
-                                    breakpoints={[
-                                        { maxWidth: '90rem', cols: 8, spacing: 'sm' },
-                                        { maxWidth: '70rem', cols: 6, spacing: 'sm' },
-                                        { maxWidth: '50rem', cols: 4, spacing: 'xs' },
-                                        { maxWidth: '40rem', cols: 3, spacing: 'xs' },
-                                        { maxWidth: '35rem', cols: 2, spacing: 'sm' },
-                                    ]}>
-                                    {electrode.stimulationPoints.map((stim_point, stim_point_i) => {
-                                        const pointId = getStimPointLabel(electrode.label, stim_point_i);
-                                        const nbStims = stim_point.stimulations.length;
-                                        return (
-                                            <Popover position='bottom' opened={selectedContact === pointId} key={pointId} withinPortal>
-                                                <Popover.Target>
-                                                    <Container p={0}>
-                                                        <StimulatedContact
-                                                            selected={selectedContact === pointId}
-                                                            stimulations={stim_point.stimulations}
-                                                            size='sm'
-                                                            value={pointId}
-                                                            key={pointId}
-                                                            onChange={(_checked) => onSelectedChanged(selectedContact !== pointId ? pointId : "")}
-                                                        >
-                                                            {getStimPointLabel(electrode.label, stim_point_i, false, true)}
-                                                        </StimulatedContact>
-                                                    </Container>
-                                                </Popover.Target>
-                                                <Popover.Dropdown>
-                                                    <Text>{t('pages.stimulationTool.stimulation.numberOfStimulationsLabel') + stim_point.stimulations.length}</Text>
-                                                    {nbStims > 0 && <Button compact leftIcon={<IconEye />} onClick={() => onViewResultsForPoint(pointId)}>{t('pages.stimulationTool.stimulation.viewResultsForPointIdLabel')}</Button>}
-                                                </Popover.Dropdown>
-                                            </Popover>
-                                        );
-                                    })}
-                                </SimpleGrid>
+                            <Title order={4} sx={{ flexShrink: 0, width: 36 }}>{electrode.label}</Title>
+                            {/* Horizontal scroll track for this electrode's contact chips */}
+                            <Box sx={{ flex: 1, minWidth: 0, overflowX: "auto", overflowY: "hidden" }}>
+                                <Box sx={{ minWidth: 850 }}>
+                                    <SimpleGrid cols={10} spacing="xs" verticalSpacing="xs" py={4}>
+                                        {electrode.stimulationPoints.map((stim_point, stim_point_i) => {
+                                            const pointId = getStimPointLabel(electrode.label, stim_point_i);
+                                            const nbStims = stim_point.stimulations.length;
+                                            return (
+                                                <Popover position='bottom' opened={selectedContact === pointId} key={pointId} withinPortal>
+                                                    <Popover.Target>
+                                                        <Box sx={{ minWidth: 0 }}>
+                                                            <StimulatedContact
+                                                                selected={selectedContact === pointId}
+                                                                stimulations={stim_point.stimulations}
+                                                                size='sm'
+                                                                value={pointId}
+                                                                key={pointId}
+                                                                onChange={(_checked) => onSelectedChanged(selectedContact !== pointId ? pointId : "")}
+                                                            >
+                                                                {getStimPointLabel(electrode.label, stim_point_i, false, true)}
+                                                            </StimulatedContact>
+                                                        </Box>
+                                                    </Popover.Target>
+                                                    <Popover.Dropdown>
+                                                        <Text>{t('pages.stimulationTool.stimulation.numberOfStimulationsLabel') + stim_point.stimulations.length}</Text>
+                                                        {nbStims > 0 && <Button compact leftIcon={<IconEye />} onClick={() => onViewResultsForPoint(pointId)}>{t('pages.stimulationTool.stimulation.viewResultsForPointIdLabel')}</Button>}
+                                                    </Popover.Dropdown>
+                                                </Popover>
+                                            );
+                                        })}
+                                    </SimpleGrid>
+                                </Box>
                             </Box>
                         </Group>
                         <Divider orientation='horizontal' size={'md'} color={'black'} />
@@ -512,7 +520,8 @@ const CentralBar = ({
         <Box h={"100%"} sx={(theme) => (
             {
                 borderRadius: theme.radius.xl,
-                overflow: "hidden",
+                overflowY: "hidden",
+                overflowX: "auto",
                 backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[6]
             })}>
             {/** No Contact exists */}
@@ -539,6 +548,7 @@ const CentralBar = ({
                     <Center
                         sx={(theme) => ({
                             flex: 1,
+                            minWidth: 0,
                             backgroundColor: selectedContactBackgroundColorSx,
                             height: '100%',
                             padding: theme.spacing.md,
@@ -550,7 +560,7 @@ const CentralBar = ({
                     </Center>
 
                     {/** Implantation ROI or selected Effect */}
-                    <Stack sx={{ flex: 3 }} h={"100%"} align="center" justify="center">
+                    <Stack sx={{ flex: 3, minWidth: 0 }} h={"100%"} align="center" justify="center">
                         <Text fz={"lg"} fw={"bold"} display={stimTimeSet ? 'none' : 'block'}>{getSelectedPointLocation()}</Text>
                         <Stack display={stimTimeSet ? 'block' : 'none'} align="flex-start" justify="center" spacing={2}>
                             <Text fz={"lg"} fw={"bold"}>{t('pages.stimulationTool.stimulation.effect.observed_effect_label')}:</Text>
@@ -561,26 +571,26 @@ const CentralBar = ({
                     </Stack>
 
                     {/** Time selection / Save button */}
-                    <Group position="center" align="center" h={"100%"} noWrap sx={{ flex: 3 }} >
+                    <Group position="center" align="center" h={"100%"} noWrap sx={{ flex: 3, minWidth: 0 }} >
                         <Group position="center" align="center" h={"100%"} w={"100%"} spacing={"xs"}>
                             {!stimTimeSet &&
                                 <HoverCard disabled={allowStimulationTimeSet}>
                                     <HoverCard.Target>
                                         <Box>
-                                            <Button.Group orientation="horizontal">
-                                                <Button size="lg"
+                                            <Button.Group orientation="vertical">
+                                                <Button size="md"
                                                     display={useDateTimePicker ? 'none' : 'flex'}
                                                     onClick={() => setStimulationTime(new Date().toISOString())}
                                                     leftIcon={<IconClockCheck />}
                                                     disabled={!allowStimulationTimeSet}>
-                                                    <Text w={"9rem"} align='center' size={"md"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_now')}</Text>
+                                                    <Text align='center' size={"md"} px="sm" sx={{ whiteSpace: 'nowrap' }} >{t('pages.stimulationTool.stimulation.set_time_label_now')}</Text>
                                                 </Button>
-                                                <Button size="lg"
+                                                <Button size="md"
                                                     display={useDateTimePicker ? 'none' : 'flex'}
                                                     onClick={() => setUseDateTimePicker(true)}
                                                     leftIcon={<IconClockEdit />}
                                                     disabled={!allowStimulationTimeSet}>
-                                                    <Text w={"9rem"} align='center' size={"md"} sx={{ whiteSpace: 'normal' }} >{t('pages.stimulationTool.stimulation.set_time_label_custom')}</Text>
+                                                    <Text align='center' size={"md"} px="sm" sx={{ whiteSpace: 'nowrap' }} >{t('pages.stimulationTool.stimulation.set_time_label_custom')}</Text>
                                                 </Button>
                                             </Button.Group>
                                             <Group position="center" display={useDateTimePicker ? 'flex' : 'none'}>
@@ -634,16 +644,16 @@ const CentralBar = ({
                     </Group>
 
                     {/** Parameters & Task or Manif & EEG */}
-                    <Box sx={{ flex: 5 }} h={"100%"} p={0} m={0}>
+                    <Box sx={{ flex: 5, minWidth: 160, overflowY: "auto" }} h={"100%"} p={0} m={0}>
                         {/** Task & Parameters when stim time is not set, or always in edit mode */}
                         <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" spacing={"sm"} display={stimTimeSet && !isEditMode ? 'none' : 'flex'}>
-                            <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
-                            <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.parameters_title')} : </strong>{formatParameters(params_form.values)}</Text>
+                            <Text fz={"sm"}><strong>{t('pages.stimulationTool.stimulation.task_title')} : </strong>{formatSelectedTask(task_form.values)}</Text>
+                            <Text fz={"sm"}><strong>{t('pages.stimulationTool.stimulation.parameters_title')} : </strong>{formatParameters(params_form.values)}</Text>
                         </Stack>
                         {/** Epi manif & EEG when stim time is set, or always in edit mode */}
                         <Stack h={"100%"} w={"100%"} align="flex-start" justify="center" spacing={"sm"} display={(stimTimeSet || isEditMode) ? 'flex' : 'none'}>
-                            <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}:</strong> {getSelectedPointEpiManifEffect()}</Text>
-                            <Text fz={"lg"}><strong>{t('pages.stimulationTool.stimulation.effect.eeg')} :</strong> {getSelectedPointEEGEffect()}</Text>
+                            <Text fz={"sm"}><strong>{t('pages.stimulationTool.stimulation.effect.epi_manifestation')}:</strong> {getSelectedPointEpiManifEffect()}</Text>
+                            <Text fz={"sm"}><strong>{t('pages.stimulationTool.stimulation.effect.eeg')} :</strong> {getSelectedPointEEGEffect()}</Text>
                         </Stack>
                     </Box>
                 </Flex >
